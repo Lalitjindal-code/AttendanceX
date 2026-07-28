@@ -1,0 +1,13 @@
+/// Strongly-typed route paths for GoRouter.
+///
+/// Use these constants instead of hardcoded strings when calling
+/// context.go() or context.push().
+abstract final class AppRoutes {
+  AppRoutes._();
+
+  static const String dashboard = '/';
+  static const String subjects = '/subjects';
+  static const String schedule = '/schedule';
+  static const String analytics = '/analytics';
+  static const String settings = '/settings';
+}

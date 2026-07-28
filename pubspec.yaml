@@ -1,0 +1,74 @@
+name: attendancex
+description: A premium offline-first attendance tracker for college students.
+version: 1.0.0+1
+publish_to: none
+
+environment:
+  sdk: ">=3.3.0 <4.0.0"
+  flutter: ">=3.22.0"
+
+dependencies:
+  flutter:
+    sdk: flutter
+
+  # ── State Management ────────────────────────────────────────────────────────
+  flutter_riverpod: ^2.5.1
+  riverpod_annotation: ^2.3.5
+
+  # ── Navigation ───────────────────────────────────────────────────────────────
+  go_router: ^14.2.7
+
+  # ── Local Database ───────────────────────────────────────────────────────────
+  isar: ^3.1.0+1
+  isar_flutter_libs: ^3.1.0+1   # Provides native Isar binary for Android/iOS
+
+  # ── Preferences ──────────────────────────────────────────────────────────────
+  shared_preferences: ^2.3.2
+
+  # ── Charts (Phase 5) ─────────────────────────────────────────────────────────
+  fl_chart: ^0.68.0
+
+  # ── Calendar Widget (Phase 6) ─────────────────────────────────────────────────
+  table_calendar: ^3.1.2
+
+  # ── Notifications (Phase 7) ──────────────────────────────────────────────────
+  flutter_local_notifications: ^17.2.2
+
+  # ── Internationalisation / Formatting ────────────────────────────────────────
+  intl: ^0.19.0
+
+  # ── Unique IDs ────────────────────────────────────────────────────────────────
+  uuid: ^4.4.2
+
+  # ── File System ──────────────────────────────────────────────────────────────
+  path_provider: ^2.1.4
+
+  # ── File Picker — Backup Import (Phase 8) ────────────────────────────────────
+  file_picker: ^8.1.2
+
+  # ── Share / Export (Phase 8) ─────────────────────────────────────────────────
+  share_plus: ^10.0.2
+
+  # ── Typography ───────────────────────────────────────────────────────────────
+  google_fonts: ^6.2.1
+
+dev_dependencies:
+  flutter_test:
+    sdk: flutter
+
+  # ── Code Generation ───────────────────────────────────────────────────────────
+  build_runner: ^2.4.12
+  isar_generator: ^3.1.0+1
+  riverpod_generator: any
+
+  # ── Linting ───────────────────────────────────────────────────────────────────
+  custom_lint: any
+  riverpod_lint: any
+  flutter_lints: ^4.0.0
+
+flutter:
+  uses-material-design: true
+
+  assets:
+    - assets/images/
+    - assets/icons/
