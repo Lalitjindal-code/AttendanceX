@@ -46,6 +46,11 @@ class ShellScaffold extends StatelessWidget {
             label: AppStrings.navSchedule,
           ),
           NavigationDestination(
+            icon: Icon(AppIcons.calendar),
+            selectedIcon: Icon(AppIcons.calendar),
+            label: AppStrings.calendarTitle,
+          ),
+          NavigationDestination(
             icon: Icon(AppIcons.analyticsOutlined),
             selectedIcon: Icon(AppIcons.analytics),
             label: AppStrings.navAnalytics,

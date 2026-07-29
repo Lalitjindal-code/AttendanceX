@@ -1,0 +1,163 @@
+import 'package:attendancex/core/enums/attendance_status.dart';
+import 'package:attendancex/core/enums/gt_mode.dart';
+import 'package:attendancex/database/collections/attendance_collection.dart';
+import 'package:attendancex/engines/attendance_engine.dart';
+import 'package:attendancex/features/settings/models/app_settings.dart';
+import 'package:flutter/material.dart';
+import 'package:flutter_test/flutter_test.dart';
+
+void main() {
+  group('AttendanceEngine Tests', () {
+    late AppSettings baseSettings;
+
+    setUp(() {
+      baseSettings = const AppSettings(
+        themeMode: ThemeMode.system,
+        defaultGoalPercentage: 75.0,
+        medicalCountsAsPresent: false,
+        gtMode: GtMode.exclude,
+        notificationsEnabled: false,
+        dailyReminderEnabled: false,
+        dailyReminderTime: '20:00',
+        lectureReminderMinutes: 10,
+      );
+    });
+
+    Attendance createAttendance(AttendanceStatus status, {int subjectId = 1}) {
+      return Attendance()
+        ..subjectId = subjectId
+        ..status = status;
+    }
+
+    test('calculateSubjectSummary with no attendance records', () {
+      final summary = AttendanceEngine.calculateSubjectSummary(1, [], baseSettings);
+      expect(summary.effectiveTotal, 0);
+      expect(summary.effectivePresent, 0);
+      expect(summary.attendancePercentage, 0.0);
+    });
+
+    test('calculateSubjectSummary with 100% attendance', () {
+      final records = [
+        createAttendance(AttendanceStatus.present),
+        createAttendance(AttendanceStatus.present),
+      ];
+      final summary = AttendanceEngine.calculateSubjectSummary(1, records, baseSettings);
+      
+      expect(summary.effectiveTotal, 2);
+      expect(summary.effectivePresent, 2);
+      expect(summary.attendancePercentage, 100.0);
+      expect(summary.totalPresentRecords, 2);
+    });
+
+    test('calculateSubjectSummary with 0% attendance', () {
+      final records = [
+        createAttendance(AttendanceStatus.absent),
+        createAttendance(AttendanceStatus.absent),
+      ];
+      final summary = AttendanceEngine.calculateSubjectSummary(1, records, baseSettings);
+      
+      expect(summary.effectiveTotal, 2);
+      expect(summary.effectivePresent, 0);
+      expect(summary.attendancePercentage, 0.0);
+      expect(summary.totalAbsentRecords, 2);
+    });
+
+    test('calculateSubjectSummary safely ignores Holidays', () {
+      final records = [
+        createAttendance(AttendanceStatus.present),
+        createAttendance(AttendanceStatus.holiday),
+        createAttendance(AttendanceStatus.holiday),
+      ];
+      final summary = AttendanceEngine.calculateSubjectSummary(1, records, baseSettings);
+      
+      expect(summary.effectiveTotal, 1);
+      expect(summary.effectivePresent, 1);
+      expect(summary.attendancePercentage, 100.0);
+      expect(summary.totalHolidayRecords, 2);
+    });
+
+    test('calculateSubjectSummary safely ignores Pending', () {
+      final records = [
+        createAttendance(AttendanceStatus.present),
+        createAttendance(AttendanceStatus.pending),
+      ];
+      final summary = AttendanceEngine.calculateSubjectSummary(1, records, baseSettings);
+      
+      expect(summary.effectiveTotal, 1);
+      expect(summary.effectivePresent, 1);
+      expect(summary.attendancePercentage, 100.0);
+      expect(summary.totalPendingRecords, 1);
+    });
+
+    group('Medical Rules', () {
+      test('medicalCountsAsPresent = true -> counts as Present', () {
+        final settings = baseSettings.copyWith(medicalCountsAsPresent: true);
+        final records = [createAttendance(AttendanceStatus.medical)];
+        
+        final summary = AttendanceEngine.calculateSubjectSummary(1, records, settings);
+        expect(summary.effectiveTotal, 1);
+        expect(summary.effectivePresent, 1);
+        expect(summary.attendancePercentage, 100.0);
+        expect(summary.totalMedicalRecords, 1);
+      });
+
+      test('medicalCountsAsPresent = false -> completely excluded', () {
+        final settings = baseSettings.copyWith(medicalCountsAsPresent: false);
+        final records = [createAttendance(AttendanceStatus.medical)];
+        
+        final summary = AttendanceEngine.calculateSubjectSummary(1, records, settings);
+        expect(summary.effectiveTotal, 0);
+        expect(summary.effectivePresent, 0);
+        expect(summary.attendancePercentage, 0.0);
+        expect(summary.totalMedicalRecords, 1);
+      });
+    });
+
+    group('GT Rules', () {
+      test('GtMode.exclude -> completely excluded', () {
+        final settings = baseSettings.copyWith(gtMode: GtMode.exclude);
+        final records = [createAttendance(AttendanceStatus.gt)];
+        
+        final summary = AttendanceEngine.calculateSubjectSummary(1, records, settings);
+        expect(summary.effectiveTotal, 0);
+        expect(summary.effectivePresent, 0);
+        expect(summary.attendancePercentage, 0.0);
+        expect(summary.totalGTRecords, 1);
+      });
+
+      test('GtMode.countAsPresent -> counts as Present', () {
+        final settings = baseSettings.copyWith(gtMode: GtMode.countAsPresent);
+        final records = [createAttendance(AttendanceStatus.gt)];
+        
+        final summary = AttendanceEngine.calculateSubjectSummary(1, records, settings);
+        expect(summary.effectiveTotal, 1);
+        expect(summary.effectivePresent, 1);
+        expect(summary.attendancePercentage, 100.0);
+        expect(summary.totalGTRecords, 1);
+      });
+
+      test('GtMode.countAsAbsent -> counts as Absent', () {
+        final settings = baseSettings.copyWith(gtMode: GtMode.countAsAbsent);
+        final records = [createAttendance(AttendanceStatus.gt)];
+        
+        final summary = AttendanceEngine.calculateSubjectSummary(1, records, settings);
+        expect(summary.effectiveTotal, 1);
+        expect(summary.effectivePresent, 0);
+        expect(summary.attendancePercentage, 0.0);
+        expect(summary.totalGTRecords, 1);
+      });
+    });
+
+    test('Overall Summary calculates correctly across subjects', () {
+      final records = [
+        createAttendance(AttendanceStatus.present, subjectId: 1),
+        createAttendance(AttendanceStatus.absent, subjectId: 2),
+      ];
+      final summary = AttendanceEngine.calculateOverallSummary(records, baseSettings);
+      
+      expect(summary.effectiveTotal, 2);
+      expect(summary.effectivePresent, 1);
+      expect(summary.attendancePercentage, 50.0);
+    });
+  });
+}

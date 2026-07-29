@@ -1,0 +1,37 @@
+import '../../../database/collections/attendance_collection.dart';
+import '../../../database/collections/schedule_collection.dart';
+import '../../../database/collections/subject_collection.dart';
+import 'attendance_summary.dart';
+import 'smart_suggestion.dart';
+
+class LectureCardModel {
+  final Schedule schedule;
+  final Subject subject;
+  final Attendance? attendance;
+  final SubjectAttendanceSummary summary;
+  final SmartSuggestion suggestion;
+
+  const LectureCardModel({
+    required this.schedule,
+    required this.subject,
+    required this.attendance,
+    required this.summary,
+    required this.suggestion,
+  });
+}
+
+class DashboardState {
+  final bool isLoading;
+  final String? errorMessage;
+  final List<LectureCardModel> todaysLectures;
+  final OverallAttendanceSummary? overallSummary;
+  final SmartSuggestion? overallSuggestion;
+
+  const DashboardState({
+    this.isLoading = true,
+    this.errorMessage,
+    this.todaysLectures = const [],
+    this.overallSummary,
+    this.overallSuggestion,
+  });
+}

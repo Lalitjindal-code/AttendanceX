@@ -1,0 +1,90 @@
+import 'package:attendancex/core/enums/attendance_status.dart';
+import 'package:attendancex/core/enums/day_of_week.dart';
+import 'package:attendancex/core/enums/lecture_type.dart';
+import 'package:attendancex/database/collections/attendance_collection.dart';
+import 'package:attendancex/database/collections/attendance_history_collection.dart';
+import 'package:attendancex/database/collections/schedule_collection.dart';
+import 'package:attendancex/database/collections/subject_collection.dart';
+import 'package:attendancex/database/database_providers.dart';
+import 'package:attendancex/features/attendance/providers/attendance_providers.dart';
+import 'package:attendancex/features/dashboard/models/smart_suggestion.dart';
+import 'package:attendancex/features/dashboard/providers/dashboard_provider.dart';
+import 'package:attendancex/features/schedule/providers/schedule_providers.dart';
+import 'package:attendancex/features/subjects/providers/subject_providers.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:flutter_test/flutter_test.dart';
+import 'package:isar/isar.dart';
+import 'package:shared_preferences/shared_preferences.dart';
+import 'package:attendancex/services/preferences_service.dart';
+
+void main() {
+  late Isar isar;
+  late ProviderContainer container;
+
+  setUpAll(() async {
+    TestWidgetsFlutterBinding.ensureInitialized();
+    await Isar.initializeIsarCore(download: true);
+    SharedPreferences.setMockInitialValues({});
+    await PreferencesService.instance.initialize();
+  });
+
+  setUp(() async {
+    isar = await Isar.open(
+      [SubjectSchema, ScheduleSchema, AttendanceSchema, AttendanceHistorySchema],
+      directory: '',
+      name: 'dashboard_test_db_${DateTime.now().microsecondsSinceEpoch}',
+    );
+
+    container = ProviderContainer(
+      overrides: [
+        isarProvider.overrideWithValue(isar),
+      ],
+    );
+  });
+
+  tearDown(() async {
+    await isar.writeTxn(() async {
+      await isar.clear();
+    });
+    await isar.close(deleteFromDisk: true);
+    container.dispose();
+  });
+
+  test('DashboardProvider correctly maps and sorts todays lectures', () async {
+    final subjectRepo = container.read(subjectRepositoryProvider);
+    final scheduleRepo = container.read(scheduleRepositoryProvider);
+
+    final sub1 = Subject()..name = 'Math';
+    final sub2 = Subject()..name = 'Physics';
+    await subjectRepo.create(sub1);
+    await subjectRepo.create(sub2);
+
+    final day = DayOfWeek.fromInt(DateTime.now().weekday);
+
+    final s1 = Schedule()
+      ..subjectId = sub1.id
+      ..dayOfWeek = day.value
+      ..startTime = '10:00'
+      ..endTime = '11:00'
+      ..type = LectureType.lecture;
+
+    final s2 = Schedule()
+      ..subjectId = sub2.id
+      ..dayOfWeek = day.value
+      ..startTime = '09:00' // should be sorted first
+      ..endTime = '10:00'
+      ..type = LectureType.lab;
+
+    await scheduleRepo.create(s1);
+    await scheduleRepo.create(s2);
+
+    // Read the future to await the first value.
+    final state = await container.read(dashboardNotifierProvider.future);
+
+    expect(state.todaysLectures.length, 2);
+    // Should be sorted by time (09:00 comes before 10:00)
+    expect(state.todaysLectures[0].subject.name, 'Physics');
+    expect(state.todaysLectures[1].subject.name, 'Math');
+  });
+
+}

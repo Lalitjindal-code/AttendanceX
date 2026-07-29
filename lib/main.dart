@@ -5,8 +5,10 @@ import 'core/config/app_config.dart';
 import 'core/theme/app_theme.dart';
 import 'database/isar_service.dart';
 import 'features/settings/providers/settings_provider.dart';
+import 'features/notifications/providers/notification_provider.dart';
 import 'navigation/app_router.dart';
 import 'services/preferences_service.dart';
+import 'services/notification_service.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -16,6 +18,9 @@ void main() async {
 
   // 2. Initialize Isar Database singleton
   await IsarService.instance.initialize();
+
+  // 3. Initialize Notifications singleton
+  await NotificationService.instance.init();
 
   runApp(
     const ProviderScope(
@@ -29,6 +34,9 @@ class AttendanceXApp extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
+    // Keep the notification orchestrator alive and reacting to changes globally
+    ref.listen(notificationOrchestratorProvider, (_, __) {});
+
     final router = ref.watch(appRouterProvider); // Generated router provider
     final settings = ref.watch(settingsProvider); // Watches ThemeMode changes
 

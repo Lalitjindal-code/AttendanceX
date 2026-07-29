@@ -8,6 +8,11 @@ abstract final class AppRoutes {
   static const String dashboard = '/';
   static const String subjects = '/subjects';
   static const String schedule = '/schedule';
+  static const String calendar = '/calendar';
   static const String analytics = '/analytics';
   static const String settings = '/settings';
+
+  // Sub-routes
+  static const String subjectForm = 'form';
+  static const String scheduleForm = 'form';
 }
