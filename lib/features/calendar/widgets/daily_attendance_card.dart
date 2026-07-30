@@ -52,75 +52,77 @@ class DailyAttendanceCard extends ConsumerWidget {
         onTap: () => _showEditDialog(context, ref),
         child: Padding(
           padding: const EdgeInsets.all(16.0),
-          child: Row(
-            children: [
-              Expanded(
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Text(
-                      item.subject.name,
-                      style: theme.textTheme.titleMedium?.copyWith(
-                        fontWeight: FontWeight.bold,
+          child: MergeSemantics(
+            child: Row(
+              children: [
+                Expanded(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(
+                        item.subject.name,
+                        style: theme.textTheme.titleMedium?.copyWith(
+                          fontWeight: FontWeight.bold,
+                        ),
                       ),
-                    ),
-                    const SizedBox(height: 4),
-                    if (item.schedule != null)
-                      Row(
-                        children: [
-                          Icon(Icons.access_time, size: 16, color: colorScheme.onSurfaceVariant),
-                          const SizedBox(width: 4),
-                          Text(
-                            '${item.schedule!.startTime} - ${item.schedule!.endTime}',
-                            style: theme.textTheme.bodyMedium?.copyWith(
-                              color: colorScheme.onSurfaceVariant,
-                            ),
-                          ),
-                          if (item.schedule!.room != null && item.schedule!.room!.isNotEmpty) ...[
-                            const SizedBox(width: 12),
-                            Icon(Icons.location_on_outlined, size: 16, color: colorScheme.onSurfaceVariant),
+                      const SizedBox(height: 4),
+                      if (item.schedule != null)
+                        Row(
+                          children: [
+                            Icon(Icons.access_time, size: 16, color: colorScheme.onSurfaceVariant),
                             const SizedBox(width: 4),
                             Text(
-                              item.schedule!.room!,
+                              '${item.schedule!.startTime} - ${item.schedule!.endTime}',
                               style: theme.textTheme.bodyMedium?.copyWith(
                                 color: colorScheme.onSurfaceVariant,
                               ),
                             ),
+                            if (item.schedule!.room != null && item.schedule!.room!.isNotEmpty) ...[
+                              const SizedBox(width: 12),
+                              Icon(Icons.location_on_outlined, size: 16, color: colorScheme.onSurfaceVariant),
+                              const SizedBox(width: 4),
+                              Text(
+                                item.schedule!.room!,
+                                style: theme.textTheme.bodyMedium?.copyWith(
+                                  color: colorScheme.onSurfaceVariant,
+                                ),
+                              ),
+                            ],
                           ],
-                        ],
-                      )
-                    else
-                      Row(
-                        children: [
-                          Icon(Icons.info_outline, size: 16, color: colorScheme.onSurfaceVariant),
-                          const SizedBox(width: 4),
-                          Text(
-                            'Manual Attendance',
-                            style: theme.textTheme.bodyMedium?.copyWith(
-                              color: colorScheme.onSurfaceVariant,
-                              fontStyle: FontStyle.italic,
+                        )
+                      else
+                        Row(
+                          children: [
+                            Icon(Icons.info_outline, size: 16, color: colorScheme.onSurfaceVariant),
+                            const SizedBox(width: 4),
+                            Text(
+                              'Manual Attendance',
+                              style: theme.textTheme.bodyMedium?.copyWith(
+                                color: colorScheme.onSurfaceVariant,
+                                fontStyle: FontStyle.italic,
+                              ),
                             ),
-                          ),
-                        ],
-                      ),
-                  ],
-                ),
-              ),
-              Container(
-                padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
-                decoration: BoxDecoration(
-                  color: item.status != null ? statusColor.withValues(alpha: 0.1) : colorScheme.surfaceContainerHighest,
-                  borderRadius: BorderRadius.circular(20),
-                ),
-                child: Text(
-                  item.status?.name.toUpperCase() ?? 'PENDING',
-                  style: theme.textTheme.labelMedium?.copyWith(
-                    color: item.status != null ? statusColor : colorScheme.onSurfaceVariant,
-                    fontWeight: FontWeight.bold,
+                          ],
+                        ),
+                    ],
                   ),
                 ),
-              ),
-            ],
+                Container(
+                  padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+                  decoration: BoxDecoration(
+                    color: item.status != null ? statusColor.withValues(alpha: 0.1) : colorScheme.surfaceContainerHighest,
+                    borderRadius: BorderRadius.circular(20),
+                  ),
+                  child: Text(
+                    item.status?.name.toUpperCase() ?? 'PENDING',
+                    style: theme.textTheme.labelMedium?.copyWith(
+                      color: item.status != null ? statusColor : colorScheme.onSurfaceVariant,
+                      fontWeight: FontWeight.bold,
+                    ),
+                  ),
+                ),
+              ],
+            ),
           ),
         ),
       ),

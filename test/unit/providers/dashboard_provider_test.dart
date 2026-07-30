@@ -1,4 +1,3 @@
-import 'package:attendancex/core/enums/attendance_status.dart';
 import 'package:attendancex/core/enums/day_of_week.dart';
 import 'package:attendancex/core/enums/lecture_type.dart';
 import 'package:attendancex/database/collections/attendance_collection.dart';
@@ -6,8 +5,6 @@ import 'package:attendancex/database/collections/attendance_history_collection.d
 import 'package:attendancex/database/collections/schedule_collection.dart';
 import 'package:attendancex/database/collections/subject_collection.dart';
 import 'package:attendancex/database/database_providers.dart';
-import 'package:attendancex/features/attendance/providers/attendance_providers.dart';
-import 'package:attendancex/features/dashboard/models/smart_suggestion.dart';
 import 'package:attendancex/features/dashboard/providers/dashboard_provider.dart';
 import 'package:attendancex/features/schedule/providers/schedule_providers.dart';
 import 'package:attendancex/features/subjects/providers/subject_providers.dart';
@@ -81,10 +78,10 @@ void main() {
     // Read the future to await the first value.
     final state = await container.read(dashboardNotifierProvider.future);
 
-    expect(state.todaysLectures.length, 2);
+    expect(state.pendingLectures.length, 2);
     // Should be sorted by time (09:00 comes before 10:00)
-    expect(state.todaysLectures[0].subject.name, 'Physics');
-    expect(state.todaysLectures[1].subject.name, 'Math');
+    expect(state.pendingLectures[0].subject.name, 'Physics');
+    expect(state.pendingLectures[1].subject.name, 'Math');
   });
 
 }

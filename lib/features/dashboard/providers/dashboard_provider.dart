@@ -14,7 +14,6 @@ import '../../schedule/providers/schedule_providers.dart';
 import '../../subjects/providers/subject_providers.dart';
 import '../../attendance/providers/attendance_providers.dart';
 import '../models/dashboard_state.dart';
-import '../models/attendance_summary.dart';
 
 part 'dashboard_provider.g.dart';
 
@@ -46,7 +45,7 @@ class DashboardNotifier extends _$DashboardNotifier {
           goalPercentage: settings.defaultGoalPercentage,
         );
 
-        final todaysAttendances = allAttendances.where((a) => a.date == todayUtc).toList();
+        final todaysAttendances = allAttendances.where((a) => a.date.isAtSameMomentAs(todayUtc) || (a.date.year == now.year && a.date.month == now.month && a.date.day == now.day)).toList();
         
         final todaysLectures = schedules.map((schedule) {
           final subject = subjects.firstWhereOrNull((s) => s.id == schedule.subjectId);
@@ -76,9 +75,30 @@ class DashboardNotifier extends _$DashboardNotifier {
           );
         }).nonNulls.toList();
 
+        final pendingLectures = todaysLectures
+            .where((l) => l.attendance == null || l.attendance!.status == AttendanceStatus.pending)
+            .toList();
+            
+        final markedLectures = todaysLectures
+            .where((l) => l.attendance != null && l.attendance!.status != AttendanceStatus.pending)
+            .toList();
+            
+        // Sorting
+        // pendingLectures are already sorted by time due to scheduleRepositoryProvider
+        // markedLectures maintain chronological order from the same repository query
+
+        // Progress Calculation
+        final totalClasses = todaysLectures.length;
+        final markedCount = markedLectures.length;
+        final todayProgressPercentage = totalClasses == 0 ? 0.0 : (markedCount / totalClasses);
+        final todayProgressText = '$markedCount / $totalClasses Classes Marked';
+
         return DashboardState(
           isLoading: false,
-          todaysLectures: todaysLectures,
+          pendingLectures: pendingLectures,
+          markedLectures: markedLectures,
+          todayProgressText: todayProgressText,
+          todayProgressPercentage: todayProgressPercentage,
           overallSummary: overallSummary,
           overallSuggestion: overallSuggestion,
         );

@@ -1,4 +1,8 @@
 import 'package:attendancex/core/enums/attendance_status.dart';
+import 'package:attendancex/database/collections/attendance_collection.dart';
+import 'package:attendancex/database/collections/subject_collection.dart';
+import 'package:attendancex/features/attendance/providers/attendance_providers.dart';
+import 'package:attendancex/features/calendar/models/calendar_state.dart';
 import 'package:attendancex/features/calendar/providers/calendar_provider.dart';
 import 'package:attendancex/features/calendar/widgets/daily_attendance_card.dart';
 import 'package:flutter/material.dart';
@@ -32,6 +36,20 @@ class CalendarScreen extends ConsumerWidget {
                 },
                 onPageChanged: (focusedDay) {
                   ref.read(calendarFocusedDateProvider.notifier).setDate(focusedDay);
+                  ref.read(calendarVisibleMonthProvider.notifier).setMonth(focusedDay);
+                },
+                onDayLongPressed: (selectedDay, focusedDay) {
+                  final isFuture = selectedDay.isAfter(DateTime.now());
+                  if (isFuture) {
+                    ScaffoldMessenger.of(context).showSnackBar(
+                      const SnackBar(content: Text('Cannot mark attendance for future dates')),
+                    );
+                    return;
+                  }
+                  
+                  ref.read(calendarSelectedDateProvider.notifier).setDate(selectedDay);
+                  ref.read(calendarFocusedDateProvider.notifier).setDate(focusedDay);
+                  _showAddManualAttendanceDialog(context, ref, state, selectedDay);
                 },
                 eventLoader: (day) {
                   final normalizedDate = DateTime(day.year, day.month, day.day);
@@ -108,5 +126,93 @@ class CalendarScreen extends ConsumerWidget {
       case AttendanceStatus.pending:
         return Colors.grey;
     }
+  }
+
+  void _showAddManualAttendanceDialog(
+      BuildContext context, WidgetRef ref, CalendarState state, DateTime date) {
+    if (state.allSubjects.isEmpty) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('No subjects available. Please add a subject first.')),
+      );
+      return;
+    }
+
+    Subject? selectedSubject;
+    AttendanceStatus? selectedStatus;
+
+    showDialog(
+      context: context,
+      builder: (context) {
+        return StatefulBuilder(
+          builder: (context, setState) {
+            return AlertDialog(
+              title: const Text('Add Manual Attendance'),
+              content: Column(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  DropdownButtonFormField<Subject>(
+                    decoration: const InputDecoration(labelText: 'Subject'),
+                    value: selectedSubject,
+                    items: state.allSubjects.map((s) {
+                      return DropdownMenuItem(
+                        value: s,
+                        child: Text(s.name),
+                      );
+                    }).toList(),
+                    onChanged: (val) => setState(() => selectedSubject = val),
+                  ),
+                  const SizedBox(height: 16),
+                  DropdownButtonFormField<AttendanceStatus>(
+                    decoration: const InputDecoration(labelText: 'Status'),
+                    value: selectedStatus,
+                    items: AttendanceStatus.values.map((status) {
+                      return DropdownMenuItem(
+                        value: status,
+                        child: Row(
+                          children: [
+                            Container(
+                              width: 12,
+                              height: 12,
+                              margin: const EdgeInsets.only(right: 8),
+                              decoration: BoxDecoration(
+                                shape: BoxShape.circle,
+                                color: _getStatusColor(status),
+                              ),
+                            ),
+                            Text(status.name.toUpperCase()),
+                          ],
+                        ),
+                      );
+                    }).toList(),
+                    onChanged: (val) => setState(() => selectedStatus = val),
+                  ),
+                ],
+              ),
+              actions: [
+                TextButton(
+                  onPressed: () => Navigator.pop(context),
+                  child: const Text('Cancel'),
+                ),
+                ElevatedButton(
+                  onPressed: selectedSubject != null && selectedStatus != null
+                      ? () {
+                          final repo = ref.read(attendanceRepositoryProvider);
+                          final att = Attendance()
+                            ..subjectId = selectedSubject!.id
+                            ..scheduleId = -1
+                            ..date = DateTime(date.year, date.month, date.day)
+                            ..status = selectedStatus!;
+                          repo.upsertAttendance(att);
+                          Navigator.pop(context);
+                        }
+                      : null,
+                  child: const Text('Save'),
+                ),
+              ],
+            );
+          },
+        );
+      },
+    );
   }
 }

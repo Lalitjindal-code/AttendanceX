@@ -15,20 +15,39 @@ part 'calendar_provider.g.dart';
 @riverpod
 class CalendarSelectedDate extends _$CalendarSelectedDate {
   @override
-  DateTime build() => DateTime.now();
+  DateTime build() {
+    final now = DateTime.now();
+    return DateTime(now.year, now.month, now.day);
+  }
 
   void setDate(DateTime date) {
-    state = date;
+    state = DateTime(date.year, date.month, date.day);
   }
 }
 
 @riverpod
 class CalendarFocusedDate extends _$CalendarFocusedDate {
   @override
-  DateTime build() => DateTime.now();
+  DateTime build() {
+    final now = DateTime.now();
+    return DateTime(now.year, now.month, now.day);
+  }
 
   void setDate(DateTime date) {
-    state = date;
+    state = DateTime(date.year, date.month, date.day);
+  }
+}
+
+@riverpod
+class CalendarVisibleMonth extends _$CalendarVisibleMonth {
+  @override
+  DateTime build() {
+    final now = DateTime.now();
+    return DateTime(now.year, now.month, 1);
+  }
+
+  void setMonth(DateTime date) {
+    state = DateTime(date.year, date.month, 1);
   }
 }
 
@@ -44,11 +63,18 @@ class CalendarNotifier extends _$CalendarNotifier {
     // will cause build() to re-run and return a new Stream when they change.
     final selectedDate = ref.watch(calendarSelectedDateProvider);
     final focusedDate = ref.watch(calendarFocusedDateProvider);
+    final visibleMonth = ref.watch(calendarVisibleMonthProvider);
+    
+    // Calculate a buffer for TableCalendar (previous and next month visible days)
+    // TableCalendar usually shows max 6 weeks (42 days) total.
+    // So 1 month back and 1 month forward is plenty.
+    final startDate = DateTime(visibleMonth.year, visibleMonth.month - 1, 1);
+    final endDate = DateTime(visibleMonth.year, visibleMonth.month + 2, 0); // End of next month
 
     return Rx.combineLatest3(
       subjectRepo.watchAll(),
       scheduleRepo.watchAll(),
-      attendanceRepo.watchAll(),
+      attendanceRepo.watchByDateRange(startDate, endDate),
       (List<Subject> subjects, List<Schedule> schedules, List<Attendance> attendances) {
         if (subjects.isEmpty) {
           return CalendarState(
@@ -56,6 +82,7 @@ class CalendarNotifier extends _$CalendarNotifier {
             focusedDate: focusedDate,
             attendanceMarkers: CalendarEngine.generateMarkers([]),
             selectedDayDetails: DailyAttendanceDetails(date: selectedDate),
+            allSubjects: [],
             isLoading: false,
           );
         }
@@ -73,6 +100,7 @@ class CalendarNotifier extends _$CalendarNotifier {
           focusedDate: focusedDate,
           attendanceMarkers: markers,
           selectedDayDetails: details,
+          allSubjects: subjects,
           isLoading: false,
         );
       },

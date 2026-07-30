@@ -157,18 +157,23 @@ class _SubjectFormScreenState extends ConsumerState<SubjectFormScreen> {
       runSpacing: AppSpacing.md,
       children: colors.map((c) {
         final isSelected = c == _selectedColor;
-        return InkWell(
-          onTap: () => setState(() => _selectedColor = c),
-          customBorder: const CircleBorder(),
-          child: Container(
-            width: 40,
-            height: 40,
-            decoration: BoxDecoration(
-              color: Color(c),
-              shape: BoxShape.circle,
-              border: isSelected ? Border.all(color: Theme.of(context).colorScheme.onSurface, width: 3) : null,
+        return Semantics(
+          label: 'Color option ${c.toRadixString(16)}',
+          selected: isSelected,
+          button: true,
+          child: InkWell(
+            onTap: () => setState(() => _selectedColor = c),
+            customBorder: const CircleBorder(),
+            child: Container(
+              width: 48,
+              height: 48,
+              decoration: BoxDecoration(
+                color: Color(c),
+                shape: BoxShape.circle,
+                border: isSelected ? Border.all(color: Theme.of(context).colorScheme.onSurface, width: 3) : null,
+              ),
+              child: isSelected ? const Icon(Icons.check, color: Colors.white) : null,
             ),
-            child: isSelected ? const Icon(Icons.check, color: Colors.white) : null,
           ),
         );
       }).toList(),
@@ -205,6 +210,7 @@ class _SubjectFormScreenState extends ConsumerState<SubjectFormScreen> {
                       decoration: const InputDecoration(labelText: 'Subject Name *', hintText: 'e.g. Data Structures'),
                       validator: SubjectValidator.validateName,
                       textCapitalization: TextCapitalization.words,
+                      textInputAction: TextInputAction.next,
                     ),
                     const SizedBox(height: AppSpacing.lg),
                     
@@ -216,6 +222,7 @@ class _SubjectFormScreenState extends ConsumerState<SubjectFormScreen> {
                             decoration: const InputDecoration(labelText: 'Credits *'),
                             keyboardType: TextInputType.number,
                             validator: SubjectValidator.validateCredits,
+                            textInputAction: TextInputAction.next,
                           ),
                         ),
                         const SizedBox(width: AppSpacing.lg),
@@ -225,6 +232,7 @@ class _SubjectFormScreenState extends ConsumerState<SubjectFormScreen> {
                             decoration: const InputDecoration(labelText: 'Goal % *'),
                             keyboardType: const TextInputType.numberWithOptions(decimal: true),
                             validator: SubjectValidator.validateGoal,
+                            textInputAction: TextInputAction.next,
                           ),
                         ),
                       ],
@@ -241,18 +249,21 @@ class _SubjectFormScreenState extends ConsumerState<SubjectFormScreen> {
                     TextFormField(
                       controller: _facultyNameController,
                       decoration: const InputDecoration(labelText: 'Faculty Name'),
+                      textInputAction: TextInputAction.next,
                     ),
                     const SizedBox(height: AppSpacing.md),
                     TextFormField(
                       controller: _facultyEmailController,
                       decoration: const InputDecoration(labelText: 'Faculty Email'),
                       keyboardType: TextInputType.emailAddress,
+                      textInputAction: TextInputAction.next,
                     ),
                     const SizedBox(height: AppSpacing.md),
                     TextFormField(
                       controller: _facultyPhoneController,
                       decoration: const InputDecoration(labelText: 'Faculty Phone'),
                       keyboardType: TextInputType.phone,
+                      textInputAction: TextInputAction.next,
                     ),
                     
                     const SizedBox(height: AppSpacing.xl),
@@ -261,6 +272,7 @@ class _SubjectFormScreenState extends ConsumerState<SubjectFormScreen> {
                       decoration: const InputDecoration(labelText: 'Notes (Optional)'),
                       maxLines: 3,
                       validator: SubjectValidator.validateNotes,
+                      textInputAction: TextInputAction.done,
                     ),
                     
                     const SizedBox(height: AppSpacing.xxl),

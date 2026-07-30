@@ -21,7 +21,7 @@ class _ScheduleScreenState extends ConsumerState<ScheduleScreen> with SingleTick
   @override
   void initState() {
     super.initState();
-    _tabController = TabController(length: 7, vsync: this);
+    _tabController = TabController(length: DayOfWeek.weekdays.length, vsync: this);
     _tabController.addListener(() {
       if (!_tabController.indexIsChanging) {
         setState(() {
@@ -47,7 +47,7 @@ class _ScheduleScreenState extends ConsumerState<ScheduleScreen> with SingleTick
         bottom: TabBar(
           controller: _tabController,
           isScrollable: true,
-          tabs: DayOfWeek.values.map((day) => Tab(text: day.shortLabel)).toList(),
+          tabs: DayOfWeek.weekdays.map((day) => Tab(text: day.shortLabel)).toList(),
         ),
       ),
       body: subjectsAsync.when(
@@ -72,7 +72,7 @@ class _ScheduleScreenState extends ConsumerState<ScheduleScreen> with SingleTick
 
           return TabBarView(
             controller: _tabController,
-            children: DayOfWeek.values.map((day) => _DayScheduleView(dayOfWeek: day.value)).toList(),
+            children: DayOfWeek.weekdays.map((day) => _DayScheduleView(dayOfWeek: day.value)).toList(),
           );
         },
         loading: () => const Center(child: CircularProgressIndicator()),
@@ -82,7 +82,7 @@ class _ScheduleScreenState extends ConsumerState<ScheduleScreen> with SingleTick
         data: (subjects) => subjects.isNotEmpty
             ? FloatingActionButton(
                 onPressed: () {
-                  context.push('${AppRoutes.schedule}/${AppRoutes.scheduleForm}?day=${DayOfWeek.values[_currentDayIndex].value}');
+                  context.push('${AppRoutes.schedule}/${AppRoutes.scheduleForm}?day=${DayOfWeek.weekdays[_currentDayIndex].value}');
                 },
                 child: const Icon(Icons.add),
               )

@@ -6,8 +6,8 @@ abstract final class AppConfig {
   AppConfig._();
 
   // ── Identity ────────────────────────────────────────────────────────────────
-  static const String appName = 'AttendanceX';
-  static const String packageName = 'com.lalitjindal.attendancex';
+  static const String appName = 'Attendify';
+  static const String packageName = 'com.lalitjindal.attendify';
   static const String version = '1.0.0';
   static const int buildNumber = 1;
 
@@ -38,5 +38,5 @@ abstract final class AppConfig {
   static const double maxGoalPercentage = 100.0;
 
   // ── Database ─────────────────────────────────────────────────────────────────
-  static const String isarDbName = 'attendancex_db';
+  static const String isarDbName = 'attendify_db';
 }

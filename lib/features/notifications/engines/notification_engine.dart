@@ -1,3 +1,5 @@
+import 'dart:convert';
+
 import 'package:attendancex/core/enums/attendance_status.dart';
 import 'package:attendancex/core/enums/day_of_week.dart';
 import 'package:attendancex/database/collections/attendance_collection.dart';
@@ -91,11 +93,19 @@ class NotificationEngine {
 
       if (alertTime.isAfter(now)) {
         final id = _generateLectureId(schedule.id, targetDate);
+        final payload = jsonEncode({
+          'type': 'lecture',
+          'scheduleId': schedule.id,
+          'subjectId': schedule.subjectId,
+          'date': '${targetDate.year.toString().padLeft(4, '0')}-${targetDate.month.toString().padLeft(2, '0')}-${targetDate.day.toString().padLeft(2, '0')}',
+        });
+        
         alerts.add(ScheduledNotification(
           id: id,
           title: 'Upcoming Class: ${subject.name}',
           body: 'Starts at ${schedule.startTime} in ${schedule.room}',
           scheduledDate: alertTime,
+          payload: payload,
         ));
       }
     }
@@ -184,11 +194,18 @@ class NotificationEngine {
 
     if (missedCount > 0) {
       final id = _generateDailyId(targetDate);
+      final payload = jsonEncode({
+        'type': 'daily_reminder',
+        'missedCount': missedCount,
+        'date': '${targetDate.year.toString().padLeft(4, '0')}-${targetDate.month.toString().padLeft(2, '0')}-${targetDate.day.toString().padLeft(2, '0')}',
+      });
+
       return ScheduledNotification(
         id: id,
         title: 'Missed Attendance',
         body: 'You have $missedCount unmarked lecture${missedCount > 1 ? 's' : ''}. Please update your attendance.',
         scheduledDate: reminderTime,
+        payload: payload,
       );
     }
 

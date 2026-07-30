@@ -1,8 +1,11 @@
 import 'package:flutter/material.dart';
+import 'package:intl/intl.dart';
 import '../../../core/enums/attendance_status.dart';
+import '../../../core/extensions/attendance_status_extension.dart';
 import '../models/dashboard_state.dart';
+import 'edit_attendance_bottom_sheet.dart';
 
-class LectureCard extends StatefulWidget {
+class LectureCard extends StatelessWidget {
   final LectureCardModel model;
   final void Function(AttendanceStatus status) onMarkAttendance;
 
@@ -13,151 +16,221 @@ class LectureCard extends StatefulWidget {
   });
 
   @override
-  State<LectureCard> createState() => _LectureCardState();
-}
-
-class _LectureCardState extends State<LectureCard> {
-  bool _isEditing = false;
-
-  @override
   Widget build(BuildContext context) {
-    final schedule = widget.model.schedule;
-    final subject = widget.model.subject;
-    final attendance = widget.model.attendance;
-    final color = Color(subject.colorValue);
+    final schedule = model.schedule;
+    final subject = model.subject;
+    final attendance = model.attendance;
+    final subjectColor = Color(subject.colorValue);
 
-    final isMarked = attendance != null && attendance.status != AttendanceStatus.pending;
+    final status = attendance?.status ?? AttendanceStatus.pending;
+    final isMarked = status != AttendanceStatus.pending;
 
-    return Card(
-      margin: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
-      elevation: 2,
-      child: Container(
+    // Use subject color for pending, but use the specific status color for marked.
+    final accentColor = isMarked ? status.color : subjectColor;
+
+    return Semantics(
+      label: isMarked 
+          ? '${subject.name} attendance marked ${status.displayName}. Double tap to edit attendance.'
+          : '${subject.name} pending attendance. Double tap to mark.',
+      child: AnimatedContainer(
+        duration: const Duration(milliseconds: 300),
+        curve: Curves.easeInOut,
+        margin: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
         decoration: BoxDecoration(
-          border: Border(left: BorderSide(color: color, width: 4)),
+          color: Theme.of(context).cardColor,
+          borderRadius: BorderRadius.circular(12),
+          border: Border.all(
+            color: isMarked ? accentColor.withOpacity(0.5) : Colors.transparent,
+            width: isMarked ? 1.5 : 0,
+          ),
+          boxShadow: isMarked ? [] : [
+            BoxShadow(
+              color: Colors.black.withOpacity(0.05),
+              blurRadius: 10,
+              offset: const Offset(0, 4),
+            ),
+          ],
         ),
-        child: Padding(
-          padding: const EdgeInsets.all(16.0),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: [
-                  Expanded(
-                    child: Text(
-                      subject.name,
-                      style: Theme.of(context).textTheme.titleLarge?.copyWith(fontWeight: FontWeight.bold),
-                      maxLines: 1,
-                      overflow: TextOverflow.ellipsis,
-                    ),
-                  ),
-                  Text(
-                    '${schedule.startTime} - ${schedule.endTime}',
-                    style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                          color: Theme.of(context).colorScheme.onSurfaceVariant,
-                        ),
-                  ),
-                ],
+        child: ClipRRect(
+          borderRadius: BorderRadius.circular(12),
+          child: Container(
+            decoration: BoxDecoration(
+              border: Border(left: BorderSide(color: accentColor, width: 4)),
+            ),
+            child: Padding(
+              padding: const EdgeInsets.all(16.0),
+              child: AnimatedSwitcher(
+                duration: const Duration(milliseconds: 300),
+                child: isMarked
+                    ? _buildMarkedContent(context, accentColor, status)
+                    : _buildPendingContent(context, accentColor),
               ),
-              const SizedBox(height: 4),
-              Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: [
-                  Text(
-                    schedule.type.name.toUpperCase(),
-                    style: Theme.of(context).textTheme.labelMedium?.copyWith(
-                          color: color,
-                          fontWeight: FontWeight.bold,
-                        ),
-                  ),
-                  if (schedule.room != null)
-                    Text(
-                      'Room: ${schedule.room}',
-                      style: Theme.of(context).textTheme.bodySmall,
-                    ),
-                ],
-              ),
-              const SizedBox(height: 16),
-              
-              if (isMarked && !_isEditing)
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: [
-                    Row(
-                      children: [
-                        Icon(
-                          _getStatusIcon(attendance.status),
-                          color: _getStatusColor(attendance.status),
-                          size: 20,
-                        ),
-                        const SizedBox(width: 8),
-                        Text(
-                          'Marked: ${attendance.status.name.toUpperCase()}',
-                          style: TextStyle(
-                            fontWeight: FontWeight.bold,
-                            color: _getStatusColor(attendance.status),
-                          ),
-                        ),
-                      ],
-                    ),
-                    TextButton.icon(
-                      onPressed: () => setState(() => _isEditing = true),
-                      icon: const Icon(Icons.edit, size: 16),
-                      label: const Text('Edit'),
-                    ),
-                  ],
-                )
-              else
-                Wrap(
-                  spacing: 8,
-                  runSpacing: 8,
-                  children: [
-                    _buildActionButton(context, 'Present', AttendanceStatus.present, Colors.green),
-                    _buildActionButton(context, 'Absent', AttendanceStatus.absent, Colors.red),
-                    _buildActionButton(context, 'Medical', AttendanceStatus.medical, Colors.orange),
-                    _buildActionButton(context, 'GT', AttendanceStatus.gt, Colors.purple),
-                    _buildActionButton(context, 'Holiday', AttendanceStatus.holiday, Colors.blue),
-                  ],
-                ),
-            ],
+            ),
           ),
         ),
       ),
     );
   }
 
-  Widget _buildActionButton(BuildContext context, String label, AttendanceStatus status, Color color) {
-    return ActionChip(
-      label: Text(label),
-      backgroundColor: color.withOpacity(0.1),
-      labelStyle: TextStyle(color: color, fontWeight: FontWeight.bold),
-      side: BorderSide(color: color.withOpacity(0.5)),
-      onPressed: () {
-        setState(() => _isEditing = false);
-        widget.onMarkAttendance(status);
-      },
+  Widget _buildPendingContent(BuildContext context, Color accentColor) {
+    return Column(
+      key: const ValueKey('pending'),
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        _buildHeader(context, accentColor),
+        const SizedBox(height: 16),
+        Wrap(
+          spacing: 8,
+          runSpacing: 8,
+          children: AttendanceStatus.values
+              .where((s) => s != AttendanceStatus.pending)
+              .map((s) => _buildActionButton(context, s, null))
+              .toList(),
+        ),
+      ],
     );
   }
 
-  IconData _getStatusIcon(AttendanceStatus status) {
-    switch (status) {
-      case AttendanceStatus.present: return Icons.check_circle;
-      case AttendanceStatus.absent: return Icons.cancel;
-      case AttendanceStatus.medical: return Icons.local_hospital;
-      case AttendanceStatus.gt: return Icons.directions_walk;
-      case AttendanceStatus.holiday: return Icons.celebration;
-      case AttendanceStatus.pending: return Icons.help_outline;
-    }
+  Widget _buildMarkedContent(BuildContext context, Color accentColor, AttendanceStatus status) {
+    return Column(
+      key: const ValueKey('marked'),
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Row(
+          children: [
+            Icon(Icons.check, color: accentColor, size: 16),
+            const SizedBox(width: 4),
+            Text(
+              'MARKED',
+              style: Theme.of(context).textTheme.labelSmall?.copyWith(
+                    color: accentColor,
+                    fontWeight: FontWeight.bold,
+                    letterSpacing: 1.2,
+                  ),
+            ),
+          ],
+        ),
+        const SizedBox(height: 8),
+        _buildHeader(context, accentColor),
+        const SizedBox(height: 12),
+        Text(
+          'Status:',
+          style: Theme.of(context).textTheme.bodySmall?.copyWith(
+                color: Theme.of(context).colorScheme.onSurfaceVariant,
+              ),
+        ),
+        const SizedBox(height: 4),
+        Row(
+          children: [
+            Icon(status.icon, color: accentColor, size: 16),
+            const SizedBox(width: 8),
+            Text(
+              status.displayName,
+              style: Theme.of(context).textTheme.titleMedium?.copyWith(
+                    color: accentColor,
+                    fontWeight: FontWeight.bold,
+                  ),
+            ),
+          ],
+        ),
+        const SizedBox(height: 16),
+        SizedBox(
+          width: double.infinity,
+          child: OutlinedButton.icon(
+            onPressed: () {
+              EditAttendanceBottomSheet.show(
+                context,
+                model: model,
+                onStatusSelected: onMarkAttendance,
+              );
+            },
+            icon: const Icon(Icons.edit, size: 16),
+            label: const Text('Edit Attendance'),
+            style: OutlinedButton.styleFrom(
+              foregroundColor: Theme.of(context).colorScheme.onSurfaceVariant,
+              side: BorderSide(color: Theme.of(context).colorScheme.outlineVariant),
+            ),
+          ),
+        ),
+      ],
+    );
   }
 
-  Color _getStatusColor(AttendanceStatus status) {
-    switch (status) {
-      case AttendanceStatus.present: return Colors.green;
-      case AttendanceStatus.absent: return Colors.red;
-      case AttendanceStatus.medical: return Colors.orange;
-      case AttendanceStatus.gt: return Colors.purple;
-      case AttendanceStatus.holiday: return Colors.blue;
-      case AttendanceStatus.pending: return Colors.grey;
-    }
+  Widget _buildHeader(BuildContext context, Color accentColor) {
+    final schedule = model.schedule;
+    final subject = model.subject;
+    
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Row(
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          children: [
+            Expanded(
+              child: Text(
+                subject.name,
+                style: Theme.of(context).textTheme.titleLarge?.copyWith(fontWeight: FontWeight.bold),
+                maxLines: 1,
+                overflow: TextOverflow.ellipsis,
+              ),
+            ),
+            Text(
+              '${schedule.startTime} - ${schedule.endTime}',
+              style: Theme.of(context).textTheme.bodyMedium?.copyWith(
+                    color: Theme.of(context).colorScheme.onSurfaceVariant,
+                  ),
+            ),
+          ],
+        ),
+        const SizedBox(height: 4),
+        Row(
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          children: [
+            Text(
+              schedule.type.name.toUpperCase(),
+              style: Theme.of(context).textTheme.labelMedium?.copyWith(
+                    color: accentColor,
+                    fontWeight: FontWeight.bold,
+                  ),
+            ),
+            if (schedule.room != null)
+              Text(
+                'Room: ${schedule.room}',
+                style: Theme.of(context).textTheme.bodySmall,
+              ),
+          ],
+        ),
+        const SizedBox(height: 2),
+        Text(
+          'Faculty: ${subject.facultyName}',
+          style: Theme.of(context).textTheme.bodySmall?.copyWith(
+                color: Theme.of(context).colorScheme.onSurfaceVariant,
+              ),
+        ),
+      ],
+    );
+  }
+
+  Widget _buildActionButton(BuildContext context, AttendanceStatus status, AttendanceStatus? currentStatus) {
+    final isSelected = currentStatus == status;
+    final color = status.color;
+
+    return ChoiceChip(
+      label: Text(status.displayName),
+      selected: isSelected,
+      showCheckmark: false,
+      selectedColor: color,
+      backgroundColor: color.withOpacity(0.1),
+      labelStyle: TextStyle(
+        color: isSelected ? Colors.white : color,
+        fontWeight: FontWeight.bold,
+      ),
+      side: BorderSide(color: isSelected ? Colors.transparent : color.withOpacity(0.5)),
+      onSelected: (selected) {
+        if (!isSelected) {
+          onMarkAttendance(status);
+        }
+      },
+    );
   }
 }

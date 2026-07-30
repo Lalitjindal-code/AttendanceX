@@ -12,6 +12,15 @@ enum DayOfWeek {
 
   const DayOfWeek(this.value);
 
+  /// Only Monday through Friday
+  static const List<DayOfWeek> weekdays = [
+    DayOfWeek.monday,
+    DayOfWeek.tuesday,
+    DayOfWeek.wednesday,
+    DayOfWeek.thursday,
+    DayOfWeek.friday,
+  ];
+
   /// Integer value matching [DateTime.weekday].
   final int value;
 

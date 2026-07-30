@@ -256,11 +256,13 @@ class _ScheduleFormScreenState extends ConsumerState<ScheduleFormScreen> {
             TextFormField(
               controller: _roomController,
               decoration: const InputDecoration(labelText: 'Room (Optional)', border: OutlineInputBorder()),
+              textInputAction: TextInputAction.next,
             ),
             const SizedBox(height: 16),
             TextFormField(
               controller: _facultyController,
               decoration: const InputDecoration(labelText: 'Faculty Override (Optional)', border: OutlineInputBorder()),
+              textInputAction: TextInputAction.done,
             ),
             const SizedBox(height: 32),
             ElevatedButton(

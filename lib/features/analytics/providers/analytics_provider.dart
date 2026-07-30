@@ -1,7 +1,5 @@
 import 'package:attendancex/database/collections/attendance_collection.dart';
 import 'package:attendancex/database/collections/subject_collection.dart';
-import 'package:attendancex/database/repositories/attendance_repository.dart';
-import 'package:attendancex/database/repositories/subject_repository.dart';
 import 'package:attendancex/engines/attendance_engine.dart';
 import 'package:attendancex/features/analytics/engines/analytics_engine.dart';
 import 'package:attendancex/features/analytics/models/analytics_state.dart';

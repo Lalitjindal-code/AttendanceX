@@ -7,7 +7,7 @@ part of 'calendar_provider.dart';
 // **************************************************************************
 
 String _$calendarSelectedDateHash() =>
-    r'9d65e7b2d80c54976dc5a472c88320a04af3d350';
+    r'99d86dbbe86072b145c94ec8d583844e39126e6d';
 
 /// See also [CalendarSelectedDate].
 @ProviderFor(CalendarSelectedDate)
@@ -24,7 +24,7 @@ final calendarSelectedDateProvider =
 
 typedef _$CalendarSelectedDate = AutoDisposeNotifier<DateTime>;
 String _$calendarFocusedDateHash() =>
-    r'b2d5a6f3322c1fe5f14d3871a448b87d0d1843ce';
+    r'64fc1bbcdaa938a3424092430f1980c514e25ca5';
 
 /// See also [CalendarFocusedDate].
 @ProviderFor(CalendarFocusedDate)
@@ -40,7 +40,24 @@ final calendarFocusedDateProvider =
 );
 
 typedef _$CalendarFocusedDate = AutoDisposeNotifier<DateTime>;
-String _$calendarNotifierHash() => r'02612f71dd2ab7fc5a1164e207bcaacb00704cfe';
+String _$calendarVisibleMonthHash() =>
+    r'b608af1380043ff16fb551e19ce0fc178536cd86';
+
+/// See also [CalendarVisibleMonth].
+@ProviderFor(CalendarVisibleMonth)
+final calendarVisibleMonthProvider =
+    AutoDisposeNotifierProvider<CalendarVisibleMonth, DateTime>.internal(
+  CalendarVisibleMonth.new,
+  name: r'calendarVisibleMonthProvider',
+  debugGetCreateSourceHash: const bool.fromEnvironment('dart.vm.product')
+      ? null
+      : _$calendarVisibleMonthHash,
+  dependencies: null,
+  allTransitiveDependencies: null,
+);
+
+typedef _$CalendarVisibleMonth = AutoDisposeNotifier<DateTime>;
+String _$calendarNotifierHash() => r'dcd2728427cb6e260c9ce5f600ad24861d59b642';
 
 /// See also [CalendarNotifier].
 @ProviderFor(CalendarNotifier)

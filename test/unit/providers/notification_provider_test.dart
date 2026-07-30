@@ -29,15 +29,13 @@ class MockNotificationService implements NotificationService {
   Future<void> init() async {}
   
   @override
-  Future<void> requestPermissions() async {}
+  Future<bool?> requestPermissions() async => true;
 }
 
 class FakeSubjectRepository implements SubjectRepository {
   @override
   Stream<List<Subject>> watchAll() => Stream.value([Subject()..id = 1..name = 'Mock Subject']);
   
-  @override
-  Future<List<Subject>> getAllSubjects() async => [];
   @override
   Future<void> create(Subject subject) async {}
   @override
@@ -63,21 +61,16 @@ class FakeScheduleRepository implements ScheduleRepository {
           ..endTime = '13:00'
           ..room = '101'
       ]);
-      
-  @override
-  Future<List<Schedule>> getSchedulesForSubject(int subjectId) async => [];
+
   @override
   Future<List<Schedule>> getByDay(int dayOfWeek) async => [];
+      
   @override
   Future<void> create(Schedule schedule) async {}
   @override
   Future<void> update(Schedule schedule) async {}
   @override
   Future<void> delete(int id) async {}
-  @override
-  Future<void> deleteSchedulesForSubject(int subjectId) async {}
-  @override
-  Stream<List<Schedule>> watchSchedulesForSubject(int subjectId) => Stream.value([]);
   @override
   Future<Schedule?> getById(int id) async => null;
   @override
@@ -93,17 +86,9 @@ class FakeAttendanceRepository implements AttendanceRepository {
   Stream<List<Attendance>> watchAll() => Stream.value([]);
   
   @override
-  Future<List<Attendance>> getAllAttendances() async => [];
-  @override
-  Future<List<Attendance>> getAttendancesForSubject(int subjectId) async => [];
-  @override
-  Future<List<AttendanceHistory>> getHistoryForAttendance(int attendanceId) async => [];
-  @override
   Future<void> upsertAttendance(Attendance attendance) async {}
   @override
   Future<void> delete(int id) async {}
-  @override
-  Future<void> deleteAttendancesForSubject(int subjectId) async {}
   @override
   Stream<List<Attendance>> watchBySubject(int subjectId) => Stream.value([]);
   @override
@@ -138,7 +123,7 @@ void main() {
     );
 
     // Provide a listener to keep it alive
-    final sub = container.listen(notificationOrchestratorProvider, (_, __) {});
+    container.listen(notificationOrchestratorProvider, (_, __) {});
     
     // Wait for the async map to emit
     await container.read(notificationOrchestratorProvider.future);

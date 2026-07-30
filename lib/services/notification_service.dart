@@ -54,9 +54,9 @@ class NotificationService {
     _isInitialized = true;
   }
 
-  Future<void> requestPermissions() async {
+  Future<bool?> requestPermissions() async {
     if (Platform.isIOS) {
-      await _flutterLocalNotificationsPlugin
+      return await _flutterLocalNotificationsPlugin
           .resolvePlatformSpecificImplementation<IOSFlutterLocalNotificationsPlugin>()
           ?.requestPermissions(
             alert: true,
@@ -67,8 +67,9 @@ class NotificationService {
       final AndroidFlutterLocalNotificationsPlugin? androidImplementation =
           _flutterLocalNotificationsPlugin.resolvePlatformSpecificImplementation<
               AndroidFlutterLocalNotificationsPlugin>();
-      await androidImplementation?.requestNotificationsPermission();
+      return await androidImplementation?.requestNotificationsPermission();
     }
+    return false;
   }
 
   /// Synchronizes currently scheduled notifications with [desiredNotifications].
@@ -107,10 +108,10 @@ class NotificationService {
       bool needsScheduling = false;
       
       if (pending == null) {
-        needsScheduling = true;
-      } else if (pending.title != desired.title || pending.body != desired.body) {
-        needsScheduling = true;
-      }
+          needsScheduling = true;
+        } else if (pending.title != desired.title || pending.body != desired.body || pending.payload != desired.payload) {
+          needsScheduling = true;
+        }
 
       if (needsScheduling) {
         final tzDate = tz.TZDateTime.from(desired.scheduledDate, tz.local);

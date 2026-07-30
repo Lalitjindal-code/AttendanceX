@@ -87,5 +87,42 @@ class Settings extends _$Settings {
     await _prefs.setString(PreferencesService.keyGtMode, mode.key);
   }
 
-  // Other update methods to be implemented as needed.
+  Future<void> updateSemesterDates(DateTime? start, DateTime? end) async {
+    final normalizedStart = start != null ? DateTime(start.year, start.month, start.day) : null;
+    final normalizedEnd = end != null ? DateTime(end.year, end.month, end.day) : null;
+    
+    state = state.copyWith(semesterStartDate: normalizedStart, semesterEndDate: normalizedEnd);
+    
+    if (normalizedStart != null) {
+      await _prefs.setString(PreferencesService.keySemesterStart, normalizedStart.toIso8601String());
+    } else {
+      await _prefs.remove(PreferencesService.keySemesterStart);
+    }
+    
+    if (normalizedEnd != null) {
+      await _prefs.setString(PreferencesService.keySemesterEnd, normalizedEnd.toIso8601String());
+    } else {
+      await _prefs.remove(PreferencesService.keySemesterEnd);
+    }
+  }
+
+  Future<void> updateNotificationsEnabled(bool enabled) async {
+    state = state.copyWith(notificationsEnabled: enabled);
+    await _prefs.setBool(PreferencesService.keyNotificationsEnabled, enabled);
+  }
+
+  Future<void> updateDailyReminderEnabled(bool enabled) async {
+    state = state.copyWith(dailyReminderEnabled: enabled);
+    await _prefs.setBool(PreferencesService.keyDailyReminderEnabled, enabled);
+  }
+
+  Future<void> updateDailyReminderTime(String time) async {
+    state = state.copyWith(dailyReminderTime: time);
+    await _prefs.setString(PreferencesService.keyDailyReminderTime, time);
+  }
+
+  Future<void> updateLectureReminderMinutes(int minutes) async {
+    state = state.copyWith(lectureReminderMinutes: minutes);
+    await _prefs.setInt(PreferencesService.keyLectureReminderMinutes, minutes);
+  }
 }

@@ -1,0 +1,105 @@
+name: Flutter CI
+
+on:
+  push:
+    branches: [ main, master ]
+  pull_request:
+    branches: [ main, master ]
+
+jobs:
+  test:
+    name: Lint & Test
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@v4
+      
+      - name: Setup Java
+        uses: actions/setup-java@v3
+        with:
+          distribution: 'zulu'
+          java-version: '17'
+      
+      - name: Setup Flutter
+        uses: subosito/flutter-action@v2
+        with:
+          channel: 'stable'
+          # Pinning flutter version for stable golden tests
+          flutter-version: '3.22.2' 
+          cache: true
+      
+      - name: Install dependencies
+        run: flutter pub get
+      
+      - name: Format
+        run: dart format --output=none --set-exit-if-changed .
+        
+      - name: Analyze
+        run: flutter analyze
+        
+      - name: Run Tests (Unit & Widget)
+        # We run goldens on linux and we pinned the flutter version above
+        run: flutter test --update-goldens
+        
+  build:
+    name: Build APK & AppBundle
+    needs: test
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@v4
+        
+      - name: Setup Java
+        uses: actions/setup-java@v3
+        with:
+          distribution: 'zulu'
+          java-version: '17'
+          
+      - name: Setup Flutter
+        uses: subosito/flutter-action@v2
+        with:
+          channel: 'stable'
+          cache: true
+          
+      - name: Install dependencies
+        run: flutter pub get
+        
+      # Build APK
+      - name: Build APK
+        run: flutter build apk --release
+        
+      # Build AppBundle
+      - name: Build AppBundle
+        run: flutter build appbundle --release
+        
+  integration_test:
+    name: Integration Tests
+    needs: test
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@v4
+        
+      - name: Setup Java
+        uses: actions/setup-java@v3
+        with:
+          distribution: 'zulu'
+          java-version: '17'
+          
+      - name: Setup Flutter
+        uses: subosito/flutter-action@v2
+        with:
+          channel: 'stable'
+          cache: true
+          
+      - name: Install dependencies
+        run: flutter pub get
+        
+      - name: Run Android Emulator and Integration Tests
+        uses: reactivecircus/android-emulator-runner@v2
+        with:
+          api-level: 33
+          target: playstore
+          arch: x86_64
+          profile: Nexus 6
+          script: flutter test integration_test/app_e2e_test.dart

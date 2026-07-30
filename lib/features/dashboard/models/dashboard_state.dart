@@ -23,14 +23,20 @@ class LectureCardModel {
 class DashboardState {
   final bool isLoading;
   final String? errorMessage;
-  final List<LectureCardModel> todaysLectures;
+  final List<LectureCardModel> pendingLectures;
+  final List<LectureCardModel> markedLectures;
+  final String todayProgressText;
+  final double todayProgressPercentage;
   final OverallAttendanceSummary? overallSummary;
   final SmartSuggestion? overallSuggestion;
 
   const DashboardState({
     this.isLoading = true,
     this.errorMessage,
-    this.todaysLectures = const [],
+    this.pendingLectures = const [],
+    this.markedLectures = const [],
+    this.todayProgressText = '0 / 0 Classes Marked',
+    this.todayProgressPercentage = 0.0,
     this.overallSummary,
     this.overallSuggestion,
   });

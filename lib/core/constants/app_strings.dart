@@ -6,7 +6,7 @@ abstract final class AppStrings {
   AppStrings._();
 
   // ── App ────────────────────────────────────────────────────────────────────────
-  static const String appName = 'AttendanceX';
+  static const String appName = 'Attendify';
   static const String appTagline = 'Smart Attendance Tracker';
 
   // ── Navigation ────────────────────────────────────────────────────────────────

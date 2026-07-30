@@ -161,14 +161,16 @@ abstract final class AppTheme {
         if (states.contains(WidgetState.selected)) {
           return TextStyle(
             color: scheme.primary,
-            fontSize: 12,
+            fontSize: 10,
             fontWeight: FontWeight.w600,
+            overflow: TextOverflow.visible,
           );
         }
         return TextStyle(
           color: scheme.onSurfaceVariant,
-          fontSize: 12,
+          fontSize: 10,
           fontWeight: FontWeight.w400,
+          overflow: TextOverflow.visible,
         );
       }),
     );

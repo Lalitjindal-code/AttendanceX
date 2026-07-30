@@ -9,7 +9,6 @@ import 'package:attendancex/database/collections/attendance_collection.dart';
 import 'package:attendancex/database/collections/schedule_collection.dart';
 import 'package:attendancex/database/collections/attendance_history_collection.dart';
 import 'package:attendancex/core/enums/attendance_status.dart';
-import 'package:attendancex/core/enums/day_of_week.dart';
 import 'package:attendancex/features/calendar/providers/calendar_provider.dart';
 import 'package:isar/isar.dart';
 
@@ -82,15 +81,17 @@ void main() {
     final subSubject = Subject()..name = 'Math';
     await subjectRepo.create(subSubject);
 
-    final wednesday = DayOfWeek.wednesday.value;
-    final testDate = DateTime(2024, 10, 16); // 16th Oct 2024 is Wednesday
+    final now = DateTime.now();
+    // Use the 15th of the current month so it is guaranteed to be in the visible month and not cause overflow issues
+    final testDate = DateTime(now.year, now.month, 15);
+    final dayOfWeek = testDate.weekday; // use actual weekday
 
     container.read(calendarSelectedDateProvider.notifier).setDate(testDate);
     container.read(calendarFocusedDateProvider.notifier).setDate(testDate);
 
     final sch = Schedule()
       ..subjectId = subSubject.id
-      ..dayOfWeek = wednesday
+      ..dayOfWeek = dayOfWeek
       ..startTime = '10:00'
       ..endTime = '11:00';
     await scheduleRepo.create(sch);

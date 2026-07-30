@@ -41,10 +41,10 @@ class IsarService {
   ///
   /// Safe to call multiple times — subsequent calls are no-ops if already open.
   /// Stores the database in [getApplicationDocumentsDirectory].
-  Future<void> initialize() async {
+  Future<void> initialize({String? directory}) async {
     if (isOpen) return;
 
-    final dir = await getApplicationDocumentsDirectory();
+    final dirPath = directory ?? (await getApplicationDocumentsDirectory()).path;
 
     _isar = await Isar.open(
       [
@@ -53,7 +53,7 @@ class IsarService {
         AttendanceSchema,
         AttendanceHistorySchema,
       ],
-      directory: dir.path,
+      directory: dirPath,
       name: AppConfig.isarDbName,
     );
   }

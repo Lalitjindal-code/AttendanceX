@@ -25,11 +25,15 @@ class ProgressRing extends StatelessWidget {
             SizedBox(
               width: 120,
               height: 120,
-              child: CircularProgressIndicator(
-                value: percentage / 100.0,
-                strokeWidth: 10,
-                backgroundColor: color.withOpacity(0.2),
-                valueColor: AlwaysStoppedAnimation<Color>(color),
+              child: Semantics(
+                label: 'Progress for $title',
+                value: '${percentage.toStringAsFixed(1)} percent',
+                child: CircularProgressIndicator(
+                  value: percentage / 100.0,
+                  strokeWidth: 10,
+                  backgroundColor: color.withOpacity(0.2),
+                  valueColor: AlwaysStoppedAnimation<Color>(color),
+                ),
               ),
             ),
             Column(

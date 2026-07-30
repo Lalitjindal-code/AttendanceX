@@ -8,4 +8,7 @@ enum LectureType {
 
   /// Tutorial or doubt-clearing session.
   tutorial,
+
+  /// Internship session.
+  internship,
 }
