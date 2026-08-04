@@ -68,9 +68,43 @@ jobs:
       - name: Build APK
         run: flutter build apk --release
         
+      - name: Upload APK
+        uses: actions/upload-artifact@v4
+        with:
+          name: attendancex-apk
+          path: build/app/outputs/flutter-apk/app-release.apk
+
       # Build AppBundle
       - name: Build AppBundle
         run: flutter build appbundle --release
+        
+      - name: Upload AppBundle
+        uses: actions/upload-artifact@v4
+        with:
+          name: attendancex-aab
+          path: build/app/outputs/bundle/release/app-release.aab
+          
+  build_ios:
+    name: Build iOS (No Codesign)
+    needs: test
+    runs-on: macos-latest
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@v4
+        
+      - name: Setup Flutter
+        uses: subosito/flutter-action@v2
+        with:
+          channel: 'stable'
+          cache: true
+          
+      - name: Install dependencies
+        run: flutter pub get
+        
+      # Build iOS without signing (for testing compilation on cloud)
+      - name: Build iOS
+        run: flutter build ios --release --no-codesign
+
         
   integration_test:
     name: Integration Tests
