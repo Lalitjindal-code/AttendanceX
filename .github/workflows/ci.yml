@@ -24,8 +24,6 @@ jobs:
         uses: subosito/flutter-action@v2
         with:
           channel: 'stable'
-          # Pinning flutter version for stable golden tests
-          flutter-version: '3.22.2' 
           cache: true
       
       - name: Install dependencies
