@@ -2,10 +2,13 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../../core/constants/app_spacing.dart';
 import '../providers/analytics_provider.dart';
-import '../widgets/atd_bar_chart.dart';
 import '../widgets/atd_line_chart.dart';
 import '../widgets/atd_donut_chart.dart';
 import '../widgets/analytics_summary_cards.dart';
+import '../widgets/subject_analytics_card.dart';
+import '../widgets/day_of_week_chart.dart';
+import '../widgets/top_bottom_subjects_cards.dart';
+import '../widgets/bunk_heatmap_chart.dart';
 
 class AnalyticsScreen extends ConsumerWidget {
   const AnalyticsScreen({super.key});
@@ -75,6 +78,8 @@ class AnalyticsScreen extends ConsumerWidget {
                         icon2: Icons.event_busy_outlined,
                         color2: Colors.orange,
                       ),
+                      const SizedBox(height: AppSpacing.md),
+                      TopBottomSubjectsCards(subjectStats: state.subjectStats),
                     ],
                   ),
                 ),
@@ -115,26 +120,77 @@ class AnalyticsScreen extends ConsumerWidget {
                 ),
               ),
 
-              // 3. Subject-wise Bar Chart
-              if (state.subjectStats.isNotEmpty)
+              // 2.5 Bunk Heatmap
+              if (state.bunkHeatmap.isNotEmpty)
+                SliverToBoxAdapter(
+                  child: BunkHeatmapChart(heatmapData: state.bunkHeatmap),
+                ),
+
+              // 2.6 Day of Week Trend Chart
+              if (state.dayOfWeekTrends.isNotEmpty)
                 SliverToBoxAdapter(
                   child: Padding(
-                    padding: const EdgeInsets.all(AppSpacing.md),
+                    padding: const EdgeInsets.only(
+                      left: AppSpacing.md,
+                      right: AppSpacing.md,
+                      bottom: AppSpacing.md,
+                      top: AppSpacing.sm,
+                    ),
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
                         Text(
-                          'Subject Breakdown',
+                          'Day of Week Analysis',
                           style: theme.textTheme.titleLarge?.copyWith(
                             fontWeight: FontWeight.bold,
                           ),
                         ),
                         const SizedBox(height: AppSpacing.sm),
-                        AtdBarChart(stats: state.subjectStats),
+                        DayOfWeekChart(trends: state.dayOfWeekTrends),
                       ],
                     ),
                   ),
                 ),
+
+              const SliverToBoxAdapter(
+                child: Padding(
+                  padding: EdgeInsets.symmetric(horizontal: AppSpacing.md),
+                  child: Divider(),
+                ),
+              ),
+
+              // 3. Subject-wise Breakdowns
+              if (state.subjectStats.isNotEmpty) ...[
+                SliverToBoxAdapter(
+                  child: Padding(
+                    padding: const EdgeInsets.only(
+                      left: AppSpacing.md,
+                      right: AppSpacing.md,
+                      top: AppSpacing.md,
+                      bottom: AppSpacing.sm,
+                    ),
+                    child: Text(
+                      'Subject Breakdown',
+                      style: theme.textTheme.titleLarge?.copyWith(
+                        fontWeight: FontWeight.bold,
+                      ),
+                    ),
+                  ),
+                ),
+                SliverPadding(
+                  padding: const EdgeInsets.symmetric(horizontal: AppSpacing.md),
+                  sliver: SliverList(
+                    delegate: SliverChildBuilderDelegate(
+                      (context, index) {
+                        return SubjectAnalyticsCard(
+                          stats: state.subjectStats[index],
+                        );
+                      },
+                      childCount: state.subjectStats.length,
+                    ),
+                  ),
+                ),
+              ],
 
               const SliverToBoxAdapter(
                 child: SizedBox(height: 80),

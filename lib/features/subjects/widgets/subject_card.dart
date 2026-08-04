@@ -93,36 +93,43 @@ class SubjectCard extends ConsumerWidget {
         ? Theme.of(context).colorScheme.primary 
         : Theme.of(context).colorScheme.error;
 
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        Row(
-          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+    return TweenAnimationBuilder<double>(
+      tween: Tween<double>(begin: 0.0, end: summary.effectiveTotal == 0 ? 0.0 : summary.effectivePresent / summary.effectiveTotal),
+      duration: const Duration(milliseconds: 800),
+      curve: Curves.easeOutCubic,
+      builder: (context, value, child) {
+        return Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Text(
-              '${percent.toStringAsFixed(1)}%',
-              style: Theme.of(context).textTheme.labelMedium?.copyWith(
-                    fontWeight: FontWeight.bold,
-                    color: progressColor,
-                  ),
+            Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                Text(
+                  '${(value * 100).toStringAsFixed(1)}%',
+                  style: Theme.of(context).textTheme.labelMedium?.copyWith(
+                        fontWeight: FontWeight.bold,
+                        color: progressColor,
+                      ),
+                ),
+                Text(
+                  '${summary.effectivePresent}/${summary.effectiveTotal}',
+                  style: Theme.of(context).textTheme.labelSmall?.copyWith(
+                        color: Theme.of(context).colorScheme.onSurfaceVariant,
+                      ),
+                ),
+              ],
             ),
-            Text(
-              '${summary.effectivePresent}/${summary.effectiveTotal}',
-              style: Theme.of(context).textTheme.labelSmall?.copyWith(
-                    color: Theme.of(context).colorScheme.onSurfaceVariant,
-                  ),
+            const SizedBox(height: AppSpacing.xs),
+            LinearProgressIndicator(
+              value: value,
+              backgroundColor: Theme.of(context).colorScheme.surfaceContainerHighest,
+              color: progressColor,
+              borderRadius: BorderRadius.circular(4),
+              minHeight: 6,
             ),
           ],
-        ),
-        const SizedBox(height: AppSpacing.xs),
-        LinearProgressIndicator(
-          value: summary.effectiveTotal == 0 ? 0.0 : summary.effectivePresent / summary.effectiveTotal,
-          backgroundColor: Theme.of(context).colorScheme.surfaceContainerHighest,
-          color: progressColor,
-          borderRadius: BorderRadius.circular(4),
-          minHeight: 6,
-        ),
-      ],
+        );
+      },
     );
   }
 }

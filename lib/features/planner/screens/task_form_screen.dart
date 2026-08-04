@@ -142,18 +142,20 @@ class _TaskFormSheetState extends ConsumerState<TaskFormSheet> {
     final bottomInset = MediaQuery.of(context).viewInsets.bottom;
     final subjectsAsync = ref.watch(subjectsProvider);
 
-    return Container(
-      decoration: BoxDecoration(
-        color: Theme.of(context).colorScheme.surface,
-        borderRadius: const BorderRadius.vertical(top: Radius.circular(24)),
-      ),
-      constraints: BoxConstraints(
-        maxHeight: MediaQuery.of(context).size.height * 0.9,
-      ),
-      child: Column(
-        mainAxisSize: MainAxisSize.min,
-        crossAxisAlignment: CrossAxisAlignment.stretch,
-        children: [
+    return Padding(
+      padding: EdgeInsets.only(bottom: bottomInset),
+      child: Container(
+        decoration: BoxDecoration(
+          color: Theme.of(context).colorScheme.surface,
+          borderRadius: const BorderRadius.vertical(top: Radius.circular(24)),
+        ),
+        constraints: BoxConstraints(
+          maxHeight: MediaQuery.of(context).size.height * 0.9,
+        ),
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          crossAxisAlignment: CrossAxisAlignment.stretch,
+          children: [
           // Drag handle
           Center(
             child: Container(
@@ -196,11 +198,11 @@ class _TaskFormSheetState extends ConsumerState<TaskFormSheet> {
                     child: CircularProgressIndicator(),
                   ))
                 : SingleChildScrollView(
-                    padding: EdgeInsets.only(
+                    padding: const EdgeInsets.only(
                       left: AppSpacing.lg,
                       right: AppSpacing.lg,
                       top: AppSpacing.md,
-                      bottom: AppSpacing.xl + bottomInset,
+                      bottom: AppSpacing.xl,
                     ),
                     child: Form(
                       key: _formKey,
@@ -300,7 +302,6 @@ class _TaskFormSheetState extends ConsumerState<TaskFormSheet> {
                             controller: _descController,
                             decoration: const InputDecoration(labelText: 'Description (Optional)'),
                             maxLines: 3,
-                            textCapitalization: TextCapitalization.sentences,
                           ),
                           const SizedBox(height: AppSpacing.lg),
                           
@@ -308,7 +309,6 @@ class _TaskFormSheetState extends ConsumerState<TaskFormSheet> {
                             controller: _notesController,
                             decoration: const InputDecoration(labelText: 'Private Notes (Optional)'),
                             maxLines: 2,
-                            textCapitalization: TextCapitalization.sentences,
                           ),
                           const SizedBox(height: AppSpacing.xxl),
                           
@@ -323,8 +323,9 @@ class _TaskFormSheetState extends ConsumerState<TaskFormSheet> {
           ),
         ],
       ),
-    );
-  }
+    ),
+  );
+}
 }
 
 /// Helper function to show the task form as a bottom sheet

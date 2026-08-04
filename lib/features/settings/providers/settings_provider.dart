@@ -45,6 +45,10 @@ class Settings extends _$Settings {
         PreferencesService.keyMedicalCountsAsPresent,
         defaultValue: false,
       ),
+      isOnboardingComplete: _prefs.getBool(
+        PreferencesService.keyIsOnboardingComplete,
+        defaultValue: false,
+      ),
       gtMode: GtMode.fromKey(_prefs.getString(
         PreferencesService.keyGtMode,
         defaultValue: GtMode.exclude.key,
@@ -161,5 +165,10 @@ class Settings extends _$Settings {
   Future<void> updateLastBackupDate(DateTime date) async {
     state = state.copyWith(lastBackupDate: date);
     await _prefs.setString(PreferencesService.keyLastBackupDate, date.toIso8601String());
+  }
+
+  Future<void> completeOnboarding() async {
+    state = state.copyWith(isOnboardingComplete: true);
+    await _prefs.setBool(PreferencesService.keyIsOnboardingComplete, true);
   }
 }

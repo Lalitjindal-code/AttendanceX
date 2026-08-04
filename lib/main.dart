@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:firebase_core/firebase_core.dart';
 
 import 'core/config/app_config.dart';
 import 'core/theme/app_theme.dart';
@@ -9,9 +11,17 @@ import 'features/notifications/providers/notification_provider.dart';
 import 'navigation/app_router.dart';
 import 'services/preferences_service.dart';
 import 'services/notification_service.dart';
+import 'services/notification_service.dart';
+import 'firebase_options.dart';
+import 'features/sync/services/firebase_sync_service.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
+
+  // Initialize Firebase
+  await Firebase.initializeApp(
+    options: DefaultFirebaseOptions.currentPlatform,
+  );
 
   // 1. Initialize SharedPreferences singleton
   await PreferencesService.instance.initialize();
@@ -36,6 +46,8 @@ class AttendanceXApp extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     // Keep the notification orchestrator alive and reacting to changes globally
     ref.listen(notificationOrchestratorProvider, (_, __) {});
+    // Keep the Firebase sync orchestrator alive to watch local DB changes
+    ref.listen(firebaseSyncOrchestratorProvider, (_, __) {});
 
     final router = ref.watch(appRouterProvider); // Generated router provider
     final settings = ref.watch(settingsProvider); // Watches ThemeMode changes

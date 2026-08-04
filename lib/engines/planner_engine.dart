@@ -24,8 +24,6 @@ class PlannerEngine {
 
   /// Categorizes tasks and returns the top 5 for the dashboard "Upcoming Deadlines".
   static List<AcademicTask> getDashboardUpcomingDeadlines(List<AcademicTask> tasks) {
-    final now = DateTime.now();
-    
     
     // Filter out completed and cancelled tasks
     final activeTasks = tasks.where((t) => t.status != TaskStatus.completed && t.status != TaskStatus.cancelled).toList();

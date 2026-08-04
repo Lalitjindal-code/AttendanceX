@@ -2,12 +2,58 @@ import 'package:attendancex/features/dashboard/models/attendance_summary.dart';
 import 'package:attendancex/features/settings/models/app_settings.dart';
 import 'package:attendancex/database/collections/attendance_collection.dart';
 import 'package:attendancex/engines/attendance_engine.dart';
+import 'package:attendancex/core/enums/attendance_status.dart';
 
 import '../models/analytics_trend.dart';
 import '../models/monthly_trend.dart';
 import '../models/attendance_forecast.dart';
+import '../models/day_of_week_trend.dart';
 
 class AnalyticsEngine {
+  /// Calculates attendance trends grouped by Day of the Week.
+  static List<DayOfWeekTrend> calculateDayOfWeekTrends(
+    List<Attendance> attendances,
+    AppSettings settings,
+  ) {
+    final Map<int, List<Attendance>> grouped = {
+      for (var i = 1; i <= 7; i++) i: []
+    };
+
+    for (var a in attendances) {
+      grouped[a.date.weekday]?.add(a);
+    }
+
+    final trends = <DayOfWeekTrend>[];
+    for (var i = 1; i <= 7; i++) {
+      final list = grouped[i]!;
+      final summary = AttendanceEngine.calculateOverallSummary(list, settings);
+      
+      trends.add(DayOfWeekTrend(
+        weekday: i,
+        presentCount: summary.effectivePresent,
+        totalCount: summary.effectiveTotal,
+        percentage: summary.effectiveTotal > 0 
+            ? summary.effectivePresent / summary.effectiveTotal 
+            : 0.0,
+      ));
+    }
+    return trends;
+  }
+
+  /// Generates a map of missed class counts for each day.
+  static Map<DateTime, int> calculateBunkHeatmap(List<Attendance> attendances) {
+    final Map<DateTime, int> missedPerDay = {};
+
+    for (var a in attendances) {
+      if (a.status == AttendanceStatus.absent) {
+        final dateKey = DateTime(a.date.year, a.date.month, a.date.day);
+        missedPerDay[dateKey] = (missedPerDay[dateKey] ?? 0) + 1;
+      }
+    }
+
+    return missedPerDay;
+  }
+
   /// Calculates monthly trends for the given list of attendances.
   /// 
   /// Reuses [AttendanceEngine] to ensure calculation rules remain consistent.

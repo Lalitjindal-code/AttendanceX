@@ -31,38 +31,70 @@ class LectureCard extends StatelessWidget {
       label: isMarked 
           ? '${subject.name} attendance marked ${status.displayName}. Double tap to edit attendance.'
           : '${subject.name} pending attendance. Double tap to mark.',
-      child: AnimatedContainer(
-        duration: const Duration(milliseconds: 300),
-        curve: Curves.easeInOut,
-        margin: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
-        decoration: BoxDecoration(
-          color: Theme.of(context).cardColor,
-          borderRadius: BorderRadius.circular(12),
-          border: Border.all(
-            color: isMarked ? accentColor.withValues(alpha: 0.5) : Colors.transparent,
-            width: isMarked ? 1.5 : 0,
+      child: Dismissible(
+        key: ValueKey('lecture_${model.schedule.id}_${model.attendance?.id ?? "pending"}'),
+        direction: isMarked ? DismissDirection.none : DismissDirection.horizontal,
+        confirmDismiss: (direction) async {
+          if (direction == DismissDirection.startToEnd) {
+            onMarkAttendance(AttendanceStatus.present);
+          } else {
+            onMarkAttendance(AttendanceStatus.absent);
+          }
+          return false;
+        },
+        background: Container(
+          margin: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+          decoration: BoxDecoration(
+            color: Colors.green.withValues(alpha: 0.8),
+            borderRadius: BorderRadius.circular(12),
           ),
-          boxShadow: isMarked ? [] : [
-            BoxShadow(
-              color: Colors.black.withValues(alpha: 0.05),
-              blurRadius: 10,
-              offset: const Offset(0, 4),
-            ),
-          ],
+          alignment: Alignment.centerLeft,
+          padding: const EdgeInsets.only(left: 24),
+          child: const Icon(Icons.check_circle, color: Colors.white, size: 32),
         ),
-        child: ClipRRect(
-          borderRadius: BorderRadius.circular(12),
-          child: Container(
-            decoration: BoxDecoration(
-              border: Border(left: BorderSide(color: accentColor, width: 4)),
+        secondaryBackground: Container(
+          margin: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+          decoration: BoxDecoration(
+            color: Theme.of(context).colorScheme.error.withValues(alpha: 0.8),
+            borderRadius: BorderRadius.circular(12),
+          ),
+          alignment: Alignment.centerRight,
+          padding: const EdgeInsets.only(right: 24),
+          child: const Icon(Icons.cancel, color: Colors.white, size: 32),
+        ),
+        child: AnimatedContainer(
+          duration: const Duration(milliseconds: 300),
+          curve: Curves.easeInOut,
+          margin: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+          decoration: BoxDecoration(
+            color: Theme.of(context).cardColor,
+            borderRadius: BorderRadius.circular(12),
+            border: Border.all(
+              color: isMarked ? accentColor.withValues(alpha: 0.5) : Colors.transparent,
+              width: isMarked ? 1.5 : 0,
             ),
-            child: Padding(
-              padding: const EdgeInsets.all(16.0),
-              child: AnimatedSwitcher(
-                duration: const Duration(milliseconds: 300),
-                child: isMarked
-                    ? _buildMarkedContent(context, accentColor, status)
-                    : _buildPendingContent(context, accentColor),
+            boxShadow: isMarked ? [] : [
+              BoxShadow(
+                color: Colors.black.withValues(alpha: 0.05),
+                blurRadius: 10,
+                offset: const Offset(0, 4),
+              ),
+            ],
+          ),
+          child: ClipRRect(
+            borderRadius: BorderRadius.circular(12),
+            child: Container(
+              decoration: BoxDecoration(
+                border: Border(left: BorderSide(color: accentColor, width: 4)),
+              ),
+              child: Padding(
+                padding: const EdgeInsets.all(16.0),
+                child: AnimatedSwitcher(
+                  duration: const Duration(milliseconds: 300),
+                  child: isMarked
+                      ? _buildMarkedContent(context, accentColor, status)
+                      : _buildPendingContent(context, accentColor),
+                ),
               ),
             ),
           ),

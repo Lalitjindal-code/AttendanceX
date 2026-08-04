@@ -1,11 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../../core/constants/app_spacing.dart';
-import '../../../core/enums/attendance_status.dart';
-import '../../../database/collections/attendance_collection.dart';
-import '../../../database/collections/subject_collection.dart';
-import '../../attendance/providers/attendance_providers.dart';
-import '../models/calendar_state.dart';
 import '../providers/calendar_provider.dart';
 import '../widgets/calendar_widget.dart';
 import '../widgets/day_detail_panel.dart';

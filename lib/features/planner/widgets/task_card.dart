@@ -113,28 +113,34 @@ class TaskCard extends ConsumerWidget {
                                 Row(
                                   children: [
                                     if (subject != null) ...[
-                                      Text(
-                                        subject!.name,
-                                        style: Theme.of(context).textTheme.bodySmall?.copyWith(
-                                          color: Theme.of(context).colorScheme.onSurfaceVariant,
+                                      Flexible(
+                                        child: Text(
+                                          subject!.name,
+                                          style: Theme.of(context).textTheme.bodySmall?.copyWith(
+                                            color: Theme.of(context).colorScheme.onSurfaceVariant,
+                                          ),
+                                          overflow: TextOverflow.ellipsis,
                                         ),
                                       ),
                                       const SizedBox(width: AppSpacing.sm),
                                       Text(
-                                        'â€¢',
+                                        '•',
                                         style: Theme.of(context).textTheme.bodySmall?.copyWith(
                                           color: Theme.of(context).colorScheme.outline,
                                         ),
                                       ),
                                       const SizedBox(width: AppSpacing.sm),
                                     ],
-                                    Text(
-                                      PlannerEngine.generateDueLabel(task),
-                                      style: Theme.of(context).textTheme.bodySmall?.copyWith(
-                                        color: isOverdue && !isCompleted 
-                                            ? Theme.of(context).colorScheme.error 
-                                            : Theme.of(context).colorScheme.onSurfaceVariant,
-                                        fontWeight: isOverdue && !isCompleted ? FontWeight.bold : FontWeight.normal,
+                                    Flexible(
+                                      child: Text(
+                                        PlannerEngine.generateDueLabel(task),
+                                        style: Theme.of(context).textTheme.bodySmall?.copyWith(
+                                          color: isOverdue && !isCompleted 
+                                              ? Theme.of(context).colorScheme.error 
+                                              : Theme.of(context).colorScheme.onSurfaceVariant,
+                                          fontWeight: isOverdue && !isCompleted ? FontWeight.bold : FontWeight.normal,
+                                        ),
+                                        overflow: TextOverflow.ellipsis,
                                       ),
                                     ),
                                   ],
@@ -146,11 +152,18 @@ class TaskCard extends ConsumerWidget {
                           // Checkbox
                           const SizedBox(width: AppSpacing.sm),
                           IconButton(
-                            icon: Icon(
-                              isCompleted ? Icons.check_circle : Icons.circle_outlined,
-                              color: isCompleted 
-                                  ? Theme.of(context).colorScheme.primary 
-                                  : Theme.of(context).colorScheme.outline,
+                            icon: AnimatedSwitcher(
+                              duration: const Duration(milliseconds: 300),
+                              transitionBuilder: (Widget child, Animation<double> animation) {
+                                return ScaleTransition(scale: animation, child: child);
+                              },
+                              child: Icon(
+                                isCompleted ? Icons.check_circle : Icons.circle_outlined,
+                                key: ValueKey<bool>(isCompleted),
+                                color: isCompleted 
+                                    ? Theme.of(context).colorScheme.primary 
+                                    : Theme.of(context).colorScheme.outline,
+                              ),
                             ),
                             tooltip: isCompleted ? 'Mark as incomplete' : 'Mark as complete',
                             onPressed: () {

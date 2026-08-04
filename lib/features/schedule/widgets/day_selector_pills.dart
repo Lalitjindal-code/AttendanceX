@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import '../../../core/constants/app_spacing.dart';
 import '../../../core/enums/day_of_week.dart';
+import '../../../core/utils/haptics.dart';
 
 class DaySelectorPills extends StatelessWidget {
   final List<DayOfWeek> days;
@@ -31,6 +32,7 @@ class DaySelectorPills extends StatelessWidget {
               selected: isSelected,
               onSelected: (selected) {
                 if (selected) {
+                  Haptics.selection();
                   onDaySelected(index);
                 }
               },

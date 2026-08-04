@@ -99,6 +99,31 @@ class AtdLineChart extends StatelessWidget {
                 ),
               ),
             ),
+            lineTouchData: LineTouchData(
+              touchTooltipData: LineTouchTooltipData(
+                getTooltipColor: (touchedSpot) => theme.colorScheme.surfaceContainerHighest,
+                getTooltipItems: (touchedSpots) {
+                  return touchedSpots.map((spot) {
+                    final index = spot.x.toInt();
+                    if (index < 0 || index >= displayTrends.length) return null;
+                    final trend = displayTrends[index];
+                    final dateStr = DateFormat('MMM yyyy').format(DateTime(trend.year, trend.month));
+                    return LineTooltipItem(
+                      '${spot.y.toStringAsFixed(1)}%\n',
+                      theme.textTheme.labelLarge!.copyWith(fontWeight: FontWeight.bold),
+                      children: [
+                        TextSpan(
+                          text: dateStr,
+                          style: theme.textTheme.labelSmall?.copyWith(
+                            color: theme.colorScheme.onSurfaceVariant,
+                          ),
+                        ),
+                      ],
+                    );
+                  }).toList();
+                },
+              ),
+            ),
             borderData: FlBorderData(show: false),
             minX: 0,
             maxX: (displayTrends.length - 1).toDouble(),

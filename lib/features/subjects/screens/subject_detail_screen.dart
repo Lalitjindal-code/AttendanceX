@@ -38,8 +38,8 @@ class SubjectDetailScreen extends ConsumerWidget {
   ) {
     return CustomScrollView(
       slivers: [
-        SliverAppBar.large(
-          title: Text(subject.name),
+        SliverAppBar(
+          expandedHeight: 160.0,
           pinned: true,
           actions: [
             IconButton(
@@ -48,20 +48,41 @@ class SubjectDetailScreen extends ConsumerWidget {
               onPressed: () => showSubjectFormSheet(context, subjectId: subject.id),
             ),
           ],
-          flexibleSpace: FlexibleSpaceBar(
-            background: Hero(
-              tag: 'subject_color_${subject.id}',
-              child: Container(color: Color(subject.colorValue)),
-            ),
-            titlePadding: const EdgeInsets.only(left: 72, bottom: 16, right: 16),
-            title: Text(
-              subject.name,
-              style: TextStyle(
-                color: ThemeData.estimateBrightnessForColor(Color(subject.colorValue)) == Brightness.light 
-                    ? Colors.black 
-                    : Colors.white,
-              ),
-            ),
+          flexibleSpace: LayoutBuilder(
+            builder: (BuildContext context, BoxConstraints constraints) {
+              final top = constraints.biggest.height;
+              // Title fades in and moves down as it expands
+              final expandRatio = (top - kToolbarHeight) / (160.0 - kToolbarHeight);
+              final opacity = expandRatio.clamp(0.0, 1.0);
+              
+              final isLight = ThemeData.estimateBrightnessForColor(Color(subject.colorValue)) == Brightness.light;
+              final textColor = isLight ? Colors.black : Colors.white;
+
+              return Stack(
+                fit: StackFit.expand,
+                children: [
+                  Container(color: Color(subject.colorValue)),
+                  Positioned(
+                    left: 72,
+                    bottom: 16,
+                    right: 16,
+                    child: Opacity(
+                      opacity: opacity,
+                      child: Text(
+                        subject.name,
+                        style: TextStyle(
+                          color: textColor,
+                          fontSize: 20 + (expandRatio * 4).clamp(0.0, 4.0),
+                          fontWeight: FontWeight.w500,
+                        ),
+                        maxLines: 1,
+                        overflow: TextOverflow.ellipsis,
+                      ),
+                    ),
+                  ),
+                ],
+              );
+            },
           ),
           iconTheme: IconThemeData(
             color: ThemeData.estimateBrightnessForColor(Color(subject.colorValue)) == Brightness.light 

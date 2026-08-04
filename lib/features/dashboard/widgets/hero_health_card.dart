@@ -49,7 +49,6 @@ class HeroHealthCard extends StatelessWidget {
       container: true,
       excludeSemantics: true,
       child: Container(
-        height: 160,
       margin: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
       padding: const EdgeInsets.all(20),
       decoration: BoxDecoration(
@@ -85,7 +84,7 @@ class HeroHealthCard extends StatelessWidget {
                   fit: StackFit.expand,
                   children: [
                     CircularProgressIndicator(
-                      value: value,
+                      value: value / 100.0,
                       strokeWidth: 8,
                       backgroundColor: Theme.of(context).colorScheme.primary.withValues(alpha: 0.1),
                       color: statusColor,
@@ -93,7 +92,7 @@ class HeroHealthCard extends StatelessWidget {
                     ),
                     Center(
                       child: Text(
-                        '${(value * 100).toInt()}%',
+                        '${value.toStringAsFixed(1)}%',
                         style: GoogleFonts.jetBrainsMono(
                           textStyle: Theme.of(context).textTheme.titleMedium?.copyWith(
                                 fontWeight: FontWeight.bold,
@@ -111,6 +110,7 @@ class HeroHealthCard extends StatelessWidget {
           // Right side: Info
           Expanded(
             child: Column(
+              mainAxisSize: MainAxisSize.min,
               crossAxisAlignment: CrossAxisAlignment.start,
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
@@ -128,7 +128,7 @@ class HeroHealthCard extends StatelessWidget {
                   curve: Curves.easeOutCubic,
                   builder: (context, value, child) {
                     return Text(
-                      '${(value * 100).toInt()}%',
+                      '${value.toStringAsFixed(1)}%',
                       style: Theme.of(context).textTheme.headlineLarge?.copyWith(
                             fontWeight: FontWeight.bold,
                             color: Theme.of(context).colorScheme.onSurface,

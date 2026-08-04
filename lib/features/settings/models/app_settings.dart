@@ -10,6 +10,7 @@ class AppSettings {
     this.isAmoled = false,
     this.defaultGoalPercentage = AppConfig.defaultGoalPercentage,
     this.medicalCountsAsPresent = false,
+    this.isOnboardingComplete = false,
     this.gtMode = GtMode.exclude,
     this.semesterStartDate,
     this.semesterEndDate,
@@ -29,6 +30,7 @@ class AppSettings {
 
   final double defaultGoalPercentage;
   final bool medicalCountsAsPresent;
+  final bool isOnboardingComplete;
   final GtMode gtMode;
   final DateTime? semesterStartDate;
   final DateTime? semesterEndDate;
@@ -44,6 +46,7 @@ class AppSettings {
     bool? isAmoled,
     double? defaultGoalPercentage,
     bool? medicalCountsAsPresent,
+    bool? isOnboardingComplete,
     GtMode? gtMode,
     DateTime? semesterStartDate,
     DateTime? semesterEndDate,
@@ -59,6 +62,7 @@ class AppSettings {
       isAmoled: isAmoled ?? this.isAmoled,
       defaultGoalPercentage: defaultGoalPercentage ?? this.defaultGoalPercentage,
       medicalCountsAsPresent: medicalCountsAsPresent ?? this.medicalCountsAsPresent,
+      isOnboardingComplete: isOnboardingComplete ?? this.isOnboardingComplete,
       gtMode: gtMode ?? this.gtMode,
       semesterStartDate: semesterStartDate ?? this.semesterStartDate,
       semesterEndDate: semesterEndDate ?? this.semesterEndDate,
@@ -77,6 +81,7 @@ class AppSettings {
       'isAmoled': isAmoled,
       'defaultGoalPercentage': defaultGoalPercentage,
       'medicalCountsAsPresent': medicalCountsAsPresent,
+      'isOnboardingComplete': isOnboardingComplete,
       'gtMode': gtMode.key,
       'semesterStartDate': semesterStartDate?.millisecondsSinceEpoch,
       'semesterEndDate': semesterEndDate?.millisecondsSinceEpoch,
@@ -95,6 +100,7 @@ class AppSettings {
       isAmoled: map['isAmoled'] ?? false,
       defaultGoalPercentage: map['defaultGoalPercentage'] ?? AppConfig.defaultGoalPercentage,
       medicalCountsAsPresent: map['medicalCountsAsPresent'] ?? false,
+      isOnboardingComplete: map['isOnboardingComplete'] ?? false,
       gtMode: GtMode.fromKey(map['gtMode'] ?? GtMode.exclude.key),
       semesterStartDate: map['semesterStartDate'] != null ? DateTime.fromMillisecondsSinceEpoch(map['semesterStartDate']) : null,
       semesterEndDate: map['semesterEndDate'] != null ? DateTime.fromMillisecondsSinceEpoch(map['semesterEndDate']) : null,

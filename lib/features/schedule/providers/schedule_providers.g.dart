@@ -173,6 +173,20 @@ class _SchedulesForDayProviderElement
   int get dayOfWeek => (origin as SchedulesForDayProvider).dayOfWeek;
 }
 
+String _$allSchedulesHash() => r'99bfc3a0d3156c40f9b071c0cb05f6e1caa6c94b';
+
+/// See also [allSchedules].
+@ProviderFor(allSchedules)
+final allSchedulesProvider = AutoDisposeStreamProvider<List<Schedule>>.internal(
+  allSchedules,
+  name: r'allSchedulesProvider',
+  debugGetCreateSourceHash:
+      const bool.fromEnvironment('dart.vm.product') ? null : _$allSchedulesHash,
+  dependencies: null,
+  allTransitiveDependencies: null,
+);
+
+typedef AllSchedulesRef = AutoDisposeStreamProviderRef<List<Schedule>>;
 String _$schedulesForDaySortedByTimeHash() =>
     r'de3b804e7d9aea787fc281451c02adcb47322c32';
 

@@ -151,18 +151,20 @@ class _SubjectFormSheetState extends ConsumerState<SubjectFormSheet> {
     final isEditing = widget.subjectId != null;
     final bottomInset = MediaQuery.of(context).viewInsets.bottom;
 
-    return Container(
-      decoration: BoxDecoration(
-        color: Theme.of(context).colorScheme.surface,
-        borderRadius: const BorderRadius.vertical(top: Radius.circular(24)), // radius2XL equivalent
-      ),
-      constraints: BoxConstraints(
-        maxHeight: MediaQuery.of(context).size.height * 0.9,
-      ),
-      child: Column(
-        mainAxisSize: MainAxisSize.min,
-        crossAxisAlignment: CrossAxisAlignment.stretch,
-        children: [
+    return Padding(
+      padding: EdgeInsets.only(bottom: bottomInset),
+      child: Container(
+        decoration: BoxDecoration(
+          color: Theme.of(context).colorScheme.surface,
+          borderRadius: const BorderRadius.vertical(top: Radius.circular(24)), // radius2XL equivalent
+        ),
+        constraints: BoxConstraints(
+          maxHeight: MediaQuery.of(context).size.height * 0.9,
+        ),
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          crossAxisAlignment: CrossAxisAlignment.stretch,
+          children: [
           // Drag handle
           Center(
             child: Container(
@@ -210,13 +212,13 @@ class _SubjectFormSheetState extends ConsumerState<SubjectFormSheet> {
                   child: CircularProgressIndicator(),
                 ))
                 : SingleChildScrollView(
-                    padding: EdgeInsets.only(
-                      left: AppSpacing.lg,
-                      right: AppSpacing.lg,
-                      top: AppSpacing.md,
-                      bottom: AppSpacing.xl + bottomInset,
-                    ),
-                    child: Form(
+                      padding: const EdgeInsets.only(
+                        left: AppSpacing.lg,
+                        right: AppSpacing.lg,
+                        top: AppSpacing.md,
+                        bottom: AppSpacing.xl,
+                      ),
+                      child: Form(
                       key: _formKey,
                       child: Column(
                         crossAxisAlignment: CrossAxisAlignment.stretch,
@@ -224,9 +226,9 @@ class _SubjectFormSheetState extends ConsumerState<SubjectFormSheet> {
                           TextFormField(
                             controller: _nameController,
                             decoration: const InputDecoration(labelText: 'Subject Name *', hintText: 'e.g. Data Structures'),
-                            validator: SubjectValidator.validateName,
                             textCapitalization: TextCapitalization.words,
                             textInputAction: TextInputAction.next,
+                            validator: SubjectValidator.validateName,
                           ),
                           const SizedBox(height: AppSpacing.lg),
                           
@@ -309,8 +311,9 @@ class _SubjectFormSheetState extends ConsumerState<SubjectFormSheet> {
           ),
         ],
       ),
-    );
-  }
+    ),
+  );
+}
 }
 
 /// Helper function to show the subject form as a bottom sheet

@@ -6,7 +6,7 @@ part of 'analytics_provider.dart';
 // RiverpodGenerator
 // **************************************************************************
 
-String _$analyticsNotifierHash() => r'139f32f555edbd368afc4f35fb0da27c79f39bd8';
+String _$analyticsNotifierHash() => r'88bea73e5c303931ba5fd973b03c4233fb481fe6';
 
 /// See also [AnalyticsNotifier].
 @ProviderFor(AnalyticsNotifier)

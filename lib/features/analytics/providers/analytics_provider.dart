@@ -16,6 +16,10 @@ import 'package:riverpod_annotation/riverpod_annotation.dart';
 import 'package:rxdart/rxdart.dart' hide Subject;
 import 'package:attendancex/features/subjects/providers/subject_providers.dart';
 
+import 'package:attendancex/core/enums/lecture_type.dart';
+import 'package:attendancex/features/schedule/providers/schedule_providers.dart';
+import 'package:attendancex/database/collections/schedule_collection.dart';
+
 part 'analytics_provider.g.dart';
 
 @riverpod
@@ -25,19 +29,25 @@ class AnalyticsNotifier extends _$AnalyticsNotifier {
     final subjectRepo = ref.watch(subjectRepositoryProvider);
     final attendanceRepo = ref.watch(attendanceRepositoryProvider);
     final plannerRepo = ref.watch(plannerRepositoryProvider);
+    final scheduleRepo = ref.watch(scheduleRepositoryProvider);
     final settings = ref.watch(settingsProvider);
 
-    return Rx.combineLatest3(
+    return Rx.combineLatest4(
       subjectRepo.watchAll(),
       attendanceRepo.watchAll(),
       plannerRepo.watchAllTasks(),
-      (List<Subject> subjects, List<Attendance> allAttendances, List<AcademicTask> allTasks) {
+      scheduleRepo.watchAll(),
+      (List<Subject> subjects, List<Attendance> allAttendances, List<AcademicTask> allTasks, List<Schedule> allSchedules) {
         if (subjects.isEmpty) {
           return const AnalyticsState(isLoading: false);
         }
 
         // 1. Overall Monthly Trends
         final monthlyTrends = AnalyticsEngine.calculateMonthlyTrends(allAttendances, settings);
+
+        // 1.5. Day of Week Trends & Bunk Heatmap
+        final dayOfWeekTrends = AnalyticsEngine.calculateDayOfWeekTrends(allAttendances, settings);
+        final bunkHeatmap = AnalyticsEngine.calculateBunkHeatmap(allAttendances);
 
         // 2. Overall Forecast
         final overallSummary = AttendanceEngine.calculateOverallSummary(allAttendances, settings);
@@ -74,6 +84,9 @@ class AnalyticsNotifier extends _$AnalyticsNotifier {
           final subjectAttendances = allAttendances.where((a) => a.subjectId == subject.id).toList();
           
           final summary = AttendanceEngine.calculateSubjectSummary(subject.id, subjectAttendances, settings);
+          final lectureSummary = AttendanceEngine.calculateSubjectSummaryByType(subject.id, LectureType.lecture, subjectAttendances, allSchedules, settings);
+          final labSummary = AttendanceEngine.calculateSubjectSummaryByType(subject.id, LectureType.lab, subjectAttendances, allSchedules, settings);
+
           final forecast = AnalyticsEngine.calculateForecast(summary, subject.goalPercentage / 100.0);
 
           final currentMonthAttendances = subjectAttendances.where((a) => a.date.year == currentYear && a.date.month == currentMonth).toList();
@@ -87,6 +100,8 @@ class AnalyticsNotifier extends _$AnalyticsNotifier {
           subjectStats.add(SubjectStatistics(
             subject: subject,
             summary: summary,
+            lectureSummary: lectureSummary,
+            labSummary: labSummary,
             forecast: forecast,
             trend: trend,
           ));
@@ -107,6 +122,8 @@ class AnalyticsNotifier extends _$AnalyticsNotifier {
         return AnalyticsState(
           isLoading: false,
           monthlyTrends: monthlyTrends,
+          dayOfWeekTrends: dayOfWeekTrends,
+          bunkHeatmap: bunkHeatmap,
           subjectStats: subjectStats,
           overallForecast: overallForecast,
           overallSummary: overallSummary,

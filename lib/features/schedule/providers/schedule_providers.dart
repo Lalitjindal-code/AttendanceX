@@ -18,6 +18,12 @@ Stream<List<Schedule>> schedulesForDay(SchedulesForDayRef ref, int dayOfWeek) {
 }
 
 @riverpod
+Stream<List<Schedule>> allSchedules(AllSchedulesRef ref) {
+  final repository = ref.watch(scheduleRepositoryProvider);
+  return repository.watchAll();
+}
+
+@riverpod
 Stream<List<Schedule>> schedulesForDaySortedByTime(SchedulesForDaySortedByTimeRef ref, int dayOfWeek) {
   final repository = ref.watch(scheduleRepositoryProvider);
   return repository.watchByDaySortedByTime(dayOfWeek);

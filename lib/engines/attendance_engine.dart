@@ -1,6 +1,8 @@
 import '../core/enums/attendance_status.dart';
 import '../core/enums/gt_mode.dart';
+import '../core/enums/lecture_type.dart';
 import '../database/collections/attendance_collection.dart';
+import '../database/collections/schedule_collection.dart';
 import '../features/dashboard/models/attendance_summary.dart';
 import '../features/dashboard/models/smart_suggestion.dart';
 import '../features/settings/models/app_settings.dart';
@@ -83,6 +85,27 @@ class AttendanceEngine {
       totalGTRecords: totalGTRecords,
       totalPendingRecords: totalPendingRecords,
     );
+  }
+
+  /// Calculates the attendance summary for a specific subject AND specific lecture type.
+  static SubjectAttendanceSummary calculateSubjectSummaryByType(
+    int subjectId,
+    LectureType type,
+    List<Attendance> attendances,
+    List<Schedule> schedules,
+    AppSettings settings,
+  ) {
+    // Map schedule ID to its LectureType for quick lookup
+    final scheduleTypeMap = {for (var s in schedules) s.id: s.type};
+    
+    // Filter attendances that match the subject and the desired lecture type
+    final filteredAttendances = attendances.where((a) {
+      if (a.subjectId != subjectId) return false;
+      final aType = scheduleTypeMap[a.scheduleId] ?? LectureType.lecture;
+      return aType == type;
+    }).toList();
+
+    return calculateSubjectSummary(subjectId, filteredAttendances, settings);
   }
 
   /// Calculates the overall attendance summary aggregated across all subjects.

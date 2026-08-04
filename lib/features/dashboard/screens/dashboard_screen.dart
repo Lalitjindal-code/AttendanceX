@@ -200,7 +200,7 @@ class DashboardScreen extends ConsumerWidget {
                     padding: EdgeInsets.all(32.0),
                     child: Center(
                       child: Text(
-                        'All caught up for today! ðŸŽ‰',
+                        'All caught up for today! 🎉',
                         style: TextStyle(fontSize: 16, color: Colors.green, fontWeight: FontWeight.bold),
                       ),
                     ),

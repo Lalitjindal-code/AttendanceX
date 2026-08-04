@@ -62,7 +62,7 @@ class _ScheduleScreenState extends ConsumerState<ScheduleScreen> {
   Future<void> _onRefresh() async {
     Haptics.selection();
     ref.invalidate(subjectsProvider);
-    ref.invalidate(schedulesForDaySortedByTimeProvider);
+    ref.invalidate(allSchedulesProvider);
     await Future.delayed(const Duration(milliseconds: 500));
   }
 
@@ -177,70 +177,75 @@ class _DayScheduleView extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    // We use sorted by time for timeline view
-    final schedulesAsync = ref.watch(schedulesForDaySortedByTimeProvider(dayOfWeek));
+    // We use allSchedules to avoid loading states when changing days
+    final schedulesAsync = ref.watch(allSchedulesProvider);
 
-    return schedulesAsync.when(
-      data: (schedules) {
-        if (schedules.isEmpty) {
-          return Padding(
-            padding: const EdgeInsets.all(AppSpacing.xxl),
-            child: Center(
-              child: Column(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  Icon(
-                    Icons.event_available_outlined,
-                    size: 64,
-                    color: Theme.of(context).colorScheme.outlineVariant,
-                  ),
-                  const SizedBox(height: AppSpacing.md),
-                  Text(
-                    'No classes scheduled for today.',
-                    style: Theme.of(context).textTheme.titleMedium?.copyWith(
-                      color: Theme.of(context).colorScheme.outline,
-                    ),
-                  ),
-                ],
-              ),
-            ),
-          );
-        }
-        
+    if (schedulesAsync.hasValue) {
+      final allSchedules = schedulesAsync.requireValue;
+      final schedules = allSchedules.where((s) => s.dayOfWeek == dayOfWeek).toList()
+         ..sort((a, b) => a.startTime.compareTo(b.startTime));
+
+      if (schedules.isEmpty) {
         return Padding(
-          padding: const EdgeInsets.symmetric(horizontal: AppSpacing.md),
-          child: Column(
-            children: List.generate(schedules.length, (index) {
-              final schedule = schedules[index];
-              final subjectAsync = ref.watch(subjectProvider(schedule.subjectId));
-              
-              return subjectAsync.when(
-                data: (subject) {
-                  if (subject == null) return const SizedBox.shrink();
-                  
-                  return ScheduleTimelineCard(
-                    schedule: schedule,
-                    subject: subject,
-                    isFirst: index == 0,
-                    isLast: index == schedules.length - 1,
-                    onEdit: () => showScheduleFormSheet(context, scheduleId: schedule.id, dayOfWeek: dayOfWeek),
-                  );
-                },
-                loading: () => const CircularProgressIndicator(),
-                error: (_, __) => const Text('Error loading subject'),
-              );
-            }),
+          padding: const EdgeInsets.all(AppSpacing.xxl),
+          child: Center(
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                Icon(
+                  Icons.event_available_outlined,
+                  size: 64,
+                  color: Theme.of(context).colorScheme.outlineVariant,
+                ),
+                const SizedBox(height: AppSpacing.md),
+                Text(
+                  'No classes scheduled for today.',
+                  style: Theme.of(context).textTheme.titleMedium?.copyWith(
+                    color: Theme.of(context).colorScheme.outline,
+                  ),
+                ),
+              ],
+            ),
           ),
         );
-      },
-      loading: () => const Padding(
+      }
+      
+      return Padding(
+        padding: const EdgeInsets.symmetric(horizontal: AppSpacing.md),
+        child: Column(
+          children: List.generate(schedules.length, (index) {
+            final schedule = schedules[index];
+            final subjectsAsync = ref.watch(subjectsProvider);
+            
+            if (!subjectsAsync.hasValue) return const SizedBox.shrink();
+            final subjectList = subjectsAsync.requireValue;
+            
+            final subjectIndex = subjectList.indexWhere((s) => s.id == schedule.subjectId);
+            if (subjectIndex == -1) return const SizedBox.shrink();
+            final subject = subjectList[subjectIndex];
+            
+            return ScheduleTimelineCard(
+              schedule: schedule,
+              subject: subject,
+              isFirst: index == 0,
+              isLast: index == schedules.length - 1,
+              onEdit: () => showScheduleFormSheet(context, scheduleId: schedule.id, dayOfWeek: dayOfWeek),
+            );
+          }),
+        ),
+      );
+    } else if (schedulesAsync.isLoading) {
+      return const Padding(
         padding: EdgeInsets.all(AppSpacing.xl),
         child: Center(child: CircularProgressIndicator()),
-      ),
-      error: (err, stack) => Padding(
+      );
+    } else if (schedulesAsync.hasError) {
+      return Padding(
         padding: const EdgeInsets.all(AppSpacing.xl),
-        child: Center(child: Text('Error: $err')),
-      ),
-    );
+        child: Center(child: Text('Error: ${schedulesAsync.error}')),
+      );
+    }
+
+    return const SizedBox.shrink();
   }
 }

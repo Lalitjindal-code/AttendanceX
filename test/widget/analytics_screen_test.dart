@@ -94,6 +94,8 @@ void main() {
             ..name = 'Physics'
             ..colorValue = Colors.blue.toARGB32(),
           summary: mockSummary,
+          lectureSummary: mockSummary,
+          labSummary: mockSummary,
           forecast: mockForecast,
           trend: AnalyticsTrend.stable,
         ),

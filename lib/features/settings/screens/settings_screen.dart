@@ -11,6 +11,9 @@ import '../../../database/database_providers.dart';
 import '../../../database/collections/attendance_collection.dart';
 import 'package:isar/isar.dart';
 import '../../backup/screens/backup_restore_screen.dart' as attendancex_backup_screen;
+import 'package:firebase_auth/firebase_auth.dart';
+import '../../auth/providers/auth_provider.dart';
+import '../../sync/services/firebase_sync_service.dart';
 
 class SettingsScreen extends ConsumerWidget {
   const SettingsScreen({super.key});
@@ -33,7 +36,7 @@ class SettingsScreen extends ConsumerWidget {
           const Divider(),
           _buildNotificationsSection(context, settings, notifier, theme),
           const Divider(),
-          _buildStorageBackupSection(context, settings, notifier, theme),
+          _buildStorageBackupSection(context, ref, settings, notifier, theme),
           const Divider(),
           _buildAdvancedSection(context, ref, settings, notifier, theme),
           const Divider(),
@@ -281,22 +284,25 @@ class SettingsScreen extends ConsumerWidget {
     );
   }
 
-  Widget _buildStorageBackupSection(BuildContext context, AppSettings settings, Settings notifier, ThemeData theme) {
+  Widget _buildStorageBackupSection(BuildContext context, WidgetRef ref, AppSettings settings, Settings notifier, ThemeData theme) {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        _buildSectionHeader('Storage & Backup', theme),
+        _buildSectionHeader('Cloud Sync', theme),
         ListTile(
-          title: const Text('Backup & Restore'),
-          subtitle: const Text('Export or import your data'),
-          leading: const Icon(Icons.cloud_upload_outlined),
-          trailing: const Icon(Icons.chevron_right),
-          onTap: () {
-            Navigator.push(
-              context,
-              MaterialPageRoute(builder: (_) => const attendancex_backup_screen.BackupRestoreScreen()),
-            );
-          },
+          title: const Text('Auto-Sync Status'),
+          subtitle: const Text('Data securely synced to Google account'),
+          leading: const Icon(Icons.cloud_done, color: Colors.green),
+          trailing: OutlinedButton(
+            onPressed: () async {
+              ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text('Syncing data to cloud...')));
+              await ref.read(firebaseSyncServiceProvider).backupData();
+              if (context.mounted) {
+                ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text('Cloud sync complete!')));
+              }
+            },
+            child: const Text('Sync Now'),
+          ),
         ),
       ],
     );

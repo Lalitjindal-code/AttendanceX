@@ -56,6 +56,10 @@ dependencies:
   timezone: ^0.9.4
   crypto: ^3.0.7
   shimmer: ^3.0.0
+  firebase_core: ^4.13.0
+  firebase_auth: ^6.5.7
+  cloud_firestore: ^6.8.0
+  google_sign_in: ^6.2.1
 
 dev_dependencies:
   flutter_test:

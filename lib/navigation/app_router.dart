@@ -11,6 +11,12 @@ import '../features/subjects/screens/subject_detail_screen.dart';
 import '../features/subjects/screens/subjects_screen.dart';
 import '../features/planner/screens/planner_screen.dart';
 import '../features/more/screens/more_screen.dart';
+import '../features/onboarding/screens/onboarding_screen.dart';
+import '../features/settings/providers/settings_provider.dart';
+import '../features/auth/screens/login_screen.dart';
+import '../features/auth/screens/signup_screen.dart';
+import '../features/auth/providers/auth_provider.dart';
+import '../features/profile/screens/profile_screen.dart';
 import 'app_routes.dart';
 import 'shell_scaffold.dart';
 
@@ -25,10 +31,51 @@ final GlobalKey<NavigatorState> _rootNavigatorKey = GlobalKey<NavigatorState>();
 /// state changes to trigger redirects.
 @riverpod
 GoRouter appRouter(AppRouterRef ref) {
+  final isOnboardingComplete = ref.watch(settingsProvider.select((s) => s.isOnboardingComplete));
+  final authState = ref.watch(authStateProvider);
+
   return GoRouter(
     navigatorKey: _rootNavigatorKey,
     initialLocation: AppRoutes.dashboard,
+    redirect: (context, state) {
+      final isGoingToOnboarding = state.uri.path == AppRoutes.onboarding;
+      final isGoingToLogin = state.uri.path == AppRoutes.login;
+      final isGoingToSignup = state.uri.path == AppRoutes.signup;
+
+      if (authState.isLoading) return null;
+      final user = authState.valueOrNull;
+
+      if (user == null) {
+        if (isGoingToSignup) return AppRoutes.signup;
+        return AppRoutes.login;
+      }
+
+      if (isGoingToLogin || isGoingToSignup) {
+        if (!isOnboardingComplete) return AppRoutes.onboarding;
+        return AppRoutes.dashboard;
+      }
+
+      if (!isOnboardingComplete && !isGoingToOnboarding) {
+        return AppRoutes.onboarding;
+      }
+      if (isOnboardingComplete && isGoingToOnboarding) {
+        return AppRoutes.dashboard;
+      }
+      return null;
+    },
     routes: [
+      GoRoute(
+        path: AppRoutes.login,
+        builder: (context, state) => const LoginScreen(),
+      ),
+      GoRoute(
+        path: AppRoutes.signup,
+        builder: (context, state) => const SignupScreen(),
+      ),
+      GoRoute(
+        path: AppRoutes.onboarding,
+        builder: (context, state) => const OnboardingScreen(),
+      ),
       StatefulShellRoute.indexedStack(
         builder: (context, state, navigationShell) {
           return ShellScaffold(navigationShell: navigationShell);
@@ -91,6 +138,10 @@ GoRouter appRouter(AppRouterRef ref) {
                   // Sub-routes for More tab (no leading slash for sub-routes, but AppRoutes are absolute)
                   // Wait, if they are absolute, we can just define them inside the branch directly instead of nested.
                   // Wait, if they are absolute, we can just define them inside the branch directly instead of nested.
+              ),
+              GoRoute(
+                path: AppRoutes.profile,
+                builder: (context, state) => const ProfileScreen(),
               ),
               GoRoute(
                 path: AppRoutes.calendar,
