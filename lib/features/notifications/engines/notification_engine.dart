@@ -30,7 +30,7 @@ class NotificationEngine {
 
     for (int i = 0; i < _schedulingWindowDays; i++) {
       final targetDate = startOfToday.add(Duration(days: i));
-      
+
       // 1. Generate Lecture Reminders
       notifications.addAll(_generateLectureAlertsForDate(
         targetDate: targetDate,
@@ -70,17 +70,23 @@ class NotificationEngine {
   }) {
     final alerts = <ScheduledNotification>[];
     final dayOfWeek = DayOfWeek.fromInt(targetDate.weekday).value;
-    final todaysSchedules = schedules.where((s) => s.dayOfWeek == dayOfWeek).toList();
-    final todaysAttendances = attendances.where((a) => _normalizeDate(a.date) == targetDate).toList();
+    final todaysSchedules =
+        schedules.where((s) => s.dayOfWeek == dayOfWeek).toList();
+    final todaysAttendances =
+        attendances.where((a) => _normalizeDate(a.date) == targetDate).toList();
 
     for (final schedule in todaysSchedules) {
       // Find subject
-      final subject = subjects.where((s) => s.id == schedule.subjectId).firstOrNull;
+      final subject =
+          subjects.where((s) => s.id == schedule.subjectId).firstOrNull;
       if (subject == null) continue;
 
       // Ensure no attendance already marked for this schedule
-      final attendance = todaysAttendances.where((a) => a.scheduleId == schedule.id).firstOrNull;
-      if (attendance != null && attendance.status != AttendanceStatus.pending) continue;
+      final attendance = todaysAttendances
+          .where((a) => a.scheduleId == schedule.id)
+          .firstOrNull;
+      if (attendance != null && attendance.status != AttendanceStatus.pending)
+        continue;
 
       // Calculate start time
       final timeParts = schedule.startTime.split(':');
@@ -88,8 +94,10 @@ class NotificationEngine {
       final hour = int.tryParse(timeParts[0]) ?? 0;
       final minute = int.tryParse(timeParts[1]) ?? 0;
 
-      final lectureTime = DateTime(targetDate.year, targetDate.month, targetDate.day, hour, minute);
-      final alertTime = lectureTime.subtract(Duration(minutes: settings.lectureReminderMinutes));
+      final lectureTime = DateTime(
+          targetDate.year, targetDate.month, targetDate.day, hour, minute);
+      final alertTime = lectureTime
+          .subtract(Duration(minutes: settings.lectureReminderMinutes));
 
       if (alertTime.isAfter(now)) {
         final id = _generateLectureId(schedule.id, targetDate);
@@ -97,9 +105,10 @@ class NotificationEngine {
           'type': 'lecture',
           'scheduleId': schedule.id,
           'subjectId': schedule.subjectId,
-          'date': '${targetDate.year.toString().padLeft(4, '0')}-${targetDate.month.toString().padLeft(2, '0')}-${targetDate.day.toString().padLeft(2, '0')}',
+          'date':
+              '${targetDate.year.toString().padLeft(4, '0')}-${targetDate.month.toString().padLeft(2, '0')}-${targetDate.day.toString().padLeft(2, '0')}',
         });
-        
+
         alerts.add(ScheduledNotification(
           id: id,
           title: 'Upcoming Class: ${subject.name}',
@@ -127,7 +136,8 @@ class NotificationEngine {
     final hour = int.tryParse(timeParts[0]) ?? 0;
     final minute = int.tryParse(timeParts[1]) ?? 0;
 
-    final reminderTime = DateTime(targetDate.year, targetDate.month, targetDate.day, hour, minute);
+    final reminderTime = DateTime(
+        targetDate.year, targetDate.month, targetDate.day, hour, minute);
 
     if (!reminderTime.isAfter(now)) {
       return null; // Already passed
@@ -138,11 +148,13 @@ class NotificationEngine {
     // (or just start before it, let's say "start before reminder time")
     // Wait, the user said "lecture time has already passed".
     // We will consider a lecture passed if its `endTime` is before `reminderTime`.
-    
+
     final dayOfWeek = DayOfWeek.fromInt(targetDate.weekday).value;
-    final todaysSchedules = schedules.where((s) => s.dayOfWeek == dayOfWeek).toList();
-    final todaysAttendances = attendances.where((a) => _normalizeDate(a.date) == targetDate).toList();
-    
+    final todaysSchedules =
+        schedules.where((s) => s.dayOfWeek == dayOfWeek).toList();
+    final todaysAttendances =
+        attendances.where((a) => _normalizeDate(a.date) == targetDate).toList();
+
     int missedCount = 0;
 
     for (final schedule in todaysSchedules) {
@@ -150,14 +162,19 @@ class NotificationEngine {
       if (endTimeParts.length != 2) continue;
       final endHour = int.tryParse(endTimeParts[0]) ?? 0;
       final endMinute = int.tryParse(endTimeParts[1]) ?? 0;
-      
-      final endTime = DateTime(targetDate.year, targetDate.month, targetDate.day, endHour, endMinute);
-      
+
+      final endTime = DateTime(targetDate.year, targetDate.month,
+          targetDate.day, endHour, endMinute);
+
       // If the lecture ends before or exactly at the reminder time
-      if (endTime.isBefore(reminderTime) || endTime.isAtSameMomentAs(reminderTime)) {
+      if (endTime.isBefore(reminderTime) ||
+          endTime.isAtSameMomentAs(reminderTime)) {
         // Is attendance missing or pending?
-        final attendance = todaysAttendances.where((a) => a.scheduleId == schedule.id).firstOrNull;
-        if (attendance == null || attendance.status == AttendanceStatus.pending) {
+        final attendance = todaysAttendances
+            .where((a) => a.scheduleId == schedule.id)
+            .firstOrNull;
+        if (attendance == null ||
+            attendance.status == AttendanceStatus.pending) {
           missedCount++;
         }
       }
@@ -172,19 +189,26 @@ class NotificationEngine {
       // Let's check previous 6 days from `targetDate` for any unmarked past lectures.
       for (int i = 1; i <= 6; i++) {
         final checkDate = targetDate.subtract(Duration(days: i));
-        
+
         // We only care if `checkDate` is on or after the semester start date?
-        if (settings.semesterStartDate != null && checkDate.isBefore(_normalizeDate(settings.semesterStartDate!))) {
+        if (settings.semesterStartDate != null &&
+            checkDate.isBefore(_normalizeDate(settings.semesterStartDate!))) {
           continue;
         }
 
         final dow = DayOfWeek.fromInt(checkDate.weekday).value;
-        final pastSchedules = schedules.where((s) => s.dayOfWeek == dow).toList();
-        final pastAttendances = attendances.where((a) => _normalizeDate(a.date) == checkDate).toList();
-        
+        final pastSchedules =
+            schedules.where((s) => s.dayOfWeek == dow).toList();
+        final pastAttendances = attendances
+            .where((a) => _normalizeDate(a.date) == checkDate)
+            .toList();
+
         for (final schedule in pastSchedules) {
-          final attendance = pastAttendances.where((a) => a.scheduleId == schedule.id).firstOrNull;
-          if (attendance == null || attendance.status == AttendanceStatus.pending) {
+          final attendance = pastAttendances
+              .where((a) => a.scheduleId == schedule.id)
+              .firstOrNull;
+          if (attendance == null ||
+              attendance.status == AttendanceStatus.pending) {
             // Lecture from a past day is completely in the past relative to `targetDate`'s reminder time.
             missedCount++;
           }
@@ -197,13 +221,15 @@ class NotificationEngine {
       final payload = jsonEncode({
         'type': 'daily_reminder',
         'missedCount': missedCount,
-        'date': '${targetDate.year.toString().padLeft(4, '0')}-${targetDate.month.toString().padLeft(2, '0')}-${targetDate.day.toString().padLeft(2, '0')}',
+        'date':
+            '${targetDate.year.toString().padLeft(4, '0')}-${targetDate.month.toString().padLeft(2, '0')}-${targetDate.day.toString().padLeft(2, '0')}',
       });
 
       return ScheduledNotification(
         id: id,
         title: 'Missed Attendance',
-        body: 'You have $missedCount unmarked lecture${missedCount > 1 ? 's' : ''}. Please update your attendance.',
+        body:
+            'You have $missedCount unmarked lecture${missedCount > 1 ? 's' : ''}. Please update your attendance.',
         scheduledDate: reminderTime,
         payload: payload,
       );

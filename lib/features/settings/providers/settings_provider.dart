@@ -24,16 +24,19 @@ class Settings extends _$Settings {
   AppSettings get currentSettings => state;
 
   AppSettings _loadSettings() {
-    final themeStr = _prefs.getString(PreferencesService.keyThemeMode, defaultValue: 'system');
+    final themeStr = _prefs.getString(PreferencesService.keyThemeMode,
+        defaultValue: 'system');
     final ThemeMode themeMode = switch (themeStr) {
       'light' => ThemeMode.light,
       'dark' => ThemeMode.dark,
       _ => ThemeMode.system,
     };
 
-    final startStr = _prefs.getStringNullable(PreferencesService.keySemesterStart);
+    final startStr =
+        _prefs.getStringNullable(PreferencesService.keySemesterStart);
     final endStr = _prefs.getStringNullable(PreferencesService.keySemesterEnd);
-    final lastBackupStr = _prefs.getStringNullable(PreferencesService.keyLastBackupDate);
+    final lastBackupStr =
+        _prefs.getStringNullable(PreferencesService.keyLastBackupDate);
 
     return AppSettings(
       themeMode: themeMode,
@@ -71,15 +74,19 @@ class Settings extends _$Settings {
         PreferencesService.keyLectureReminderMinutes,
         defaultValue: AppConfig.defaultLectureReminderMinutes,
       ),
-      defaultTaskReminderOffsets: _prefs.getStringList(
-        PreferencesService.keyDefaultTaskReminderOffsets,
-        defaultValue: ['60', '1440'],
-      ).map((e) => int.tryParse(e) ?? 0).toList(),
+      defaultTaskReminderOffsets: _prefs
+          .getStringList(
+            PreferencesService.keyDefaultTaskReminderOffsets,
+            defaultValue: ['60', '1440'],
+          )
+          .map((e) => int.tryParse(e) ?? 0)
+          .toList(),
       isAmoled: _prefs.getBool(
         PreferencesService.keyIsAmoled,
         defaultValue: false,
       ),
-      lastBackupDate: lastBackupStr != null ? DateTime.tryParse(lastBackupStr) : null,
+      lastBackupDate:
+          lastBackupStr != null ? DateTime.tryParse(lastBackupStr) : null,
     );
   }
 
@@ -95,7 +102,8 @@ class Settings extends _$Settings {
 
   Future<void> updateMedicalPolicy(bool countsAsPresent) async {
     state = state.copyWith(medicalCountsAsPresent: countsAsPresent);
-    await _prefs.setBool(PreferencesService.keyMedicalCountsAsPresent, countsAsPresent);
+    await _prefs.setBool(
+        PreferencesService.keyMedicalCountsAsPresent, countsAsPresent);
   }
 
   Future<void> updateGtMode(GtMode mode) async {
@@ -104,19 +112,24 @@ class Settings extends _$Settings {
   }
 
   Future<void> updateSemesterDates(DateTime? start, DateTime? end) async {
-    final normalizedStart = start != null ? DateTime(start.year, start.month, start.day) : null;
-    final normalizedEnd = end != null ? DateTime(end.year, end.month, end.day) : null;
-    
-    state = state.copyWith(semesterStartDate: normalizedStart, semesterEndDate: normalizedEnd);
-    
+    final normalizedStart =
+        start != null ? DateTime(start.year, start.month, start.day) : null;
+    final normalizedEnd =
+        end != null ? DateTime(end.year, end.month, end.day) : null;
+
+    state = state.copyWith(
+        semesterStartDate: normalizedStart, semesterEndDate: normalizedEnd);
+
     if (normalizedStart != null) {
-      await _prefs.setString(PreferencesService.keySemesterStart, normalizedStart.toIso8601String());
+      await _prefs.setString(PreferencesService.keySemesterStart,
+          normalizedStart.toIso8601String());
     } else {
       await _prefs.remove(PreferencesService.keySemesterStart);
     }
-    
+
     if (normalizedEnd != null) {
-      await _prefs.setString(PreferencesService.keySemesterEnd, normalizedEnd.toIso8601String());
+      await _prefs.setString(
+          PreferencesService.keySemesterEnd, normalizedEnd.toIso8601String());
     } else {
       await _prefs.remove(PreferencesService.keySemesterEnd);
     }
@@ -164,7 +177,8 @@ class Settings extends _$Settings {
 
   Future<void> updateLastBackupDate(DateTime date) async {
     state = state.copyWith(lastBackupDate: date);
-    await _prefs.setString(PreferencesService.keyLastBackupDate, date.toIso8601String());
+    await _prefs.setString(
+        PreferencesService.keyLastBackupDate, date.toIso8601String());
   }
 
   Future<void> completeOnboarding() async {

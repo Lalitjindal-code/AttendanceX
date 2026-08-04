@@ -13,7 +13,8 @@ class DayDetailPanel extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    if (state.selectedDayDetails.items.isEmpty && state.selectedDayTasks.isEmpty) {
+    if (state.selectedDayDetails.items.isEmpty &&
+        state.selectedDayTasks.isEmpty) {
       return SliverFillRemaining(
         hasScrollBody: false,
         child: Center(
@@ -31,15 +32,15 @@ class DayDetailPanel extends ConsumerWidget {
                 Text(
                   'No classes or tasks scheduled for',
                   style: Theme.of(context).textTheme.titleMedium?.copyWith(
-                    color: Theme.of(context).colorScheme.onSurfaceVariant,
-                  ),
+                        color: Theme.of(context).colorScheme.onSurfaceVariant,
+                      ),
                 ),
                 Text(
                   DateFormat('MMMM d, yyyy').format(state.selectedDate),
                   style: Theme.of(context).textTheme.titleSmall?.copyWith(
-                    color: Theme.of(context).colorScheme.onSurfaceVariant,
-                    fontWeight: FontWeight.bold,
-                  ),
+                        color: Theme.of(context).colorScheme.onSurfaceVariant,
+                        fontWeight: FontWeight.bold,
+                      ),
                 ),
               ],
             ),
@@ -49,7 +50,8 @@ class DayDetailPanel extends ConsumerWidget {
     }
 
     return SliverPadding(
-      padding: const EdgeInsets.symmetric(horizontal: AppSpacing.md, vertical: AppSpacing.sm),
+      padding: const EdgeInsets.symmetric(
+          horizontal: AppSpacing.md, vertical: AppSpacing.sm),
       sliver: SliverList(
         delegate: SliverChildBuilderDelegate(
           (context, index) {
@@ -60,19 +62,21 @@ class DayDetailPanel extends ConsumerWidget {
             if (state.selectedDayDetails.items.isNotEmpty) {
               children.add(
                 Padding(
-                  padding: const EdgeInsets.only(bottom: AppSpacing.sm, left: AppSpacing.xs),
+                  padding: const EdgeInsets.only(
+                      bottom: AppSpacing.sm, left: AppSpacing.xs),
                   child: Text(
                     'Classes',
                     style: Theme.of(context).textTheme.titleMedium?.copyWith(
-                      fontWeight: FontWeight.bold,
-                      color: Theme.of(context).colorScheme.primary,
-                    ),
+                          fontWeight: FontWeight.bold,
+                          color: Theme.of(context).colorScheme.primary,
+                        ),
                   ),
                 ),
               );
               children.addAll(
                 state.selectedDayDetails.items.map(
-                  (item) => DailyAttendanceCard(item: item, date: state.selectedDate),
+                  (item) =>
+                      DailyAttendanceCard(item: item, date: state.selectedDate),
                 ),
               );
               children.add(const SizedBox(height: AppSpacing.lg));
@@ -81,19 +85,22 @@ class DayDetailPanel extends ConsumerWidget {
             if (state.selectedDayTasks.isNotEmpty) {
               children.add(
                 Padding(
-                  padding: const EdgeInsets.only(bottom: AppSpacing.sm, left: AppSpacing.xs),
+                  padding: const EdgeInsets.only(
+                      bottom: AppSpacing.sm, left: AppSpacing.xs),
                   child: Text(
                     'Tasks & Deadlines',
                     style: Theme.of(context).textTheme.titleMedium?.copyWith(
-                      fontWeight: FontWeight.bold,
-                      color: Theme.of(context).colorScheme.primary,
-                    ),
+                          fontWeight: FontWeight.bold,
+                          color: Theme.of(context).colorScheme.primary,
+                        ),
                   ),
                 ),
               );
               children.addAll(
                 state.selectedDayTasks.map((task) {
-                  final subject = state.allSubjects.where((s) => s.id == task.subjectId).firstOrNull;
+                  final subject = state.allSubjects
+                      .where((s) => s.id == task.subjectId)
+                      .firstOrNull;
                   return Padding(
                     padding: const EdgeInsets.only(bottom: AppSpacing.sm),
                     child: TaskCard(task: task, subject: subject),
@@ -107,8 +114,12 @@ class DayDetailPanel extends ConsumerWidget {
             }
             return null;
           },
-          childCount: (state.selectedDayDetails.items.isNotEmpty ? state.selectedDayDetails.items.length + 2 : 0) +
-                      (state.selectedDayTasks.isNotEmpty ? state.selectedDayTasks.length + 1 : 0),
+          childCount: (state.selectedDayDetails.items.isNotEmpty
+                  ? state.selectedDayDetails.items.length + 2
+                  : 0) +
+              (state.selectedDayTasks.isNotEmpty
+                  ? state.selectedDayTasks.length + 1
+                  : 0),
         ),
       ),
     );

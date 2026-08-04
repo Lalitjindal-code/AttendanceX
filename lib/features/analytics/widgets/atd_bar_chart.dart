@@ -17,7 +17,8 @@ class AtdBarChart extends StatelessWidget {
 
     return Container(
       height: 250,
-      padding: const EdgeInsets.only(top: AppSpacing.md, right: AppSpacing.md, bottom: AppSpacing.md),
+      padding: const EdgeInsets.only(
+          top: AppSpacing.md, right: AppSpacing.md, bottom: AppSpacing.md),
       child: BarChart(
         BarChartData(
           alignment: BarChartAlignment.spaceAround,
@@ -34,8 +35,10 @@ class AtdBarChart extends StatelessWidget {
           ),
           titlesData: FlTitlesData(
             show: true,
-            rightTitles: const AxisTitles(sideTitles: SideTitles(showTitles: false)),
-            topTitles: const AxisTitles(sideTitles: SideTitles(showTitles: false)),
+            rightTitles:
+                const AxisTitles(sideTitles: SideTitles(showTitles: false)),
+            topTitles:
+                const AxisTitles(sideTitles: SideTitles(showTitles: false)),
             bottomTitles: AxisTitles(
               sideTitles: SideTitles(
                 showTitles: true,
@@ -43,7 +46,9 @@ class AtdBarChart extends StatelessWidget {
                   if (value.toInt() >= 0 && value.toInt() < stats.length) {
                     final subject = stats[value.toInt()].subject;
                     // truncate name to 3 letters for the chart
-                    final shortName = subject.name.length > 3 ? subject.name.substring(0, 3) : subject.name;
+                    final shortName = subject.name.length > 3
+                        ? subject.name.substring(0, 3)
+                        : subject.name;
                     return Padding(
                       padding: const EdgeInsets.only(top: 8.0),
                       child: Text(
@@ -80,7 +85,7 @@ class AtdBarChart extends StatelessWidget {
             final index = entry.key;
             final stat = entry.value;
             final percentage = stat.summary.attendancePercentage;
-            
+
             final color = Color(stat.subject.colorValue);
 
             return BarChartGroupData(
@@ -97,7 +102,9 @@ class AtdBarChart extends StatelessWidget {
                   backDrawRodData: BackgroundBarChartRodData(
                     show: true,
                     toY: 100,
-                    color: isDark ? theme.colorScheme.surfaceContainerHigh : theme.colorScheme.surfaceContainerHighest,
+                    color: isDark
+                        ? theme.colorScheme.surfaceContainerHigh
+                        : theme.colorScheme.surfaceContainerHighest,
                   ),
                 ),
               ],

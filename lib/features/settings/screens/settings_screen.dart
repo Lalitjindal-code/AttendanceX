@@ -10,7 +10,8 @@ import '../providers/settings_provider.dart';
 import '../../../database/database_providers.dart';
 import '../../../database/collections/attendance_collection.dart';
 import 'package:isar/isar.dart';
-import '../../backup/screens/backup_restore_screen.dart' as attendancex_backup_screen;
+import '../../backup/screens/backup_restore_screen.dart'
+    as attendancex_backup_screen;
 import 'package:firebase_auth/firebase_auth.dart';
 import '../../auth/providers/auth_provider.dart';
 import '../../sync/services/firebase_sync_service.dart';
@@ -61,7 +62,8 @@ class SettingsScreen extends ConsumerWidget {
     );
   }
 
-  Widget _buildAppearanceSection(BuildContext context, AppSettings settings, Settings notifier, ThemeData theme) {
+  Widget _buildAppearanceSection(BuildContext context, AppSettings settings,
+      Settings notifier, ThemeData theme) {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
@@ -91,16 +93,19 @@ class SettingsScreen extends ConsumerWidget {
     );
   }
 
-  Widget _buildAcademicProfileSection(BuildContext context, AppSettings settings, Settings notifier, ThemeData theme) {
+  Widget _buildAcademicProfileSection(BuildContext context,
+      AppSettings settings, Settings notifier, ThemeData theme) {
     final dateFormat = DateFormat('MMM d, yyyy');
-    
+
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         _buildSectionHeader('Academic Profile', theme),
         ListTile(
           title: const Text('Semester Start Date'),
-          subtitle: Text(settings.semesterStartDate != null ? dateFormat.format(settings.semesterStartDate!) : 'Not set'),
+          subtitle: Text(settings.semesterStartDate != null
+              ? dateFormat.format(settings.semesterStartDate!)
+              : 'Not set'),
           trailing: const Icon(Icons.calendar_today),
           onTap: () async {
             final date = await showDatePicker(
@@ -110,9 +115,11 @@ class SettingsScreen extends ConsumerWidget {
               lastDate: DateTime(2030),
             );
             if (date != null) {
-              if (settings.semesterEndDate != null && date.isAfter(settings.semesterEndDate!)) {
+              if (settings.semesterEndDate != null &&
+                  date.isAfter(settings.semesterEndDate!)) {
                 if (context.mounted) {
-                  ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text('Start date must be before end date.')));
+                  ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
+                      content: Text('Start date must be before end date.')));
                 }
                 return;
               }
@@ -122,19 +129,25 @@ class SettingsScreen extends ConsumerWidget {
         ),
         ListTile(
           title: const Text('Semester End Date'),
-          subtitle: Text(settings.semesterEndDate != null ? dateFormat.format(settings.semesterEndDate!) : 'Not set'),
+          subtitle: Text(settings.semesterEndDate != null
+              ? dateFormat.format(settings.semesterEndDate!)
+              : 'Not set'),
           trailing: const Icon(Icons.calendar_today),
           onTap: () async {
             final date = await showDatePicker(
               context: context,
-              initialDate: settings.semesterEndDate ?? settings.semesterStartDate ?? DateTime.now(),
+              initialDate: settings.semesterEndDate ??
+                  settings.semesterStartDate ??
+                  DateTime.now(),
               firstDate: DateTime(2020),
               lastDate: DateTime(2030),
             );
             if (date != null) {
-              if (settings.semesterStartDate != null && date.isBefore(settings.semesterStartDate!)) {
+              if (settings.semesterStartDate != null &&
+                  date.isBefore(settings.semesterStartDate!)) {
                 if (context.mounted) {
-                  ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text('End date must be after start date.')));
+                  ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
+                      content: Text('End date must be after start date.')));
                 }
                 return;
               }
@@ -146,7 +159,8 @@ class SettingsScreen extends ConsumerWidget {
     );
   }
 
-  Widget _buildAttendanceRulesSection(BuildContext context, AppSettings settings, Settings notifier, ThemeData theme) {
+  Widget _buildAttendanceRulesSection(BuildContext context,
+      AppSettings settings, Settings notifier, ThemeData theme) {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
@@ -168,7 +182,9 @@ class SettingsScreen extends ConsumerWidget {
         ),
         SwitchListTile(
           title: const Text('Medical Leave (ML)'),
-          subtitle: Text(settings.medicalCountsAsPresent ? 'Counts as Present' : 'Excluded from calculation'),
+          subtitle: Text(settings.medicalCountsAsPresent
+              ? 'Counts as Present'
+              : 'Excluded from calculation'),
           value: settings.medicalCountsAsPresent,
           onChanged: (val) => notifier.updateMedicalPolicy(val),
         ),
@@ -192,7 +208,8 @@ class SettingsScreen extends ConsumerWidget {
     );
   }
 
-  Widget _buildNotificationsSection(BuildContext context, AppSettings settings, Settings notifier, ThemeData theme) {
+  Widget _buildNotificationsSection(BuildContext context, AppSettings settings,
+      Settings notifier, ThemeData theme) {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
@@ -203,10 +220,13 @@ class SettingsScreen extends ConsumerWidget {
           value: settings.notificationsEnabled,
           onChanged: (val) async {
             if (val) {
-              final granted = await NotificationService.instance.requestPermissions();
+              final granted =
+                  await NotificationService.instance.requestPermissions();
               if (granted != true && context.mounted) {
                 ScaffoldMessenger.of(context).showSnackBar(
-                  const SnackBar(content: Text('Notification permissions denied. Please enable them in OS settings.')),
+                  const SnackBar(
+                      content: Text(
+                          'Notification permissions denied. Please enable them in OS settings.')),
                 );
               }
             }
@@ -218,7 +238,9 @@ class SettingsScreen extends ConsumerWidget {
           subtitle: const Text('Alert before class starts'),
           enabled: settings.notificationsEnabled,
           trailing: DropdownButton<int>(
-            value: [5, 10, 15, 30].contains(settings.lectureReminderMinutes) ? settings.lectureReminderMinutes : 10,
+            value: [5, 10, 15, 30].contains(settings.lectureReminderMinutes)
+                ? settings.lectureReminderMinutes
+                : 10,
             items: [5, 10, 15, 30].map((mins) {
               return DropdownMenuItem(value: mins, child: Text('$mins mins'));
             }).toList(),
@@ -234,7 +256,9 @@ class SettingsScreen extends ConsumerWidget {
           subtitle: const Text('Default alert for new tasks'),
           enabled: settings.notificationsEnabled,
           trailing: DropdownButton<int>(
-            value: settings.defaultTaskReminderOffsets.isNotEmpty ? settings.defaultTaskReminderOffsets.first : 1440,
+            value: settings.defaultTaskReminderOffsets.isNotEmpty
+                ? settings.defaultTaskReminderOffsets.first
+                : 1440,
             items: const [
               DropdownMenuItem(value: 60, child: Text('1 hour before')),
               DropdownMenuItem(value: 180, child: Text('3 hours before')),
@@ -243,7 +267,8 @@ class SettingsScreen extends ConsumerWidget {
             ],
             onChanged: settings.notificationsEnabled
                 ? (val) {
-                    if (val != null) notifier.updateDefaultTaskReminderOffsets([val]);
+                    if (val != null)
+                      notifier.updateDefaultTaskReminderOffsets([val]);
                   }
                 : null,
           ),
@@ -259,14 +284,17 @@ class SettingsScreen extends ConsumerWidget {
         ListTile(
           title: const Text('Daily Reminder Time'),
           subtitle: Text(settings.dailyReminderTime),
-          enabled: settings.notificationsEnabled && settings.dailyReminderEnabled,
+          enabled:
+              settings.notificationsEnabled && settings.dailyReminderEnabled,
           trailing: const Icon(Icons.access_time),
           onTap: settings.notificationsEnabled && settings.dailyReminderEnabled
               ? () async {
                   final timeParts = settings.dailyReminderTime.split(':');
                   final initialTime = TimeOfDay(
                     hour: int.tryParse(timeParts[0]) ?? 20,
-                    minute: int.tryParse(timeParts.length > 1 ? timeParts[1] : '0') ?? 0,
+                    minute: int.tryParse(
+                            timeParts.length > 1 ? timeParts[1] : '0') ??
+                        0,
                   );
                   final time = await showTimePicker(
                     context: context,
@@ -284,7 +312,8 @@ class SettingsScreen extends ConsumerWidget {
     );
   }
 
-  Widget _buildStorageBackupSection(BuildContext context, WidgetRef ref, AppSettings settings, Settings notifier, ThemeData theme) {
+  Widget _buildStorageBackupSection(BuildContext context, WidgetRef ref,
+      AppSettings settings, Settings notifier, ThemeData theme) {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
@@ -295,10 +324,12 @@ class SettingsScreen extends ConsumerWidget {
           leading: const Icon(Icons.cloud_done, color: Colors.green),
           trailing: OutlinedButton(
             onPressed: () async {
-              ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text('Syncing data to cloud...')));
+              ScaffoldMessenger.of(context).showSnackBar(
+                  const SnackBar(content: Text('Syncing data to cloud...')));
               await ref.read(firebaseSyncServiceProvider).backupData();
               if (context.mounted) {
-                ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text('Cloud sync complete!')));
+                ScaffoldMessenger.of(context).showSnackBar(
+                    const SnackBar(content: Text('Cloud sync complete!')));
               }
             },
             child: const Text('Sync Now'),
@@ -308,7 +339,8 @@ class SettingsScreen extends ConsumerWidget {
     );
   }
 
-  Widget _buildAdvancedSection(BuildContext context, WidgetRef ref, AppSettings settings, Settings notifier, ThemeData theme) {
+  Widget _buildAdvancedSection(BuildContext context, WidgetRef ref,
+      AppSettings settings, Settings notifier, ThemeData theme) {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
@@ -320,14 +352,16 @@ class SettingsScreen extends ConsumerWidget {
           onTap: () async {
             await ImportTimetable.run();
             if (context.mounted) {
-              ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text('Timetable Imported! Restart app if needed.')));
+              ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
+                  content: Text('Timetable Imported! Restart app if needed.')));
             }
           },
         ),
         ListTile(
           title: Text(
             'Clear Today\'s Attendance',
-            style: TextStyle(color: theme.colorScheme.error, fontWeight: FontWeight.bold),
+            style: TextStyle(
+                color: theme.colorScheme.error, fontWeight: FontWeight.bold),
           ),
           subtitle: const Text('Deletes all attendance marked today'),
           leading: Icon(Icons.delete_outline, color: theme.colorScheme.error),
@@ -335,13 +369,14 @@ class SettingsScreen extends ConsumerWidget {
             final isar = ref.read(isarProvider);
             final now = DateTime.now();
             final todayUtc = DateTime.utc(now.year, now.month, now.day);
-            
+
             await isar.writeTxn(() async {
               await isar.attendances.filter().dateEqualTo(todayUtc).deleteAll();
             });
-            
+
             if (context.mounted) {
-              ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text('Cleared today\'s attendance!')));
+              ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
+                  content: Text('Cleared today\'s attendance!')));
             }
           },
         ),

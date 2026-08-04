@@ -10,12 +10,12 @@ class BunkHeatmapChart extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
-    
+
     // We will show the last 28 days (4 weeks)
     final now = DateTime.now();
     final endDate = DateTime(now.year, now.month, now.day);
     // Move to the nearest Sunday (or end of week) to align the grid
-    final daysToSubtract = endDate.weekday % 7; 
+    final daysToSubtract = endDate.weekday % 7;
     final adjustedEndDate = endDate.add(Duration(days: 7 - daysToSubtract));
     final startDate = adjustedEndDate.subtract(const Duration(days: 27));
 
@@ -26,7 +26,8 @@ class BunkHeatmapChart extends StatelessWidget {
     }
 
     return Padding(
-      padding: const EdgeInsets.symmetric(horizontal: AppSpacing.md, vertical: AppSpacing.sm),
+      padding: const EdgeInsets.symmetric(
+          horizontal: AppSpacing.md, vertical: AppSpacing.sm),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
@@ -69,7 +70,7 @@ class BunkHeatmapChart extends StatelessWidget {
               final date = dates[index];
               final dateKey = DateTime(date.year, date.month, date.day);
               final missedClasses = heatmapData[dateKey] ?? 0;
-              
+
               return Tooltip(
                 message: '${DateFormat('MMM d, yyyy').format(date)}\n'
                     '${missedClasses == 0 ? "No bunks" : "$missedClasses class${missedClasses > 1 ? 'es' : ''} bunked"}',
@@ -80,7 +81,8 @@ class BunkHeatmapChart extends StatelessWidget {
                     color: _getColor(missedClasses, theme),
                     borderRadius: BorderRadius.circular(4),
                     border: Border.all(
-                      color: theme.colorScheme.outlineVariant.withValues(alpha: 0.3),
+                      color: theme.colorScheme.outlineVariant
+                          .withValues(alpha: 0.3),
                     ),
                   ),
                 ),
@@ -153,7 +155,8 @@ class BunkHeatmapChart extends StatelessWidget {
   }
 
   Color _getColor(int missedClasses, ThemeData theme) {
-    if (missedClasses == 0) return theme.colorScheme.surfaceContainerHighest.withValues(alpha: 0.3);
+    if (missedClasses == 0)
+      return theme.colorScheme.surfaceContainerHighest.withValues(alpha: 0.3);
     if (missedClasses <= 1) return Colors.orange.shade300;
     if (missedClasses <= 2) return Colors.deepOrange.shade400;
     if (missedClasses <= 4) return Colors.red.shade600;

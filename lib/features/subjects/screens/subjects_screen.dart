@@ -34,12 +34,12 @@ class _SubjectsScreenState extends ConsumerState<SubjectsScreen> {
   }
 
   void _onScroll() {
-    if (_scrollController.position.userScrollDirection == 
+    if (_scrollController.position.userScrollDirection ==
         ScrollDirection.reverse) {
       if (_isFabExtended) {
         setState(() => _isFabExtended = false);
       }
-    } else if (_scrollController.position.userScrollDirection == 
+    } else if (_scrollController.position.userScrollDirection ==
         ScrollDirection.forward) {
       if (!_isFabExtended) {
         setState(() => _isFabExtended = true);
@@ -68,44 +68,97 @@ class _SubjectsScreenState extends ConsumerState<SubjectsScreen> {
               floating: true,
               pinned: true,
             ),
-          subjectsAsync.when(
-            data: (subjects) {
-              if (subjects.isEmpty) {
-                return SliverFillRemaining(
-                  hasScrollBody: false,
-                  child: Center(
-                    child: Padding(
-                      padding: const EdgeInsets.all(AppSpacing.xl),
-                      child: Column(
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        children: [
-                          Icon(
-                            Icons.library_books_outlined,
-                            size: 72,
-                            color: Theme.of(context).colorScheme.outlineVariant,
-                          ),
-                          const SizedBox(height: AppSpacing.lg),
-                          Text(
-                            AppStrings.subjectsEmpty,
-                            textAlign: TextAlign.center,
-                            style: Theme.of(context).textTheme.bodyLarge?.copyWith(
-                                  color: Theme.of(context).colorScheme.onSurfaceVariant,
-                                ),
-                          ),
-                          const SizedBox(height: AppSpacing.xl),
-                          FilledButton.icon(
-                            onPressed: () => showSubjectFormSheet(context),
-                            icon: const Icon(Icons.add),
-                            label: const Text('Add First Subject'),
-                          ),
-                        ],
+            subjectsAsync.when(
+              data: (subjects) {
+                if (subjects.isEmpty) {
+                  return SliverFillRemaining(
+                    hasScrollBody: false,
+                    child: Center(
+                      child: Padding(
+                        padding: const EdgeInsets.all(AppSpacing.xl),
+                        child: Column(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: [
+                            Icon(
+                              Icons.library_books_outlined,
+                              size: 72,
+                              color:
+                                  Theme.of(context).colorScheme.outlineVariant,
+                            ),
+                            const SizedBox(height: AppSpacing.lg),
+                            Text(
+                              AppStrings.subjectsEmpty,
+                              textAlign: TextAlign.center,
+                              style: Theme.of(context)
+                                  .textTheme
+                                  .bodyLarge
+                                  ?.copyWith(
+                                    color: Theme.of(context)
+                                        .colorScheme
+                                        .onSurfaceVariant,
+                                  ),
+                            ),
+                            const SizedBox(height: AppSpacing.xl),
+                            FilledButton.icon(
+                              onPressed: () => showSubjectFormSheet(context),
+                              icon: const Icon(Icons.add),
+                              label: const Text('Add First Subject'),
+                            ),
+                          ],
+                        ),
                       ),
+                    ),
+                  );
+                }
+
+                return SliverPadding(
+                  padding: const EdgeInsets.symmetric(
+                    horizontal: AppSpacing.md,
+                    vertical: AppSpacing.md,
+                  ),
+                  sliver: SliverGrid(
+                    gridDelegate:
+                        const SliverGridDelegateWithFixedCrossAxisCount(
+                      crossAxisCount: 2,
+                      mainAxisSpacing: AppSpacing.md,
+                      crossAxisSpacing: AppSpacing.md,
+                      childAspectRatio: 0.85,
+                    ),
+                    delegate: SliverChildBuilderDelegate(
+                      (context, index) {
+                        final delay = index * 100;
+                        return TweenAnimationBuilder<double>(
+                          tween: Tween(begin: 0.0, end: 1.0),
+                          duration: const Duration(milliseconds: 400),
+                          curve: Curves.easeOutCubic,
+                          builder: (context, value, child) {
+                            // Simple delay logic
+                            if (value == 0.0) {
+                              Future.delayed(Duration(milliseconds: delay), () {
+                                if (context.mounted) {
+                                  // Trigger rebuild but TweenAnimationBuilder manages its own animation so this trick isn't perfect.
+                                  // Instead we can animate the transform with a staggered begin value if we write a custom implicit animation,
+                                  // but for simplicity TweenAnimationBuilder starting immediately with a translation looks fine.
+                                }
+                              });
+                            }
+                            // Better staggered approach with tween:
+                            return Transform.translate(
+                              offset: Offset(0, 50 * (1 - value)),
+                              child: Opacity(
+                                opacity: value,
+                                child: SubjectCard(subject: subjects[index]),
+                              ),
+                            );
+                          },
+                        );
+                      },
+                      childCount: subjects.length,
                     ),
                   ),
                 );
-              }
-
-              return SliverPadding(
+              },
+              loading: () => SliverPadding(
                 padding: const EdgeInsets.symmetric(
                   horizontal: AppSpacing.md,
                   vertical: AppSpacing.md,
@@ -118,65 +171,19 @@ class _SubjectsScreenState extends ConsumerState<SubjectsScreen> {
                     childAspectRatio: 0.85,
                   ),
                   delegate: SliverChildBuilderDelegate(
-                    (context, index) {
-                      final delay = index * 100;
-                      return TweenAnimationBuilder<double>(
-                        tween: Tween(begin: 0.0, end: 1.0),
-                        duration: const Duration(milliseconds: 400),
-                        curve: Curves.easeOutCubic,
-                        builder: (context, value, child) {
-                          // Simple delay logic
-                          if (value == 0.0) {
-                            Future.delayed(Duration(milliseconds: delay), () {
-                              if (context.mounted) {
-                                // Trigger rebuild but TweenAnimationBuilder manages its own animation so this trick isn't perfect.
-                                // Instead we can animate the transform with a staggered begin value if we write a custom implicit animation,
-                                // but for simplicity TweenAnimationBuilder starting immediately with a translation looks fine.
-                              }
-                            });
-                          }
-                          // Better staggered approach with tween:
-                          return Transform.translate(
-                            offset: Offset(0, 50 * (1 - value)),
-                            child: Opacity(
-                              opacity: value,
-                              child: SubjectCard(subject: subjects[index]),
-                            ),
-                          );
-                        },
-                      );
-                    },
-                    childCount: subjects.length,
+                    (context, index) => const SubjectCardSkeleton(),
+                    childCount: 6,
                   ),
                 ),
-              );
-            },
-            loading: () => SliverPadding(
-              padding: const EdgeInsets.symmetric(
-                horizontal: AppSpacing.md,
-                vertical: AppSpacing.md,
               ),
-              sliver: SliverGrid(
-                gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-                  crossAxisCount: 2,
-                  mainAxisSpacing: AppSpacing.md,
-                  crossAxisSpacing: AppSpacing.md,
-                  childAspectRatio: 0.85,
-                ),
-                delegate: SliverChildBuilderDelegate(
-                  (context, index) => const SubjectCardSkeleton(),
-                  childCount: 6,
-                ),
+              error: (error, stack) => SliverFillRemaining(
+                child: Center(child: Text('Error: $error')),
               ),
             ),
-            error: (error, stack) => SliverFillRemaining(
-              child: Center(child: Text('Error: $error')),
-            ),
-          ),
-          // Bottom padding to ensure last item is not hidden behind the bottom nav bar or FAB
-          const SliverPadding(padding: EdgeInsets.only(bottom: 80)),
-        ],
-      ),
+            // Bottom padding to ensure last item is not hidden behind the bottom nav bar or FAB
+            const SliverPadding(padding: EdgeInsets.only(bottom: 80)),
+          ],
+        ),
       ),
       floatingActionButton: FloatingActionButton.extended(
         onPressed: () => showSubjectFormSheet(context),

@@ -22,14 +22,16 @@ class AuthService {
 
   AuthService(this._auth);
 
-  Future<UserCredential> signInWithEmailPassword(String email, String password) async {
+  Future<UserCredential> signInWithEmailPassword(
+      String email, String password) async {
     return await _auth.signInWithEmailAndPassword(
       email: email,
       password: password,
     );
   }
 
-  Future<UserCredential> signUpWithEmailPassword(String email, String password) async {
+  Future<UserCredential> signUpWithEmailPassword(
+      String email, String password) async {
     return await _auth.createUserWithEmailAndPassword(
       email: email,
       password: password,
@@ -49,7 +51,8 @@ class AuthService {
     }
 
     // Obtain the auth details from the request
-    final GoogleSignInAuthentication googleAuth = await googleUser.authentication;
+    final GoogleSignInAuthentication googleAuth =
+        await googleUser.authentication;
 
     // Create a new credential
     final OAuthCredential credential = GoogleAuthProvider.credential(

@@ -40,7 +40,7 @@ class AnalyticsScreen extends ConsumerWidget {
                 floating: true,
                 pinned: true,
               ),
-              
+
               // 1. Overview Donut Chart & Cards
               SliverToBoxAdapter(
                 child: Padding(
@@ -112,7 +112,7 @@ class AnalyticsScreen extends ConsumerWidget {
                     ),
                   ),
                 ),
-              
+
               const SliverToBoxAdapter(
                 child: Padding(
                   padding: EdgeInsets.symmetric(horizontal: AppSpacing.md),
@@ -178,7 +178,8 @@ class AnalyticsScreen extends ConsumerWidget {
                   ),
                 ),
                 SliverPadding(
-                  padding: const EdgeInsets.symmetric(horizontal: AppSpacing.md),
+                  padding:
+                      const EdgeInsets.symmetric(horizontal: AppSpacing.md),
                   sliver: SliverList(
                     delegate: SliverChildBuilderDelegate(
                       (context, index) {
@@ -218,16 +219,16 @@ class AnalyticsScreen extends ConsumerWidget {
           Text(
             'Nothing to analyse yet.',
             style: Theme.of(context).textTheme.titleLarge?.copyWith(
-              color: Theme.of(context).colorScheme.onSurface,
-              fontWeight: FontWeight.bold,
-            ),
+                  color: Theme.of(context).colorScheme.onSurface,
+                  fontWeight: FontWeight.bold,
+                ),
           ),
           const SizedBox(height: AppSpacing.xs),
           Text(
             'Start marking attendance to see insights.',
             style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-              color: Theme.of(context).colorScheme.onSurfaceVariant,
-            ),
+                  color: Theme.of(context).colorScheme.onSurfaceVariant,
+                ),
           ),
         ],
       ),

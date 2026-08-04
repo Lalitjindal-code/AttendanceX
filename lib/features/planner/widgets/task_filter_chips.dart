@@ -17,7 +17,8 @@ class TaskFilterChips extends ConsumerWidget {
 
     return SingleChildScrollView(
       scrollDirection: Axis.horizontal,
-      padding: const EdgeInsets.symmetric(horizontal: AppSpacing.md, vertical: AppSpacing.sm),
+      padding: const EdgeInsets.symmetric(
+          horizontal: AppSpacing.md, vertical: AppSpacing.sm),
       child: Row(
         children: [
           // Clear Filters
@@ -28,12 +29,13 @@ class TaskFilterChips extends ConsumerWidget {
                 avatar: const Icon(Icons.close, size: 16),
                 label: const Text('Clear'),
                 onPressed: () {
-                  ref.read(plannerFilterProvider.notifier).state = const PlannerFilter();
+                  ref.read(plannerFilterProvider.notifier).state =
+                      const PlannerFilter();
                   Haptics.selection();
                 },
               ),
             ),
-          
+
           // Completed toggle
           Padding(
             padding: const EdgeInsets.only(right: AppSpacing.sm),
@@ -41,45 +43,47 @@ class TaskFilterChips extends ConsumerWidget {
               label: const Text('Show Completed'),
               selected: !filter.hideCompleted,
               onSelected: (selected) {
-                ref.read(plannerFilterProvider.notifier).state = 
+                ref.read(plannerFilterProvider.notifier).state =
                     filter.copyWith(hideCompleted: !selected);
                 Haptics.selection();
               },
             ),
           ),
-          
+
           // Priorities
           ...TaskPriority.values.map((priority) => Padding(
-            padding: const EdgeInsets.only(right: AppSpacing.sm),
-            child: FilterChip(
-              label: Text(priority.name.substring(0, 1).toUpperCase() + priority.name.substring(1)),
-              selected: filter.priority == priority,
-              onSelected: (selected) {
-                ref.read(plannerFilterProvider.notifier).state = 
-                    filter.copyWith(priority: priority, clearPriority: !selected);
-                Haptics.selection();
-              },
-            ),
-          )),
-          
+                padding: const EdgeInsets.only(right: AppSpacing.sm),
+                child: FilterChip(
+                  label: Text(priority.name.substring(0, 1).toUpperCase() +
+                      priority.name.substring(1)),
+                  selected: filter.priority == priority,
+                  onSelected: (selected) {
+                    ref.read(plannerFilterProvider.notifier).state = filter
+                        .copyWith(priority: priority, clearPriority: !selected);
+                    Haptics.selection();
+                  },
+                ),
+              )),
+
           // Subjects
           if (subjectsAsync.valueOrNull != null)
             ...subjectsAsync.valueOrNull!.map((subject) => Padding(
-              padding: const EdgeInsets.only(right: AppSpacing.sm),
-              child: FilterChip(
-                label: Text(subject.name),
-                selected: filter.subjectId == subject.id,
-                onSelected: (selected) {
-                  ref.read(plannerFilterProvider.notifier).state = 
-                      filter.copyWith(subjectId: subject.id, clearSubject: !selected);
-                  Haptics.selection();
-                },
-                avatar: CircleAvatar(
-                  backgroundColor: Color(subject.colorValue),
-                  radius: 8,
-                ),
-              ),
-            )),
+                  padding: const EdgeInsets.only(right: AppSpacing.sm),
+                  child: FilterChip(
+                    label: Text(subject.name),
+                    selected: filter.subjectId == subject.id,
+                    onSelected: (selected) {
+                      ref.read(plannerFilterProvider.notifier).state =
+                          filter.copyWith(
+                              subjectId: subject.id, clearSubject: !selected);
+                      Haptics.selection();
+                    },
+                    avatar: CircleAvatar(
+                      backgroundColor: Color(subject.colorValue),
+                      radius: 8,
+                    ),
+                  ),
+                )),
         ],
       ),
     );

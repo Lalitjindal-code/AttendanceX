@@ -77,9 +77,6 @@ class ScheduleRepository {
 
   /// Fetches all schedules for a specific day (used by Engine for conflict validation).
   Future<List<Schedule>> getByDay(int dayOfWeek) async {
-    return await _isar.schedules
-        .filter()
-        .dayOfWeekEqualTo(dayOfWeek)
-        .findAll();
+    return await _isar.schedules.filter().dayOfWeekEqualTo(dayOfWeek).findAll();
   }
 }

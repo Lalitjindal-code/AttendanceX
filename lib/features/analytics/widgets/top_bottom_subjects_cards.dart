@@ -12,7 +12,8 @@ class TopBottomSubjectsCards extends StatelessWidget {
     if (subjectStats.length < 2) return const SizedBox();
 
     final sortedStats = List<SubjectStatistics>.from(subjectStats)
-      ..sort((a, b) => b.summary.attendancePercentage.compareTo(a.summary.attendancePercentage));
+      ..sort((a, b) => b.summary.attendancePercentage
+          .compareTo(a.summary.attendancePercentage));
 
     final topSubject = sortedStats.first;
     final bottomSubject = sortedStats.last;

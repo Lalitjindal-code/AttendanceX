@@ -49,8 +49,7 @@ enum GtMode {
         'GT classes are ignored in calculation, like holidays. (Default)',
       GtMode.countAsPresent =>
         'GT classes count as attended. Attendance improves slightly.',
-      GtMode.countAsAbsent =>
-        'GT classes count against your attendance.',
+      GtMode.countAsAbsent => 'GT classes count against your attendance.',
     };
   }
 }

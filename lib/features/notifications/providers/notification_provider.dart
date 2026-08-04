@@ -31,8 +31,10 @@ class NotificationOrchestrator extends _$NotificationOrchestrator {
       scheduleRepo.watchAll(),
       attendanceRepo.watchAll(),
       plannerRepo.watchAllTasks(),
-      (List<Subject> subjects, List<Schedule> schedules, List<Attendance> attendances, List<AcademicTask> tasks) {
-        return _syncNotifications(subjects, schedules, attendances, tasks, settings);
+      (List<Subject> subjects, List<Schedule> schedules,
+          List<Attendance> attendances, List<AcademicTask> tasks) {
+        return _syncNotifications(
+            subjects, schedules, attendances, tasks, settings);
       },
     ).asyncMap((_) async {}); // Convert to Stream<void>
   }
@@ -53,13 +55,13 @@ class NotificationOrchestrator extends _$NotificationOrchestrator {
       settings: settings,
       now: now,
     );
-    
+
     final taskNotifications = PlannerEngine.generateTaskNotifications(
       tasks,
       subjects,
       now,
     );
-    
+
     final allNotifications = [...desiredNotifications, ...taskNotifications];
 
     await NotificationService.instance.syncNotifications(allNotifications);

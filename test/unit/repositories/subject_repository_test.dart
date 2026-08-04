@@ -68,7 +68,8 @@ void main() {
       expect(fetched!.name, 'Advanced Math');
     });
 
-    test('throws DuplicateException when updating to an existing name', () async {
+    test('throws DuplicateException when updating to an existing name',
+        () async {
       final sub1 = Subject()..name = 'Math';
       await repository.create(sub1);
 
@@ -89,9 +90,17 @@ void main() {
       await repository.create(subject);
 
       await isar.writeTxn(() async {
-        await isar.schedules.put(Schedule()..subjectId = subject.id..startTime = '09:00'..endTime = '10:00');
-        await isar.schedules.put(Schedule()..subjectId = subject.id..startTime = '11:00'..endTime = '12:00');
-        await isar.attendances.put(Attendance()..subjectId = subject.id..date = DateTime.now());
+        await isar.schedules.put(Schedule()
+          ..subjectId = subject.id
+          ..startTime = '09:00'
+          ..endTime = '10:00');
+        await isar.schedules.put(Schedule()
+          ..subjectId = subject.id
+          ..startTime = '11:00'
+          ..endTime = '12:00');
+        await isar.attendances.put(Attendance()
+          ..subjectId = subject.id
+          ..date = DateTime.now());
       });
 
       final impact = await repository.getDeletionImpact(subject.id);
@@ -106,8 +115,13 @@ void main() {
       await repository.create(subject);
 
       await isar.writeTxn(() async {
-        await isar.schedules.put(Schedule()..subjectId = subject.id..startTime = '09:00'..endTime = '10:00');
-        await isar.attendances.put(Attendance()..subjectId = subject.id..date = DateTime.now());
+        await isar.schedules.put(Schedule()
+          ..subjectId = subject.id
+          ..startTime = '09:00'
+          ..endTime = '10:00');
+        await isar.attendances.put(Attendance()
+          ..subjectId = subject.id
+          ..date = DateTime.now());
       });
 
       await repository.deletePermanently(subject.id);

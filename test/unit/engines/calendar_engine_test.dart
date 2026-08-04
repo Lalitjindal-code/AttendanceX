@@ -11,27 +11,38 @@ void main() {
     final now = DateTime(2023, 10, 10); // A Tuesday
 
     test('generateMarkers groups correctly and normalizes dates', () {
-      final a1 = Attendance()..date = DateTime(2023, 10, 10, 10, 0)..status = AttendanceStatus.present;
-      final a2 = Attendance()..date = DateTime(2023, 10, 10, 11, 0)..status = AttendanceStatus.absent;
-      final a3 = Attendance()..date = DateTime(2023, 10, 11, 10, 0)..status = AttendanceStatus.medical;
+      final a1 = Attendance()
+        ..date = DateTime(2023, 10, 10, 10, 0)
+        ..status = AttendanceStatus.present;
+      final a2 = Attendance()
+        ..date = DateTime(2023, 10, 10, 11, 0)
+        ..status = AttendanceStatus.absent;
+      final a3 = Attendance()
+        ..date = DateTime(2023, 10, 11, 10, 0)
+        ..status = AttendanceStatus.medical;
 
       final markers = CalendarEngine.generateMarkers([a1, a2, a3]);
       expect(markers.length, 2);
-      
+
       final oct10 = DateTime(2023, 10, 10);
       final oct11 = DateTime(2023, 10, 11);
-      
+
       expect(markers[oct10]?.length, 2);
       expect(markers[oct10]?.contains(AttendanceStatus.present), isTrue);
       expect(markers[oct10]?.contains(AttendanceStatus.absent), isTrue);
-      
+
       expect(markers[oct11]?.length, 1);
       expect(markers[oct11]?.contains(AttendanceStatus.medical), isTrue);
     });
 
-    test('buildDailyDetails handles scheduled and manual attendance properly', () {
-      final s1 = Subject()..id = 1..name = 'Math';
-      final s2 = Subject()..id = 2..name = 'Physics';
+    test('buildDailyDetails handles scheduled and manual attendance properly',
+        () {
+      final s1 = Subject()
+        ..id = 1
+        ..name = 'Math';
+      final s2 = Subject()
+        ..id = 2
+        ..name = 'Physics';
 
       // 2023-10-10 is Tuesday.
       final sch1 = Schedule()
@@ -47,7 +58,7 @@ void main() {
         ..dayOfWeek = DayOfWeek.tuesday.value
         ..startTime = '10:00'
         ..endTime = '11:00';
-      
+
       final sch3 = Schedule()
         ..id = 3
         ..subjectId = 1
@@ -106,14 +117,16 @@ void main() {
 
     test('buildDailyDetails handles leap year and month boundary', () {
       final leapDay = DateTime(2024, 2, 29); // Thursday
-      
-      final sub = Subject()..id = 1..name = 'Bio';
+
+      final sub = Subject()
+        ..id = 1
+        ..name = 'Bio';
       final sch = Schedule()
         ..id = 1
         ..subjectId = 1
         ..dayOfWeek = DayOfWeek.thursday.value
         ..startTime = '09:00';
-        
+
       final att = Attendance()
         ..id = 1
         ..subjectId = 1
@@ -121,7 +134,8 @@ void main() {
         ..date = leapDay
         ..status = AttendanceStatus.present;
 
-      final details = CalendarEngine.buildDailyDetails(leapDay, [sub], [sch], [att]);
+      final details =
+          CalendarEngine.buildDailyDetails(leapDay, [sub], [sch], [att]);
       expect(details.items.length, 1);
       expect(details.items.first.attendance?.status, AttendanceStatus.present);
     });

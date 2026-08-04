@@ -22,7 +22,9 @@ class _AtdDonutChartState extends State<AtdDonutChart> {
 
     final presentCount = widget.summary.totalPresentRecords;
     final absentCount = widget.summary.totalAbsentRecords;
-    final otherCount = widget.summary.totalMedicalRecords + widget.summary.totalHolidayRecords + widget.summary.totalGTRecords;
+    final otherCount = widget.summary.totalMedicalRecords +
+        widget.summary.totalHolidayRecords +
+        widget.summary.totalGTRecords;
 
     final total = presentCount + absentCount + otherCount;
     if (total == 0) return const SizedBox();
@@ -38,11 +40,14 @@ class _AtdDonutChartState extends State<AtdDonutChart> {
               pieTouchData: PieTouchData(
                 touchCallback: (FlTouchEvent event, pieTouchResponse) {
                   setState(() {
-                    if (!event.isInterestedForInteractions || pieTouchResponse == null || pieTouchResponse.touchedSection == null) {
+                    if (!event.isInterestedForInteractions ||
+                        pieTouchResponse == null ||
+                        pieTouchResponse.touchedSection == null) {
                       touchedIndex = -1;
                       return;
                     }
-                    touchedIndex = pieTouchResponse.touchedSection!.touchedSectionIndex;
+                    touchedIndex =
+                        pieTouchResponse.touchedSection!.touchedSectionIndex;
                   });
                 },
               ),
@@ -54,14 +59,16 @@ class _AtdDonutChartState extends State<AtdDonutChart> {
                   color: Colors.green,
                   value: presentCount.toDouble(),
                   title: touchedIndex == 0 ? '$presentCount\nPresent' : '',
-                  titleStyle: theme.textTheme.labelSmall?.copyWith(fontWeight: FontWeight.bold, color: Colors.white),
+                  titleStyle: theme.textTheme.labelSmall?.copyWith(
+                      fontWeight: FontWeight.bold, color: Colors.white),
                   radius: touchedIndex == 0 ? 30.0 : 20.0,
                 ),
                 PieChartSectionData(
                   color: Colors.red,
                   value: absentCount.toDouble(),
                   title: touchedIndex == 1 ? '$absentCount\nAbsent' : '',
-                  titleStyle: theme.textTheme.labelSmall?.copyWith(fontWeight: FontWeight.bold, color: Colors.white),
+                  titleStyle: theme.textTheme.labelSmall?.copyWith(
+                      fontWeight: FontWeight.bold, color: Colors.white),
                   radius: touchedIndex == 1 ? 30.0 : 20.0,
                 ),
                 if (otherCount > 0)
@@ -69,7 +76,8 @@ class _AtdDonutChartState extends State<AtdDonutChart> {
                     color: Colors.blue,
                     value: otherCount.toDouble(),
                     title: touchedIndex == 2 ? '$otherCount\nOther' : '',
-                    titleStyle: theme.textTheme.labelSmall?.copyWith(fontWeight: FontWeight.bold, color: Colors.white),
+                    titleStyle: theme.textTheme.labelSmall?.copyWith(
+                        fontWeight: FontWeight.bold, color: Colors.white),
                     radius: touchedIndex == 2 ? 30.0 : 20.0,
                   ),
               ],

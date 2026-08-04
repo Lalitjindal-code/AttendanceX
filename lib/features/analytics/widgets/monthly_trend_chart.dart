@@ -20,7 +20,7 @@ class MonthlyTrendChart extends StatelessWidget {
     }
 
     // Ensure we have at least 2 points to draw a line, if only 1, we can duplicate it or just draw a dot.
-    final displayTrends = trends.length == 1 
+    final displayTrends = trends.length == 1
         ? [trends.first, trends.first] // Duplicate to draw a straight flat line
         : trends;
 
@@ -30,9 +30,12 @@ class MonthlyTrendChart extends StatelessWidget {
 
     final firstTrend = displayTrends.first;
     final lastTrend = displayTrends.last;
-    final firstMonthStr = DateFormat('MMM yyyy').format(DateTime(firstTrend.year, firstTrend.month));
-    final lastMonthStr = DateFormat('MMM yyyy').format(DateTime(lastTrend.year, lastTrend.month));
-    final semanticLabel = 'Attendance trend over ${displayTrends.length} months. '
+    final firstMonthStr = DateFormat('MMM yyyy')
+        .format(DateTime(firstTrend.year, firstTrend.month));
+    final lastMonthStr = DateFormat('MMM yyyy')
+        .format(DateTime(lastTrend.year, lastTrend.month));
+    final semanticLabel =
+        'Attendance trend over ${displayTrends.length} months. '
         'From $firstMonthStr at ${(firstTrend.percentage * 100).toStringAsFixed(1)}% '
         'to $lastMonthStr at ${(lastTrend.percentage * 100).toStringAsFixed(1)}%.';
 
@@ -41,7 +44,8 @@ class MonthlyTrendChart extends StatelessWidget {
       child: AspectRatio(
         aspectRatio: 1.7,
         child: Padding(
-          padding: const EdgeInsets.only(right: 18, left: 12, top: 24, bottom: 12),
+          padding:
+              const EdgeInsets.only(right: 18, left: 12, top: 24, bottom: 12),
           child: LineChart(
             LineChartData(
               gridData: const FlGridData(
@@ -52,8 +56,10 @@ class MonthlyTrendChart extends StatelessWidget {
               ),
               titlesData: FlTitlesData(
                 show: true,
-                rightTitles: const AxisTitles(sideTitles: SideTitles(showTitles: false)),
-                topTitles: const AxisTitles(sideTitles: SideTitles(showTitles: false)),
+                rightTitles:
+                    const AxisTitles(sideTitles: SideTitles(showTitles: false)),
+                topTitles:
+                    const AxisTitles(sideTitles: SideTitles(showTitles: false)),
                 bottomTitles: AxisTitles(
                   sideTitles: SideTitles(
                     showTitles: true,
@@ -61,7 +67,8 @@ class MonthlyTrendChart extends StatelessWidget {
                     interval: 1,
                     getTitlesWidget: (value, meta) {
                       final index = value.toInt();
-                      if (index < 0 || index >= displayTrends.length) return const SizedBox.shrink();
+                      if (index < 0 || index >= displayTrends.length)
+                        return const SizedBox.shrink();
                       final trend = displayTrends[index];
                       final date = DateTime(trend.year, trend.month);
                       return SideTitleWidget(
@@ -79,7 +86,8 @@ class MonthlyTrendChart extends StatelessWidget {
                     showTitles: true,
                     interval: 20,
                     getTitlesWidget: (value, meta) {
-                      return Text('${value.toInt()}%', style: const TextStyle(fontSize: 10));
+                      return Text('${value.toInt()}%',
+                          style: const TextStyle(fontSize: 10));
                     },
                     reservedSize: 42,
                   ),
@@ -103,7 +111,10 @@ class MonthlyTrendChart extends StatelessWidget {
                   dotData: const FlDotData(show: true),
                   belowBarData: BarAreaData(
                     show: true,
-                    color: Theme.of(context).colorScheme.primary.withValues(alpha: 0.2),
+                    color: Theme.of(context)
+                        .colorScheme
+                        .primary
+                        .withValues(alpha: 0.2),
                   ),
                 ),
               ],

@@ -60,8 +60,10 @@ class AppSettings {
     return AppSettings(
       themeMode: themeMode ?? this.themeMode,
       isAmoled: isAmoled ?? this.isAmoled,
-      defaultGoalPercentage: defaultGoalPercentage ?? this.defaultGoalPercentage,
-      medicalCountsAsPresent: medicalCountsAsPresent ?? this.medicalCountsAsPresent,
+      defaultGoalPercentage:
+          defaultGoalPercentage ?? this.defaultGoalPercentage,
+      medicalCountsAsPresent:
+          medicalCountsAsPresent ?? this.medicalCountsAsPresent,
       isOnboardingComplete: isOnboardingComplete ?? this.isOnboardingComplete,
       gtMode: gtMode ?? this.gtMode,
       semesterStartDate: semesterStartDate ?? this.semesterStartDate,
@@ -69,8 +71,10 @@ class AppSettings {
       notificationsEnabled: notificationsEnabled ?? this.notificationsEnabled,
       dailyReminderEnabled: dailyReminderEnabled ?? this.dailyReminderEnabled,
       dailyReminderTime: dailyReminderTime ?? this.dailyReminderTime,
-      lectureReminderMinutes: lectureReminderMinutes ?? this.lectureReminderMinutes,
-      defaultTaskReminderOffsets: defaultTaskReminderOffsets ?? this.defaultTaskReminderOffsets,
+      lectureReminderMinutes:
+          lectureReminderMinutes ?? this.lectureReminderMinutes,
+      defaultTaskReminderOffsets:
+          defaultTaskReminderOffsets ?? this.defaultTaskReminderOffsets,
       lastBackupDate: lastBackupDate ?? this.lastBackupDate,
     );
   }
@@ -96,20 +100,31 @@ class AppSettings {
 
   factory AppSettings.fromMap(Map<String, dynamic> map) {
     return AppSettings(
-      themeMode: ThemeMode.values.firstWhere((e) => e.name == map['themeMode'], orElse: () => ThemeMode.system),
+      themeMode: ThemeMode.values.firstWhere((e) => e.name == map['themeMode'],
+          orElse: () => ThemeMode.system),
       isAmoled: map['isAmoled'] ?? false,
-      defaultGoalPercentage: map['defaultGoalPercentage'] ?? AppConfig.defaultGoalPercentage,
+      defaultGoalPercentage:
+          map['defaultGoalPercentage'] ?? AppConfig.defaultGoalPercentage,
       medicalCountsAsPresent: map['medicalCountsAsPresent'] ?? false,
       isOnboardingComplete: map['isOnboardingComplete'] ?? false,
       gtMode: GtMode.fromKey(map['gtMode'] ?? GtMode.exclude.key),
-      semesterStartDate: map['semesterStartDate'] != null ? DateTime.fromMillisecondsSinceEpoch(map['semesterStartDate']) : null,
-      semesterEndDate: map['semesterEndDate'] != null ? DateTime.fromMillisecondsSinceEpoch(map['semesterEndDate']) : null,
+      semesterStartDate: map['semesterStartDate'] != null
+          ? DateTime.fromMillisecondsSinceEpoch(map['semesterStartDate'])
+          : null,
+      semesterEndDate: map['semesterEndDate'] != null
+          ? DateTime.fromMillisecondsSinceEpoch(map['semesterEndDate'])
+          : null,
       notificationsEnabled: map['notificationsEnabled'] ?? true,
       dailyReminderEnabled: map['dailyReminderEnabled'] ?? true,
-      dailyReminderTime: map['dailyReminderTime'] ?? AppConfig.defaultDailyReminderTime,
-      lectureReminderMinutes: map['lectureReminderMinutes'] ?? AppConfig.defaultLectureReminderMinutes,
-      defaultTaskReminderOffsets: List<int>.from(map['defaultTaskReminderOffsets'] ?? [60, 1440]),
-      lastBackupDate: map['lastBackupDate'] != null ? DateTime.fromMillisecondsSinceEpoch(map['lastBackupDate']) : null,
+      dailyReminderTime:
+          map['dailyReminderTime'] ?? AppConfig.defaultDailyReminderTime,
+      lectureReminderMinutes: map['lectureReminderMinutes'] ??
+          AppConfig.defaultLectureReminderMinutes,
+      defaultTaskReminderOffsets:
+          List<int>.from(map['defaultTaskReminderOffsets'] ?? [60, 1440]),
+      lastBackupDate: map['lastBackupDate'] != null
+          ? DateTime.fromMillisecondsSinceEpoch(map['lastBackupDate'])
+          : null,
     );
   }
 }

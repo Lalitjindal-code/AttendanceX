@@ -65,13 +65,21 @@ class Attendance {
   factory Attendance.fromMap(Map<String, dynamic> map) {
     return Attendance()
       ..id = map['id'] ?? Isar.autoIncrement
-      ..date = map['date'] != null ? DateTime.fromMillisecondsSinceEpoch(map['date']) : DateTime.now()
+      ..date = map['date'] != null
+          ? DateTime.fromMillisecondsSinceEpoch(map['date'])
+          : DateTime.now()
       ..subjectId = map['subjectId'] ?? 0
       ..scheduleId = map['scheduleId'] ?? 0
-      ..status = AttendanceStatus.values.firstWhere((e) => e.name == map['status'], orElse: () => AttendanceStatus.pending)
+      ..status = AttendanceStatus.values.firstWhere(
+          (e) => e.name == map['status'],
+          orElse: () => AttendanceStatus.pending)
       ..notes = map['notes']
       ..holidayReason = map['holidayReason']
-      ..createdAt = map['createdAt'] != null ? DateTime.fromMillisecondsSinceEpoch(map['createdAt']) : DateTime.now()
-      ..updatedAt = map['updatedAt'] != null ? DateTime.fromMillisecondsSinceEpoch(map['updatedAt']) : DateTime.now();
+      ..createdAt = map['createdAt'] != null
+          ? DateTime.fromMillisecondsSinceEpoch(map['createdAt'])
+          : DateTime.now()
+      ..updatedAt = map['updatedAt'] != null
+          ? DateTime.fromMillisecondsSinceEpoch(map['updatedAt'])
+          : DateTime.now();
   }
 }

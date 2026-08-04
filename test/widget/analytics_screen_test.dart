@@ -26,7 +26,8 @@ void main() {
   Widget createWidget(AnalyticsState state) {
     return ProviderScope(
       overrides: [
-        analyticsNotifierProvider.overrideWith(() => FakeAnalyticsNotifier(state)),
+        analyticsNotifierProvider
+            .overrideWith(() => FakeAnalyticsNotifier(state)),
       ],
       child: const MaterialApp(
         home: AnalyticsScreen(),
@@ -47,7 +48,8 @@ void main() {
     expect(find.text('Nothing to analyse yet.'), findsOneWidget);
   });
 
-  testWidgets('Analytics renders loaded state with subject stats', (WidgetTester tester) async {
+  testWidgets('Analytics renders loaded state with subject stats',
+      (WidgetTester tester) async {
     const mockSummary = SubjectAttendanceSummary(
       subjectId: 1,
       effectivePresent: 45,
@@ -116,8 +118,10 @@ void main() {
     expect(find.text('Overview', skipOffstage: false), findsOneWidget);
     expect(find.text('Attendance Trend', skipOffstage: false), findsOneWidget);
     expect(find.text('Subject Breakdown', skipOffstage: false), findsOneWidget);
-    expect(find.text('Phy', skipOffstage: false), findsOneWidget); // Truncated subject name
-    expect(find.text('90%', skipOffstage: false), findsOneWidget); // Donut chart overall percentage
+    expect(find.text('Phy', skipOffstage: false),
+        findsOneWidget); // Truncated subject name
+    expect(find.text('90%', skipOffstage: false),
+        findsOneWidget); // Donut chart overall percentage
     expect(find.text('Bunks Available', skipOffstage: false), findsOneWidget);
     expect(find.text('5', skipOffstage: false), findsOneWidget); // Bunks value
   });

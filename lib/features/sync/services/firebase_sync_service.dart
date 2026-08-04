@@ -38,7 +38,7 @@ class FirebaseSyncService {
   }
 
   /// Performs a full backup of the local Isar database to Firestore.
-  /// 
+  ///
   /// This should be called automatically whenever local data changes.
   Future<void> backupData() async {
     final user = _auth.currentUser;
@@ -46,7 +46,11 @@ class FirebaseSyncService {
 
     try {
       final uid = user.uid;
-      final backupRef = _firestore.collection('users').doc(uid).collection('backups').doc('latest');
+      final backupRef = _firestore
+          .collection('users')
+          .doc(uid)
+          .collection('backups')
+          .doc('latest');
 
       // Fetch all local data
       final subjects = await _isar.subjects.where().findAll();
@@ -70,7 +74,7 @@ class FirebaseSyncService {
   }
 
   /// Restores data from Firestore to the local Isar database.
-  /// 
+  ///
   /// This should be called when a user logs in.
   Future<void> restoreData() async {
     final user = _auth.currentUser;
@@ -78,7 +82,11 @@ class FirebaseSyncService {
 
     try {
       final uid = user.uid;
-      final backupRef = _firestore.collection('users').doc(uid).collection('backups').doc('latest');
+      final backupRef = _firestore
+          .collection('users')
+          .doc(uid)
+          .collection('backups')
+          .doc('latest');
 
       final snapshot = await backupRef.get();
       if (!snapshot.exists) return;
@@ -86,13 +94,17 @@ class FirebaseSyncService {
       final data = snapshot.data();
       if (data == null) return;
 
-      final subjectsData = List<Map<String, dynamic>>.from(data['subjects'] ?? []);
-      final attendancesData = List<Map<String, dynamic>>.from(data['attendances'] ?? []);
-      final schedulesData = List<Map<String, dynamic>>.from(data['schedules'] ?? []);
+      final subjectsData =
+          List<Map<String, dynamic>>.from(data['subjects'] ?? []);
+      final attendancesData =
+          List<Map<String, dynamic>>.from(data['attendances'] ?? []);
+      final schedulesData =
+          List<Map<String, dynamic>>.from(data['schedules'] ?? []);
       final tasksData = List<Map<String, dynamic>>.from(data['tasks'] ?? []);
 
       final subjects = subjectsData.map((e) => Subject.fromMap(e)).toList();
-      final attendances = attendancesData.map((e) => Attendance.fromMap(e)).toList();
+      final attendances =
+          attendancesData.map((e) => Attendance.fromMap(e)).toList();
       final schedules = schedulesData.map((e) => Schedule.fromMap(e)).toList();
       final tasks = tasksData.map((e) => AcademicTask.fromMap(e)).toList();
 

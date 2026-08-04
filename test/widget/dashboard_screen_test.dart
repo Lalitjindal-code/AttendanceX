@@ -18,7 +18,7 @@ import '../helpers/golden_helper.dart';
 
 class FakeDashboardNotifier extends DashboardNotifier {
   final DashboardState _mockState;
-  
+
   AttendanceStatus? lastMarkedStatus;
   int? lastMarkedScheduleId;
 
@@ -30,7 +30,8 @@ class FakeDashboardNotifier extends DashboardNotifier {
   }
 
   @override
-  Future<void> markAttendance(int scheduleId, int subjectId, AttendanceStatus status) async {
+  Future<void> markAttendance(
+      int scheduleId, int subjectId, AttendanceStatus status) async {
     lastMarkedScheduleId = scheduleId;
     lastMarkedStatus = status;
   }
@@ -53,7 +54,7 @@ void main() {
     totalGTRecords: 0,
     totalPendingRecords: 0,
   );
-  
+
   const defaultSuggestion = SmartSuggestion(
     type: SmartSuggestionType.onTrack,
     subjectId: null,
@@ -64,8 +65,14 @@ void main() {
   final loadedState = DashboardState(
     pendingLectures: [
       LectureCardModel(
-        subject: Subject()..name = 'Math'..colorValue = Colors.blue.toARGB32(),
-        schedule: Schedule()..id = 1..type = LectureType.lecture..startTime = '10:00'..endTime = '11:00',
+        subject: Subject()
+          ..name = 'Math'
+          ..colorValue = Colors.blue.toARGB32(),
+        schedule: Schedule()
+          ..id = 1
+          ..type = LectureType.lecture
+          ..startTime = '10:00'
+          ..endTime = '11:00',
         attendance: null,
         summary: defaultSummary,
         suggestion: defaultSuggestion,
@@ -107,7 +114,8 @@ void main() {
 
       await tester.pumpWidget(ProviderScope(
         overrides: [
-          dashboardNotifierProvider.overrideWith(() => FakeDashboardNotifier(state)),
+          dashboardNotifierProvider
+              .overrideWith(() => FakeDashboardNotifier(state)),
         ],
         child: const MaterialApp(home: DashboardScreen()),
       ));
@@ -117,7 +125,8 @@ void main() {
       expect(find.text('No attendance data yet.'), findsOneWidget);
     });
 
-    testWidgets('Dashboard interactions - Mark Present/Absent/Edit', (WidgetTester tester) async {
+    testWidgets('Dashboard interactions - Mark Present/Absent/Edit',
+        (WidgetTester tester) async {
       final fakeNotifier = FakeDashboardNotifier(loadedState);
 
       await tester.pumpWidget(ProviderScope(
@@ -151,8 +160,14 @@ void main() {
         pendingLectures: const [],
         markedLectures: [
           LectureCardModel(
-            subject: Subject()..name = 'Math'..colorValue = Colors.blue.toARGB32(),
-            schedule: Schedule()..id = 1..type = LectureType.lecture..startTime = '10:00'..endTime = '11:00',
+            subject: Subject()
+              ..name = 'Math'
+              ..colorValue = Colors.blue.toARGB32(),
+            schedule: Schedule()
+              ..id = 1
+              ..type = LectureType.lecture
+              ..startTime = '10:00'
+              ..endTime = '11:00',
             attendance: Attendance()..status = AttendanceStatus.present,
             summary: defaultSummary,
             suggestion: defaultSuggestion,
@@ -177,9 +192,10 @@ void main() {
       await tester.pumpAndSettle();
 
       expect(find.text('Present', skipOffstage: false), findsWidgets);
-      
+
       // Scroll to Edit Attendance button if necessary
-      await tester.ensureVisible(find.text('Edit Attendance', skipOffstage: false));
+      await tester
+          .ensureVisible(find.text('Edit Attendance', skipOffstage: false));
       await tester.pumpAndSettle();
 
       // Tap Edit
@@ -190,7 +206,8 @@ void main() {
       expect(find.text('Absent'), findsWidgets); // Found in bottom sheet
     });
 
-    testWidgets('Dashboard text scale factor regression loop', (WidgetTester tester) async {
+    testWidgets('Dashboard text scale factor regression loop',
+        (WidgetTester tester) async {
       final textScaleFactors = [1.0, 1.3, 1.5, 2.0];
 
       for (final scale in textScaleFactors) {
@@ -202,7 +219,8 @@ void main() {
           child: MaterialApp(
             builder: (context, child) {
               return MediaQuery(
-                data: MediaQuery.of(context).copyWith(textScaler: TextScaler.linear(scale)),
+                data: MediaQuery.of(context)
+                    .copyWith(textScaler: TextScaler.linear(scale)),
                 child: child!,
               );
             },
@@ -210,8 +228,8 @@ void main() {
           ),
         ));
         await tester.pumpAndSettle();
-        
-        // Ensure no flex overflow exceptions are thrown. 
+
+        // Ensure no flex overflow exceptions are thrown.
         // Flutter tester throws automatically on overflow during pump if exceptions are not caught.
         expect(tester.takeException(), isNull);
       }

@@ -28,12 +28,14 @@ Future<Subject?> subject(SubjectRef ref, int id) {
 }
 
 @riverpod
-Stream<SubjectAttendanceSummary> subjectSummary(SubjectSummaryRef ref, int subjectId) async* {
+Stream<SubjectAttendanceSummary> subjectSummary(
+    SubjectSummaryRef ref, int subjectId) async* {
   final attendanceRepo = ref.watch(attendanceRepositoryProvider);
   final settings = ref.watch(settingsProvider);
   final stream = attendanceRepo.watchBySubject(subjectId);
-  
+
   await for (final attendances in stream) {
-    yield AttendanceEngine.calculateSubjectSummary(subjectId, attendances, settings);
+    yield AttendanceEngine.calculateSubjectSummary(
+        subjectId, attendances, settings);
   }
 }

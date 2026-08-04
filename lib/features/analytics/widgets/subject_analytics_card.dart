@@ -64,10 +64,11 @@ class SubjectAnalyticsCard extends StatelessWidget {
                   ),
                 ),
                 Container(
-                  padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+                  padding:
+                      const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
                   decoration: BoxDecoration(
-                    color: isSafe 
-                        ? theme.colorScheme.primaryContainer 
+                    color: isSafe
+                        ? theme.colorScheme.primaryContainer
                         : theme.colorScheme.errorContainer,
                     borderRadius: BorderRadius.circular(12),
                   ),
@@ -75,8 +76,8 @@ class SubjectAnalyticsCard extends StatelessWidget {
                     '${overallPct.toStringAsFixed(1)}%',
                     style: theme.textTheme.titleMedium?.copyWith(
                       fontWeight: FontWeight.bold,
-                      color: isSafe 
-                          ? theme.colorScheme.onPrimaryContainer 
+                      color: isSafe
+                          ? theme.colorScheme.onPrimaryContainer
                           : theme.colorScheme.onErrorContainer,
                     ),
                   ),
@@ -84,19 +85,30 @@ class SubjectAnalyticsCard extends StatelessWidget {
               ],
             ),
             const SizedBox(height: AppSpacing.lg),
-            _buildTypeRow(context, 'Lectures', lecturePct, stats.lectureSummary.effectivePresent, stats.lectureSummary.effectiveTotal),
+            _buildTypeRow(
+                context,
+                'Lectures',
+                lecturePct,
+                stats.lectureSummary.effectivePresent,
+                stats.lectureSummary.effectiveTotal),
             const SizedBox(height: AppSpacing.md),
-            _buildTypeRow(context, 'Labs', labPct, stats.labSummary.effectivePresent, stats.labSummary.effectiveTotal),
+            _buildTypeRow(
+                context,
+                'Labs',
+                labPct,
+                stats.labSummary.effectivePresent,
+                stats.labSummary.effectiveTotal),
           ],
         ),
       ),
     );
   }
 
-  Widget _buildTypeRow(BuildContext context, String title, double pct, int present, int total) {
+  Widget _buildTypeRow(
+      BuildContext context, String title, double pct, int present, int total) {
     final theme = Theme.of(context);
     final validTotal = total > 0;
-    
+
     return Row(
       children: [
         SizedBox(

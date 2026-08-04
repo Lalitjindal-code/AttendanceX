@@ -13,7 +13,7 @@ void main() {
     setUp(() async {
       TestWidgetsFlutterBinding.ensureInitialized();
       engine = BackupEngine(LocalStorageRepository());
-      
+
       // We will use a local file in the test directory
       final dir = Directory.systemTemp.createTempSync('attendify_test');
       testPath = '${dir.path}/test_backup.atfy';

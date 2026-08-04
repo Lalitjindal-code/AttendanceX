@@ -27,20 +27,20 @@ class ScheduleTimelineCard extends ConsumerWidget {
   void _markAttendance(WidgetRef ref, AttendanceStatus status) {
     final now = DateTime.now();
     final todayUtc = DateTime.utc(now.year, now.month, now.day);
-    
+
     // We only allow marking for today from the schedule view for quick action
     if (now.weekday != schedule.dayOfWeek) {
-      // It's not today. We probably shouldn't allow marking attendance for future/past days here easily 
+      // It's not today. We probably shouldn't allow marking attendance for future/past days here easily
       // without a date picker. But for simplicity, we could assume 'today'.
       // However, usually timetable only shows quick mark for today.
     }
-    
+
     final attendance = Attendance()
       ..scheduleId = schedule.id
       ..subjectId = subject.id
       ..date = todayUtc
       ..status = status;
-      
+
     ref.read(attendanceRepositoryProvider).upsertAttendance(attendance);
     Haptics.light();
   }
@@ -87,28 +87,30 @@ class ScheduleTimelineCard extends ConsumerWidget {
                 Text(
                   schedule.startTime,
                   style: Theme.of(context).textTheme.titleSmall?.copyWith(
-                    fontWeight: FontWeight.bold,
-                  ),
+                        fontWeight: FontWeight.bold,
+                      ),
                 ),
                 Text(
                   schedule.endTime,
                   style: Theme.of(context).textTheme.bodySmall?.copyWith(
-                    color: Theme.of(context).colorScheme.onSurfaceVariant,
-                  ),
+                        color: Theme.of(context).colorScheme.onSurfaceVariant,
+                      ),
                 ),
               ],
             ),
           ),
-          
+
           const SizedBox(width: AppSpacing.md),
-          
+
           // Timeline indicator
           Column(
             children: [
               Container(
                 width: 2,
                 height: 16,
-                color: isFirst ? Colors.transparent : Theme.of(context).colorScheme.outlineVariant,
+                color: isFirst
+                    ? Colors.transparent
+                    : Theme.of(context).colorScheme.outlineVariant,
               ),
               Container(
                 width: 12,
@@ -125,23 +127,25 @@ class ScheduleTimelineCard extends ConsumerWidget {
               Expanded(
                 child: Container(
                   width: 2,
-                  color: isLast ? Colors.transparent : Theme.of(context).colorScheme.outlineVariant,
+                  color: isLast
+                      ? Colors.transparent
+                      : Theme.of(context).colorScheme.outlineVariant,
                 ),
               ),
             ],
           ),
-          
+
           const SizedBox(width: AppSpacing.md),
-          
+
           // Card content
           Expanded(
             child: Padding(
               padding: const EdgeInsets.only(bottom: AppSpacing.md),
               child: Dismissible(
                 key: ValueKey('schedule_${schedule.id}'),
-                direction: DateTime.now().weekday == schedule.dayOfWeek 
-                  ? DismissDirection.horizontal 
-                  : DismissDirection.none,
+                direction: DateTime.now().weekday == schedule.dayOfWeek
+                    ? DismissDirection.horizontal
+                    : DismissDirection.none,
                 confirmDismiss: (direction) async {
                   if (direction == DismissDirection.startToEnd) {
                     _markPresentWithFeedback(context, ref);
@@ -158,17 +162,22 @@ class ScheduleTimelineCard extends ConsumerWidget {
                   ),
                   alignment: Alignment.centerLeft,
                   padding: const EdgeInsets.only(left: 24),
-                  child: const Icon(Icons.check_circle, color: Colors.white, size: 32),
+                  child: const Icon(Icons.check_circle,
+                      color: Colors.white, size: 32),
                 ),
                 secondaryBackground: Container(
                   margin: const EdgeInsets.symmetric(vertical: 4),
                   decoration: BoxDecoration(
-                    color: Theme.of(context).colorScheme.error.withValues(alpha: 0.8),
+                    color: Theme.of(context)
+                        .colorScheme
+                        .error
+                        .withValues(alpha: 0.8),
                     borderRadius: BorderRadius.circular(16),
                   ),
                   alignment: Alignment.centerRight,
                   padding: const EdgeInsets.only(right: 24),
-                  child: const Icon(Icons.cancel, color: Colors.white, size: 32),
+                  child:
+                      const Icon(Icons.cancel, color: Colors.white, size: 32),
                 ),
                 child: Card(
                   elevation: 0,
@@ -193,13 +202,17 @@ class ScheduleTimelineCard extends ConsumerWidget {
                               Expanded(
                                 child: Text(
                                   subject.name,
-                                  style: Theme.of(context).textTheme.titleMedium?.copyWith(
-                                    fontWeight: FontWeight.bold,
-                                  ),
+                                  style: Theme.of(context)
+                                      .textTheme
+                                      .titleMedium
+                                      ?.copyWith(
+                                        fontWeight: FontWeight.bold,
+                                      ),
                                 ),
                               ),
                               Container(
-                                padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+                                padding: const EdgeInsets.symmetric(
+                                    horizontal: 8, vertical: 4),
                                 decoration: BoxDecoration(
                                   color: subjectColor.withValues(alpha: 0.2),
                                   borderRadius: BorderRadius.circular(8),
@@ -216,22 +229,35 @@ class ScheduleTimelineCard extends ConsumerWidget {
                             ],
                           ),
                           const SizedBox(height: AppSpacing.xs),
-                          if (schedule.room != null || schedule.facultyOverride != null) ...[
+                          if (schedule.room != null ||
+                              schedule.facultyOverride != null) ...[
                             Row(
                               children: [
                                 if (schedule.room != null) ...[
-                                  Icon(Icons.location_on_outlined, size: 14, color: Theme.of(context).colorScheme.onSurfaceVariant),
+                                  Icon(Icons.location_on_outlined,
+                                      size: 14,
+                                      color: Theme.of(context)
+                                          .colorScheme
+                                          .onSurfaceVariant),
                                   const SizedBox(width: 4),
-                                  Text(schedule.room!, style: Theme.of(context).textTheme.bodySmall),
+                                  Text(schedule.room!,
+                                      style: Theme.of(context)
+                                          .textTheme
+                                          .bodySmall),
                                   const SizedBox(width: AppSpacing.sm),
                                 ],
                                 if (schedule.facultyOverride != null) ...[
-                                  Icon(Icons.person_outline, size: 14, color: Theme.of(context).colorScheme.onSurfaceVariant),
+                                  Icon(Icons.person_outline,
+                                      size: 14,
+                                      color: Theme.of(context)
+                                          .colorScheme
+                                          .onSurfaceVariant),
                                   const SizedBox(width: 4),
                                   Expanded(
                                     child: Text(
                                       schedule.facultyOverride!,
-                                      style: Theme.of(context).textTheme.bodySmall,
+                                      style:
+                                          Theme.of(context).textTheme.bodySmall,
                                       overflow: TextOverflow.ellipsis,
                                     ),
                                   ),

@@ -49,7 +49,9 @@ class BackupMetadata {
       version: map['version'] ?? 1,
       appVersion: map['appVersion'] ?? '1.0.0',
       databaseVersion: map['databaseVersion'] ?? 1,
-      createdAt: map['createdAt'] != null ? DateTime.tryParse(map['createdAt']) ?? DateTime.now() : DateTime.now(),
+      createdAt: map['createdAt'] != null
+          ? DateTime.tryParse(map['createdAt']) ?? DateTime.now()
+          : DateTime.now(),
       platform: map['platform'] ?? 'unknown',
       checksum: map['checksum'] ?? '',
       compressionType: map['compressionType'] ?? 'gzip',
@@ -96,19 +98,26 @@ class BackupModel {
   factory BackupModel.fromMap(Map<String, dynamic> map) {
     final metadata = BackupMetadata.fromMap(map['metadata'] ?? {});
     final data = map['data'] ?? {};
-    
+
     return BackupModel(
       metadata: metadata,
-      subjects: List<Subject>.from((data['subjects'] ?? []).map((x) => Subject.fromMap(x))),
-      schedules: List<Schedule>.from((data['schedules'] ?? []).map((x) => Schedule.fromMap(x))),
-      attendanceRecords: List<Attendance>.from((data['attendanceRecords'] ?? []).map((x) => Attendance.fromMap(x))),
-      attendanceHistory: List<AttendanceHistory>.from((data['attendanceHistory'] ?? []).map((x) => AttendanceHistory.fromMap(x))),
-      tasks: List<AcademicTask>.from((data['tasks'] ?? []).map((x) => AcademicTask.fromMap(x))),
+      subjects: List<Subject>.from(
+          (data['subjects'] ?? []).map((x) => Subject.fromMap(x))),
+      schedules: List<Schedule>.from(
+          (data['schedules'] ?? []).map((x) => Schedule.fromMap(x))),
+      attendanceRecords: List<Attendance>.from(
+          (data['attendanceRecords'] ?? []).map((x) => Attendance.fromMap(x))),
+      attendanceHistory: List<AttendanceHistory>.from(
+          (data['attendanceHistory'] ?? [])
+              .map((x) => AttendanceHistory.fromMap(x))),
+      tasks: List<AcademicTask>.from(
+          (data['tasks'] ?? []).map((x) => AcademicTask.fromMap(x))),
       settings: AppSettings.fromMap(data['settings'] ?? {}),
     );
   }
 
   String toJson() => json.encode(toMap());
 
-  factory BackupModel.fromJson(String source) => BackupModel.fromMap(json.decode(source));
+  factory BackupModel.fromJson(String source) =>
+      BackupModel.fromMap(json.decode(source));
 }

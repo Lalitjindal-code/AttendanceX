@@ -10,11 +10,11 @@ class AcademicTask {
   AcademicTask();
 
   Id id = Isar.autoIncrement;
-  
+
   late String title;
-  
+
   String? description;
-  
+
   @Index()
   int subjectId = 0;
 
@@ -22,7 +22,7 @@ class AcademicTask {
 
   @Enumerated(EnumType.name)
   late TaskType type;
-  
+
   @Enumerated(EnumType.name)
   TaskPriority priority = TaskPriority.medium;
 
@@ -44,7 +44,7 @@ class AcademicTask {
   String? notes;
 
   DateTime createdAt = DateTime.now();
-  
+
   DateTime updatedAt = DateTime.now();
 
   DateTime? completedAt;
@@ -89,17 +89,29 @@ class AcademicTask {
       ..description = map['description']
       ..subjectId = map['subjectId'] ?? 0
       ..facultyId = map['facultyId']
-      ..type = TaskType.values.firstWhere((e) => e.name == map['type'], orElse: () => TaskType.assignment)
-      ..priority = TaskPriority.values.firstWhere((e) => e.name == map['priority'], orElse: () => TaskPriority.medium)
-      ..status = TaskStatus.values.firstWhere((e) => e.name == map['status'], orElse: () => TaskStatus.pending)
-      ..dueDate = map['dueDate'] != null ? DateTime.fromMillisecondsSinceEpoch(map['dueDate']) : DateTime.now()
+      ..type = TaskType.values.firstWhere((e) => e.name == map['type'],
+          orElse: () => TaskType.assignment)
+      ..priority = TaskPriority.values.firstWhere(
+          (e) => e.name == map['priority'],
+          orElse: () => TaskPriority.medium)
+      ..status = TaskStatus.values.firstWhere((e) => e.name == map['status'],
+          orElse: () => TaskStatus.pending)
+      ..dueDate = map['dueDate'] != null
+          ? DateTime.fromMillisecondsSinceEpoch(map['dueDate'])
+          : DateTime.now()
       ..dueTime = map['dueTime']
       ..estimatedDuration = map['estimatedDuration']
       ..repeatRule = map['repeatRule']
       ..notes = map['notes']
-      ..createdAt = map['createdAt'] != null ? DateTime.fromMillisecondsSinceEpoch(map['createdAt']) : DateTime.now()
-      ..updatedAt = map['updatedAt'] != null ? DateTime.fromMillisecondsSinceEpoch(map['updatedAt']) : DateTime.now()
-      ..completedAt = map['completedAt'] != null ? DateTime.fromMillisecondsSinceEpoch(map['completedAt']) : null
+      ..createdAt = map['createdAt'] != null
+          ? DateTime.fromMillisecondsSinceEpoch(map['createdAt'])
+          : DateTime.now()
+      ..updatedAt = map['updatedAt'] != null
+          ? DateTime.fromMillisecondsSinceEpoch(map['updatedAt'])
+          : DateTime.now()
+      ..completedAt = map['completedAt'] != null
+          ? DateTime.fromMillisecondsSinceEpoch(map['completedAt'])
+          : null
       ..attachments = List<String>.from(map['attachments'] ?? [])
       ..submissionUrls = List<String>.from(map['submissionUrls'] ?? [])
       ..notificationOffsets = List<int>.from(map['notificationOffsets'] ?? []);

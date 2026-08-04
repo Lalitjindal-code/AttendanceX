@@ -65,193 +65,209 @@ class DashboardScreen extends ConsumerWidget {
               slivers: [
                 SliverAppBar.large(
                   title: Text(_getGreeting()),
-                actions: [
-                  IconButton(
-                    icon: const Icon(Icons.notifications_none_rounded),
-                    tooltip: 'Notifications',
-                    onPressed: () {},
+                  actions: [
+                    IconButton(
+                      icon: const Icon(Icons.notifications_none_rounded),
+                      tooltip: 'Notifications',
+                      onPressed: () {},
+                    ),
+                  ],
+                ),
+                const SliverToBoxAdapter(
+                  child: DashboardHeader(),
+                ),
+
+                // Hero Attendance Health Card
+                SliverToBoxAdapter(
+                  child: HeroHealthCard(state: state),
+                ),
+
+                // Quick Stats Row
+                SliverToBoxAdapter(
+                  child: QuickStatsRow(quickStats: state.quickStats),
+                ),
+
+                // Upcoming Deadlines Section
+                if (state.upcomingTasks.isNotEmpty) ...[
+                  SliverToBoxAdapter(
+                    child: Padding(
+                      padding: const EdgeInsets.fromLTRB(16, 24, 16, 8),
+                      child: Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        children: [
+                          Text(
+                            'Upcoming Deadlines',
+                            style: Theme.of(context)
+                                .textTheme
+                                .titleLarge
+                                ?.copyWith(
+                                  fontWeight: FontWeight.bold,
+                                ),
+                          ),
+                          if (state.upcomingTasks.length > 5)
+                            TextButton(
+                              onPressed: () => context.go(AppRoutes.planner),
+                              child: const Text('View All â†’'),
+                            ),
+                        ],
+                      ),
+                    ),
+                  ),
+                  SliverToBoxAdapter(
+                    child: Consumer(
+                      builder: (context, ref, child) {
+                        final subjectsAsync = ref.watch(subjectsProvider);
+                        final subjects = subjectsAsync.valueOrNull ?? [];
+
+                        final displayTasks =
+                            state.upcomingTasks.take(5).toList();
+
+                        return Column(
+                          children: displayTasks.map((task) {
+                            final subject = subjects.firstWhereOrNull(
+                                (s) => s.id == task.subjectId);
+                            return Padding(
+                              padding: const EdgeInsets.symmetric(
+                                  horizontal: 16.0, vertical: 4.0),
+                              child: TaskCard(
+                                task: task,
+                                subject: subject,
+                                onEdit: () {
+                                  showTaskFormSheet(context, taskId: task.id);
+                                },
+                              ),
+                            );
+                          }).toList(),
+                        );
+                      },
+                    ),
                   ),
                 ],
-              ),
-              const SliverToBoxAdapter(
-                child: DashboardHeader(),
-              ),
-              
-              // Hero Attendance Health Card
-              SliverToBoxAdapter(
-                child: HeroHealthCard(state: state),
-              ),
 
-              // Quick Stats Row
-              SliverToBoxAdapter(
-                child: QuickStatsRow(quickStats: state.quickStats),
-              ),
-
-              // Upcoming Deadlines Section
-              if (state.upcomingTasks.isNotEmpty) ...[
+                // Today's Schedule Section
                 SliverToBoxAdapter(
                   child: Padding(
                     padding: const EdgeInsets.fromLTRB(16, 24, 16, 8),
-                    child: Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                      children: [
-                        Text(
-                          'Upcoming Deadlines',
-                          style: Theme.of(context).textTheme.titleLarge?.copyWith(
-                                fontWeight: FontWeight.bold,
-                              ),
-                        ),
-                        if (state.upcomingTasks.length > 5)
-                          TextButton(
-                            onPressed: () => context.go(AppRoutes.planner),
-                            child: const Text('View All â†’'),
-                          ),
-                      ],
-                    ),
-                  ),
-                ),
-                SliverToBoxAdapter(
-                  child: Consumer(
-                    builder: (context, ref, child) {
-                      final subjectsAsync = ref.watch(subjectsProvider);
-                      final subjects = subjectsAsync.valueOrNull ?? [];
-                      
-                      final displayTasks = state.upcomingTasks.take(5).toList();
-                      
-                      return Column(
-                        children: displayTasks.map((task) {
-                          final subject = subjects.firstWhereOrNull((s) => s.id == task.subjectId);
-                          return Padding(
-                            padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 4.0),
-                            child: TaskCard(
-                              task: task,
-                              subject: subject,
-                              onEdit: () {
-                                showTaskFormSheet(context, taskId: task.id);
-                              },
-                            ),
-                          );
-                        }).toList(),
-                      );
-                    },
-                  ),
-                ),
-              ],
-
-              // Today's Schedule Section
-              SliverToBoxAdapter(
-                child: Padding(
-                  padding: const EdgeInsets.fromLTRB(16, 24, 16, 8),
-                  child: Text(
-                    "Today's Schedule",
-                    style: Theme.of(context).textTheme.titleLarge?.copyWith(
-                          fontWeight: FontWeight.bold,
-                        ),
-                  ),
-                ),
-              ),
-
-              // Next Class Card (if there's a pending class)
-              if (pendingLectures.isNotEmpty)
-                SliverToBoxAdapter(
-                  child: NextClassCard(
-                    lecture: pendingLectures.first,
-                    onMarkAttendance: () {
-                      _showAttendanceBottomSheet(context, ref, pendingLectures.first);
-                    },
-                  ),
-                ),
-
-              // Remaining Pending Classes
-              if (pendingLectures.length > 1)
-                SliverToBoxAdapter(
-                  child: Column(
-                    children: pendingLectures.skip(1).map((lecture) {
-                      return LectureCard(
-                        key: ValueKey('pending_${lecture.schedule.id}'),
-                        model: lecture,
-                        onMarkAttendance: (status) {
-                          ref.read(dashboardNotifierProvider.notifier).markAttendance(
-                            lecture.schedule.id,
-                            lecture.subject.id,
-                            status,
-                          );
-                        },
-                      );
-                    }).toList(),
-                  ),
-                ),
-
-              if (pendingLectures.isEmpty && markedLectures.isEmpty)
-                const SliverToBoxAdapter(
-                  child: Padding(
-                    padding: EdgeInsets.all(32.0),
-                    child: Center(
-                      child: Text(
-                        'No lectures scheduled for today.',
-                        style: TextStyle(fontSize: 16, color: Colors.grey),
-                      ),
-                    ),
-                  ),
-                )
-              else if (pendingLectures.isEmpty)
-                const SliverToBoxAdapter(
-                  child: Padding(
-                    padding: EdgeInsets.all(32.0),
-                    child: Center(
-                      child: Text(
-                        'All caught up for today! 🎉',
-                        style: TextStyle(fontSize: 16, color: Colors.green, fontWeight: FontWeight.bold),
-                      ),
-                    ),
-                  ),
-                ),
-
-              // Marked Classes
-              if (markedLectures.isNotEmpty) ...[
-                const SliverToBoxAdapter(
-                  child: Padding(
-                    padding: EdgeInsets.fromLTRB(16, 24, 16, 8),
                     child: Text(
-                      'Marked Classes',
-                      style: TextStyle(
-                        fontSize: 18,
-                        fontWeight: FontWeight.bold,
-                        color: Colors.grey,
-                      ),
+                      "Today's Schedule",
+                      style: Theme.of(context).textTheme.titleLarge?.copyWith(
+                            fontWeight: FontWeight.bold,
+                          ),
                     ),
                   ),
                 ),
-                SliverToBoxAdapter(
-                  child: Column(
-                    children: markedLectures.map((lecture) {
-                      return LectureCard(
-                        key: ValueKey('marked_${lecture.schedule.id}'),
-                        model: lecture,
-                        onMarkAttendance: (status) {
-                          ref.read(dashboardNotifierProvider.notifier).markAttendance(
-                            lecture.schedule.id,
-                            lecture.subject.id,
-                            status,
-                          );
-                        },
-                      );
-                    }).toList(),
+
+                // Next Class Card (if there's a pending class)
+                if (pendingLectures.isNotEmpty)
+                  SliverToBoxAdapter(
+                    child: NextClassCard(
+                      lecture: pendingLectures.first,
+                      onMarkAttendance: () {
+                        _showAttendanceBottomSheet(
+                            context, ref, pendingLectures.first);
+                      },
+                    ),
                   ),
-                ),
-              ],
-              const SliverToBoxAdapter(child: SizedBox(height: 32)),
+
+                // Remaining Pending Classes
+                if (pendingLectures.length > 1)
+                  SliverToBoxAdapter(
+                    child: Column(
+                      children: pendingLectures.skip(1).map((lecture) {
+                        return LectureCard(
+                          key: ValueKey('pending_${lecture.schedule.id}'),
+                          model: lecture,
+                          onMarkAttendance: (status) {
+                            ref
+                                .read(dashboardNotifierProvider.notifier)
+                                .markAttendance(
+                                  lecture.schedule.id,
+                                  lecture.subject.id,
+                                  status,
+                                );
+                          },
+                        );
+                      }).toList(),
+                    ),
+                  ),
+
+                if (pendingLectures.isEmpty && markedLectures.isEmpty)
+                  const SliverToBoxAdapter(
+                    child: Padding(
+                      padding: EdgeInsets.all(32.0),
+                      child: Center(
+                        child: Text(
+                          'No lectures scheduled for today.',
+                          style: TextStyle(fontSize: 16, color: Colors.grey),
+                        ),
+                      ),
+                    ),
+                  )
+                else if (pendingLectures.isEmpty)
+                  const SliverToBoxAdapter(
+                    child: Padding(
+                      padding: EdgeInsets.all(32.0),
+                      child: Center(
+                        child: Text(
+                          'All caught up for today! 🎉',
+                          style: TextStyle(
+                              fontSize: 16,
+                              color: Colors.green,
+                              fontWeight: FontWeight.bold),
+                        ),
+                      ),
+                    ),
+                  ),
+
+                // Marked Classes
+                if (markedLectures.isNotEmpty) ...[
+                  const SliverToBoxAdapter(
+                    child: Padding(
+                      padding: EdgeInsets.fromLTRB(16, 24, 16, 8),
+                      child: Text(
+                        'Marked Classes',
+                        style: TextStyle(
+                          fontSize: 18,
+                          fontWeight: FontWeight.bold,
+                          color: Colors.grey,
+                        ),
+                      ),
+                    ),
+                  ),
+                  SliverToBoxAdapter(
+                    child: Column(
+                      children: markedLectures.map((lecture) {
+                        return LectureCard(
+                          key: ValueKey('marked_${lecture.schedule.id}'),
+                          model: lecture,
+                          onMarkAttendance: (status) {
+                            ref
+                                .read(dashboardNotifierProvider.notifier)
+                                .markAttendance(
+                                  lecture.schedule.id,
+                                  lecture.subject.id,
+                                  status,
+                                );
+                          },
+                        );
+                      }).toList(),
+                    ),
+                  ),
+                ],
+                const SliverToBoxAdapter(child: SizedBox(height: 32)),
               ],
             ),
           );
         },
         loading: () => _buildSkeleton(context),
-        error: (err, stack) => Scaffold(body: Center(child: Text('Error: $err'))),
+        error: (err, stack) =>
+            Scaffold(body: Center(child: Text('Error: $err'))),
       ),
     );
   }
 
-  void _showAttendanceBottomSheet(BuildContext context, WidgetRef ref, LectureCardModel lecture) {
+  void _showAttendanceBottomSheet(
+      BuildContext context, WidgetRef ref, LectureCardModel lecture) {
     showModalBottomSheet(
       context: context,
       isScrollControlled: true,
@@ -271,7 +287,10 @@ class DashboardScreen extends ConsumerWidget {
                 width: 32,
                 height: 4,
                 decoration: BoxDecoration(
-                  color: Theme.of(context).colorScheme.onSurfaceVariant.withValues(alpha: 0.4),
+                  color: Theme.of(context)
+                      .colorScheme
+                      .onSurfaceVariant
+                      .withValues(alpha: 0.4),
                   borderRadius: BorderRadius.circular(2),
                 ),
               ),
@@ -294,30 +313,34 @@ class DashboardScreen extends ConsumerWidget {
                 mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                 children: [
                   _buildQuickMarkButton(
-                    context, 
-                    'Present', 
-                    Icons.check_circle_rounded, 
-                    Colors.green, 
+                    context,
+                    'Present',
+                    Icons.check_circle_rounded,
+                    Colors.green,
                     () {
-                      ref.read(dashboardNotifierProvider.notifier).markAttendance(
-                        lecture.schedule.id,
-                        lecture.subject.id,
-                        AttendanceStatus.present,
-                      );
+                      ref
+                          .read(dashboardNotifierProvider.notifier)
+                          .markAttendance(
+                            lecture.schedule.id,
+                            lecture.subject.id,
+                            AttendanceStatus.present,
+                          );
                       Navigator.pop(context);
                     },
                   ),
                   _buildQuickMarkButton(
-                    context, 
-                    'Absent', 
-                    Icons.cancel_rounded, 
-                    Theme.of(context).colorScheme.error, 
+                    context,
+                    'Absent',
+                    Icons.cancel_rounded,
+                    Theme.of(context).colorScheme.error,
                     () {
-                      ref.read(dashboardNotifierProvider.notifier).markAttendance(
-                        lecture.schedule.id,
-                        lecture.subject.id,
-                        AttendanceStatus.absent,
-                      );
+                      ref
+                          .read(dashboardNotifierProvider.notifier)
+                          .markAttendance(
+                            lecture.schedule.id,
+                            lecture.subject.id,
+                            AttendanceStatus.absent,
+                          );
                       Navigator.pop(context);
                     },
                   ),
@@ -330,7 +353,8 @@ class DashboardScreen extends ConsumerWidget {
     );
   }
 
-  Widget _buildQuickMarkButton(BuildContext context, String label, IconData icon, Color color, VoidCallback onTap) {
+  Widget _buildQuickMarkButton(BuildContext context, String label,
+      IconData icon, Color color, VoidCallback onTap) {
     return InkWell(
       onTap: onTap,
       borderRadius: BorderRadius.circular(16),

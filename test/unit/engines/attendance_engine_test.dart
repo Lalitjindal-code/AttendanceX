@@ -30,7 +30,8 @@ void main() {
     }
 
     test('calculateSubjectSummary with no attendance records', () {
-      final summary = AttendanceEngine.calculateSubjectSummary(1, [], baseSettings);
+      final summary =
+          AttendanceEngine.calculateSubjectSummary(1, [], baseSettings);
       expect(summary.effectiveTotal, 0);
       expect(summary.effectivePresent, 0);
       expect(summary.attendancePercentage, 0.0);
@@ -41,8 +42,9 @@ void main() {
         createAttendance(AttendanceStatus.present),
         createAttendance(AttendanceStatus.present),
       ];
-      final summary = AttendanceEngine.calculateSubjectSummary(1, records, baseSettings);
-      
+      final summary =
+          AttendanceEngine.calculateSubjectSummary(1, records, baseSettings);
+
       expect(summary.effectiveTotal, 2);
       expect(summary.effectivePresent, 2);
       expect(summary.attendancePercentage, 100.0);
@@ -54,8 +56,9 @@ void main() {
         createAttendance(AttendanceStatus.absent),
         createAttendance(AttendanceStatus.absent),
       ];
-      final summary = AttendanceEngine.calculateSubjectSummary(1, records, baseSettings);
-      
+      final summary =
+          AttendanceEngine.calculateSubjectSummary(1, records, baseSettings);
+
       expect(summary.effectiveTotal, 2);
       expect(summary.effectivePresent, 0);
       expect(summary.attendancePercentage, 0.0);
@@ -68,8 +71,9 @@ void main() {
         createAttendance(AttendanceStatus.holiday),
         createAttendance(AttendanceStatus.holiday),
       ];
-      final summary = AttendanceEngine.calculateSubjectSummary(1, records, baseSettings);
-      
+      final summary =
+          AttendanceEngine.calculateSubjectSummary(1, records, baseSettings);
+
       expect(summary.effectiveTotal, 1);
       expect(summary.effectivePresent, 1);
       expect(summary.attendancePercentage, 100.0);
@@ -81,8 +85,9 @@ void main() {
         createAttendance(AttendanceStatus.present),
         createAttendance(AttendanceStatus.pending),
       ];
-      final summary = AttendanceEngine.calculateSubjectSummary(1, records, baseSettings);
-      
+      final summary =
+          AttendanceEngine.calculateSubjectSummary(1, records, baseSettings);
+
       expect(summary.effectiveTotal, 1);
       expect(summary.effectivePresent, 1);
       expect(summary.attendancePercentage, 100.0);
@@ -93,8 +98,9 @@ void main() {
       test('medicalCountsAsPresent = true -> counts as Present', () {
         final settings = baseSettings.copyWith(medicalCountsAsPresent: true);
         final records = [createAttendance(AttendanceStatus.medical)];
-        
-        final summary = AttendanceEngine.calculateSubjectSummary(1, records, settings);
+
+        final summary =
+            AttendanceEngine.calculateSubjectSummary(1, records, settings);
         expect(summary.effectiveTotal, 1);
         expect(summary.effectivePresent, 1);
         expect(summary.attendancePercentage, 100.0);
@@ -104,8 +110,9 @@ void main() {
       test('medicalCountsAsPresent = false -> completely excluded', () {
         final settings = baseSettings.copyWith(medicalCountsAsPresent: false);
         final records = [createAttendance(AttendanceStatus.medical)];
-        
-        final summary = AttendanceEngine.calculateSubjectSummary(1, records, settings);
+
+        final summary =
+            AttendanceEngine.calculateSubjectSummary(1, records, settings);
         expect(summary.effectiveTotal, 0);
         expect(summary.effectivePresent, 0);
         expect(summary.attendancePercentage, 0.0);
@@ -117,8 +124,9 @@ void main() {
       test('GtMode.exclude -> completely excluded', () {
         final settings = baseSettings.copyWith(gtMode: GtMode.exclude);
         final records = [createAttendance(AttendanceStatus.gt)];
-        
-        final summary = AttendanceEngine.calculateSubjectSummary(1, records, settings);
+
+        final summary =
+            AttendanceEngine.calculateSubjectSummary(1, records, settings);
         expect(summary.effectiveTotal, 0);
         expect(summary.effectivePresent, 0);
         expect(summary.attendancePercentage, 0.0);
@@ -128,8 +136,9 @@ void main() {
       test('GtMode.countAsPresent -> counts as Present', () {
         final settings = baseSettings.copyWith(gtMode: GtMode.countAsPresent);
         final records = [createAttendance(AttendanceStatus.gt)];
-        
-        final summary = AttendanceEngine.calculateSubjectSummary(1, records, settings);
+
+        final summary =
+            AttendanceEngine.calculateSubjectSummary(1, records, settings);
         expect(summary.effectiveTotal, 1);
         expect(summary.effectivePresent, 1);
         expect(summary.attendancePercentage, 100.0);
@@ -139,8 +148,9 @@ void main() {
       test('GtMode.countAsAbsent -> counts as Absent', () {
         final settings = baseSettings.copyWith(gtMode: GtMode.countAsAbsent);
         final records = [createAttendance(AttendanceStatus.gt)];
-        
-        final summary = AttendanceEngine.calculateSubjectSummary(1, records, settings);
+
+        final summary =
+            AttendanceEngine.calculateSubjectSummary(1, records, settings);
         expect(summary.effectiveTotal, 1);
         expect(summary.effectivePresent, 0);
         expect(summary.attendancePercentage, 0.0);
@@ -153,8 +163,9 @@ void main() {
         createAttendance(AttendanceStatus.present, subjectId: 1),
         createAttendance(AttendanceStatus.absent, subjectId: 2),
       ];
-      final summary = AttendanceEngine.calculateOverallSummary(records, baseSettings);
-      
+      final summary =
+          AttendanceEngine.calculateOverallSummary(records, baseSettings);
+
       expect(summary.effectiveTotal, 2);
       expect(summary.effectivePresent, 1);
       expect(summary.attendancePercentage, 50.0);

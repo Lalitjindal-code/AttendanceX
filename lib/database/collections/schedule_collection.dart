@@ -78,8 +78,11 @@ class Schedule {
       ..endTime = map['endTime'] ?? '10:00'
       ..room = map['room']
       ..facultyOverride = map['facultyOverride']
-      ..type = LectureType.values.firstWhere((e) => e.name == map['type'], orElse: () => LectureType.lecture)
+      ..type = LectureType.values.firstWhere((e) => e.name == map['type'],
+          orElse: () => LectureType.lecture)
       ..order = map['order'] ?? 0
-      ..createdAt = map['createdAt'] != null ? DateTime.fromMillisecondsSinceEpoch(map['createdAt']) : DateTime.now();
+      ..createdAt = map['createdAt'] != null
+          ? DateTime.fromMillisecondsSinceEpoch(map['createdAt'])
+          : DateTime.now();
   }
 }

@@ -62,7 +62,8 @@ class DefaultFirebaseOptions {
     messagingSenderId: '1043894238865',
     projectId: 'attendify-lalitjindal-a6e9e',
     storageBucket: 'attendify-lalitjindal-a6e9e.firebasestorage.app',
-    iosClientId: '1043894238865-k0e8o3sjsk7vahuj2ogikapasfds0f73.apps.googleusercontent.com',
+    iosClientId:
+        '1043894238865-k0e8o3sjsk7vahuj2ogikapasfds0f73.apps.googleusercontent.com',
     iosBundleId: 'com.lalitjindal.attendance',
   );
 }

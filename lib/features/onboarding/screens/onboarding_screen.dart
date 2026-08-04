@@ -48,7 +48,8 @@ class _OnboardingScreenState extends ConsumerState<OnboardingScreen> {
           children: [
             // Top action bar
             Padding(
-              padding: const EdgeInsets.symmetric(horizontal: AppSpacing.md, vertical: AppSpacing.sm),
+              padding: const EdgeInsets.symmetric(
+                  horizontal: AppSpacing.md, vertical: AppSpacing.sm),
               child: Row(
                 mainAxisAlignment: MainAxisAlignment.end,
                 children: [
@@ -62,7 +63,7 @@ class _OnboardingScreenState extends ConsumerState<OnboardingScreen> {
                 ],
               ),
             ),
-            
+
             // Pages
             Expanded(
               child: PageView(
@@ -74,13 +75,15 @@ class _OnboardingScreenState extends ConsumerState<OnboardingScreen> {
                   OnboardingPage(
                     iconData: Icons.track_changes_outlined,
                     title: 'Never miss a class... unless you want to.',
-                    subtitle: 'Set attendance goals, track your progress, and get smart suggestions on when it is safe to bunk.',
+                    subtitle:
+                        'Set attendance goals, track your progress, and get smart suggestions on when it is safe to bunk.',
                     color: Theme.of(context).colorScheme.primary,
                   ),
                   OnboardingPage(
                     iconData: Icons.insert_chart_outlined,
                     title: 'Smart Analytics at your fingertips',
-                    subtitle: 'Beautiful charts help you visualize your attendance trends across the entire semester.',
+                    subtitle:
+                        'Beautiful charts help you visualize your attendance trends across the entire semester.',
                     color: Colors.blue,
                   ),
                   OnboardingSubjectForm(
@@ -89,7 +92,7 @@ class _OnboardingScreenState extends ConsumerState<OnboardingScreen> {
                 ],
               ),
             ),
-            
+
             // Bottom indicators and next button
             if (_currentPage < 2)
               Padding(
@@ -115,7 +118,7 @@ class _OnboardingScreenState extends ConsumerState<OnboardingScreen> {
                         ),
                       ),
                     ),
-                    
+
                     // Next Button
                     FloatingActionButton(
                       onPressed: _onNext,

@@ -39,7 +39,7 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
             _emailController.text.trim(),
             _passwordController.text.trim(),
           );
-      
+
       // Wait for the auth state to settle, then restore data
       await ref.read(firebaseSyncServiceProvider).restoreData();
 
@@ -171,7 +171,8 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
                 FilledButton(
                   onPressed: _isLoading ? null : _login,
                   style: FilledButton.styleFrom(
-                    padding: const EdgeInsets.symmetric(vertical: AppSpacing.lg),
+                    padding:
+                        const EdgeInsets.symmetric(vertical: AppSpacing.lg),
                     shape: RoundedRectangleBorder(
                       borderRadius: BorderRadius.circular(AppRadius.md),
                     ),
@@ -193,7 +194,8 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
                   ),
                   label: const Text('Continue with Google'),
                   style: OutlinedButton.styleFrom(
-                    padding: const EdgeInsets.symmetric(vertical: AppSpacing.lg),
+                    padding:
+                        const EdgeInsets.symmetric(vertical: AppSpacing.lg),
                     shape: RoundedRectangleBorder(
                       borderRadius: BorderRadius.circular(AppRadius.md),
                     ),

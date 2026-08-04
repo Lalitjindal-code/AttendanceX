@@ -6,9 +6,12 @@ import 'package:flutter_test/flutter_test.dart';
 void main() {
   group('ScheduleEngine time format validation', () {
     test('throws ValidationException for invalid format', () {
-      expect(() => ScheduleEngine.timeToMinutes('900'), throwsA(isA<ValidationException>()));
-      expect(() => ScheduleEngine.timeToMinutes('09-00'), throwsA(isA<ValidationException>()));
-      expect(() => ScheduleEngine.timeToMinutes('aa:bb'), throwsA(isA<ValidationException>()));
+      expect(() => ScheduleEngine.timeToMinutes('900'),
+          throwsA(isA<ValidationException>()));
+      expect(() => ScheduleEngine.timeToMinutes('09-00'),
+          throwsA(isA<ValidationException>()));
+      expect(() => ScheduleEngine.timeToMinutes('aa:bb'),
+          throwsA(isA<ValidationException>()));
     });
 
     test('correctly parses HH:mm', () {
@@ -30,7 +33,8 @@ void main() {
     });
 
     test('returns normally for valid time range', () {
-      expect(() => ScheduleEngine.validateTimeRange('09:00', '10:00'), returnsNormally);
+      expect(() => ScheduleEngine.validateTimeRange('09:00', '10:00'),
+          returnsNormally);
     });
   });
 
@@ -55,7 +59,9 @@ void main() {
         ..startTime = '10:00'
         ..endTime = '11:00';
 
-      expect(() => ScheduleEngine.checkForConflicts(newSchedule, existingSchedules),
+      expect(
+          () =>
+              ScheduleEngine.checkForConflicts(newSchedule, existingSchedules),
           returnsNormally);
     });
 
@@ -64,7 +70,9 @@ void main() {
         ..startTime = '09:00'
         ..endTime = '10:00';
 
-      expect(() => ScheduleEngine.checkForConflicts(newSchedule, existingSchedules),
+      expect(
+          () =>
+              ScheduleEngine.checkForConflicts(newSchedule, existingSchedules),
           throwsA(isA<TimeConflictException>()));
     });
 
@@ -73,7 +81,9 @@ void main() {
         ..startTime = '09:30'
         ..endTime = '10:30';
 
-      expect(() => ScheduleEngine.checkForConflicts(newSchedule, existingSchedules),
+      expect(
+          () =>
+              ScheduleEngine.checkForConflicts(newSchedule, existingSchedules),
           throwsA(isA<TimeConflictException>()));
     });
 
@@ -82,7 +92,9 @@ void main() {
         ..startTime = '08:30'
         ..endTime = '09:30';
 
-      expect(() => ScheduleEngine.checkForConflicts(newSchedule, existingSchedules),
+      expect(
+          () =>
+              ScheduleEngine.checkForConflicts(newSchedule, existingSchedules),
           throwsA(isA<TimeConflictException>()));
     });
 
@@ -91,7 +103,9 @@ void main() {
         ..startTime = '08:00'
         ..endTime = '10:30';
 
-      expect(() => ScheduleEngine.checkForConflicts(newSchedule, existingSchedules),
+      expect(
+          () =>
+              ScheduleEngine.checkForConflicts(newSchedule, existingSchedules),
           throwsA(isA<TimeConflictException>()));
     });
 
@@ -101,7 +115,9 @@ void main() {
         ..startTime = '09:00'
         ..endTime = '10:00';
 
-      expect(() => ScheduleEngine.checkForConflicts(editingSchedule, existingSchedules),
+      expect(
+          () => ScheduleEngine.checkForConflicts(
+              editingSchedule, existingSchedules),
           returnsNormally);
     });
   });

@@ -48,14 +48,16 @@ void main() {
       // Verify history created
       final histories = await isar.attendanceHistorys.where().findAll();
       expect(histories.length, 1);
-      
+
       final history = histories.first;
       expect(history.attendanceId, attendance.id);
       expect(history.previousStatus, AttendanceStatus.pending);
       expect(history.newStatus, AttendanceStatus.present);
     });
 
-    test('upserting existing attendance with same status does NOT create duplicate history', () async {
+    test(
+        'upserting existing attendance with same status does NOT create duplicate history',
+        () async {
       final date = DateTime.now();
       final attendance = Attendance()
         ..subjectId = 1
@@ -65,7 +67,7 @@ void main() {
 
       // First insert
       await repository.upsertAttendance(attendance);
-      
+
       // Update with SAME status
       final toUpdate = await repository.getById(attendance.id);
       toUpdate!.notes = 'Same status update';
@@ -76,7 +78,9 @@ void main() {
       expect(histories.length, 1);
     });
 
-    test('upserting existing attendance with DIFFERENT status creates new history', () async {
+    test(
+        'upserting existing attendance with DIFFERENT status creates new history',
+        () async {
       final date = DateTime.now();
       final attendance = Attendance()
         ..subjectId = 1
@@ -86,24 +90,27 @@ void main() {
 
       // First insert
       await repository.upsertAttendance(attendance);
-      
+
       // Update with DIFFERENT status
       final toUpdate = await repository.getById(attendance.id);
       toUpdate!.status = AttendanceStatus.absent;
       await repository.upsertAttendance(toUpdate);
 
       // History should now have 2 entries
-      final histories = await isar.attendanceHistorys.where().sortByChangedAt().findAll();
+      final histories =
+          await isar.attendanceHistorys.where().sortByChangedAt().findAll();
       expect(histories.length, 2);
-      
+
       expect(histories[0].previousStatus, AttendanceStatus.pending);
       expect(histories[0].newStatus, AttendanceStatus.present);
-      
+
       expect(histories[1].previousStatus, AttendanceStatus.present);
       expect(histories[1].newStatus, AttendanceStatus.absent);
     });
 
-    test('upserting new attendance matching unique constraints updates existing and logs history', () async {
+    test(
+        'upserting new attendance matching unique constraints updates existing and logs history',
+        () async {
       final date = DateTime.utc(2023, 1, 1);
       final a1 = Attendance()
         ..subjectId = 1

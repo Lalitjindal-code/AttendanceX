@@ -24,7 +24,8 @@ class _CalendarWidgetState extends ConsumerState<CalendarWidget> {
   Color _getStatusColor(AttendanceStatus status, BuildContext context) {
     switch (status) {
       case AttendanceStatus.present:
-        return Theme.of(context).extension<CustomColors>()?.success ?? Colors.green;
+        return Theme.of(context).extension<CustomColors>()?.success ??
+            Colors.green;
       case AttendanceStatus.absent:
         return Theme.of(context).colorScheme.error;
       case AttendanceStatus.medical:
@@ -60,7 +61,8 @@ class _CalendarWidgetState extends ConsumerState<CalendarWidget> {
           CalendarFormat.twoWeeks: '2 Weeks',
           CalendarFormat.week: 'Week',
         },
-        selectedDayPredicate: (day) => isSameDay(widget.state.selectedDate, day),
+        selectedDayPredicate: (day) =>
+            isSameDay(widget.state.selectedDate, day),
         onDaySelected: (selectedDay, focusedDay) {
           ref.read(calendarSelectedDateProvider.notifier).setDate(selectedDay);
           ref.read(calendarFocusedDateProvider.notifier).setDate(focusedDay);
@@ -80,13 +82,15 @@ class _CalendarWidgetState extends ConsumerState<CalendarWidget> {
           final isFuture = selectedDay.isAfter(DateTime.now());
           if (isFuture) {
             ScaffoldMessenger.of(context).showSnackBar(
-              const SnackBar(content: Text('Cannot mark attendance for future dates')),
+              const SnackBar(
+                  content: Text('Cannot mark attendance for future dates')),
             );
             return;
           }
           ref.read(calendarSelectedDateProvider.notifier).setDate(selectedDay);
           ref.read(calendarFocusedDateProvider.notifier).setDate(focusedDay);
-          _showAddManualAttendanceDialog(context, ref, widget.state, selectedDay);
+          _showAddManualAttendanceDialog(
+              context, ref, widget.state, selectedDay);
         },
         eventLoader: (day) {
           final normalizedDate = DateTime(day.year, day.month, day.day);
@@ -97,9 +101,15 @@ class _CalendarWidgetState extends ConsumerState<CalendarWidget> {
         },
         calendarStyle: CalendarStyle(
           outsideDaysVisible: true,
-          outsideTextStyle: TextStyle(color: Theme.of(context).colorScheme.onSurfaceVariant.withValues(alpha: 0.5)),
-          defaultTextStyle: TextStyle(color: Theme.of(context).colorScheme.onSurface),
-          weekendTextStyle: TextStyle(color: Theme.of(context).colorScheme.primary),
+          outsideTextStyle: TextStyle(
+              color: Theme.of(context)
+                  .colorScheme
+                  .onSurfaceVariant
+                  .withValues(alpha: 0.5)),
+          defaultTextStyle:
+              TextStyle(color: Theme.of(context).colorScheme.onSurface),
+          weekendTextStyle:
+              TextStyle(color: Theme.of(context).colorScheme.primary),
           selectedDecoration: BoxDecoration(
             color: Theme.of(context).colorScheme.primary,
             shape: BoxShape.circle,
@@ -129,8 +139,8 @@ class _CalendarWidgetState extends ConsumerState<CalendarWidget> {
             fontSize: 13,
           ),
           titleTextStyle: Theme.of(context).textTheme.titleMedium!.copyWith(
-            fontWeight: FontWeight.bold,
-          ),
+                fontWeight: FontWeight.bold,
+              ),
         ),
         calendarBuilders: CalendarBuilders(
           markerBuilder: (context, date, events) {
@@ -150,7 +160,8 @@ class _CalendarWidgetState extends ConsumerState<CalendarWidget> {
                     if (event is AttendanceStatus) {
                       markerColor = _getStatusColor(event, context);
                     } else {
-                      markerColor = Theme.of(context).colorScheme.primary; // Task marker
+                      markerColor =
+                          Theme.of(context).colorScheme.primary; // Task marker
                     }
                     return Container(
                       width: 6,
@@ -171,83 +182,85 @@ class _CalendarWidgetState extends ConsumerState<CalendarWidget> {
   }
 }
 
-  void _showAddManualAttendanceDialog(
-      BuildContext context, WidgetRef ref, CalendarState state, DateTime date) {
-    if (state.allSubjects.isEmpty) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('No subjects available. Please add a subject first.')),
-      );
-      return;
-    }
+void _showAddManualAttendanceDialog(
+    BuildContext context, WidgetRef ref, CalendarState state, DateTime date) {
+  if (state.allSubjects.isEmpty) {
+    ScaffoldMessenger.of(context).showSnackBar(
+      const SnackBar(
+          content: Text('No subjects available. Please add a subject first.')),
+    );
+    return;
+  }
 
-    Subject? selectedSubject;
-    AttendanceStatus? selectedStatus;
+  Subject? selectedSubject;
+  AttendanceStatus? selectedStatus;
 
-    showDialog(
-      context: context,
-      builder: (context) {
-        return StatefulBuilder(
-          builder: (context, setState) {
-            return AlertDialog(
-              title: const Text('Add Manual Attendance'),
-              content: Column(
-                mainAxisSize: MainAxisSize.min,
-                children: [
-                  DropdownButtonFormField<Subject>(
-                    key: const Key('subject_dropdown'),
-                    decoration: const InputDecoration(labelText: 'Subject'),
-                    initialValue: selectedSubject,
-                    items: state.allSubjects.map((s) {
-                      return DropdownMenuItem(
-                        value: s,
-                        child: Text(s.name),
-                      );
-                    }).toList(),
-                    onChanged: (val) => setState(() => selectedSubject = val),
-                  ),
-                  const SizedBox(height: 16),
-                  DropdownButtonFormField<AttendanceStatus>(
-                    key: const Key('status_dropdown'),
-                    decoration: const InputDecoration(labelText: 'Status'),
-                    initialValue: selectedStatus,
-                    items: AttendanceStatus.values.map((status) {
-                      return DropdownMenuItem(
-                        value: status,
-                        child: Text(status.name.toUpperCase()),
-                      );
-                    }).toList(),
-                    onChanged: (val) => setState(() => selectedStatus = val),
-                  ),
-                ],
-              ),
-              actions: [
-                TextButton(
-                  onPressed: () => Navigator.pop(context),
-                  child: const Text('Cancel'),
+  showDialog(
+    context: context,
+    builder: (context) {
+      return StatefulBuilder(
+        builder: (context, setState) {
+          return AlertDialog(
+            title: const Text('Add Manual Attendance'),
+            content: Column(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                DropdownButtonFormField<Subject>(
+                  key: const Key('subject_dropdown'),
+                  decoration: const InputDecoration(labelText: 'Subject'),
+                  initialValue: selectedSubject,
+                  items: state.allSubjects.map((s) {
+                    return DropdownMenuItem(
+                      value: s,
+                      child: Text(s.name),
+                    );
+                  }).toList(),
+                  onChanged: (val) => setState(() => selectedSubject = val),
                 ),
-                FilledButton(
-                  onPressed: selectedSubject != null && selectedStatus != null
-                      ? () {
-                          final att = Attendance()
-                            ..subjectId = selectedSubject!.id
-                            ..scheduleId = -1
-                            ..date = DateTime(date.year, date.month, date.day)
-                            ..status = selectedStatus!;
-                          
-                          final repo = ref.read(attendanceRepositoryProvider);
-                          repo.upsertAttendance(att);
-                          Navigator.pop(context);
-                        }
-                      : null,
-                  child: const Text('Save'),
+                const SizedBox(height: 16),
+                DropdownButtonFormField<AttendanceStatus>(
+                  key: const Key('status_dropdown'),
+                  decoration: const InputDecoration(labelText: 'Status'),
+                  initialValue: selectedStatus,
+                  items: AttendanceStatus.values.map((status) {
+                    return DropdownMenuItem(
+                      value: status,
+                      child: Text(status.name.toUpperCase()),
+                    );
+                  }).toList(),
+                  onChanged: (val) => setState(() => selectedStatus = val),
                 ),
               ],
-            );
-          },
-        );
-      },
-    );
-  }
+            ),
+            actions: [
+              TextButton(
+                onPressed: () => Navigator.pop(context),
+                child: const Text('Cancel'),
+              ),
+              FilledButton(
+                onPressed: selectedSubject != null && selectedStatus != null
+                    ? () {
+                        final att = Attendance()
+                          ..subjectId = selectedSubject!.id
+                          ..scheduleId = -1
+                          ..date = DateTime(date.year, date.month, date.day)
+                          ..status = selectedStatus!;
+
+                        final repo = ref.read(attendanceRepositoryProvider);
+                        repo.upsertAttendance(att);
+                        Navigator.pop(context);
+                      }
+                    : null,
+                child: const Text('Save'),
+              ),
+            ],
+          );
+        },
+      );
+    },
+  );
+}
+
 // Removed the extra bracket that closed the class prematurely
 class CustomColors extends ThemeExtension<CustomColors> {
   final Color? success;
@@ -260,7 +273,8 @@ class CustomColors extends ThemeExtension<CustomColors> {
   }
 
   @override
-  ThemeExtension<CustomColors> lerp(ThemeExtension<CustomColors>? other, double t) {
+  ThemeExtension<CustomColors> lerp(
+      ThemeExtension<CustomColors>? other, double t) {
     if (other is! CustomColors) {
       return this;
     }

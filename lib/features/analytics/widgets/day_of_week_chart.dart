@@ -21,7 +21,7 @@ class DayOfWeekChart extends StatelessWidget {
 
     final theme = Theme.of(context);
     final colorScheme = theme.colorScheme;
-    
+
     // Find highest percentage to scale Y axis slightly above it, max 100
     double maxPct = 0;
     for (var t in trends) {
@@ -31,7 +31,11 @@ class DayOfWeekChart extends StatelessWidget {
 
     return Container(
       height: 220,
-      padding: const EdgeInsets.only(right: AppSpacing.md, left: AppSpacing.sm, top: AppSpacing.lg, bottom: AppSpacing.sm),
+      padding: const EdgeInsets.only(
+          right: AppSpacing.md,
+          left: AppSpacing.sm,
+          top: AppSpacing.lg,
+          bottom: AppSpacing.sm),
       child: BarChart(
         BarChartData(
           alignment: BarChartAlignment.spaceAround,
@@ -45,7 +49,8 @@ class DayOfWeekChart extends StatelessWidget {
                 final dayName = _getDayName(trend.weekday);
                 return BarTooltipItem(
                   '$dayName\n',
-                  theme.textTheme.labelLarge!.copyWith(fontWeight: FontWeight.bold),
+                  theme.textTheme.labelLarge!
+                      .copyWith(fontWeight: FontWeight.bold),
                   children: [
                     if (trend.totalCount == 0)
                       TextSpan(
@@ -56,7 +61,8 @@ class DayOfWeekChart extends StatelessWidget {
                       )
                     else
                       TextSpan(
-                        text: '${(trend.percentage * 100).toStringAsFixed(1)}%\n${trend.presentCount}/${trend.totalCount} Attended',
+                        text:
+                            '${(trend.percentage * 100).toStringAsFixed(1)}%\n${trend.presentCount}/${trend.totalCount} Attended',
                         style: theme.textTheme.labelSmall?.copyWith(
                           color: colorScheme.onSurfaceVariant,
                         ),
@@ -100,8 +106,10 @@ class DayOfWeekChart extends StatelessWidget {
                 },
               ),
             ),
-            topTitles: const AxisTitles(sideTitles: SideTitles(showTitles: false)),
-            rightTitles: const AxisTitles(sideTitles: SideTitles(showTitles: false)),
+            topTitles:
+                const AxisTitles(sideTitles: SideTitles(showTitles: false)),
+            rightTitles:
+                const AxisTitles(sideTitles: SideTitles(showTitles: false)),
           ),
           gridData: FlGridData(
             show: true,
@@ -137,27 +145,43 @@ class DayOfWeekChart extends StatelessWidget {
 
   String _getDayName(int weekday) {
     switch (weekday) {
-      case 1: return 'Monday';
-      case 2: return 'Tuesday';
-      case 3: return 'Wednesday';
-      case 4: return 'Thursday';
-      case 5: return 'Friday';
-      case 6: return 'Saturday';
-      case 7: return 'Sunday';
-      default: return '';
+      case 1:
+        return 'Monday';
+      case 2:
+        return 'Tuesday';
+      case 3:
+        return 'Wednesday';
+      case 4:
+        return 'Thursday';
+      case 5:
+        return 'Friday';
+      case 6:
+        return 'Saturday';
+      case 7:
+        return 'Sunday';
+      default:
+        return '';
     }
   }
 
   String _getDayShortName(int weekday) {
     switch (weekday) {
-      case 1: return 'Mon';
-      case 2: return 'Tue';
-      case 3: return 'Wed';
-      case 4: return 'Thu';
-      case 5: return 'Fri';
-      case 6: return 'Sat';
-      case 7: return 'Sun';
-      default: return '';
+      case 1:
+        return 'Mon';
+      case 2:
+        return 'Tue';
+      case 3:
+        return 'Wed';
+      case 4:
+        return 'Thu';
+      case 5:
+        return 'Fri';
+      case 6:
+        return 'Sat';
+      case 7:
+        return 'Sun';
+      default:
+        return '';
     }
   }
 }

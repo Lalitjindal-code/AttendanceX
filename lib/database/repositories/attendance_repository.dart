@@ -29,7 +29,7 @@ class AttendanceRepository {
             .and()
             .scheduleIdEqualTo(attendance.scheduleId)
             .findFirst();
-        
+
         if (existing != null) {
           attendance.id = existing.id;
           attendance.createdAt = existing.createdAt;
@@ -90,9 +90,7 @@ class AttendanceRepository {
 
   /// Returns a stream of all attendance records.
   Stream<List<Attendance>> watchAll() {
-    return _isar.attendances
-        .where()
-        .watch(fireImmediately: true);
+    return _isar.attendances.where().watch(fireImmediately: true);
   }
 
   /// Returns a stream of history for a specific subject.
@@ -112,7 +110,10 @@ class AttendanceRepository {
   /// Deletes an attendance record and its associated history.
   Future<void> delete(int id) async {
     await _isar.writeTxn(() async {
-      await _isar.attendanceHistorys.filter().attendanceIdEqualTo(id).deleteAll();
+      await _isar.attendanceHistorys
+          .filter()
+          .attendanceIdEqualTo(id)
+          .deleteAll();
       await _isar.attendances.delete(id);
     });
   }

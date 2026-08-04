@@ -46,12 +46,12 @@ class _ScheduleScreenState extends ConsumerState<ScheduleScreen> {
   }
 
   void _onScroll() {
-    if (_scrollController.position.userScrollDirection == 
+    if (_scrollController.position.userScrollDirection ==
         ScrollDirection.reverse) {
       if (_isFabExtended) {
         setState(() => _isFabExtended = false);
       }
-    } else if (_scrollController.position.userScrollDirection == 
+    } else if (_scrollController.position.userScrollDirection ==
         ScrollDirection.forward) {
       if (!_isFabExtended) {
         setState(() => _isFabExtended = true);
@@ -76,88 +76,96 @@ class _ScheduleScreenState extends ConsumerState<ScheduleScreen> {
         child: CustomScrollView(
           controller: _scrollController,
           slivers: [
-          SliverAppBar.large(
-            title: const Text(AppStrings.scheduleTitle),
-            floating: true,
-            pinned: true,
-            actions: [
-              if (subjectsAsync.valueOrNull?.isNotEmpty == true)
-                IconButton(
-                  icon: const Icon(Icons.add),
-                  tooltip: 'Add Class',
-                  onPressed: () => showScheduleFormSheet(context, dayOfWeek: DayOfWeek.weekdays[_currentDayIndex].value),
-                ),
-            ],
-          ),
-          
-          subjectsAsync.when(
-            data: (subjects) {
-              if (subjects.isEmpty) {
-                return SliverFillRemaining(
-                  hasScrollBody: false,
-                  child: Center(
-                    child: Padding(
-                      padding: const EdgeInsets.all(AppSpacing.xl),
-                      child: Column(
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        children: [
-                          Icon(
-                            Icons.menu_book_outlined,
-                            size: 72,
-                            color: Theme.of(context).colorScheme.outlineVariant,
-                          ),
-                          const SizedBox(height: AppSpacing.lg),
-                          Text(
-                            'No subjects available.\nPlease create a subject first.',
-                            textAlign: TextAlign.center,
-                            style: Theme.of(context).textTheme.bodyLarge?.copyWith(
-                                  color: Theme.of(context).colorScheme.onSurfaceVariant,
-                                ),
-                          ),
-                          const SizedBox(height: AppSpacing.xl),
-                          FilledButton.icon(
-                            onPressed: () => context.go(AppRoutes.subjects),
-                            icon: const Icon(Icons.add),
-                            label: const Text('Go to Subjects'),
-                          ),
-                        ],
+            SliverAppBar.large(
+              title: const Text(AppStrings.scheduleTitle),
+              floating: true,
+              pinned: true,
+              actions: [
+                if (subjectsAsync.valueOrNull?.isNotEmpty == true)
+                  IconButton(
+                    icon: const Icon(Icons.add),
+                    tooltip: 'Add Class',
+                    onPressed: () => showScheduleFormSheet(context,
+                        dayOfWeek: DayOfWeek.weekdays[_currentDayIndex].value),
+                  ),
+              ],
+            ),
+            subjectsAsync.when(
+              data: (subjects) {
+                if (subjects.isEmpty) {
+                  return SliverFillRemaining(
+                    hasScrollBody: false,
+                    child: Center(
+                      child: Padding(
+                        padding: const EdgeInsets.all(AppSpacing.xl),
+                        child: Column(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: [
+                            Icon(
+                              Icons.menu_book_outlined,
+                              size: 72,
+                              color:
+                                  Theme.of(context).colorScheme.outlineVariant,
+                            ),
+                            const SizedBox(height: AppSpacing.lg),
+                            Text(
+                              'No subjects available.\nPlease create a subject first.',
+                              textAlign: TextAlign.center,
+                              style: Theme.of(context)
+                                  .textTheme
+                                  .bodyLarge
+                                  ?.copyWith(
+                                    color: Theme.of(context)
+                                        .colorScheme
+                                        .onSurfaceVariant,
+                                  ),
+                            ),
+                            const SizedBox(height: AppSpacing.xl),
+                            FilledButton.icon(
+                              onPressed: () => context.go(AppRoutes.subjects),
+                              icon: const Icon(Icons.add),
+                              label: const Text('Go to Subjects'),
+                            ),
+                          ],
+                        ),
                       ),
                     ),
-                  ),
-                );
-              }
+                  );
+                }
 
-              return SliverList(
-                delegate: SliverChildListDelegate([
-                  DaySelectorPills(
-                    days: DayOfWeek.weekdays,
-                    selectedDayIndex: _currentDayIndex,
-                    onDaySelected: (index) {
-                      setState(() {
-                        _currentDayIndex = index;
-                      });
-                    },
-                  ),
-                  const SizedBox(height: AppSpacing.md),
-                  _DayScheduleView(dayOfWeek: DayOfWeek.weekdays[_currentDayIndex].value),
-                  const SizedBox(height: 80),
-                ]),
-              );
-            },
-            loading: () => const SliverFillRemaining(
-              child: Center(child: CircularProgressIndicator()),
+                return SliverList(
+                  delegate: SliverChildListDelegate([
+                    DaySelectorPills(
+                      days: DayOfWeek.weekdays,
+                      selectedDayIndex: _currentDayIndex,
+                      onDaySelected: (index) {
+                        setState(() {
+                          _currentDayIndex = index;
+                        });
+                      },
+                    ),
+                    const SizedBox(height: AppSpacing.md),
+                    _DayScheduleView(
+                        dayOfWeek: DayOfWeek.weekdays[_currentDayIndex].value),
+                    const SizedBox(height: 80),
+                  ]),
+                );
+              },
+              loading: () => const SliverFillRemaining(
+                child: Center(child: CircularProgressIndicator()),
+              ),
+              error: (err, stack) => SliverFillRemaining(
+                child: Center(child: Text('Error: $err')),
+              ),
             ),
-            error: (err, stack) => SliverFillRemaining(
-              child: Center(child: Text('Error: $err')),
-            ),
-          ),
-        ],
-      ),
+          ],
+        ),
       ),
       floatingActionButton: subjectsAsync.maybeWhen(
         data: (subjects) => subjects.isNotEmpty
             ? FloatingActionButton.extended(
-                onPressed: () => showScheduleFormSheet(context, dayOfWeek: DayOfWeek.weekdays[_currentDayIndex].value),
+                onPressed: () => showScheduleFormSheet(context,
+                    dayOfWeek: DayOfWeek.weekdays[_currentDayIndex].value),
                 icon: const Icon(Icons.add),
                 label: const Text('Add Class'),
                 tooltip: 'Add Class',
@@ -182,8 +190,10 @@ class _DayScheduleView extends ConsumerWidget {
 
     if (schedulesAsync.hasValue) {
       final allSchedules = schedulesAsync.requireValue;
-      final schedules = allSchedules.where((s) => s.dayOfWeek == dayOfWeek).toList()
-         ..sort((a, b) => a.startTime.compareTo(b.startTime));
+      final schedules = allSchedules
+          .where((s) => s.dayOfWeek == dayOfWeek)
+          .toList()
+        ..sort((a, b) => a.startTime.compareTo(b.startTime));
 
       if (schedules.isEmpty) {
         return Padding(
@@ -201,35 +211,37 @@ class _DayScheduleView extends ConsumerWidget {
                 Text(
                   'No classes scheduled for today.',
                   style: Theme.of(context).textTheme.titleMedium?.copyWith(
-                    color: Theme.of(context).colorScheme.outline,
-                  ),
+                        color: Theme.of(context).colorScheme.outline,
+                      ),
                 ),
               ],
             ),
           ),
         );
       }
-      
+
       return Padding(
         padding: const EdgeInsets.symmetric(horizontal: AppSpacing.md),
         child: Column(
           children: List.generate(schedules.length, (index) {
             final schedule = schedules[index];
             final subjectsAsync = ref.watch(subjectsProvider);
-            
+
             if (!subjectsAsync.hasValue) return const SizedBox.shrink();
             final subjectList = subjectsAsync.requireValue;
-            
-            final subjectIndex = subjectList.indexWhere((s) => s.id == schedule.subjectId);
+
+            final subjectIndex =
+                subjectList.indexWhere((s) => s.id == schedule.subjectId);
             if (subjectIndex == -1) return const SizedBox.shrink();
             final subject = subjectList[subjectIndex];
-            
+
             return ScheduleTimelineCard(
               schedule: schedule,
               subject: subject,
               isFirst: index == 0,
               isLast: index == schedules.length - 1,
-              onEdit: () => showScheduleFormSheet(context, scheduleId: schedule.id, dayOfWeek: dayOfWeek),
+              onEdit: () => showScheduleFormSheet(context,
+                  scheduleId: schedule.id, dayOfWeek: dayOfWeek),
             );
           }),
         ),

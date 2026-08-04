@@ -127,7 +127,7 @@ Map<String, dynamic> _decompressBackup(List<int> compressedBytes) {
 
   // Validate checksum
   final storedChecksum = map['metadata']['checksum'];
-  
+
   // Temporarily clear checksum to re-calculate
   map['metadata']['checksum'] = '';
   final rawJsonBytes = utf8.encode(json.encode(map));
@@ -137,7 +137,8 @@ Map<String, dynamic> _decompressBackup(List<int> compressedBytes) {
   map['metadata']['checksum'] = storedChecksum;
 
   if (storedChecksum != '' && storedChecksum != computedChecksum) {
-    throw Exception('Backup checksum validation failed. The file may be corrupted.');
+    throw Exception(
+        'Backup checksum validation failed. The file may be corrupted.');
   }
 
   return map;

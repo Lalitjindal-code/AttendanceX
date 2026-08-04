@@ -12,13 +12,14 @@ class DailyAttendanceDetails {
   @override
   bool operator ==(Object other) {
     if (identical(this, other)) return true;
-  
+
     return other is DailyAttendanceDetails &&
-      other.date.year == date.year &&
-      other.date.month == date.month &&
-      other.date.day == date.day;
+        other.date.year == date.year &&
+        other.date.month == date.month &&
+        other.date.day == date.day;
   }
 
   @override
-  int get hashCode => date.year.hashCode ^ date.month.hashCode ^ date.day.hashCode;
+  int get hashCode =>
+      date.year.hashCode ^ date.month.hashCode ^ date.day.hashCode;
 }

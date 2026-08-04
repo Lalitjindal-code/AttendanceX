@@ -41,15 +41,25 @@ class QuickStatsRow extends StatelessWidget {
     );
   }
 
-  Widget _buildStatCard(BuildContext context, {required String title, required int attended, required int total, required IconData icon}) {
+  Widget _buildStatCard(BuildContext context,
+      {required String title,
+      required int attended,
+      required int total,
+      required IconData icon}) {
     return Expanded(
       child: Container(
         padding: const EdgeInsets.symmetric(vertical: 16, horizontal: 8),
         decoration: BoxDecoration(
-          color: Theme.of(context).colorScheme.surfaceContainerHighest.withValues(alpha: 0.4),
+          color: Theme.of(context)
+              .colorScheme
+              .surfaceContainerHighest
+              .withValues(alpha: 0.4),
           borderRadius: BorderRadius.circular(16),
           border: Border.all(
-            color: Theme.of(context).colorScheme.outlineVariant.withValues(alpha: 0.5),
+            color: Theme.of(context)
+                .colorScheme
+                .outlineVariant
+                .withValues(alpha: 0.5),
             width: 1,
           ),
         ),

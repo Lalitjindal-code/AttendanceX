@@ -28,7 +28,13 @@ void main() {
 
   setUp(() async {
     isar = await Isar.open(
-      [SubjectSchema, ScheduleSchema, AttendanceSchema, AttendanceHistorySchema, AcademicTaskSchema],
+      [
+        SubjectSchema,
+        ScheduleSchema,
+        AttendanceSchema,
+        AttendanceHistorySchema,
+        AcademicTaskSchema
+      ],
       directory: '',
       name: 'analytics_test_db_${DateTime.now().microsecondsSinceEpoch}',
     );
@@ -59,7 +65,9 @@ void main() {
     final subjectRepo = container.read(subjectRepositoryProvider);
     final attendanceRepo = container.read(attendanceRepositoryProvider);
 
-    final sub1 = Subject()..name = 'Physics'..goalPercentage = 75.0;
+    final sub1 = Subject()
+      ..name = 'Physics'
+      ..goalPercentage = 75.0;
     await subjectRepo.create(sub1);
 
     final now = DateTime.now();
@@ -75,27 +83,27 @@ void main() {
     await Future.delayed(const Duration(milliseconds: 100));
 
     final state = await container.read(analyticsNotifierProvider.future);
-    
+
     expect(state.isLoading, false);
     expect(state.subjectStats.length, 1);
     expect(state.subjectStats[0].subject.name, 'Physics');
-    
+
     // Total should be 1, present 1, 100%
     expect(state.subjectStats[0].summary.effectivePresent, 1);
     expect(state.subjectStats[0].summary.effectiveTotal, 1);
-    
+
     // Forecast should show 100% current
     expect(state.subjectStats[0].forecast.currentPercentage, 1.0);
-    
+
     // Trend should be insufficientData because previous month has 0 total
     expect(state.subjectStats[0].trend, AnalyticsTrend.insufficientData);
-    
+
     // Monthly trend should have 1 entry
     expect(state.monthlyTrends.length, 1);
     expect(state.monthlyTrends[0].presentCount, 1);
     expect(state.monthlyTrends[0].totalCount, 1);
     expect(state.monthlyTrends[0].percentage, 1.0);
-    
+
     // Overall forecast
     expect(state.overallForecast, isNotNull);
     expect(state.overallForecast!.currentPercentage, 1.0);

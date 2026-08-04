@@ -35,7 +35,8 @@ class _DashboardHeaderState extends State<DashboardHeader> {
   @override
   Widget build(BuildContext context) {
     final timeStr = DateFormat.jm().format(_now); // e.g., 7:46 PM
-    final dateStr = DateFormat('EEEE, MMMM d, yyyy').format(_now); // e.g., Thursday, July 30, 2026
+    final dateStr = DateFormat('EEEE, MMMM d, yyyy')
+        .format(_now); // e.g., Thursday, July 30, 2026
 
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 24.0, vertical: 16.0),

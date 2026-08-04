@@ -45,7 +45,8 @@ class IsarService {
   Future<void> initialize({String? directory}) async {
     if (isOpen) return;
 
-    final dirPath = directory ?? (await getApplicationDocumentsDirectory()).path;
+    final dirPath =
+        directory ?? (await getApplicationDocumentsDirectory()).path;
 
     _isar = await Isar.open(
       [

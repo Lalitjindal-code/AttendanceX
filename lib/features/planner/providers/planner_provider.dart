@@ -16,22 +16,28 @@ final plannerTasksProvider = StreamProvider<List<AcademicTask>>((ref) {
   return repo.watchAllTasks();
 });
 
-final plannerFilterProvider = StateProvider<PlannerFilter>((ref) => const PlannerFilter());
+final plannerFilterProvider =
+    StateProvider<PlannerFilter>((ref) => const PlannerFilter());
 
 /// A computed provider that yields filtered tasks sorted by PlannerEngine.
-final sortedPlannerTasksProvider = Provider<AsyncValue<List<AcademicTask>>>((ref) {
+final sortedPlannerTasksProvider =
+    Provider<AsyncValue<List<AcademicTask>>>((ref) {
   final tasksAsync = ref.watch(plannerTasksProvider);
   final filter = ref.watch(plannerFilterProvider);
-  
+
   return tasksAsync.whenData((tasks) {
     final filtered = tasks.where((t) {
-      if (filter.subjectId != null && t.subjectId != filter.subjectId) return false;
-      if (filter.priority != null && t.priority != filter.priority) return false;
+      if (filter.subjectId != null && t.subjectId != filter.subjectId)
+        return false;
+      if (filter.priority != null && t.priority != filter.priority)
+        return false;
       if (filter.status != null && t.status != filter.status) return false;
-      if (filter.hideCompleted && t.status == TaskStatus.completed && filter.status != TaskStatus.completed) return false;
+      if (filter.hideCompleted &&
+          t.status == TaskStatus.completed &&
+          filter.status != TaskStatus.completed) return false;
       return true;
     }).toList();
-    
+
     return PlannerEngine.sortTasks(filtered);
   });
 });
@@ -79,18 +85,19 @@ class PlannerNotifier extends StateNotifier<AsyncValue<void>> {
       ..attachments = task.attachments
       ..submissionUrls = task.submissionUrls
       ..notificationOffsets = task.notificationOffsets;
-      
+
     if (task.status == TaskStatus.completed) {
       updated.status = TaskStatus.pending;
     } else {
       updated.status = TaskStatus.completed;
     }
-    
+
     await saveTask(updated);
   }
 }
 
-final plannerNotifierProvider = StateNotifierProvider<PlannerNotifier, AsyncValue<void>>((ref) {
+final plannerNotifierProvider =
+    StateNotifierProvider<PlannerNotifier, AsyncValue<void>>((ref) {
   final repo = ref.watch(plannerRepositoryProvider);
   return PlannerNotifier(repo);
 });

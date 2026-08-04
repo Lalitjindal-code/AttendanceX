@@ -21,7 +21,8 @@ class NotificationService {
 
   NotificationService._internal();
 
-  final FlutterLocalNotificationsPlugin _flutterLocalNotificationsPlugin = FlutterLocalNotificationsPlugin();
+  final FlutterLocalNotificationsPlugin _flutterLocalNotificationsPlugin =
+      FlutterLocalNotificationsPlugin();
   bool _isInitialized = false;
 
   Future<void> init() async {
@@ -31,7 +32,7 @@ class NotificationService {
 
     const AndroidInitializationSettings initializationSettingsAndroid =
         AndroidInitializationSettings('@mipmap/ic_launcher');
-        
+
     const DarwinInitializationSettings initializationSettingsDarwin =
         DarwinInitializationSettings(
       requestAlertPermission: false,
@@ -39,14 +40,16 @@ class NotificationService {
       requestSoundPermission: false,
     );
 
-    const InitializationSettings initializationSettings = InitializationSettings(
+    const InitializationSettings initializationSettings =
+        InitializationSettings(
       android: initializationSettingsAndroid,
       iOS: initializationSettingsDarwin,
     );
 
     await _flutterLocalNotificationsPlugin.initialize(
       initializationSettings,
-      onDidReceiveNotificationResponse: (NotificationResponse notificationResponse) {
+      onDidReceiveNotificationResponse:
+          (NotificationResponse notificationResponse) {
         // Handle payload here if necessary
       },
     );
@@ -57,7 +60,8 @@ class NotificationService {
   Future<bool?> requestPermissions() async {
     if (Platform.isIOS) {
       return await _flutterLocalNotificationsPlugin
-          .resolvePlatformSpecificImplementation<IOSFlutterLocalNotificationsPlugin>()
+          .resolvePlatformSpecificImplementation<
+              IOSFlutterLocalNotificationsPlugin>()
           ?.requestPermissions(
             alert: true,
             badge: true,
@@ -65,12 +69,14 @@ class NotificationService {
           );
     } else if (Platform.isAndroid) {
       final AndroidFlutterLocalNotificationsPlugin? androidImplementation =
-          _flutterLocalNotificationsPlugin.resolvePlatformSpecificImplementation<
-              AndroidFlutterLocalNotificationsPlugin>();
-      
-      final notificationsGranted = await androidImplementation?.requestNotificationsPermission();
+          _flutterLocalNotificationsPlugin
+              .resolvePlatformSpecificImplementation<
+                  AndroidFlutterLocalNotificationsPlugin>();
+
+      final notificationsGranted =
+          await androidImplementation?.requestNotificationsPermission();
       await androidImplementation?.requestExactAlarmsPermission();
-      
+
       return notificationsGranted;
     }
     return false;
@@ -78,7 +84,8 @@ class NotificationService {
 
   /// Synchronizes currently scheduled notifications with [desiredNotifications].
   /// Cancels obsolete notifications and schedules new ones.
-  Future<void> syncNotifications(List<ScheduledNotification> desiredNotifications) async {
+  Future<void> syncNotifications(
+      List<ScheduledNotification> desiredNotifications) async {
     if (!_isInitialized) await init();
 
     final List<PendingNotificationRequest> pendingNotifications =
@@ -101,7 +108,7 @@ class NotificationService {
     // Wait, the user said "schedule only new or modified notifications".
     // We can cancel and reschedule if we want to update it, but we can't easily check the scheduled time of a pending notification.
     // But since our IDs are deterministic (derived from scheduleId and date), the time and content for a given ID are effectively constant!
-    // If the lecture time changes, the `ScheduledNotification` ID will still be the same? 
+    // If the lecture time changes, the `ScheduledNotification` ID will still be the same?
     // Yes, `_generateLectureId(schedule.id, targetDate)`. If `schedule.startTime` changes, the ID is unchanged, but we should reschedule it.
     // Without being able to compare the pending time/content, the safest approach to update an existing ID is to just check if it's in pending. If we MUST update it (e.g. settings changed), maybe it's better to cancel and reschedule.
     // Let's optimize: if an ID is in pending, we assume it's correct UNLESS we need to force an update.
@@ -110,16 +117,18 @@ class NotificationService {
     for (final desired in desiredNotifications) {
       final pending = pendingMap[desired.id];
       bool needsScheduling = false;
-      
+
       if (pending == null) {
-          needsScheduling = true;
-        } else if (pending.title != desired.title || pending.body != desired.body || pending.payload != desired.payload) {
-          needsScheduling = true;
-        }
+        needsScheduling = true;
+      } else if (pending.title != desired.title ||
+          pending.body != desired.body ||
+          pending.payload != desired.payload) {
+        needsScheduling = true;
+      }
 
       if (needsScheduling) {
         final tzDate = tz.TZDateTime.from(desired.scheduledDate, tz.local);
-        
+
         try {
           await _flutterLocalNotificationsPlugin.zonedSchedule(
             desired.id,

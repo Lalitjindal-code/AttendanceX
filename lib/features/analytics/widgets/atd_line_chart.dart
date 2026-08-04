@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import '../../../core/constants/app_spacing.dart';
 import '../models/monthly_trend.dart';
+
 class AtdLineChart extends StatelessWidget {
   final List<MonthlyTrend> trends;
 
@@ -20,7 +21,7 @@ class AtdLineChart extends StatelessWidget {
     }
 
     // Ensure we have at least 2 points to draw a line, if only 1, we can duplicate it or just draw a dot.
-    final displayTrends = trends.length == 1 
+    final displayTrends = trends.length == 1
         ? [trends.first, trends.first] // Duplicate to draw a straight flat line
         : trends;
 
@@ -30,9 +31,12 @@ class AtdLineChart extends StatelessWidget {
 
     final firstTrend = displayTrends.first;
     final lastTrend = displayTrends.last;
-    final firstMonthStr = DateFormat('MMM yyyy').format(DateTime(firstTrend.year, firstTrend.month));
-    final lastMonthStr = DateFormat('MMM yyyy').format(DateTime(lastTrend.year, lastTrend.month));
-    final semanticLabel = 'Attendance trend over ${displayTrends.length} months. '
+    final firstMonthStr = DateFormat('MMM yyyy')
+        .format(DateTime(firstTrend.year, firstTrend.month));
+    final lastMonthStr = DateFormat('MMM yyyy')
+        .format(DateTime(lastTrend.year, lastTrend.month));
+    final semanticLabel =
+        'Attendance trend over ${displayTrends.length} months. '
         'From $firstMonthStr at ${(firstTrend.percentage * 100).toStringAsFixed(1)}% '
         'to $lastMonthStr at ${(lastTrend.percentage * 100).toStringAsFixed(1)}%.';
 
@@ -43,7 +47,11 @@ class AtdLineChart extends StatelessWidget {
       label: semanticLabel,
       child: Container(
         height: 220,
-        padding: const EdgeInsets.only(right: AppSpacing.md, left: AppSpacing.sm, top: AppSpacing.lg, bottom: AppSpacing.sm),
+        padding: const EdgeInsets.only(
+            right: AppSpacing.md,
+            left: AppSpacing.sm,
+            top: AppSpacing.lg,
+            bottom: AppSpacing.sm),
         child: LineChart(
           LineChartData(
             gridData: FlGridData(
@@ -58,8 +66,10 @@ class AtdLineChart extends StatelessWidget {
             ),
             titlesData: FlTitlesData(
               show: true,
-              rightTitles: const AxisTitles(sideTitles: SideTitles(showTitles: false)),
-              topTitles: const AxisTitles(sideTitles: SideTitles(showTitles: false)),
+              rightTitles:
+                  const AxisTitles(sideTitles: SideTitles(showTitles: false)),
+              topTitles:
+                  const AxisTitles(sideTitles: SideTitles(showTitles: false)),
               bottomTitles: AxisTitles(
                 sideTitles: SideTitles(
                   showTitles: true,
@@ -67,7 +77,8 @@ class AtdLineChart extends StatelessWidget {
                   interval: 1,
                   getTitlesWidget: (value, meta) {
                     final index = value.toInt();
-                    if (index < 0 || index >= displayTrends.length) return const SizedBox.shrink();
+                    if (index < 0 || index >= displayTrends.length)
+                      return const SizedBox.shrink();
                     final trend = displayTrends[index];
                     final date = DateTime(trend.year, trend.month);
                     return Padding(
@@ -101,16 +112,19 @@ class AtdLineChart extends StatelessWidget {
             ),
             lineTouchData: LineTouchData(
               touchTooltipData: LineTouchTooltipData(
-                getTooltipColor: (touchedSpot) => theme.colorScheme.surfaceContainerHighest,
+                getTooltipColor: (touchedSpot) =>
+                    theme.colorScheme.surfaceContainerHighest,
                 getTooltipItems: (touchedSpots) {
                   return touchedSpots.map((spot) {
                     final index = spot.x.toInt();
                     if (index < 0 || index >= displayTrends.length) return null;
                     final trend = displayTrends[index];
-                    final dateStr = DateFormat('MMM yyyy').format(DateTime(trend.year, trend.month));
+                    final dateStr = DateFormat('MMM yyyy')
+                        .format(DateTime(trend.year, trend.month));
                     return LineTooltipItem(
                       '${spot.y.toStringAsFixed(1)}%\n',
-                      theme.textTheme.labelLarge!.copyWith(fontWeight: FontWeight.bold),
+                      theme.textTheme.labelLarge!
+                          .copyWith(fontWeight: FontWeight.bold),
                       children: [
                         TextSpan(
                           text: dateStr,
@@ -154,7 +168,8 @@ class AtdLineChart extends StatelessWidget {
                     begin: Alignment.topCenter,
                     end: Alignment.bottomCenter,
                     colors: [
-                      theme.colorScheme.primary.withValues(alpha: isDark ? 0.3 : 0.2),
+                      theme.colorScheme.primary
+                          .withValues(alpha: isDark ? 0.3 : 0.2),
                       theme.colorScheme.primary.withValues(alpha: 0.0),
                     ],
                   ),

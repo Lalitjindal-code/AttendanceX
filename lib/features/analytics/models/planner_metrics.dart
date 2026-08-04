@@ -10,6 +10,7 @@ class PlannerMetrics {
     this.overdueTasks = 0,
     this.upcomingTasks = 0,
   });
-  
-  double get completionRate => totalTasks == 0 ? 0.0 : completedTasks / totalTasks;
+
+  double get completionRate =>
+      totalTasks == 0 ? 0.0 : completedTasks / totalTasks;
 }

@@ -37,24 +37,29 @@ class AnalyticsNotifier extends _$AnalyticsNotifier {
       attendanceRepo.watchAll(),
       plannerRepo.watchAllTasks(),
       scheduleRepo.watchAll(),
-      (List<Subject> subjects, List<Attendance> allAttendances, List<AcademicTask> allTasks, List<Schedule> allSchedules) {
+      (List<Subject> subjects, List<Attendance> allAttendances,
+          List<AcademicTask> allTasks, List<Schedule> allSchedules) {
         if (subjects.isEmpty) {
           return const AnalyticsState(isLoading: false);
         }
 
         // 1. Overall Monthly Trends
-        final monthlyTrends = AnalyticsEngine.calculateMonthlyTrends(allAttendances, settings);
+        final monthlyTrends =
+            AnalyticsEngine.calculateMonthlyTrends(allAttendances, settings);
 
         // 1.5. Day of Week Trends & Bunk Heatmap
-        final dayOfWeekTrends = AnalyticsEngine.calculateDayOfWeekTrends(allAttendances, settings);
-        final bunkHeatmap = AnalyticsEngine.calculateBunkHeatmap(allAttendances);
+        final dayOfWeekTrends =
+            AnalyticsEngine.calculateDayOfWeekTrends(allAttendances, settings);
+        final bunkHeatmap =
+            AnalyticsEngine.calculateBunkHeatmap(allAttendances);
 
         // 2. Overall Forecast
-        final overallSummary = AttendanceEngine.calculateOverallSummary(allAttendances, settings);
-        
+        final overallSummary =
+            AttendanceEngine.calculateOverallSummary(allAttendances, settings);
+
         double avgGoal = 0.0;
         for (var sub in subjects) {
-           avgGoal += sub.goalPercentage / 100.0;
+          avgGoal += sub.goalPercentage / 100.0;
         }
         avgGoal /= subjects.length;
 
@@ -70,7 +75,8 @@ class AnalyticsNotifier extends _$AnalyticsNotifier {
           totalPendingRecords: overallSummary.totalPendingRecords,
         );
 
-        final overallForecast = AnalyticsEngine.calculateForecast(dummySubjectSummary, avgGoal);
+        final overallForecast =
+            AnalyticsEngine.calculateForecast(dummySubjectSummary, avgGoal);
 
         // 3. Subject Stats
         final subjectStats = <SubjectStatistics>[];
@@ -81,21 +87,43 @@ class AnalyticsNotifier extends _$AnalyticsNotifier {
         final prevYear = currentMonth == 1 ? currentYear - 1 : currentYear;
 
         for (final subject in subjects) {
-          final subjectAttendances = allAttendances.where((a) => a.subjectId == subject.id).toList();
-          
-          final summary = AttendanceEngine.calculateSubjectSummary(subject.id, subjectAttendances, settings);
-          final lectureSummary = AttendanceEngine.calculateSubjectSummaryByType(subject.id, LectureType.lecture, subjectAttendances, allSchedules, settings);
-          final labSummary = AttendanceEngine.calculateSubjectSummaryByType(subject.id, LectureType.lab, subjectAttendances, allSchedules, settings);
+          final subjectAttendances =
+              allAttendances.where((a) => a.subjectId == subject.id).toList();
 
-          final forecast = AnalyticsEngine.calculateForecast(summary, subject.goalPercentage / 100.0);
+          final summary = AttendanceEngine.calculateSubjectSummary(
+              subject.id, subjectAttendances, settings);
+          final lectureSummary = AttendanceEngine.calculateSubjectSummaryByType(
+              subject.id,
+              LectureType.lecture,
+              subjectAttendances,
+              allSchedules,
+              settings);
+          final labSummary = AttendanceEngine.calculateSubjectSummaryByType(
+              subject.id,
+              LectureType.lab,
+              subjectAttendances,
+              allSchedules,
+              settings);
 
-          final currentMonthAttendances = subjectAttendances.where((a) => a.date.year == currentYear && a.date.month == currentMonth).toList();
-          final prevMonthAttendances = subjectAttendances.where((a) => a.date.year == prevYear && a.date.month == prevMonth).toList();
+          final forecast = AnalyticsEngine.calculateForecast(
+              summary, subject.goalPercentage / 100.0);
 
-          final currentSummary = AttendanceEngine.calculateSubjectSummary(subject.id, currentMonthAttendances, settings);
-          final prevSummary = AttendanceEngine.calculateSubjectSummary(subject.id, prevMonthAttendances, settings);
+          final currentMonthAttendances = subjectAttendances
+              .where((a) =>
+                  a.date.year == currentYear && a.date.month == currentMonth)
+              .toList();
+          final prevMonthAttendances = subjectAttendances
+              .where(
+                  (a) => a.date.year == prevYear && a.date.month == prevMonth)
+              .toList();
 
-          final trend = AnalyticsEngine.calculateTrend(currentSummary, prevSummary);
+          final currentSummary = AttendanceEngine.calculateSubjectSummary(
+              subject.id, currentMonthAttendances, settings);
+          final prevSummary = AttendanceEngine.calculateSubjectSummary(
+              subject.id, prevMonthAttendances, settings);
+
+          final trend =
+              AnalyticsEngine.calculateTrend(currentSummary, prevSummary);
 
           subjectStats.add(SubjectStatistics(
             subject: subject,
@@ -108,10 +136,12 @@ class AnalyticsNotifier extends _$AnalyticsNotifier {
         }
 
         // 4. Planner Metrics
-        final completedTasks = allTasks.where((t) => t.status == TaskStatus.completed).length;
+        final completedTasks =
+            allTasks.where((t) => t.status == TaskStatus.completed).length;
         final overdueTasks = allTasks.where(PlannerEngine.isOverdue).length;
-        final upcomingTasks = PlannerEngine.getDashboardUpcomingDeadlines(allTasks).length;
-        
+        final upcomingTasks =
+            PlannerEngine.getDashboardUpcomingDeadlines(allTasks).length;
+
         final plannerMetrics = PlannerMetrics(
           totalTasks: allTasks.length,
           completedTasks: completedTasks,

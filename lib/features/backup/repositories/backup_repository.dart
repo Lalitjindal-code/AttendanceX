@@ -1,6 +1,5 @@
-
 /// Abstract repository defining the interface for storing and retrieving backups.
-/// 
+///
 /// This is designed to be platform and storage agnostic. Future implementations
 /// can support Google Drive, iCloud, Dropbox, etc.
 abstract class BackupRepository {

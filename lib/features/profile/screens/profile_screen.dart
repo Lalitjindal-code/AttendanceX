@@ -40,22 +40,27 @@ class ProfileScreen extends ConsumerWidget {
             Center(
               child: CircleAvatar(
                 radius: 60,
-                backgroundImage: user.photoURL != null ? NetworkImage(user.photoURL!) : null,
-                child: user.photoURL == null ? const Icon(Icons.person, size: 60) : null,
+                backgroundImage:
+                    user.photoURL != null ? NetworkImage(user.photoURL!) : null,
+                child: user.photoURL == null
+                    ? const Icon(Icons.person, size: 60)
+                    : null,
               ),
             ),
             const SizedBox(height: 24),
             Text(
               user.displayName ?? 'Student',
-              style: theme.textTheme.headlineMedium?.copyWith(fontWeight: FontWeight.bold),
+              style: theme.textTheme.headlineMedium
+                  ?.copyWith(fontWeight: FontWeight.bold),
             ),
             const SizedBox(height: 8),
             Text(
               user.email ?? '',
-              style: theme.textTheme.titleMedium?.copyWith(color: theme.colorScheme.onSurfaceVariant),
+              style: theme.textTheme.titleMedium
+                  ?.copyWith(color: theme.colorScheme.onSurfaceVariant),
             ),
             const SizedBox(height: 40),
-            
+
             // Add more profile settings or info here in the future
             Card(
               elevation: 0,
@@ -75,7 +80,8 @@ class ProfileScreen extends ConsumerWidget {
                     leading: const Icon(Icons.verified_user_outlined),
                     title: const Text('Status'),
                     subtitle: const Text('Active & Verified'),
-                    trailing: Icon(Icons.check_circle, color: Colors.green[400]),
+                    trailing:
+                        Icon(Icons.check_circle, color: Colors.green[400]),
                   ),
                 ],
               ),
@@ -88,11 +94,13 @@ class ProfileScreen extends ConsumerWidget {
                   await ref.read(authProvider).signOut();
                 },
                 icon: const Icon(Icons.logout, color: Colors.red),
-                label: const Text('Sign Out', style: TextStyle(color: Colors.red)),
+                label:
+                    const Text('Sign Out', style: TextStyle(color: Colors.red)),
                 style: OutlinedButton.styleFrom(
                   padding: const EdgeInsets.symmetric(vertical: 16),
                   side: const BorderSide(color: Colors.red),
-                  shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+                  shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(12)),
                 ),
               ),
             ),

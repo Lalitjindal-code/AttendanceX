@@ -15,17 +15,14 @@ abstract final class AppTheme {
   // ── Theme Getters ─────────────────────────────────────────────────────────────
 
   /// Light theme.
-  static ThemeData get light =>
-      _build(AppColorScheme.light, Brightness.light);
+  static ThemeData get light => _build(AppColorScheme.light, Brightness.light);
 
   /// Dark theme.
-  static ThemeData get dark =>
-      _build(AppColorScheme.dark, Brightness.dark);
+  static ThemeData get dark => _build(AppColorScheme.dark, Brightness.dark);
 
   /// AMOLED / true-black dark theme.
   /// Uses [AppColorScheme.amoled] which has a pure #000000 surface.
-  static ThemeData get amoled =>
-      _build(AppColorScheme.amoled, Brightness.dark);
+  static ThemeData get amoled => _build(AppColorScheme.amoled, Brightness.dark);
 
   // ── Builder ───────────────────────────────────────────────────────────────────
 
@@ -80,12 +77,11 @@ abstract final class AppTheme {
         fontFamily: 'PlusJakartaSans',
       ),
       systemOverlayStyle: brightness == Brightness.light
-          ? SystemUiOverlayStyle.dark
-              .copyWith(
-                statusBarColor: Colors.transparent,
-                systemNavigationBarColor: scheme.surface,
-                systemNavigationBarIconBrightness: Brightness.dark,
-              )
+          ? SystemUiOverlayStyle.dark.copyWith(
+              statusBarColor: Colors.transparent,
+              systemNavigationBarColor: scheme.surface,
+              systemNavigationBarIconBrightness: Brightness.dark,
+            )
           : SystemUiOverlayStyle.light.copyWith(
               statusBarColor: Colors.transparent,
               systemNavigationBarColor: scheme.surface,

@@ -13,16 +13,16 @@ import '../helpers/golden_helper.dart';
 class FakeEnabledSettings extends Settings {
   @override
   AppSettings build() => const AppSettings(
-    notificationsEnabled: true,
-    dailyReminderEnabled: true,
-    dailyReminderTime: '20:00',
-    lectureReminderMinutes: 10,
-    defaultGoalPercentage: 75.0,
-    semesterStartDate: null,
-    semesterEndDate: null,
-    gtMode: GtMode.exclude,
-    medicalCountsAsPresent: false,
-  );
+        notificationsEnabled: true,
+        dailyReminderEnabled: true,
+        dailyReminderTime: '20:00',
+        lectureReminderMinutes: 10,
+        defaultGoalPercentage: 75.0,
+        semesterStartDate: null,
+        semesterEndDate: null,
+        gtMode: GtMode.exclude,
+        medicalCountsAsPresent: false,
+      );
 
   @override
   Future<void> updateDailyReminderTime(String time) async {
@@ -62,10 +62,11 @@ void main() {
       await tester.pumpAndSettle();
 
       expect(find.text('APPEARANCE'), findsOneWidget);
-      
+
       // Switch to dark mode
       final darkFinder = find.text('Dark');
-      await tester.dragUntilVisible(darkFinder, find.byType(ListView), const Offset(0, -500));
+      await tester.dragUntilVisible(
+          darkFinder, find.byType(ListView), const Offset(0, -500));
       await tester.pumpAndSettle();
 
       await tester.tap(darkFinder);
@@ -75,7 +76,8 @@ void main() {
       expect(prefs.getString(PreferencesService.keyThemeMode), 'dark');
     });
 
-    testWidgets('Notification toggle updates state and preferences', (WidgetTester tester) async {
+    testWidgets('Notification toggle updates state and preferences',
+        (WidgetTester tester) async {
       await tester.pumpWidget(createTestWidget());
       await tester.pumpAndSettle();
 
@@ -83,10 +85,11 @@ void main() {
         of: find.text('Master switch for all alerts'),
         matching: find.byType(SwitchListTile),
       );
-      
-      await tester.dragUntilVisible(masterSwitchFinder, find.byType(ListView), const Offset(0, -500));
+
+      await tester.dragUntilVisible(
+          masterSwitchFinder, find.byType(ListView), const Offset(0, -500));
       await tester.pumpAndSettle();
-      
+
       await tester.tap(masterSwitchFinder);
       await tester.pumpAndSettle();
 
@@ -99,9 +102,10 @@ void main() {
       await tester.pumpAndSettle();
 
       final excludeFinder = find.text(GtMode.exclude.label);
-      await tester.dragUntilVisible(excludeFinder, find.byType(ListView), const Offset(0, -500));
+      await tester.dragUntilVisible(
+          excludeFinder, find.byType(ListView), const Offset(0, -500));
       await tester.pumpAndSettle();
-      
+
       expect(excludeFinder, findsOneWidget);
 
       await tester.tap(excludeFinder);
@@ -112,7 +116,8 @@ void main() {
       await tester.pumpAndSettle();
 
       final prefs = await SharedPreferences.getInstance();
-      expect(prefs.getString(PreferencesService.keyGtMode), GtMode.countAsPresent.key);
+      expect(prefs.getString(PreferencesService.keyGtMode),
+          GtMode.countAsPresent.key);
     });
 
     testWidgets('Medical toggle works', (WidgetTester tester) async {
@@ -123,10 +128,11 @@ void main() {
         of: find.text('Medical Leave (ML)'),
         matching: find.byType(SwitchListTile),
       );
-      
-      await tester.dragUntilVisible(medicalFinder, find.byType(ListView), const Offset(0, -500));
+
+      await tester.dragUntilVisible(
+          medicalFinder, find.byType(ListView), const Offset(0, -500));
       await tester.pumpAndSettle();
-      
+
       await tester.tap(medicalFinder);
       await tester.pumpAndSettle();
 
@@ -134,14 +140,16 @@ void main() {
       expect(prefs.getBool(PreferencesService.keyMedicalCountsAsPresent), true);
     });
 
-    testWidgets('Goal percentage slider updates value', (WidgetTester tester) async {
+    testWidgets('Goal percentage slider updates value',
+        (WidgetTester tester) async {
       await tester.pumpWidget(createTestWidget());
       await tester.pumpAndSettle();
 
-      expect(find.text('75%'), findsOneWidget); 
+      expect(find.text('75%'), findsOneWidget);
 
       final sliderFinder = find.byType(Slider);
-      await tester.dragUntilVisible(sliderFinder, find.byType(ListView), const Offset(0, -500));
+      await tester.dragUntilVisible(
+          sliderFinder, find.byType(ListView), const Offset(0, -500));
       await tester.pumpAndSettle();
 
       await tester.tap(sliderFinder);
@@ -151,7 +159,8 @@ void main() {
       expect(prefs.getDouble(PreferencesService.keyDefaultGoal) != 0.75, true);
     });
 
-    testWidgets('Daily Reminder time picker opens and sets time', (WidgetTester tester) async {
+    testWidgets('Daily Reminder time picker opens and sets time',
+        (WidgetTester tester) async {
       await tester.pumpWidget(createTestWidget(
         overrides: [
           settingsProvider.overrideWith(() => FakeEnabledSettings()),
@@ -160,7 +169,8 @@ void main() {
       await tester.pumpAndSettle();
 
       final textFinder = find.text('Daily Reminder Time');
-      await tester.dragUntilVisible(textFinder, find.byType(ListView), const Offset(0, -500));
+      await tester.dragUntilVisible(
+          textFinder, find.byType(ListView), const Offset(0, -500));
       await tester.pumpAndSettle();
 
       await tester.tap(textFinder);
@@ -171,17 +181,20 @@ void main() {
       await tester.pumpAndSettle();
 
       final prefs = await SharedPreferences.getInstance();
-      expect(prefs.getString(PreferencesService.keyDailyReminderTime), isNotNull);
+      expect(
+          prefs.getString(PreferencesService.keyDailyReminderTime), isNotNull);
     });
 
-    testWidgets('Settings text scale regression loop', (WidgetTester tester) async {
+    testWidgets('Settings text scale regression loop',
+        (WidgetTester tester) async {
       final textScaleFactors = [1.0, 1.3, 1.5, 2.0];
       for (final scale in textScaleFactors) {
         await tester.pumpWidget(ProviderScope(
           child: MaterialApp(
             builder: (context, child) {
               return MediaQuery(
-                data: MediaQuery.of(context).copyWith(textScaler: TextScaler.linear(scale)),
+                data: MediaQuery.of(context)
+                    .copyWith(textScaler: TextScaler.linear(scale)),
                 child: child!,
               );
             },

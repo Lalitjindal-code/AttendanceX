@@ -39,12 +39,12 @@ class _PlannerScreenState extends ConsumerState<PlannerScreen> {
   }
 
   void _onScroll() {
-    if (_scrollController.position.userScrollDirection == 
+    if (_scrollController.position.userScrollDirection ==
         ScrollDirection.reverse) {
       if (_isFabExtended) {
         setState(() => _isFabExtended = false);
       }
-    } else if (_scrollController.position.userScrollDirection == 
+    } else if (_scrollController.position.userScrollDirection ==
         ScrollDirection.forward) {
       if (!_isFabExtended) {
         setState(() => _isFabExtended = true);
@@ -71,107 +71,141 @@ class _PlannerScreenState extends ConsumerState<PlannerScreen> {
         child: CustomScrollView(
           controller: _scrollController,
           slivers: [
-          SliverAppBar.large(
-            title: const Text('Planner'),
-            floating: true,
-            pinned: true,
-            actions: [
-              IconButton(
-                icon: const Icon(Icons.add),
-                tooltip: 'Add Task',
-                onPressed: () => showTaskFormSheet(context),
-              ),
-            ],
-          ),
-          
-          // Filter Chips
-          const SliverToBoxAdapter(
-            child: TaskFilterChips(),
-          ),
-          
-          tasksAsync.when(
-            data: (tasks) {
-              final subjects = subjectsAsync.valueOrNull ?? [];
-              
-              if (tasks.isEmpty) {
-                return SliverFillRemaining(
-                  hasScrollBody: false,
-                  child: Center(
-                    child: Padding(
-                      padding: const EdgeInsets.all(AppSpacing.xl),
-                      child: Column(
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        children: [
-                          Icon(
-                            Icons.assignment_turned_in_outlined,
-                            size: 72,
-                            color: Theme.of(context).colorScheme.outlineVariant,
-                          ),
-                          const SizedBox(height: AppSpacing.lg),
-                          Text(
-                            ref.watch(plannerFilterProvider).isEmpty 
-                                ? "All caught up! Add a deadline when you're ready."
-                                : 'No tasks match your filters.',
-                            textAlign: TextAlign.center,
-                            style: Theme.of(context).textTheme.bodyLarge?.copyWith(
-                                  color: Theme.of(context).colorScheme.onSurfaceVariant,
-                                ),
-                          ),
-                          const SizedBox(height: AppSpacing.xl),
-                          if (ref.watch(plannerFilterProvider).isEmpty)
-                            FilledButton.icon(
-                              onPressed: () => showTaskFormSheet(context),
-                              icon: const Icon(Icons.add),
-                              label: const Text('Add Task'),
+            SliverAppBar.large(
+              title: const Text('Planner'),
+              floating: true,
+              pinned: true,
+              actions: [
+                IconButton(
+                  icon: const Icon(Icons.add),
+                  tooltip: 'Add Task',
+                  onPressed: () => showTaskFormSheet(context),
+                ),
+              ],
+            ),
+
+            // Filter Chips
+            const SliverToBoxAdapter(
+              child: TaskFilterChips(),
+            ),
+
+            tasksAsync.when(
+              data: (tasks) {
+                final subjects = subjectsAsync.valueOrNull ?? [];
+
+                if (tasks.isEmpty) {
+                  return SliverFillRemaining(
+                    hasScrollBody: false,
+                    child: Center(
+                      child: Padding(
+                        padding: const EdgeInsets.all(AppSpacing.xl),
+                        child: Column(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: [
+                            Icon(
+                              Icons.assignment_turned_in_outlined,
+                              size: 72,
+                              color:
+                                  Theme.of(context).colorScheme.outlineVariant,
                             ),
-                        ],
-                      ),
-                    ),
-                  ),
-                );
-              }
-
-              final overdueTasks = tasks.where(PlannerEngine.isOverdue).toList();
-              final todayTasks = tasks.where((t) => PlannerEngine.generateDueLabel(t) == 'Today' && !PlannerEngine.isOverdue(t) && t.status != TaskStatus.completed).toList();
-              final tomorrowTasks = tasks.where((t) => PlannerEngine.generateDueLabel(t) == 'Tomorrow' && t.status != TaskStatus.completed).toList();
-              final upcomingTasks = tasks.where((t) => !PlannerEngine.isOverdue(t) && PlannerEngine.generateDueLabel(t) != 'Today' && PlannerEngine.generateDueLabel(t) != 'Tomorrow' && t.status != TaskStatus.completed).toList();
-              final completedTasks = tasks.where((t) => t.status == TaskStatus.completed).toList();
-
-              return SliverList(
-                delegate: SliverChildListDelegate([
-                  _buildSection(context, 'Overdue', overdueTasks, subjects, Theme.of(context).colorScheme.error),
-                  _buildSection(context, 'Due Today', todayTasks, subjects, Colors.orange),
-                  _buildSection(context, 'Due Tomorrow', tomorrowTasks, subjects, Colors.blue),
-                  _buildSection(context, 'Upcoming', upcomingTasks, subjects, Theme.of(context).colorScheme.primary),
-                  _buildSection(context, 'Completed', completedTasks, subjects, Theme.of(context).colorScheme.outline),
-                  
-                  if (tasks.where((t) => t.status != TaskStatus.completed).isEmpty)
-                    Padding(
-                      padding: const EdgeInsets.all(AppSpacing.xxl),
-                      child: Center(
-                        child: Text(
-                          "🎉 You're all caught up!",
-                          style: Theme.of(context).textTheme.titleMedium?.copyWith(
-                            color: Theme.of(context).colorScheme.primary,
-                          ),
+                            const SizedBox(height: AppSpacing.lg),
+                            Text(
+                              ref.watch(plannerFilterProvider).isEmpty
+                                  ? "All caught up! Add a deadline when you're ready."
+                                  : 'No tasks match your filters.',
+                              textAlign: TextAlign.center,
+                              style: Theme.of(context)
+                                  .textTheme
+                                  .bodyLarge
+                                  ?.copyWith(
+                                    color: Theme.of(context)
+                                        .colorScheme
+                                        .onSurfaceVariant,
+                                  ),
+                            ),
+                            const SizedBox(height: AppSpacing.xl),
+                            if (ref.watch(plannerFilterProvider).isEmpty)
+                              FilledButton.icon(
+                                onPressed: () => showTaskFormSheet(context),
+                                icon: const Icon(Icons.add),
+                                label: const Text('Add Task'),
+                              ),
+                          ],
                         ),
                       ),
                     ),
-                  
-                  // Bottom padding
-                  const SizedBox(height: 80),
-                ]),
-              );
-            },
-            loading: () => const SliverFillRemaining(
-              child: Center(child: CircularProgressIndicator()),
+                  );
+                }
+
+                final overdueTasks =
+                    tasks.where(PlannerEngine.isOverdue).toList();
+                final todayTasks = tasks
+                    .where((t) =>
+                        PlannerEngine.generateDueLabel(t) == 'Today' &&
+                        !PlannerEngine.isOverdue(t) &&
+                        t.status != TaskStatus.completed)
+                    .toList();
+                final tomorrowTasks = tasks
+                    .where((t) =>
+                        PlannerEngine.generateDueLabel(t) == 'Tomorrow' &&
+                        t.status != TaskStatus.completed)
+                    .toList();
+                final upcomingTasks = tasks
+                    .where((t) =>
+                        !PlannerEngine.isOverdue(t) &&
+                        PlannerEngine.generateDueLabel(t) != 'Today' &&
+                        PlannerEngine.generateDueLabel(t) != 'Tomorrow' &&
+                        t.status != TaskStatus.completed)
+                    .toList();
+                final completedTasks = tasks
+                    .where((t) => t.status == TaskStatus.completed)
+                    .toList();
+
+                return SliverList(
+                  delegate: SliverChildListDelegate([
+                    _buildSection(context, 'Overdue', overdueTasks, subjects,
+                        Theme.of(context).colorScheme.error),
+                    _buildSection(context, 'Due Today', todayTasks, subjects,
+                        Colors.orange),
+                    _buildSection(context, 'Due Tomorrow', tomorrowTasks,
+                        subjects, Colors.blue),
+                    _buildSection(context, 'Upcoming', upcomingTasks, subjects,
+                        Theme.of(context).colorScheme.primary),
+                    _buildSection(context, 'Completed', completedTasks,
+                        subjects, Theme.of(context).colorScheme.outline),
+
+                    if (tasks
+                        .where((t) => t.status != TaskStatus.completed)
+                        .isEmpty)
+                      Padding(
+                        padding: const EdgeInsets.all(AppSpacing.xxl),
+                        child: Center(
+                          child: Text(
+                            "🎉 You're all caught up!",
+                            style: Theme.of(context)
+                                .textTheme
+                                .titleMedium
+                                ?.copyWith(
+                                  color: Theme.of(context).colorScheme.primary,
+                                ),
+                          ),
+                        ),
+                      ),
+
+                    // Bottom padding
+                    const SizedBox(height: 80),
+                  ]),
+                );
+              },
+              loading: () => const SliverFillRemaining(
+                child: Center(child: CircularProgressIndicator()),
+              ),
+              error: (err, stack) => SliverFillRemaining(
+                child: Center(child: Text('Error: $err')),
+              ),
             ),
-            error: (err, stack) => SliverFillRemaining(
-              child: Center(child: Text('Error: $err')),
-            ),
-          ),
-        ],
-      ),
+          ],
+        ),
       ),
       floatingActionButton: FloatingActionButton.extended(
         onPressed: () => showTaskFormSheet(context),
@@ -183,14 +217,16 @@ class _PlannerScreenState extends ConsumerState<PlannerScreen> {
     );
   }
 
-  Widget _buildSection(BuildContext context, String title, List<AcademicTask> tasks, List<Subject> subjects, Color color) {
+  Widget _buildSection(BuildContext context, String title,
+      List<AcademicTask> tasks, List<Subject> subjects, Color color) {
     if (tasks.isEmpty) return const SizedBox.shrink();
-    
+
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         Padding(
-          padding: const EdgeInsets.fromLTRB(AppSpacing.lg, AppSpacing.lg, AppSpacing.lg, AppSpacing.sm),
+          padding: const EdgeInsets.fromLTRB(
+              AppSpacing.lg, AppSpacing.lg, AppSpacing.lg, AppSpacing.sm),
           child: Row(
             children: [
               Container(
@@ -202,23 +238,24 @@ class _PlannerScreenState extends ConsumerState<PlannerScreen> {
               Text(
                 title,
                 style: Theme.of(context).textTheme.titleSmall?.copyWith(
-                  fontWeight: FontWeight.bold,
-                  color: color,
-                ),
+                      fontWeight: FontWeight.bold,
+                      color: color,
+                    ),
               ),
               const Spacer(),
               Text(
                 '${tasks.length}',
                 style: Theme.of(context).textTheme.bodySmall?.copyWith(
-                  color: Theme.of(context).colorScheme.onSurfaceVariant,
-                  fontWeight: FontWeight.bold,
-                ),
+                      color: Theme.of(context).colorScheme.onSurfaceVariant,
+                      fontWeight: FontWeight.bold,
+                    ),
               ),
             ],
           ),
         ),
         ...tasks.map((task) {
-          final subject = subjects.where((s) => s.id == task.subjectId).firstOrNull;
+          final subject =
+              subjects.where((s) => s.id == task.subjectId).firstOrNull;
           return Padding(
             padding: const EdgeInsets.symmetric(horizontal: AppSpacing.md),
             child: TaskCard(

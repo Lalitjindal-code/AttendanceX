@@ -1,4 +1,3 @@
-
 import 'package:attendancex/database/collections/schedule_collection.dart';
 import 'package:attendancex/database/repositories/schedule_repository.dart';
 import 'package:flutter_test/flutter_test.dart';
@@ -44,9 +43,17 @@ void main() {
     });
 
     test('updateOrder reorders schedules correctly', () async {
-      final s1 = Schedule()..dayOfWeek = 1..startTime = '09:00'..endTime = '10:00'..order = 0;
-      final s2 = Schedule()..dayOfWeek = 1..startTime = '10:00'..endTime = '11:00'..order = 1;
-      
+      final s1 = Schedule()
+        ..dayOfWeek = 1
+        ..startTime = '09:00'
+        ..endTime = '10:00'
+        ..order = 0;
+      final s2 = Schedule()
+        ..dayOfWeek = 1
+        ..startTime = '10:00'
+        ..endTime = '11:00'
+        ..order = 1;
+
       await repository.create(s1);
       await repository.create(s2);
 

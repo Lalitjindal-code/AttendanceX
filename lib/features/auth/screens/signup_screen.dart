@@ -49,7 +49,7 @@ class _SignupScreenState extends ConsumerState<SignupScreen> {
 
     try {
       await ref.read(authProvider).signUpWithEmailPassword(email, password);
-      
+
       // Since it's a new account, upload current local data as their first backup
       await ref.read(firebaseSyncServiceProvider).backupData();
 
@@ -201,7 +201,8 @@ class _SignupScreenState extends ConsumerState<SignupScreen> {
                 FilledButton(
                   onPressed: _isLoading ? null : _signup,
                   style: FilledButton.styleFrom(
-                    padding: const EdgeInsets.symmetric(vertical: AppSpacing.lg),
+                    padding:
+                        const EdgeInsets.symmetric(vertical: AppSpacing.lg),
                     shape: RoundedRectangleBorder(
                       borderRadius: BorderRadius.circular(AppRadius.md),
                     ),
@@ -223,7 +224,8 @@ class _SignupScreenState extends ConsumerState<SignupScreen> {
                   ),
                   label: const Text('Sign up with Google'),
                   style: OutlinedButton.styleFrom(
-                    padding: const EdgeInsets.symmetric(vertical: AppSpacing.lg),
+                    padding:
+                        const EdgeInsets.symmetric(vertical: AppSpacing.lg),
                     shape: RoundedRectangleBorder(
                       borderRadius: BorderRadius.circular(AppRadius.md),
                     ),

@@ -51,19 +51,19 @@ class DailyAttendanceItem {
   @override
   bool operator ==(Object other) {
     if (identical(this, other)) return true;
-  
+
     return other is DailyAttendanceItem &&
-      other.subject.id == subject.id &&
-      other.schedule?.id == schedule?.id &&
-      other.attendance?.id == attendance?.id &&
-      other.isManual == isManual;
+        other.subject.id == subject.id &&
+        other.schedule?.id == schedule?.id &&
+        other.attendance?.id == attendance?.id &&
+        other.isManual == isManual;
   }
 
   @override
   int get hashCode {
     return subject.id.hashCode ^
-      (schedule?.id).hashCode ^
-      (attendance?.id).hashCode ^
-      isManual.hashCode;
+        (schedule?.id).hashCode ^
+        (attendance?.id).hashCode ^
+        isManual.hashCode;
   }
 }

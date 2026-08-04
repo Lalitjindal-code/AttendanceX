@@ -32,8 +32,8 @@ class SubjectDetailScreen extends ConsumerWidget {
   }
 
   Widget _buildContent(
-    BuildContext context, 
-    Subject subject, 
+    BuildContext context,
+    Subject subject,
     AsyncValue<SubjectAttendanceSummary> summaryAsync,
   ) {
     return CustomScrollView(
@@ -45,17 +45,21 @@ class SubjectDetailScreen extends ConsumerWidget {
             IconButton(
               icon: const Icon(Icons.edit_outlined),
               tooltip: 'Edit Subject',
-              onPressed: () => showSubjectFormSheet(context, subjectId: subject.id),
+              onPressed: () =>
+                  showSubjectFormSheet(context, subjectId: subject.id),
             ),
           ],
           flexibleSpace: LayoutBuilder(
             builder: (BuildContext context, BoxConstraints constraints) {
               final top = constraints.biggest.height;
               // Title fades in and moves down as it expands
-              final expandRatio = (top - kToolbarHeight) / (160.0 - kToolbarHeight);
+              final expandRatio =
+                  (top - kToolbarHeight) / (160.0 - kToolbarHeight);
               final opacity = expandRatio.clamp(0.0, 1.0);
-              
-              final isLight = ThemeData.estimateBrightnessForColor(Color(subject.colorValue)) == Brightness.light;
+
+              final isLight = ThemeData.estimateBrightnessForColor(
+                      Color(subject.colorValue)) ==
+                  Brightness.light;
               final textColor = isLight ? Colors.black : Colors.white;
 
               return Stack(
@@ -85,8 +89,10 @@ class SubjectDetailScreen extends ConsumerWidget {
             },
           ),
           iconTheme: IconThemeData(
-            color: ThemeData.estimateBrightnessForColor(Color(subject.colorValue)) == Brightness.light 
-                ? Colors.black 
+            color: ThemeData.estimateBrightnessForColor(
+                        Color(subject.colorValue)) ==
+                    Brightness.light
+                ? Colors.black
                 : Colors.white,
           ),
         ),
@@ -95,18 +101,23 @@ class SubjectDetailScreen extends ConsumerWidget {
           sliver: SliverList(
             delegate: SliverChildListDelegate([
               // General info
-              _buildInfoRow(context, Icons.info_outline, '${subject.credits} Credits • Goal: ${subject.goalPercentage.toInt()}%'),
-              if (subject.facultyName != null && subject.facultyName!.isNotEmpty)
-                _buildInfoRow(context, Icons.person_outline, subject.facultyName!),
+              _buildInfoRow(context, Icons.info_outline,
+                  '${subject.credits} Credits • Goal: ${subject.goalPercentage.toInt()}%'),
+              if (subject.facultyName != null &&
+                  subject.facultyName!.isNotEmpty)
+                _buildInfoRow(
+                    context, Icons.person_outline, subject.facultyName!),
               if (subject.notes != null && subject.notes!.isNotEmpty)
                 _buildInfoRow(context, Icons.notes, subject.notes!),
-              
+
               const SizedBox(height: AppSpacing.xl),
-              Text('Attendance Status', style: Theme.of(context).textTheme.titleMedium),
+              Text('Attendance Status',
+                  style: Theme.of(context).textTheme.titleMedium),
               const SizedBox(height: AppSpacing.md),
-              
+
               summaryAsync.when(
-                data: (summary) => _buildBunkCalculator(context, subject, summary),
+                data: (summary) =>
+                    _buildBunkCalculator(context, subject, summary),
                 loading: () => const Center(child: CircularProgressIndicator()),
                 error: (error, stack) => Text('Error loading stats: $error'),
               ),
@@ -122,7 +133,8 @@ class SubjectDetailScreen extends ConsumerWidget {
       padding: const EdgeInsets.only(bottom: AppSpacing.md),
       child: Row(
         children: [
-          Icon(icon, size: 20, color: Theme.of(context).colorScheme.onSurfaceVariant),
+          Icon(icon,
+              size: 20, color: Theme.of(context).colorScheme.onSurfaceVariant),
           const SizedBox(width: AppSpacing.md),
           Expanded(
             child: Text(
@@ -137,7 +149,8 @@ class SubjectDetailScreen extends ConsumerWidget {
     );
   }
 
-  Widget _buildBunkCalculator(BuildContext context, Subject subject, SubjectAttendanceSummary summary) {
+  Widget _buildBunkCalculator(
+      BuildContext context, Subject subject, SubjectAttendanceSummary summary) {
     final currentPercentage = summary.attendancePercentage;
     final total = summary.effectiveTotal;
     final present = summary.effectivePresent;
@@ -186,8 +199,8 @@ class SubjectDetailScreen extends ConsumerWidget {
               '${currentPercentage.toStringAsFixed(1)}%',
               style: Theme.of(context).textTheme.displayMedium?.copyWith(
                     fontWeight: FontWeight.bold,
-                    color: currentPercentage >= subject.goalPercentage 
-                        ? Theme.of(context).colorScheme.primary 
+                    color: currentPercentage >= subject.goalPercentage
+                        ? Theme.of(context).colorScheme.primary
                         : Theme.of(context).colorScheme.error,
                   ),
             ),
@@ -202,7 +215,8 @@ class SubjectDetailScreen extends ConsumerWidget {
               child: Divider(),
             ),
             if (currentPercentage >= subject.goalPercentage) ...[
-              const Icon(Icons.check_circle_outline, color: Colors.green, size: 32),
+              const Icon(Icons.check_circle_outline,
+                  color: Colors.green, size: 32),
               const SizedBox(height: AppSpacing.sm),
               Text(
                 'You are in the safe zone.',
@@ -210,8 +224,8 @@ class SubjectDetailScreen extends ConsumerWidget {
               ),
               const SizedBox(height: AppSpacing.xs),
               Text(
-                safeToBunk > 0 
-                    ? 'You can miss the next $safeToBunk classes and stay above ${subject.goalPercentage.toInt()}%.' 
+                safeToBunk > 0
+                    ? 'You can miss the next $safeToBunk classes and stay above ${subject.goalPercentage.toInt()}%.'
                     : 'You cannot miss the next class without dropping below goal.',
                 textAlign: TextAlign.center,
                 style: Theme.of(context).textTheme.bodyMedium?.copyWith(
@@ -219,7 +233,8 @@ class SubjectDetailScreen extends ConsumerWidget {
                     ),
               ),
             ] else ...[
-              const Icon(Icons.warning_amber_rounded, color: Colors.red, size: 32),
+              const Icon(Icons.warning_amber_rounded,
+                  color: Colors.red, size: 32),
               const SizedBox(height: AppSpacing.sm),
               Text(
                 'You are falling behind.',
@@ -227,8 +242,8 @@ class SubjectDetailScreen extends ConsumerWidget {
               ),
               const SizedBox(height: AppSpacing.xs),
               Text(
-                classesNeeded > 0 
-                    ? 'You need to attend the next $classesNeeded classes to reach ${subject.goalPercentage.toInt()}%.' 
+                classesNeeded > 0
+                    ? 'You need to attend the next $classesNeeded classes to reach ${subject.goalPercentage.toInt()}%.'
                     : 'You cannot mathematically reach 100% anymore.',
                 textAlign: TextAlign.center,
                 style: Theme.of(context).textTheme.bodyMedium?.copyWith(

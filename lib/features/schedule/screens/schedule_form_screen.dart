@@ -26,7 +26,7 @@ class ScheduleFormSheet extends ConsumerStatefulWidget {
 
 class _ScheduleFormSheetState extends ConsumerState<ScheduleFormSheet> {
   final _formKey = GlobalKey<FormState>();
-  
+
   int? _selectedSubjectId;
   LectureType _selectedType = LectureType.lecture;
   TimeOfDay? _startTime;
@@ -34,7 +34,7 @@ class _ScheduleFormSheetState extends ConsumerState<ScheduleFormSheet> {
   final _roomController = TextEditingController();
   final _facultyController = TextEditingController();
   late int _dayOfWeek;
-  
+
   bool _isLoading = true;
   Schedule? _existingSchedule;
 
@@ -49,10 +49,10 @@ class _ScheduleFormSheetState extends ConsumerState<ScheduleFormSheet> {
     if (widget.scheduleId != null) {
       final repo = ref.read(scheduleRepositoryProvider);
       _existingSchedule = await repo.getById(widget.scheduleId!);
-      
+
       if (_existingSchedule != null) {
         _selectedSubjectId = _existingSchedule!.subjectId;
-        
+
         _dayOfWeek = _existingSchedule!.dayOfWeek;
         _selectedType = _existingSchedule!.type;
         _startTime = _parseTime(_existingSchedule!.startTime);
@@ -61,10 +61,10 @@ class _ScheduleFormSheetState extends ConsumerState<ScheduleFormSheet> {
         _facultyController.text = _existingSchedule!.facultyOverride ?? '';
       }
     }
-    
+
     // Preload subjects so it's ready for rendering
     await ref.read(subjectsProvider.future);
-    
+
     if (mounted) {
       setState(() {
         _isLoading = false;
@@ -89,10 +89,10 @@ class _ScheduleFormSheetState extends ConsumerState<ScheduleFormSheet> {
   }
 
   Future<void> _selectTime(BuildContext context, bool isStart) async {
-    final initialTime = isStart 
+    final initialTime = isStart
         ? (_startTime ?? const TimeOfDay(hour: 9, minute: 0))
         : (_endTime ?? const TimeOfDay(hour: 10, minute: 0));
-        
+
     final picked = await showTimePicker(
       context: context,
       initialTime: initialTime,
@@ -117,7 +117,7 @@ class _ScheduleFormSheetState extends ConsumerState<ScheduleFormSheet> {
 
   Future<void> _save() async {
     if (!_formKey.currentState!.validate()) return;
-    
+
     if (_selectedSubjectId == null) {
       _showError('Please select a subject');
       return;
@@ -135,15 +135,19 @@ class _ScheduleFormSheetState extends ConsumerState<ScheduleFormSheet> {
       ScheduleEngine.validateTimeRange(startStr, endStr);
 
       final repo = ref.read(scheduleRepositoryProvider);
-      
+
       final schedule = _existingSchedule ?? Schedule();
       schedule.subjectId = _selectedSubjectId!;
       schedule.dayOfWeek = _dayOfWeek;
       schedule.type = _selectedType;
       schedule.startTime = startStr;
       schedule.endTime = endStr;
-      schedule.room = _roomController.text.trim().isEmpty ? null : _roomController.text.trim();
-      schedule.facultyOverride = _facultyController.text.trim().isEmpty ? null : _facultyController.text.trim();
+      schedule.room = _roomController.text.trim().isEmpty
+          ? null
+          : _roomController.text.trim();
+      schedule.facultyOverride = _facultyController.text.trim().isEmpty
+          ? null
+          : _facultyController.text.trim();
 
       // Check conflicts
       final existingSchedules = await repo.getByDay(_dayOfWeek);
@@ -153,7 +157,10 @@ class _ScheduleFormSheetState extends ConsumerState<ScheduleFormSheet> {
         // Find max order
         int maxOrder = 0;
         if (existingSchedules.isNotEmpty) {
-          maxOrder = existingSchedules.map((e) => e.order).reduce((a, b) => a > b ? a : b) + 1;
+          maxOrder = existingSchedules
+                  .map((e) => e.order)
+                  .reduce((a, b) => a > b ? a : b) +
+              1;
         }
         schedule.order = maxOrder;
         await repo.create(schedule);
@@ -177,7 +184,7 @@ class _ScheduleFormSheetState extends ConsumerState<ScheduleFormSheet> {
       SnackBar(content: Text(message)),
     );
   }
-  
+
   Future<void> _delete() async {
     if (_existingSchedule != null) {
       final repo = ref.read(scheduleRepositoryProvider);
@@ -207,16 +214,20 @@ class _ScheduleFormSheetState extends ConsumerState<ScheduleFormSheet> {
           // Drag handle
           Center(
             child: Container(
-              margin: const EdgeInsets.only(top: AppSpacing.sm, bottom: AppSpacing.md),
+              margin: const EdgeInsets.only(
+                  top: AppSpacing.sm, bottom: AppSpacing.md),
               width: 32,
               height: 4,
               decoration: BoxDecoration(
-                color: Theme.of(context).colorScheme.onSurfaceVariant.withValues(alpha: 0.4),
+                color: Theme.of(context)
+                    .colorScheme
+                    .onSurfaceVariant
+                    .withValues(alpha: 0.4),
                 borderRadius: BorderRadius.circular(2),
               ),
             ),
           ),
-          
+
           // Header
           Padding(
             padding: const EdgeInsets.symmetric(horizontal: AppSpacing.lg),
@@ -230,7 +241,8 @@ class _ScheduleFormSheetState extends ConsumerState<ScheduleFormSheet> {
                 ),
                 if (isEditing)
                   IconButton(
-                    icon: Icon(Icons.delete_outline, color: Theme.of(context).colorScheme.error),
+                    icon: Icon(Icons.delete_outline,
+                        color: Theme.of(context).colorScheme.error),
                     tooltip: 'Delete Class',
                     onPressed: _delete,
                   ),
@@ -243,11 +255,12 @@ class _ScheduleFormSheetState extends ConsumerState<ScheduleFormSheet> {
             ),
           ),
           const Divider(),
-          
+
           // Form Content
           Flexible(
             child: _isLoading
-                ? const Center(child: Padding(
+                ? const Center(
+                    child: Padding(
                     padding: EdgeInsets.all(AppSpacing.xxl),
                     child: CircularProgressIndicator(),
                   ))
@@ -268,33 +281,45 @@ class _ScheduleFormSheetState extends ConsumerState<ScheduleFormSheet> {
                               if (subjects.isEmpty) {
                                 return Text(
                                   'You need to create a subject first.',
-                                  style: TextStyle(color: Theme.of(context).colorScheme.error),
+                                  style: TextStyle(
+                                      color:
+                                          Theme.of(context).colorScheme.error),
                                 );
                               }
                               return DropdownButtonFormField<int>(
-                                decoration: const InputDecoration(labelText: 'Subject *'),
+                                decoration: const InputDecoration(
+                                    labelText: 'Subject *'),
                                 initialValue: _selectedSubjectId,
                                 isExpanded: true,
-                                items: subjects.map((s) => DropdownMenuItem<int>(
-                                  value: s.id, 
-                                  child: Text(s.name, overflow: TextOverflow.ellipsis),
-                                )).toList(),
-                                onChanged: (val) => setState(() => _selectedSubjectId = val),
-                                validator: (val) => val == null ? 'Required' : null,
+                                items: subjects
+                                    .map((s) => DropdownMenuItem<int>(
+                                          value: s.id,
+                                          child: Text(s.name,
+                                              overflow: TextOverflow.ellipsis),
+                                        ))
+                                    .toList(),
+                                onChanged: (val) =>
+                                    setState(() => _selectedSubjectId = val),
+                                validator: (val) =>
+                                    val == null ? 'Required' : null,
                               );
                             },
                             loading: () => const LinearProgressIndicator(),
-                            error: (_, __) => const Text('Failed to load subjects'),
+                            error: (_, __) =>
+                                const Text('Failed to load subjects'),
                           ),
                           const SizedBox(height: AppSpacing.lg),
-                          
                           Row(
                             children: [
                               Expanded(
                                 child: DropdownButtonFormField<DayOfWeek>(
-                                  decoration: const InputDecoration(labelText: 'Day'),
+                                  decoration:
+                                      const InputDecoration(labelText: 'Day'),
                                   initialValue: DayOfWeek.fromInt(_dayOfWeek),
-                                  items: DayOfWeek.weekdays.map((d) => DropdownMenuItem(value: d, child: Text(d.label))).toList(),
+                                  items: DayOfWeek.weekdays
+                                      .map((d) => DropdownMenuItem(
+                                          value: d, child: Text(d.label)))
+                                      .toList(),
                                   onChanged: (val) {
                                     if (val != null) {
                                       setState(() => _dayOfWeek = val.value);
@@ -305,9 +330,14 @@ class _ScheduleFormSheetState extends ConsumerState<ScheduleFormSheet> {
                               const SizedBox(width: AppSpacing.lg),
                               Expanded(
                                 child: DropdownButtonFormField<LectureType>(
-                                  decoration: const InputDecoration(labelText: 'Type'),
+                                  decoration:
+                                      const InputDecoration(labelText: 'Type'),
                                   initialValue: _selectedType,
-                                  items: LectureType.values.map((t) => DropdownMenuItem(value: t, child: Text(t.name.toUpperCase()))).toList(),
+                                  items: LectureType.values
+                                      .map((t) => DropdownMenuItem(
+                                          value: t,
+                                          child: Text(t.name.toUpperCase())))
+                                      .toList(),
                                   onChanged: (val) {
                                     if (val != null) {
                                       setState(() => _selectedType = val);
@@ -318,7 +348,6 @@ class _ScheduleFormSheetState extends ConsumerState<ScheduleFormSheet> {
                             ],
                           ),
                           const SizedBox(height: AppSpacing.lg),
-                          
                           Row(
                             children: [
                               Expanded(
@@ -328,9 +357,12 @@ class _ScheduleFormSheetState extends ConsumerState<ScheduleFormSheet> {
                                   child: InputDecorator(
                                     decoration: const InputDecoration(
                                       labelText: 'Start Time *',
-                                      suffixIcon: Icon(Icons.access_time_outlined),
+                                      suffixIcon:
+                                          Icon(Icons.access_time_outlined),
                                     ),
-                                    child: Text(_startTime != null ? _formatTime(_startTime!) : 'Select Time'),
+                                    child: Text(_startTime != null
+                                        ? _formatTime(_startTime!)
+                                        : 'Select Time'),
                                   ),
                                 ),
                               ),
@@ -342,16 +374,18 @@ class _ScheduleFormSheetState extends ConsumerState<ScheduleFormSheet> {
                                   child: InputDecorator(
                                     decoration: const InputDecoration(
                                       labelText: 'End Time *',
-                                      suffixIcon: Icon(Icons.access_time_outlined),
+                                      suffixIcon:
+                                          Icon(Icons.access_time_outlined),
                                     ),
-                                    child: Text(_endTime != null ? _formatTime(_endTime!) : 'Select Time'),
+                                    child: Text(_endTime != null
+                                        ? _formatTime(_endTime!)
+                                        : 'Select Time'),
                                   ),
                                 ),
                               ),
                             ],
                           ),
                           const SizedBox(height: AppSpacing.lg),
-                          
                           TextFormField(
                             controller: _roomController,
                             decoration: const InputDecoration(
@@ -361,7 +395,6 @@ class _ScheduleFormSheetState extends ConsumerState<ScheduleFormSheet> {
                             textInputAction: TextInputAction.next,
                           ),
                           const SizedBox(height: AppSpacing.lg),
-                          
                           TextFormField(
                             controller: _facultyController,
                             decoration: const InputDecoration(
@@ -371,10 +404,10 @@ class _ScheduleFormSheetState extends ConsumerState<ScheduleFormSheet> {
                             textInputAction: TextInputAction.done,
                           ),
                           const SizedBox(height: AppSpacing.xxl),
-                          
                           FilledButton(
                             onPressed: _save,
-                            child: Text(isEditing ? 'Save Changes' : 'Add Class'),
+                            child:
+                                Text(isEditing ? 'Save Changes' : 'Add Class'),
                           ),
                         ],
                       ),
@@ -388,7 +421,8 @@ class _ScheduleFormSheetState extends ConsumerState<ScheduleFormSheet> {
 }
 
 /// Helper function to show the schedule form as a bottom sheet
-Future<void> showScheduleFormSheet(BuildContext context, {int? scheduleId, int? dayOfWeek}) {
+Future<void> showScheduleFormSheet(BuildContext context,
+    {int? scheduleId, int? dayOfWeek}) {
   return showModalBottomSheet(
     context: context,
     isScrollControlled: true,

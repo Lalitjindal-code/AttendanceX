@@ -61,25 +61,27 @@ class CalendarNotifier extends _$CalendarNotifier {
     final scheduleRepo = ref.watch(scheduleRepositoryProvider);
     final attendanceRepo = ref.watch(attendanceRepositoryProvider);
     final plannerRepo = ref.watch(plannerRepositoryProvider);
-    
+
     // We listen to the dates. Because this is a StreamProvider, watching these
     // will cause build() to re-run and return a new Stream when they change.
     final selectedDate = ref.watch(calendarSelectedDateProvider);
     final focusedDate = ref.watch(calendarFocusedDateProvider);
     final visibleMonth = ref.watch(calendarVisibleMonthProvider);
-    
+
     // Calculate a buffer for TableCalendar (previous and next month visible days)
     // TableCalendar usually shows max 6 weeks (42 days) total.
     // So 1 month back and 1 month forward is plenty.
     final startDate = DateTime(visibleMonth.year, visibleMonth.month - 1, 1);
-    final endDate = DateTime(visibleMonth.year, visibleMonth.month + 2, 0); // End of next month
+    final endDate = DateTime(
+        visibleMonth.year, visibleMonth.month + 2, 0); // End of next month
 
     return Rx.combineLatest4(
       subjectRepo.watchAll(),
       scheduleRepo.watchAll(),
       attendanceRepo.watchByDateRange(startDate, endDate),
       plannerRepo.watchAllTasks(),
-      (List<Subject> subjects, List<Schedule> schedules, List<Attendance> attendances, List<AcademicTask> tasks) {
+      (List<Subject> subjects, List<Schedule> schedules,
+          List<Attendance> attendances, List<AcademicTask> tasks) {
         if (subjects.isEmpty) {
           return CalendarState(
             selectedDate: selectedDate,

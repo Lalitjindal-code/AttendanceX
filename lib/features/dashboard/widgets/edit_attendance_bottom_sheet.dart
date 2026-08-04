@@ -60,7 +60,8 @@ class EditAttendanceBottomSheet extends StatelessWidget {
               runSpacing: 12,
               children: AttendanceStatus.values
                   .where((status) => status != AttendanceStatus.pending)
-                  .map((status) => _buildStatusButton(context, status, currentStatus))
+                  .map((status) =>
+                      _buildStatusButton(context, status, currentStatus))
                   .toList(),
             ),
             const SizedBox(height: 16),
@@ -70,13 +71,15 @@ class EditAttendanceBottomSheet extends StatelessWidget {
     );
   }
 
-  Widget _buildStatusButton(BuildContext context, AttendanceStatus status, AttendanceStatus? currentStatus) {
+  Widget _buildStatusButton(BuildContext context, AttendanceStatus status,
+      AttendanceStatus? currentStatus) {
     final isSelected = currentStatus == status;
     final color = status.color;
 
     return ActionChip(
       label: Text(status.displayName),
-      avatar: Icon(status.icon, size: 18, color: isSelected ? Colors.white : color),
+      avatar:
+          Icon(status.icon, size: 18, color: isSelected ? Colors.white : color),
       backgroundColor: isSelected ? color : color.withValues(alpha: 0.1),
       labelStyle: TextStyle(
         color: isSelected ? Colors.white : color,

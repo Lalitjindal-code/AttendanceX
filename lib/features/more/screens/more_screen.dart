@@ -36,8 +36,12 @@ class MoreScreen extends StatelessWidget {
                       children: [
                         CircleAvatar(
                           radius: 24,
-                          backgroundImage: user.photoURL != null ? NetworkImage(user.photoURL!) : null,
-                          child: user.photoURL == null ? const Icon(Icons.person) : null,
+                          backgroundImage: user.photoURL != null
+                              ? NetworkImage(user.photoURL!)
+                              : null,
+                          child: user.photoURL == null
+                              ? const Icon(Icons.person)
+                              : null,
                         ),
                         const SizedBox(width: 16),
                         Expanded(
@@ -46,11 +50,13 @@ class MoreScreen extends StatelessWidget {
                             children: [
                               Text(
                                 user.displayName ?? 'Student Profile',
-                                style: theme.textTheme.titleMedium?.copyWith(fontWeight: FontWeight.bold),
+                                style: theme.textTheme.titleMedium
+                                    ?.copyWith(fontWeight: FontWeight.bold),
                               ),
                               Text(
                                 'View Account Details',
-                                style: theme.textTheme.bodySmall?.copyWith(color: theme.colorScheme.primary),
+                                style: theme.textTheme.bodySmall?.copyWith(
+                                    color: theme.colorScheme.primary),
                               ),
                             ],
                           ),
@@ -83,4 +89,3 @@ class MoreScreen extends StatelessWidget {
     );
   }
 }
-

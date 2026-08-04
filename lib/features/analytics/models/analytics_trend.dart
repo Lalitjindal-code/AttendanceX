@@ -1,6 +1,1 @@
-enum AnalyticsTrend {
-  improving,
-  declining,
-  stable,
-  insufficientData
-}
+enum AnalyticsTrend { improving, declining, stable, insufficientData }

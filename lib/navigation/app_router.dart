@@ -31,7 +31,8 @@ final GlobalKey<NavigatorState> _rootNavigatorKey = GlobalKey<NavigatorState>();
 /// state changes to trigger redirects.
 @riverpod
 GoRouter appRouter(AppRouterRef ref) {
-  final isOnboardingComplete = ref.watch(settingsProvider.select((s) => s.isOnboardingComplete));
+  final isOnboardingComplete =
+      ref.watch(settingsProvider.select((s) => s.isOnboardingComplete));
   final authState = ref.watch(authStateProvider);
 
   return GoRouter(
@@ -135,9 +136,9 @@ GoRouter appRouter(AppRouterRef ref) {
                 path: AppRoutes.more,
                 builder: (context, state) => const MoreScreen(),
                 routes: const <RouteBase>[],
-                  // Sub-routes for More tab (no leading slash for sub-routes, but AppRoutes are absolute)
-                  // Wait, if they are absolute, we can just define them inside the branch directly instead of nested.
-                  // Wait, if they are absolute, we can just define them inside the branch directly instead of nested.
+                // Sub-routes for More tab (no leading slash for sub-routes, but AppRoutes are absolute)
+                // Wait, if they are absolute, we can just define them inside the branch directly instead of nested.
+                // Wait, if they are absolute, we can just define them inside the branch directly instead of nested.
               ),
               GoRoute(
                 path: AppRoutes.profile,

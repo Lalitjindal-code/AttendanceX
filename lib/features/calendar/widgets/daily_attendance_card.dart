@@ -46,11 +46,15 @@ class DailyAttendanceCard extends ConsumerWidget {
     return Card(
       margin: const EdgeInsets.only(bottom: AppSpacing.sm),
       elevation: 0,
-      color: item.status != null ? statusColor.withValues(alpha: 0.05) : colorScheme.surfaceContainerHighest.withValues(alpha: 0.3),
+      color: item.status != null
+          ? statusColor.withValues(alpha: 0.05)
+          : colorScheme.surfaceContainerHighest.withValues(alpha: 0.3),
       shape: RoundedRectangleBorder(
         borderRadius: BorderRadius.circular(16),
         side: BorderSide(
-          color: item.status != null ? statusColor.withValues(alpha: 0.3) : colorScheme.outlineVariant,
+          color: item.status != null
+              ? statusColor.withValues(alpha: 0.3)
+              : colorScheme.outlineVariant,
         ),
       ),
       clipBehavior: Clip.antiAlias,
@@ -84,7 +88,9 @@ class DailyAttendanceCard extends ConsumerWidget {
                             if (item.schedule != null)
                               Row(
                                 children: [
-                                  Icon(Icons.access_time, size: 14, color: colorScheme.onSurfaceVariant),
+                                  Icon(Icons.access_time,
+                                      size: 14,
+                                      color: colorScheme.onSurfaceVariant),
                                   const SizedBox(width: 4),
                                   Text(
                                     '${item.schedule!.startTime} - ${item.schedule!.endTime}',
@@ -97,7 +103,9 @@ class DailyAttendanceCard extends ConsumerWidget {
                             else
                               Row(
                                 children: [
-                                  Icon(Icons.info_outline, size: 14, color: colorScheme.onSurfaceVariant),
+                                  Icon(Icons.info_outline,
+                                      size: 14,
+                                      color: colorScheme.onSurfaceVariant),
                                   const SizedBox(width: 4),
                                   Text(
                                     'Manual Attendance',
@@ -112,15 +120,20 @@ class DailyAttendanceCard extends ConsumerWidget {
                         ),
                       ),
                       Container(
-                        padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
+                        padding: const EdgeInsets.symmetric(
+                            horizontal: 10, vertical: 6),
                         decoration: BoxDecoration(
-                          color: item.status != null ? statusColor.withValues(alpha: 0.15) : colorScheme.surfaceContainerHighest,
+                          color: item.status != null
+                              ? statusColor.withValues(alpha: 0.15)
+                              : colorScheme.surfaceContainerHighest,
                           borderRadius: BorderRadius.circular(20),
                         ),
                         child: Text(
                           item.status?.name.toUpperCase() ?? 'PENDING',
                           style: theme.textTheme.labelMedium?.copyWith(
-                            color: item.status != null ? statusColor : colorScheme.onSurfaceVariant,
+                            color: item.status != null
+                                ? statusColor
+                                : colorScheme.onSurfaceVariant,
                             fontWeight: FontWeight.bold,
                           ),
                         ),
@@ -153,11 +166,15 @@ class DailyAttendanceCard extends ConsumerWidget {
               // Drag handle
               Center(
                 child: Container(
-                  margin: const EdgeInsets.only(top: AppSpacing.sm, bottom: AppSpacing.md),
+                  margin: const EdgeInsets.only(
+                      top: AppSpacing.sm, bottom: AppSpacing.md),
                   width: 32,
                   height: 4,
                   decoration: BoxDecoration(
-                    color: Theme.of(context).colorScheme.onSurfaceVariant.withValues(alpha: 0.4),
+                    color: Theme.of(context)
+                        .colorScheme
+                        .onSurfaceVariant
+                        .withValues(alpha: 0.4),
                     borderRadius: BorderRadius.circular(2),
                   ),
                 ),
@@ -182,19 +199,24 @@ class DailyAttendanceCard extends ConsumerWidget {
               const Divider(),
               Expanded(
                 child: ListView(
-                  padding: const EdgeInsets.symmetric(horizontal: AppSpacing.md, vertical: AppSpacing.sm),
+                  padding: const EdgeInsets.symmetric(
+                      horizontal: AppSpacing.md, vertical: AppSpacing.sm),
                   children: AttendanceStatus.values.map((status) {
                     final isSelected = item.status == status;
                     return Padding(
                       padding: const EdgeInsets.only(bottom: AppSpacing.xs),
                       child: ListTile(
-                        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+                        shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(12)),
                         selected: isSelected,
-                        selectedTileColor: Theme.of(context).colorScheme.primaryContainer,
+                        selectedTileColor:
+                            Theme.of(context).colorScheme.primaryContainer,
                         title: Text(
                           status.name.toUpperCase(),
                           style: TextStyle(
-                            fontWeight: isSelected ? FontWeight.bold : FontWeight.normal,
+                            fontWeight: isSelected
+                                ? FontWeight.bold
+                                : FontWeight.normal,
                           ),
                         ),
                         trailing: isSelected ? const Icon(Icons.check) : null,
@@ -220,9 +242,9 @@ class DailyAttendanceCard extends ConsumerWidget {
       ..subjectId = item.subject.id
       ..scheduleId = item.schedule?.id ?? -1
       ..date = DateTime(date.year, date.month, date.day);
-    
+
     att.status = newStatus;
-    
+
     // Perform background update
     repo.upsertAttendance(att);
   }

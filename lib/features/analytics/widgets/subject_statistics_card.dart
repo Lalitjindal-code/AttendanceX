@@ -10,11 +10,11 @@ class SubjectStatisticsCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
-    
+
     IconData trendIcon;
     Color trendColor;
     String trendText;
-    
+
     switch (stats.trend) {
       case AnalyticsTrend.improving:
         trendIcon = Icons.trending_up;
@@ -62,7 +62,8 @@ class SubjectStatisticsCard extends StatelessWidget {
                   ),
                 ),
                 Container(
-                  padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+                  padding:
+                      const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
                   decoration: BoxDecoration(
                     color: trendColor.withValues(alpha: 0.1),
                     borderRadius: BorderRadius.circular(8),
@@ -129,7 +130,8 @@ class SubjectStatisticsCard extends StatelessWidget {
                 'Attend ${stats.forecast.classesNeededToReachGoal} more class(es) to reach your goal.',
                 style: theme.textTheme.bodyMedium,
               )
-            else if (stats.forecast.safeBunksRemaining > 0 && stats.forecast.safeBunksRemaining != 999)
+            else if (stats.forecast.safeBunksRemaining > 0 &&
+                stats.forecast.safeBunksRemaining != 999)
               Text(
                 'You can safely bunk ${stats.forecast.safeBunksRemaining} class(es).',
                 style: theme.textTheme.bodyMedium,
@@ -172,7 +174,8 @@ class SubjectStatisticsCard extends StatelessWidget {
     );
   }
 
-  Widget _buildStatColumn(String label, String value, ThemeData theme, Color color) {
+  Widget _buildStatColumn(
+      String label, String value, ThemeData theme, Color color) {
     return Column(
       children: [
         Text(
@@ -192,7 +195,8 @@ class SubjectStatisticsCard extends StatelessWidget {
     );
   }
 
-  Widget _buildForecastBox(String label, String value, ThemeData theme, Color color) {
+  Widget _buildForecastBox(
+      String label, String value, ThemeData theme, Color color) {
     return Container(
       padding: const EdgeInsets.all(8),
       decoration: BoxDecoration(

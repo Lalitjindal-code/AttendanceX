@@ -138,8 +138,7 @@ abstract final class AppStrings {
   static const String validInvalidEmail = 'Enter a valid email address';
   static const String validTimeConflict =
       'This time slot conflicts with an existing lecture';
-  static const String validEndBeforeStart =
-      'End time must be after start time';
+  static const String validEndBeforeStart = 'End time must be after start time';
 
   // ── Snackbars ─────────────────────────────────────────────────────────────────
   static const String snackSubjectAdded = 'Subject added';

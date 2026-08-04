@@ -30,20 +30,23 @@ class FakeCalendarNotifier extends CalendarNotifier {
 
 class FakeAttendanceRepository implements AttendanceRepository {
   bool wasUpsertCalled = false;
-  
+
   @override
   Future<void> upsertAttendance(Attendance attendance) async {
     wasUpsertCalled = true;
   }
-  
+
   @override
   dynamic noSuchMethod(Invocation invocation) => super.noSuchMethod(invocation);
 }
 
 void main() {
   final testDate = DateTime(2026, 1, 15);
-  final subject = Subject()..id = 1..name = 'Physics'..colorValue = Colors.blue.toARGB32();
-  
+  final subject = Subject()
+    ..id = 1
+    ..name = 'Physics'
+    ..colorValue = Colors.blue.toARGB32();
+
   final loadedState = CalendarState(
     selectedDate: testDate,
     focusedDate: testDate,
@@ -56,7 +59,10 @@ void main() {
       items: [
         DailyAttendanceItem(
           subject: subject,
-          schedule: Schedule()..startTime = '10:00'..endTime = '11:00'..type = LectureType.lecture,
+          schedule: Schedule()
+            ..startTime = '10:00'
+            ..endTime = '11:00'
+            ..type = LectureType.lecture,
           attendance: Attendance()..status = AttendanceStatus.present,
           isManual: false,
         ),
@@ -68,7 +74,8 @@ void main() {
   );
 
   group('Calendar Widget Tests', () {
-    testWidgets('Calendar renders empty selected day details', (WidgetTester tester) async {
+    testWidgets('Calendar renders empty selected day details',
+        (WidgetTester tester) async {
       final state = CalendarState(
         selectedDate: testDate,
         focusedDate: testDate,
@@ -82,7 +89,8 @@ void main() {
 
       await tester.pumpWidget(ProviderScope(
         overrides: [
-          calendarNotifierProvider.overrideWith(() => FakeCalendarNotifier(state)),
+          calendarNotifierProvider
+              .overrideWith(() => FakeCalendarNotifier(state)),
         ],
         child: const MaterialApp(home: CalendarScreen()),
       ));
@@ -91,7 +99,8 @@ void main() {
       expect(find.text('No classes or tasks scheduled for'), findsOneWidget);
     });
 
-    testWidgets('Calendar manual attendance interactions (bottom sheet)', (WidgetTester tester) async {
+    testWidgets('Calendar manual attendance interactions (bottom sheet)',
+        (WidgetTester tester) async {
       final fakeNotifier = FakeCalendarNotifier(loadedState);
       final fakeAttendanceRepo = FakeAttendanceRepository();
 
@@ -116,7 +125,7 @@ void main() {
       await tester.pumpAndSettle();
       await tester.tap(find.byType(DropdownMenuItem<Subject>).last);
       await tester.pumpAndSettle();
-      
+
       // Open Status Dropdown
       await tester.tap(find.byKey(const Key('status_dropdown')));
       await tester.pumpAndSettle();
@@ -130,7 +139,8 @@ void main() {
       expect(fakeAttendanceRepo.wasUpsertCalled, true);
     });
 
-    testWidgets('Calendar text scale factor regression loop', (WidgetTester tester) async {
+    testWidgets('Calendar text scale factor regression loop',
+        (WidgetTester tester) async {
       final textScaleFactors = [1.0, 1.3, 1.5, 2.0];
 
       for (final scale in textScaleFactors) {
@@ -142,7 +152,8 @@ void main() {
           child: MaterialApp(
             builder: (context, child) {
               return MediaQuery(
-                data: MediaQuery.of(context).copyWith(textScaler: TextScaler.linear(scale)),
+                data: MediaQuery.of(context)
+                    .copyWith(textScaler: TextScaler.linear(scale)),
                 child: child!,
               );
             },

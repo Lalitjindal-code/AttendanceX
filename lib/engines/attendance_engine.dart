@@ -19,7 +19,7 @@ class AttendanceEngine {
   ) {
     int effectivePresent = 0;
     int effectiveTotal = 0;
-    
+
     int totalPresentRecords = 0;
     int totalAbsentRecords = 0;
     int totalHolidayRecords = 0;
@@ -97,7 +97,7 @@ class AttendanceEngine {
   ) {
     // Map schedule ID to its LectureType for quick lookup
     final scheduleTypeMap = {for (var s in schedules) s.id: s.type};
-    
+
     // Filter attendances that match the subject and the desired lecture type
     final filteredAttendances = attendances.where((a) {
       if (a.subjectId != subjectId) return false;
@@ -115,7 +115,7 @@ class AttendanceEngine {
   ) {
     int effectivePresent = 0;
     int effectiveTotal = 0;
-    
+
     int totalPresentRecords = 0;
     int totalAbsentRecords = 0;
     int totalHolidayRecords = 0;
@@ -217,7 +217,8 @@ class AttendanceEngine {
           type: SmartSuggestionType.safeBunk,
           subjectId: subjectId,
           classes: safeBunks,
-          message: 'You can safely bunk $safeBunks class${safeBunks == 1 ? '' : 'es'}.',
+          message:
+              'You can safely bunk $safeBunks class${safeBunks == 1 ? '' : 'es'}.',
         );
       } else {
         return SmartSuggestion(
@@ -246,7 +247,8 @@ class AttendanceEngine {
         type: SmartSuggestionType.attendMore,
         subjectId: subjectId,
         classes: requiredClasses,
-        message: 'Attend $requiredClasses more class${requiredClasses == 1 ? '' : 'es'} to reach your goal.',
+        message:
+            'Attend $requiredClasses more class${requiredClasses == 1 ? '' : 'es'} to reach your goal.',
       );
     }
   }

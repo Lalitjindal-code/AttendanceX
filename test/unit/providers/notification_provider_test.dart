@@ -24,21 +24,26 @@ class MockNotificationService implements NotificationService {
   List<ScheduledNotification>? lastSyncedNotifications;
 
   @override
-  Future<void> syncNotifications(List<ScheduledNotification> desiredNotifications) async {
+  Future<void> syncNotifications(
+      List<ScheduledNotification> desiredNotifications) async {
     lastSyncedNotifications = desiredNotifications;
   }
-  
+
   @override
   Future<void> init() async {}
-  
+
   @override
   Future<bool?> requestPermissions() async => true;
 }
 
 class FakeSubjectRepository implements SubjectRepository {
   @override
-  Stream<List<Subject>> watchAll() => Stream.value([Subject()..id = 1..name = 'Mock Subject']);
-  
+  Stream<List<Subject>> watchAll() => Stream.value([
+        Subject()
+          ..id = 1
+          ..name = 'Mock Subject'
+      ]);
+
   @override
   Future<void> create(Subject subject) async {}
   @override
@@ -48,7 +53,9 @@ class FakeSubjectRepository implements SubjectRepository {
   @override
   Future<Subject?> getById(int id) async => null;
   @override
-  Future<SubjectDeletionImpact> getDeletionImpact(int subjectId) async => const SubjectDeletionImpact(schedulesCount: 0, attendancesCount: 0, historyCount: 0);
+  Future<SubjectDeletionImpact> getDeletionImpact(int subjectId) async =>
+      const SubjectDeletionImpact(
+          schedulesCount: 0, attendancesCount: 0, historyCount: 0);
   @override
   Stream<List<Subject>> watchAllActive() => Stream.value([]);
 }
@@ -67,7 +74,7 @@ class FakeScheduleRepository implements ScheduleRepository {
 
   @override
   Future<List<Schedule>> getByDay(int dayOfWeek) async => [];
-      
+
   @override
   Future<void> create(Schedule schedule) async {}
   @override
@@ -79,15 +86,17 @@ class FakeScheduleRepository implements ScheduleRepository {
   @override
   Future<void> updateOrder(List<int> scheduleIds) async {}
   @override
-  Stream<List<Schedule>> watchByDaySortedByOrder(int dayOfWeek) => Stream.value([]);
+  Stream<List<Schedule>> watchByDaySortedByOrder(int dayOfWeek) =>
+      Stream.value([]);
   @override
-  Stream<List<Schedule>> watchByDaySortedByTime(int dayOfWeek) => Stream.value([]);
+  Stream<List<Schedule>> watchByDaySortedByTime(int dayOfWeek) =>
+      Stream.value([]);
 }
 
 class FakeAttendanceRepository implements AttendanceRepository {
   @override
   Stream<List<Attendance>> watchAll() => Stream.value([]);
-  
+
   @override
   Future<void> upsertAttendance(Attendance attendance) async {}
   @override
@@ -97,17 +106,21 @@ class FakeAttendanceRepository implements AttendanceRepository {
   @override
   Future<List<Attendance>> getBySubjectId(int subjectId) async => [];
   @override
-  Stream<List<AttendanceHistory>> watchHistoryBySubject(int subjectId) => Stream.value([]);
+  Stream<List<AttendanceHistory>> watchHistoryBySubject(int subjectId) =>
+      Stream.value([]);
   @override
-  Stream<List<Attendance>> watchByDateRange(DateTime start, DateTime end) => Stream.value([]);
+  Stream<List<Attendance>> watchByDateRange(DateTime start, DateTime end) =>
+      Stream.value([]);
   @override
   Future<Attendance?> getById(int id) async => null;
 }
 
 class FakeSettings extends Settings {
   @override
-  AppSettings build() =>
-      const AppSettings(notificationsEnabled: true, lectureReminderMinutes: 10, dailyReminderEnabled: false);
+  AppSettings build() => const AppSettings(
+      notificationsEnabled: true,
+      lectureReminderMinutes: 10,
+      dailyReminderEnabled: false);
 }
 
 void main() {
@@ -120,7 +133,13 @@ void main() {
 
   setUp(() async {
     isar = await Isar.open(
-      [SubjectSchema, ScheduleSchema, AttendanceSchema, AttendanceHistorySchema, AcademicTaskSchema],
+      [
+        SubjectSchema,
+        ScheduleSchema,
+        AttendanceSchema,
+        AttendanceHistorySchema,
+        AcademicTaskSchema
+      ],
       directory: '',
       name: 'notification_test_db_${DateTime.now().microsecondsSinceEpoch}',
     );
@@ -141,19 +160,20 @@ void main() {
         isarProvider.overrideWithValue(isar),
         subjectRepositoryProvider.overrideWithValue(FakeSubjectRepository()),
         scheduleRepositoryProvider.overrideWithValue(FakeScheduleRepository()),
-        attendanceRepositoryProvider.overrideWithValue(FakeAttendanceRepository()),
+        attendanceRepositoryProvider
+            .overrideWithValue(FakeAttendanceRepository()),
         settingsProvider.overrideWith(() => FakeSettings()),
       ],
     );
 
     // Provide a listener to keep it alive
     container.listen(notificationOrchestratorProvider, (_, __) {});
-    
+
     // Wait for the async map to emit
     await container.read(notificationOrchestratorProvider.future);
 
     expect(mockService.lastSyncedNotifications, isNotNull);
-    
+
     container.dispose();
   });
 }

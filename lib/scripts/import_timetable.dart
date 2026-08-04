@@ -9,7 +9,6 @@ import 'package:shared_preferences/shared_preferences.dart';
 
 class ImportTimetable {
   static Future<void> run() async {
-    
     final isar = IsarService.instance.isar;
 
     await isar.writeTxn(() async {
@@ -46,7 +45,8 @@ class ImportTimetable {
           ..credits = 3,
         'AI-307': Subject()
           ..name = 'AI-307 Internship-I'
-          ..facultyName = 'Prof. Jyothi Sonkar, Prof. Ankur Mishra, Prof. Garima Jain'
+          ..facultyName =
+              'Prof. Jyothi Sonkar, Prof. Ankur Mishra, Prof. Garima Jain'
           ..colorValue = Colors.green.toARGB32()
           ..credits = 2,
       };
@@ -54,7 +54,10 @@ class ImportTimetable {
       final savedSubjects = <String, Subject>{};
 
       for (final entry in subjects.entries) {
-        final existingList = await isar.subjects.filter().nameEqualTo(entry.value.name).findAll();
+        final existingList = await isar.subjects
+            .filter()
+            .nameEqualTo(entry.value.name)
+            .findAll();
         final existing = existingList.isEmpty ? null : existingList.first;
         if (existing == null) {
           final id = await isar.subjects.put(entry.value);
@@ -82,52 +85,220 @@ class ImportTimetable {
           ..room = room
           ..type = type
           ..facultyOverride = facultyOverride;
-          
+
         await isar.schedules.put(s);
       }
-      
+
       await isar.schedules.clear();
 
       // MONDAY (Day 1)
-      await addSchedule(subjectKey: 'AI-302', day: 1, startTime: '10:30', endTime: '12:30', room: 'Lab-VVNCC(Z-1)', type: LectureType.lab);
-      await addSchedule(subjectKey: 'AI-303', day: 1, startTime: '12:30', endTime: '13:30', room: 'Room No 104', type: LectureType.lecture);
-      await addSchedule(subjectKey: 'AI-305', day: 1, startTime: '14:30', endTime: '15:30', room: 'Room No 105', type: LectureType.lecture, facultyOverride: 'Prof. Jyothi Sonkar');
-      await addSchedule(subjectKey: 'MAB-301', day: 1, startTime: '15:30', endTime: '16:30', room: 'Room No 105', type: LectureType.lecture);
-      await addSchedule(subjectKey: 'AI-307', day: 1, startTime: '16:30', endTime: '17:30', room: 'Room No 105', type: LectureType.internship, facultyOverride: 'Prof. Jyothi Sonkar');
+      await addSchedule(
+          subjectKey: 'AI-302',
+          day: 1,
+          startTime: '10:30',
+          endTime: '12:30',
+          room: 'Lab-VVNCC(Z-1)',
+          type: LectureType.lab);
+      await addSchedule(
+          subjectKey: 'AI-303',
+          day: 1,
+          startTime: '12:30',
+          endTime: '13:30',
+          room: 'Room No 104',
+          type: LectureType.lecture);
+      await addSchedule(
+          subjectKey: 'AI-305',
+          day: 1,
+          startTime: '14:30',
+          endTime: '15:30',
+          room: 'Room No 105',
+          type: LectureType.lecture,
+          facultyOverride: 'Prof. Jyothi Sonkar');
+      await addSchedule(
+          subjectKey: 'MAB-301',
+          day: 1,
+          startTime: '15:30',
+          endTime: '16:30',
+          room: 'Room No 105',
+          type: LectureType.lecture);
+      await addSchedule(
+          subjectKey: 'AI-307',
+          day: 1,
+          startTime: '16:30',
+          endTime: '17:30',
+          room: 'Room No 105',
+          type: LectureType.internship,
+          facultyOverride: 'Prof. Jyothi Sonkar');
 
       // TUESDAY (Day 2)
-      await addSchedule(subjectKey: 'AI-304', day: 2, startTime: '10:30', endTime: '12:30', room: 'Lab-CSE', type: LectureType.lab);
-      await addSchedule(subjectKey: 'AI-303', day: 2, startTime: '12:30', endTime: '13:30', room: 'Room No 209', type: LectureType.lecture);
-      await addSchedule(subjectKey: 'AI-307', day: 2, startTime: '14:30', endTime: '15:30', room: 'Room No 209', type: LectureType.internship, facultyOverride: 'Prof. Ankur Mishra');
-      await addSchedule(subjectKey: 'AI-305', day: 2, startTime: '15:30', endTime: '16:30', room: 'Room No 209', type: LectureType.lecture, facultyOverride: 'Prof. Jyothi Sonkar');
-      await addSchedule(subjectKey: 'AI-307', day: 2, startTime: '16:30', endTime: '17:30', room: 'Room No 209', type: LectureType.internship, facultyOverride: 'Prof. Garima Jain');
+      await addSchedule(
+          subjectKey: 'AI-304',
+          day: 2,
+          startTime: '10:30',
+          endTime: '12:30',
+          room: 'Lab-CSE',
+          type: LectureType.lab);
+      await addSchedule(
+          subjectKey: 'AI-303',
+          day: 2,
+          startTime: '12:30',
+          endTime: '13:30',
+          room: 'Room No 209',
+          type: LectureType.lecture);
+      await addSchedule(
+          subjectKey: 'AI-307',
+          day: 2,
+          startTime: '14:30',
+          endTime: '15:30',
+          room: 'Room No 209',
+          type: LectureType.internship,
+          facultyOverride: 'Prof. Ankur Mishra');
+      await addSchedule(
+          subjectKey: 'AI-305',
+          day: 2,
+          startTime: '15:30',
+          endTime: '16:30',
+          room: 'Room No 209',
+          type: LectureType.lecture,
+          facultyOverride: 'Prof. Jyothi Sonkar');
+      await addSchedule(
+          subjectKey: 'AI-307',
+          day: 2,
+          startTime: '16:30',
+          endTime: '17:30',
+          room: 'Room No 209',
+          type: LectureType.internship,
+          facultyOverride: 'Prof. Garima Jain');
 
       // WEDNESDAY (Day 3)
-      await addSchedule(subjectKey: 'MAB-301', day: 3, startTime: '10:30', endTime: '11:30', room: 'Room No 209', type: LectureType.lecture);
-      await addSchedule(subjectKey: 'AI-302', day: 3, startTime: '11:30', endTime: '12:30', room: 'Room No 209', type: LectureType.lecture);
-      await addSchedule(subjectKey: 'AI-304', day: 3, startTime: '12:30', endTime: '13:30', room: 'Room No 209', type: LectureType.lecture);
-      await addSchedule(subjectKey: 'AI-307', day: 3, startTime: '14:30', endTime: '15:30', room: 'Room No 209', type: LectureType.internship, facultyOverride: 'Prof. Jyothi Sonkar');
-      await addSchedule(subjectKey: 'AI-306', day: 3, startTime: '15:30', endTime: '17:30', room: 'Lab-CSE', type: LectureType.lab);
+      await addSchedule(
+          subjectKey: 'MAB-301',
+          day: 3,
+          startTime: '10:30',
+          endTime: '11:30',
+          room: 'Room No 209',
+          type: LectureType.lecture);
+      await addSchedule(
+          subjectKey: 'AI-302',
+          day: 3,
+          startTime: '11:30',
+          endTime: '12:30',
+          room: 'Room No 209',
+          type: LectureType.lecture);
+      await addSchedule(
+          subjectKey: 'AI-304',
+          day: 3,
+          startTime: '12:30',
+          endTime: '13:30',
+          room: 'Room No 209',
+          type: LectureType.lecture);
+      await addSchedule(
+          subjectKey: 'AI-307',
+          day: 3,
+          startTime: '14:30',
+          endTime: '15:30',
+          room: 'Room No 209',
+          type: LectureType.internship,
+          facultyOverride: 'Prof. Jyothi Sonkar');
+      await addSchedule(
+          subjectKey: 'AI-306',
+          day: 3,
+          startTime: '15:30',
+          endTime: '17:30',
+          room: 'Lab-CSE',
+          type: LectureType.lab);
 
       // THURSDAY (Day 4)
-      await addSchedule(subjectKey: 'AI-304', day: 4, startTime: '10:30', endTime: '11:30', room: 'Room No 209', type: LectureType.lecture);
-      await addSchedule(subjectKey: 'AI-303', day: 4, startTime: '11:30', endTime: '12:30', room: 'Room No 209', type: LectureType.lecture);
-      await addSchedule(subjectKey: 'AI-303', day: 4, startTime: '12:30', endTime: '13:30', room: 'Room No 216', type: LectureType.lab);
-      await addSchedule(subjectKey: 'AI-303', day: 4, startTime: '14:30', endTime: '15:30', room: 'VVNCC ZONE-2', type: LectureType.lab);
-      await addSchedule(subjectKey: 'AI-302', day: 4, startTime: '15:30', endTime: '16:30', room: 'Room No 209', type: LectureType.lecture);
-      await addSchedule(subjectKey: 'MAB-301', day: 4, startTime: '16:30', endTime: '17:30', room: 'Room No 209', type: LectureType.lecture);
+      await addSchedule(
+          subjectKey: 'AI-304',
+          day: 4,
+          startTime: '10:30',
+          endTime: '11:30',
+          room: 'Room No 209',
+          type: LectureType.lecture);
+      await addSchedule(
+          subjectKey: 'AI-303',
+          day: 4,
+          startTime: '11:30',
+          endTime: '12:30',
+          room: 'Room No 209',
+          type: LectureType.lecture);
+      await addSchedule(
+          subjectKey: 'AI-303',
+          day: 4,
+          startTime: '12:30',
+          endTime: '13:30',
+          room: 'Room No 216',
+          type: LectureType.lab);
+      await addSchedule(
+          subjectKey: 'AI-303',
+          day: 4,
+          startTime: '14:30',
+          endTime: '15:30',
+          room: 'VVNCC ZONE-2',
+          type: LectureType.lab);
+      await addSchedule(
+          subjectKey: 'AI-302',
+          day: 4,
+          startTime: '15:30',
+          endTime: '16:30',
+          room: 'Room No 209',
+          type: LectureType.lecture);
+      await addSchedule(
+          subjectKey: 'MAB-301',
+          day: 4,
+          startTime: '16:30',
+          endTime: '17:30',
+          room: 'Room No 209',
+          type: LectureType.lecture);
 
       // FRIDAY (Day 5)
-      await addSchedule(subjectKey: 'MAB-301', day: 5, startTime: '10:30', endTime: '11:30', room: 'Room No 209', type: LectureType.lecture);
-      await addSchedule(subjectKey: 'AI-302', day: 5, startTime: '11:30', endTime: '12:30', room: 'Room No 209', type: LectureType.lecture);
-      await addSchedule(subjectKey: 'AI-306', day: 5, startTime: '12:30', endTime: '13:30', room: 'CSE Lab', type: LectureType.lab);
-      await addSchedule(subjectKey: 'AI-306', day: 5, startTime: '14:30', endTime: '15:30', room: 'CSE Lab', type: LectureType.lab);
-      await addSchedule(subjectKey: 'AI-304', day: 5, startTime: '15:30', endTime: '16:30', room: 'Room No 209', type: LectureType.lecture);
-      await addSchedule(subjectKey: 'AI-305', day: 5, startTime: '16:30', endTime: '17:30', room: 'Room No 209', type: LectureType.lecture, facultyOverride: 'Prof. Jyothi Sonkar');
+      await addSchedule(
+          subjectKey: 'MAB-301',
+          day: 5,
+          startTime: '10:30',
+          endTime: '11:30',
+          room: 'Room No 209',
+          type: LectureType.lecture);
+      await addSchedule(
+          subjectKey: 'AI-302',
+          day: 5,
+          startTime: '11:30',
+          endTime: '12:30',
+          room: 'Room No 209',
+          type: LectureType.lecture);
+      await addSchedule(
+          subjectKey: 'AI-306',
+          day: 5,
+          startTime: '12:30',
+          endTime: '13:30',
+          room: 'CSE Lab',
+          type: LectureType.lab);
+      await addSchedule(
+          subjectKey: 'AI-306',
+          day: 5,
+          startTime: '14:30',
+          endTime: '15:30',
+          room: 'CSE Lab',
+          type: LectureType.lab);
+      await addSchedule(
+          subjectKey: 'AI-304',
+          day: 5,
+          startTime: '15:30',
+          endTime: '16:30',
+          room: 'Room No 209',
+          type: LectureType.lecture);
+      await addSchedule(
+          subjectKey: 'AI-305',
+          day: 5,
+          startTime: '16:30',
+          endTime: '17:30',
+          room: 'Room No 209',
+          type: LectureType.lecture,
+          facultyOverride: 'Prof. Jyothi Sonkar');
     });
 
     final prefs = await SharedPreferences.getInstance();
     await prefs.setString(PreferencesService.keySemesterStart, '2026-07-13');
-
   }
 }

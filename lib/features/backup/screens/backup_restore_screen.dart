@@ -10,7 +10,8 @@ class BackupRestoreScreen extends ConsumerStatefulWidget {
   const BackupRestoreScreen({super.key});
 
   @override
-  ConsumerState<BackupRestoreScreen> createState() => _BackupRestoreScreenState();
+  ConsumerState<BackupRestoreScreen> createState() =>
+      _BackupRestoreScreenState();
 }
 
 class _BackupRestoreScreenState extends ConsumerState<BackupRestoreScreen> {
@@ -24,21 +25,27 @@ class _BackupRestoreScreenState extends ConsumerState<BackupRestoreScreen> {
         // Use file picker to save file securely without broad storage permissions
         final result = await FilePicker.platform.getDirectoryPath();
         if (result == null) return; // User canceled
-        final fileName = 'Attendify_Backup_${DateFormat('yyyy-MM-dd_HH-mm').format(DateTime.now())}.atfy';
+        final fileName =
+            'Attendify_Backup_${DateFormat('yyyy-MM-dd_HH-mm').format(DateTime.now())}.atfy';
         outputFile = '$result/$fileName';
       } else {
         // Desktop platforms
         outputFile = await FilePicker.platform.saveFile(
           dialogTitle: 'Save Backup File',
-          fileName: 'Attendify_Backup_${DateFormat('yyyy-MM-dd_HH-mm').format(DateTime.now())}.atfy',
+          fileName:
+              'Attendify_Backup_${DateFormat('yyyy-MM-dd_HH-mm').format(DateTime.now())}.atfy',
           type: FileType.custom,
           allowedExtensions: ['atfy'],
         );
         if (outputFile == null) return;
       }
 
-      await ref.read(backupControllerProvider.notifier).createBackup(outputFile);
-      await ref.read(settingsProvider.notifier).updateLastBackupDate(DateTime.now());
+      await ref
+          .read(backupControllerProvider.notifier)
+          .createBackup(outputFile);
+      await ref
+          .read(settingsProvider.notifier)
+          .updateLastBackupDate(DateTime.now());
 
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
@@ -65,36 +72,42 @@ class _BackupRestoreScreenState extends ConsumerState<BackupRestoreScreen> {
 
       final path = result.files.single.path;
       if (path == null) throw Exception('Unable to access file path.');
-      
+
       if (!path.endsWith('.atfy')) {
         throw Exception('Please select a valid Attendify backup file (.atfy)');
       }
 
       final controller = ref.read(backupControllerProvider.notifier);
-      
+
       // Get preview
       final preview = await controller.getPreview(path);
-      
+
       if (!mounted) return;
-      
+
       final confirm = await showDialog<bool>(
         context: context,
         builder: (context) {
           final theme = Theme.of(context);
           return AlertDialog(
-            icon: Icon(Icons.restore, color: theme.colorScheme.onSurfaceVariant),
+            icon:
+                Icon(Icons.restore, color: theme.colorScheme.onSurfaceVariant),
             title: const Text('Restore This Backup?'),
             content: Column(
               mainAxisSize: MainAxisSize.min,
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Text('Date: ${_dateFormat.format(preview.createdAt)}', style: theme.textTheme.bodyMedium),
-                Text('App Version: ${preview.appVersion}', style: theme.textTheme.bodyMedium),
-                Text('Platform: ${preview.platform}', style: theme.textTheme.bodyMedium),
+                Text('Date: ${_dateFormat.format(preview.createdAt)}',
+                    style: theme.textTheme.bodyMedium),
+                Text('App Version: ${preview.appVersion}',
+                    style: theme.textTheme.bodyMedium),
+                Text('Platform: ${preview.platform}',
+                    style: theme.textTheme.bodyMedium),
                 const SizedBox(height: 16),
                 Text(
                   'Current data will be replaced. Rollback backup auto-created.',
-                  style: TextStyle(color: theme.colorScheme.error, fontWeight: FontWeight.w500),
+                  style: TextStyle(
+                      color: theme.colorScheme.error,
+                      fontWeight: FontWeight.w500),
                 ),
               ],
             ),
@@ -171,7 +184,8 @@ class _BackupRestoreScreenState extends ConsumerState<BackupRestoreScreen> {
                     ),
                     backgroundColor: theme.colorScheme.surfaceContainerHigh,
                     side: BorderSide.none,
-                    padding: const EdgeInsets.symmetric(horizontal: 4, vertical: 0),
+                    padding:
+                        const EdgeInsets.symmetric(horizontal: 4, vertical: 0),
                   ),
                   enabled: false,
                 ),
@@ -189,7 +203,8 @@ class _BackupRestoreScreenState extends ConsumerState<BackupRestoreScreen> {
           padding: const EdgeInsets.all(16.0),
           child: Row(
             children: [
-              Icon(Icons.shield_outlined, size: 40, color: theme.colorScheme.primary),
+              Icon(Icons.shield_outlined,
+                  size: 40, color: theme.colorScheme.primary),
               const SizedBox(width: 16),
               Expanded(
                 child: Column(
@@ -197,7 +212,8 @@ class _BackupRestoreScreenState extends ConsumerState<BackupRestoreScreen> {
                   children: [
                     Text(
                       'Your data is safe.',
-                      style: theme.textTheme.titleMedium?.copyWith(fontWeight: FontWeight.bold),
+                      style: theme.textTheme.titleMedium
+                          ?.copyWith(fontWeight: FontWeight.bold),
                     ),
                     const SizedBox(height: 4),
                     Row(
@@ -206,16 +222,19 @@ class _BackupRestoreScreenState extends ConsumerState<BackupRestoreScreen> {
                           width: 8,
                           height: 8,
                           decoration: BoxDecoration(
-                            color: lastBackupDate != null ? Colors.green : Colors.grey,
+                            color: lastBackupDate != null
+                                ? Colors.green
+                                : Colors.grey,
                             shape: BoxShape.circle,
                           ),
                         ),
                         const SizedBox(width: 8),
                         Text(
-                          lastBackupDate != null 
+                          lastBackupDate != null
                               ? 'Last backup: ${_dateFormat.format(lastBackupDate)}'
                               : 'No recent backup',
-                          style: theme.textTheme.bodySmall?.copyWith(color: theme.colorScheme.onSurfaceVariant),
+                          style: theme.textTheme.bodySmall?.copyWith(
+                              color: theme.colorScheme.onSurfaceVariant),
                         ),
                       ],
                     ),
@@ -255,7 +274,8 @@ class _BackupRestoreScreenState extends ConsumerState<BackupRestoreScreen> {
           const SizedBox(height: 8),
           Text(
             'Processing data...',
-            style: theme.textTheme.bodyMedium?.copyWith(color: theme.colorScheme.onSurfaceVariant),
+            style: theme.textTheme.bodyMedium
+                ?.copyWith(color: theme.colorScheme.onSurfaceVariant),
           ),
         ],
       ),

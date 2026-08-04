@@ -39,7 +39,8 @@ class CalendarEngine {
     return UnmodifiableMapView(map);
   }
 
-  static List<AcademicTask> getTasksForDate(DateTime targetDate, List<AcademicTask> tasks) {
+  static List<AcademicTask> getTasksForDate(
+      DateTime targetDate, List<AcademicTask> tasks) {
     final date = _normalizeDate(targetDate);
     return tasks.where((t) => _normalizeDate(t.dueDate) == date).toList();
   }
@@ -53,19 +54,24 @@ class CalendarEngine {
     final date = _normalizeDate(targetDate);
     final dayOfWeek = DayOfWeek.fromInt(date.weekday).value;
 
-    final todaysSchedules = schedules.where((s) => s.dayOfWeek == dayOfWeek).toList();
-    final todaysAttendances = attendances.where((a) => _normalizeDate(a.date) == date).toList();
+    final todaysSchedules =
+        schedules.where((s) => s.dayOfWeek == dayOfWeek).toList();
+    final todaysAttendances =
+        attendances.where((a) => _normalizeDate(a.date) == date).toList();
 
     final List<DailyAttendanceItem> items = [];
     final Set<int> usedAttendanceIds = {};
 
     for (final schedule in todaysSchedules) {
-      final subject = subjects.where((s) => s.id == schedule.subjectId).firstOrNull;
+      final subject =
+          subjects.where((s) => s.id == schedule.subjectId).firstOrNull;
       if (subject == null) continue; // Skip if subject is deleted
 
       // Find attendance specifically for this schedule
-      final attendance = todaysAttendances.where((a) => a.scheduleId == schedule.id).firstOrNull;
-      
+      final attendance = todaysAttendances
+          .where((a) => a.scheduleId == schedule.id)
+          .firstOrNull;
+
       if (attendance != null) {
         usedAttendanceIds.add(attendance.id);
       }
@@ -81,12 +87,14 @@ class CalendarEngine {
     // Process manual attendances (those without a schedule, or schedule that was deleted)
     for (final attendance in todaysAttendances) {
       if (!usedAttendanceIds.contains(attendance.id)) {
-        final subject = subjects.where((s) => s.id == attendance.subjectId).firstOrNull;
+        final subject =
+            subjects.where((s) => s.id == attendance.subjectId).firstOrNull;
         if (subject == null) continue;
 
         items.add(DailyAttendanceItem(
           subject: subject,
-          schedule: null, // It's manual because it doesn't match any schedule for today
+          schedule:
+              null, // It's manual because it doesn't match any schedule for today
           attendance: attendance,
           isManual: true,
         ));

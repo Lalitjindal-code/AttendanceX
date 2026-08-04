@@ -52,15 +52,17 @@ class SubjectRepository {
   /// Creates a new subject if the name is not a duplicate.
   Future<void> create(Subject subject) async {
     final normalizedName = SubjectValidator.normalizeName(subject.name);
-    
+
     // Check for duplicates
     final exists = await _isar.subjects
-        .filter()
-        .nameEqualTo(normalizedName, caseSensitive: false)
-        .count() > 0;
+            .filter()
+            .nameEqualTo(normalizedName, caseSensitive: false)
+            .count() >
+        0;
 
     if (exists) {
-      throw const DuplicateException('A subject with this name already exists.');
+      throw const DuplicateException(
+          'A subject with this name already exists.');
     }
 
     subject.name = normalizedName;
@@ -86,7 +88,8 @@ class SubjectRepository {
         .findFirst();
 
     if (existingDuplicate != null) {
-      throw const DuplicateException('Another subject with this name already exists.');
+      throw const DuplicateException(
+          'Another subject with this name already exists.');
     }
 
     subject.name = normalizedName;
@@ -126,16 +129,10 @@ class SubjectRepository {
           .deleteAll();
 
       // 2. Delete Attendance Records
-      await _isar.attendances
-          .filter()
-          .subjectIdEqualTo(subjectId)
-          .deleteAll();
+      await _isar.attendances.filter().subjectIdEqualTo(subjectId).deleteAll();
 
       // 3. Delete Schedule Entries
-      await _isar.schedules
-          .filter()
-          .subjectIdEqualTo(subjectId)
-          .deleteAll();
+      await _isar.schedules.filter().subjectIdEqualTo(subjectId).deleteAll();
 
       // 4. Delete the Subject
       await _isar.subjects.delete(subjectId);

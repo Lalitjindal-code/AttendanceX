@@ -16,7 +16,6 @@ class LectureCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-
     final subject = model.subject;
     final attendance = model.attendance;
     final subjectColor = Color(subject.colorValue);
@@ -28,12 +27,14 @@ class LectureCard extends StatelessWidget {
     final accentColor = isMarked ? status.color : subjectColor;
 
     return Semantics(
-      label: isMarked 
+      label: isMarked
           ? '${subject.name} attendance marked ${status.displayName}. Double tap to edit attendance.'
           : '${subject.name} pending attendance. Double tap to mark.',
       child: Dismissible(
-        key: ValueKey('lecture_${model.schedule.id}_${model.attendance?.id ?? "pending"}'),
-        direction: isMarked ? DismissDirection.none : DismissDirection.horizontal,
+        key: ValueKey(
+            'lecture_${model.schedule.id}_${model.attendance?.id ?? "pending"}'),
+        direction:
+            isMarked ? DismissDirection.none : DismissDirection.horizontal,
         confirmDismiss: (direction) async {
           if (direction == DismissDirection.startToEnd) {
             onMarkAttendance(AttendanceStatus.present);
@@ -70,16 +71,20 @@ class LectureCard extends StatelessWidget {
             color: Theme.of(context).cardColor,
             borderRadius: BorderRadius.circular(12),
             border: Border.all(
-              color: isMarked ? accentColor.withValues(alpha: 0.5) : Colors.transparent,
+              color: isMarked
+                  ? accentColor.withValues(alpha: 0.5)
+                  : Colors.transparent,
               width: isMarked ? 1.5 : 0,
             ),
-            boxShadow: isMarked ? [] : [
-              BoxShadow(
-                color: Colors.black.withValues(alpha: 0.05),
-                blurRadius: 10,
-                offset: const Offset(0, 4),
-              ),
-            ],
+            boxShadow: isMarked
+                ? []
+                : [
+                    BoxShadow(
+                      color: Colors.black.withValues(alpha: 0.05),
+                      blurRadius: 10,
+                      offset: const Offset(0, 4),
+                    ),
+                  ],
           ),
           child: ClipRRect(
             borderRadius: BorderRadius.circular(12),
@@ -122,7 +127,8 @@ class LectureCard extends StatelessWidget {
     );
   }
 
-  Widget _buildMarkedContent(BuildContext context, Color accentColor, AttendanceStatus status) {
+  Widget _buildMarkedContent(
+      BuildContext context, Color accentColor, AttendanceStatus status) {
     return Column(
       key: const ValueKey('marked'),
       crossAxisAlignment: CrossAxisAlignment.start,
@@ -179,7 +185,8 @@ class LectureCard extends StatelessWidget {
             label: const Text('Edit Attendance'),
             style: OutlinedButton.styleFrom(
               foregroundColor: Theme.of(context).colorScheme.onSurfaceVariant,
-              side: BorderSide(color: Theme.of(context).colorScheme.outlineVariant),
+              side: BorderSide(
+                  color: Theme.of(context).colorScheme.outlineVariant),
             ),
           ),
         ),
@@ -190,7 +197,7 @@ class LectureCard extends StatelessWidget {
   Widget _buildHeader(BuildContext context, Color accentColor) {
     final schedule = model.schedule;
     final subject = model.subject;
-    
+
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
@@ -200,7 +207,10 @@ class LectureCard extends StatelessWidget {
             Expanded(
               child: Text(
                 subject.name,
-                style: Theme.of(context).textTheme.titleLarge?.copyWith(fontWeight: FontWeight.bold),
+                style: Theme.of(context)
+                    .textTheme
+                    .titleLarge
+                    ?.copyWith(fontWeight: FontWeight.bold),
                 maxLines: 1,
                 overflow: TextOverflow.ellipsis,
               ),
@@ -242,7 +252,8 @@ class LectureCard extends StatelessWidget {
     );
   }
 
-  Widget _buildActionButton(BuildContext context, AttendanceStatus status, AttendanceStatus? currentStatus) {
+  Widget _buildActionButton(BuildContext context, AttendanceStatus status,
+      AttendanceStatus? currentStatus) {
     final isSelected = currentStatus == status;
     final color = status.color;
 
@@ -256,7 +267,9 @@ class LectureCard extends StatelessWidget {
         color: isSelected ? Colors.white : color,
         fontWeight: FontWeight.bold,
       ),
-      side: BorderSide(color: isSelected ? Colors.transparent : color.withValues(alpha: 0.5)),
+      side: BorderSide(
+          color:
+              isSelected ? Colors.transparent : color.withValues(alpha: 0.5)),
       onSelected: (selected) {
         if (!isSelected) {
           onMarkAttendance(status);

@@ -19,23 +19,25 @@ class BackupRestoreService {
   final Settings settingsNotifier;
 
   /// Performs a safe, transactional restore of the backup file at [path].
-  /// 
+  ///
   /// 1. Validates the backup
   /// 2. Creates a temporary backup of current state
   /// 3. Clears the database
   /// 4. Imports new data
   /// 5. On failure: rolls back from temporary backup and throws
-  Future<void> restoreBackup(String path, {void Function(double)? onProgress}) async {
+  Future<void> restoreBackup(String path,
+      {void Function(double)? onProgress}) async {
     onProgress?.call(0.1);
 
     // 1. Validate & Parse
     final backupModel = await engine.parseAndValidateBackup(path);
-    
-    // Duplicate Protection: Not fully implemented bit-for-bit, 
+
+    // Duplicate Protection: Not fully implemented bit-for-bit,
     // but we can check if the db version and lengths exactly match (simplified).
     final currentSubjects = await isar.subjects.count();
     final currentRecords = await isar.attendances.count();
-    if (currentSubjects == backupModel.subjects.length && currentRecords == backupModel.attendanceRecords.length) {
+    if (currentSubjects == backupModel.subjects.length &&
+        currentRecords == backupModel.attendanceRecords.length) {
       // Very basic duplicate protection. Could be expanded with checksums of current DB.
     }
 
@@ -50,7 +52,7 @@ class BackupRestoreService {
     try {
       await isar.writeTxn(() async {
         await isar.clear(); // Clear all collections
-        
+
         await isar.subjects.putAll(backupModel.subjects);
         await isar.schedules.putAll(backupModel.schedules);
         await isar.attendances.putAll(backupModel.attendanceRecords);
@@ -73,25 +75,26 @@ class BackupRestoreService {
     } catch (e) {
       // ROLLBACK
       await _rollback(tempPath);
-      throw Exception('Restore failed. Successfully rolled back to previous state. Error: $e');
+      throw Exception(
+          'Restore failed. Successfully rolled back to previous state. Error: $e');
     }
   }
 
   Future<String> _createTemporaryBackup() async {
     final tempDir = await getTemporaryDirectory();
     final tempPath = '${tempDir.path}/attendify_temp_backup.atfy';
-    
+
     final subjects = await isar.subjects.where().findAll();
     final schedules = await isar.schedules.where().findAll();
     final attendances = await isar.attendances.where().findAll();
     final history = await isar.attendanceHistorys.where().findAll();
     final tasks = await isar.academicTasks.where().findAll();
     // Assuming settingsNotifier state represents current AppSettings
-    final currentSettings = settingsNotifier.currentSettings; 
+    final currentSettings = settingsNotifier.currentSettings;
 
     // We use a LocalStorageRepository explicitly for the temp backup
     final tempEngine = BackupEngine(LocalStorageRepository());
-    
+
     await tempEngine.exportBackup(
       path: tempPath,
       subjects: subjects,
@@ -131,11 +134,16 @@ class BackupRestoreService {
     await settingsNotifier.updateDefaultGoal(settings.defaultGoalPercentage);
     await settingsNotifier.updateMedicalPolicy(settings.medicalCountsAsPresent);
     await settingsNotifier.updateGtMode(settings.gtMode);
-    await settingsNotifier.updateSemesterDates(settings.semesterStartDate, settings.semesterEndDate);
-    await settingsNotifier.updateNotificationsEnabled(settings.notificationsEnabled);
-    await settingsNotifier.updateDailyReminderEnabled(settings.dailyReminderEnabled);
+    await settingsNotifier.updateSemesterDates(
+        settings.semesterStartDate, settings.semesterEndDate);
+    await settingsNotifier
+        .updateNotificationsEnabled(settings.notificationsEnabled);
+    await settingsNotifier
+        .updateDailyReminderEnabled(settings.dailyReminderEnabled);
     await settingsNotifier.updateDailyReminderTime(settings.dailyReminderTime);
-    await settingsNotifier.updateLectureReminderMinutes(settings.lectureReminderMinutes);
-    await settingsNotifier.updateDefaultTaskReminderOffsets(settings.defaultTaskReminderOffsets);
+    await settingsNotifier
+        .updateLectureReminderMinutes(settings.lectureReminderMinutes);
+    await settingsNotifier
+        .updateDefaultTaskReminderOffsets(settings.defaultTaskReminderOffsets);
   }
 }

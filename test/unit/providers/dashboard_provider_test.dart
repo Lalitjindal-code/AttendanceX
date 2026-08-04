@@ -28,7 +28,13 @@ void main() {
 
   setUp(() async {
     isar = await Isar.open(
-      [SubjectSchema, ScheduleSchema, AttendanceSchema, AttendanceHistorySchema, AcademicTaskSchema],
+      [
+        SubjectSchema,
+        ScheduleSchema,
+        AttendanceSchema,
+        AttendanceHistorySchema,
+        AcademicTaskSchema
+      ],
       directory: '',
       name: 'dashboard_test_db_${DateTime.now().microsecondsSinceEpoch}',
     );
@@ -84,5 +90,4 @@ void main() {
     expect(state.pendingLectures[0].subject.name, 'Physics');
     expect(state.pendingLectures[1].subject.name, 'Math');
   });
-
 }

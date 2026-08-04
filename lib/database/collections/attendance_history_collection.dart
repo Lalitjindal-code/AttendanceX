@@ -64,9 +64,17 @@ class AttendanceHistory {
       ..id = map['id'] ?? Isar.autoIncrement
       ..attendanceId = map['attendanceId'] ?? 0
       ..subjectId = map['subjectId'] ?? 0
-      ..date = map['date'] != null ? DateTime.fromMillisecondsSinceEpoch(map['date']) : DateTime.now()
-      ..previousStatus = AttendanceStatus.values.firstWhere((e) => e.name == map['previousStatus'], orElse: () => AttendanceStatus.pending)
-      ..newStatus = AttendanceStatus.values.firstWhere((e) => e.name == map['newStatus'], orElse: () => AttendanceStatus.pending)
-      ..changedAt = map['changedAt'] != null ? DateTime.fromMillisecondsSinceEpoch(map['changedAt']) : DateTime.now();
+      ..date = map['date'] != null
+          ? DateTime.fromMillisecondsSinceEpoch(map['date'])
+          : DateTime.now()
+      ..previousStatus = AttendanceStatus.values.firstWhere(
+          (e) => e.name == map['previousStatus'],
+          orElse: () => AttendanceStatus.pending)
+      ..newStatus = AttendanceStatus.values.firstWhere(
+          (e) => e.name == map['newStatus'],
+          orElse: () => AttendanceStatus.pending)
+      ..changedAt = map['changedAt'] != null
+          ? DateTime.fromMillisecondsSinceEpoch(map['changedAt'])
+          : DateTime.now();
   }
 }

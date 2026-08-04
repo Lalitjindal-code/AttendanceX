@@ -14,13 +14,26 @@ void main() {
   Widget createWidget(List<Schedule> mockSchedules) {
     return ProviderScope(
       overrides: [
-        schedulesForDaySortedByTimeProvider(1).overrideWith((ref) => Stream.value(mockSchedules)),
-        schedulesForDaySortedByTimeProvider(2).overrideWith((ref) => Stream.value(mockSchedules)),
-        schedulesForDaySortedByTimeProvider(3).overrideWith((ref) => Stream.value(mockSchedules)),
-        schedulesForDaySortedByTimeProvider(4).overrideWith((ref) => Stream.value(mockSchedules)),
-        schedulesForDaySortedByTimeProvider(5).overrideWith((ref) => Stream.value(mockSchedules)),
-        subjectProvider(1).overrideWith((ref) => Future.value(Subject()..name = 'Math'..colorValue = Colors.blue.toARGB32()..id = 1)),
-        subjectsProvider.overrideWith((ref) => Stream.value([Subject()..name = 'Math'..colorValue = Colors.blue.toARGB32()..id = 1])),
+        schedulesForDaySortedByTimeProvider(1)
+            .overrideWith((ref) => Stream.value(mockSchedules)),
+        schedulesForDaySortedByTimeProvider(2)
+            .overrideWith((ref) => Stream.value(mockSchedules)),
+        schedulesForDaySortedByTimeProvider(3)
+            .overrideWith((ref) => Stream.value(mockSchedules)),
+        schedulesForDaySortedByTimeProvider(4)
+            .overrideWith((ref) => Stream.value(mockSchedules)),
+        schedulesForDaySortedByTimeProvider(5)
+            .overrideWith((ref) => Stream.value(mockSchedules)),
+        subjectProvider(1).overrideWith((ref) => Future.value(Subject()
+          ..name = 'Math'
+          ..colorValue = Colors.blue.toARGB32()
+          ..id = 1)),
+        subjectsProvider.overrideWith((ref) => Stream.value([
+              Subject()
+                ..name = 'Math'
+                ..colorValue = Colors.blue.toARGB32()
+                ..id = 1
+            ])),
       ],
       child: const MaterialApp(
         home: ScheduleScreen(),
@@ -47,7 +60,9 @@ void main() {
       expect(find.text('No classes scheduled for today.'), findsOneWidget);
     });
 
-    testWidgets('Schedule renders loaded state and interacts with floating button', (WidgetTester tester) async {
+    testWidgets(
+        'Schedule renders loaded state and interacts with floating button',
+        (WidgetTester tester) async {
       await tester.pumpWidget(createWidget([mockSchedule]));
       await tester.pumpAndSettle();
 
@@ -62,24 +77,39 @@ void main() {
       expect(find.byType(FloatingActionButton), findsOneWidget);
     });
 
-    testWidgets('Schedule text scale factor regression loop', (WidgetTester tester) async {
+    testWidgets('Schedule text scale factor regression loop',
+        (WidgetTester tester) async {
       final textScaleFactors = [1.0, 1.3, 1.5, 2.0];
 
       for (final scale in textScaleFactors) {
         await tester.pumpWidget(ProviderScope(
           overrides: [
-            schedulesForDaySortedByTimeProvider(1).overrideWith((ref) => Stream.value([mockSchedule])),
-            schedulesForDaySortedByTimeProvider(2).overrideWith((ref) => Stream.value([mockSchedule])),
-            schedulesForDaySortedByTimeProvider(3).overrideWith((ref) => Stream.value([mockSchedule])),
-            schedulesForDaySortedByTimeProvider(4).overrideWith((ref) => Stream.value([mockSchedule])),
-            schedulesForDaySortedByTimeProvider(5).overrideWith((ref) => Stream.value([mockSchedule])),
-            subjectProvider(1).overrideWith((ref) => Future.value(Subject()..name = 'Math'..colorValue = Colors.blue.toARGB32()..id = 1)),
-            subjectsProvider.overrideWith((ref) => Stream.value([Subject()..name = 'Math'..colorValue = Colors.blue.toARGB32()..id = 1])),
+            schedulesForDaySortedByTimeProvider(1)
+                .overrideWith((ref) => Stream.value([mockSchedule])),
+            schedulesForDaySortedByTimeProvider(2)
+                .overrideWith((ref) => Stream.value([mockSchedule])),
+            schedulesForDaySortedByTimeProvider(3)
+                .overrideWith((ref) => Stream.value([mockSchedule])),
+            schedulesForDaySortedByTimeProvider(4)
+                .overrideWith((ref) => Stream.value([mockSchedule])),
+            schedulesForDaySortedByTimeProvider(5)
+                .overrideWith((ref) => Stream.value([mockSchedule])),
+            subjectProvider(1).overrideWith((ref) => Future.value(Subject()
+              ..name = 'Math'
+              ..colorValue = Colors.blue.toARGB32()
+              ..id = 1)),
+            subjectsProvider.overrideWith((ref) => Stream.value([
+                  Subject()
+                    ..name = 'Math'
+                    ..colorValue = Colors.blue.toARGB32()
+                    ..id = 1
+                ])),
           ],
           child: MaterialApp(
             builder: (context, child) {
               return MediaQuery(
-                data: MediaQuery.of(context).copyWith(textScaler: TextScaler.linear(scale)),
+                data: MediaQuery.of(context)
+                    .copyWith(textScaler: TextScaler.linear(scale)),
                 child: child!,
               );
             },
@@ -87,10 +117,10 @@ void main() {
           ),
         ));
         await tester.pumpAndSettle();
-        
+
         await tester.tap(find.text('Mon'));
         await tester.pumpAndSettle();
-        
+
         expect(tester.takeException(), isNull);
       }
     });

@@ -24,7 +24,13 @@ void main() {
 
   setUp(() async {
     isar = await Isar.open(
-      [SubjectSchema, ScheduleSchema, AttendanceSchema, AttendanceHistorySchema, AcademicTaskSchema],
+      [
+        SubjectSchema,
+        ScheduleSchema,
+        AttendanceSchema,
+        AttendanceHistorySchema,
+        AcademicTaskSchema
+      ],
       directory: '',
       name: 'calendar_test_db_${DateTime.now().microsecondsSinceEpoch}',
     );
@@ -56,13 +62,13 @@ void main() {
     final sub2 = container.listen(calendarFocusedDateProvider, (_, __) {});
 
     final newDate = DateTime(2025, 1, 1);
-    
+
     container.read(calendarSelectedDateProvider.notifier).setDate(newDate);
     container.read(calendarFocusedDateProvider.notifier).setDate(newDate);
 
     // Now start the provider and read the future
     final state = await container.read(calendarNotifierProvider.future);
-    
+
     expect(state.selectedDate, newDate);
     expect(state.focusedDate, newDate);
     expect(state.selectedDayDetails.date, newDate);
@@ -96,7 +102,7 @@ void main() {
       ..startTime = '10:00'
       ..endTime = '11:00';
     await scheduleRepo.create(sch);
-    
+
     final savedSch = await isar.schedules.where().findFirst();
 
     final att = Attendance()
@@ -108,17 +114,18 @@ void main() {
 
     // Read state for the first time AFTER inserting everything
     final state = await container.read(calendarNotifierProvider.future);
-    
+
     // Assert markers
     expect(state.attendanceMarkers.length, 1);
     expect(state.attendanceMarkers.containsKey(testDate), isTrue);
     expect(state.attendanceMarkers[testDate]!.length, 1);
     expect(state.attendanceMarkers[testDate]!.first, AttendanceStatus.present);
-    
+
     // Assert daily details
     expect(state.selectedDayDetails.items.length, 1);
     expect(state.selectedDayDetails.items.first.subject.name, 'Math');
-    expect(state.selectedDayDetails.items.first.attendance?.status, AttendanceStatus.present);
+    expect(state.selectedDayDetails.items.first.attendance?.status,
+        AttendanceStatus.present);
     expect(state.selectedDayDetails.items.first.isManual, false);
 
     sub1.close();

@@ -59,8 +59,8 @@ class SubjectColorPicker extends StatelessWidget {
                       ]
                     : null,
               ),
-              child: isSelected 
-                  ? const Icon(Icons.check, color: Colors.white) 
+              child: isSelected
+                  ? const Icon(Icons.check, color: Colors.white)
                   : null,
             ),
           ),

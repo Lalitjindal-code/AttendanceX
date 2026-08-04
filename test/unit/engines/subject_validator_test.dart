@@ -4,7 +4,8 @@ import 'package:flutter_test/flutter_test.dart';
 void main() {
   group('SubjectValidator Normalization', () {
     test('normalizes complex strings correctly', () {
-      expect(SubjectValidator.normalizeName('  DATA   STRUCTURES  '), 'DATA STRUCTURES');
+      expect(SubjectValidator.normalizeName('  DATA   STRUCTURES  '),
+          'DATA STRUCTURES');
       expect(SubjectValidator.normalizeName('Math'), 'Math');
     });
   });
@@ -17,7 +18,8 @@ void main() {
 
     test('returns error when name exceeds 60 characters', () {
       final longName = 'A' * 61;
-      expect(SubjectValidator.validateName(longName), 'Subject name cannot exceed 60 characters');
+      expect(SubjectValidator.validateName(longName),
+          'Subject name cannot exceed 60 characters');
     });
 
     test('returns null when valid', () {
@@ -36,8 +38,10 @@ void main() {
     });
 
     test('returns error when out of bounds', () {
-      expect(SubjectValidator.validateCredits('0'), 'Credits must be between 1 and 10');
-      expect(SubjectValidator.validateCredits('11'), 'Credits must be between 1 and 10');
+      expect(SubjectValidator.validateCredits('0'),
+          'Credits must be between 1 and 10');
+      expect(SubjectValidator.validateCredits('11'),
+          'Credits must be between 1 and 10');
     });
 
     test('returns null when valid', () {
@@ -48,7 +52,8 @@ void main() {
 
   group('SubjectValidator.validateGoal', () {
     test('returns error when null or empty', () {
-      expect(SubjectValidator.validateGoal(null), 'Goal percentage is required');
+      expect(
+          SubjectValidator.validateGoal(null), 'Goal percentage is required');
     });
 
     test('returns error when non-numeric', () {
@@ -56,8 +61,10 @@ void main() {
     });
 
     test('returns error when out of bounds', () {
-      expect(SubjectValidator.validateGoal('0.9'), 'Goal must be between 1 and 100');
-      expect(SubjectValidator.validateGoal('100.1'), 'Goal must be between 1 and 100');
+      expect(SubjectValidator.validateGoal('0.9'),
+          'Goal must be between 1 and 100');
+      expect(SubjectValidator.validateGoal('100.1'),
+          'Goal must be between 1 and 100');
     });
 
     test('returns null when valid', () {

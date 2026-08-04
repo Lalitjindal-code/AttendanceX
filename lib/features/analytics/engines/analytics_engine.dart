@@ -27,13 +27,13 @@ class AnalyticsEngine {
     for (var i = 1; i <= 7; i++) {
       final list = grouped[i]!;
       final summary = AttendanceEngine.calculateOverallSummary(list, settings);
-      
+
       trends.add(DayOfWeekTrend(
         weekday: i,
         presentCount: summary.effectivePresent,
         totalCount: summary.effectiveTotal,
-        percentage: summary.effectiveTotal > 0 
-            ? summary.effectivePresent / summary.effectiveTotal 
+        percentage: summary.effectiveTotal > 0
+            ? summary.effectivePresent / summary.effectiveTotal
             : 0.0,
       ));
     }
@@ -55,7 +55,7 @@ class AnalyticsEngine {
   }
 
   /// Calculates monthly trends for the given list of attendances.
-  /// 
+  ///
   /// Reuses [AttendanceEngine] to ensure calculation rules remain consistent.
   static List<MonthlyTrend> calculateMonthlyTrends(
     List<Attendance> attendances,
@@ -78,7 +78,8 @@ class AnalyticsEngine {
       final year = int.parse(parts[0]);
       final month = int.parse(parts[1]);
 
-      final summary = AttendanceEngine.calculateOverallSummary(entry.value, settings);
+      final summary =
+          AttendanceEngine.calculateOverallSummary(entry.value, settings);
 
       trends.add(MonthlyTrend(
         year: year,
@@ -104,12 +105,14 @@ class AnalyticsEngine {
     SubjectAttendanceSummary currentPeriod,
     SubjectAttendanceSummary previousPeriod,
   ) {
-    if (previousPeriod.effectiveTotal == 0 || currentPeriod.effectiveTotal == 0) {
+    if (previousPeriod.effectiveTotal == 0 ||
+        currentPeriod.effectiveTotal == 0) {
       return AnalyticsTrend.insufficientData;
     }
 
-    final diff = currentPeriod.attendancePercentage - previousPeriod.attendancePercentage;
-    
+    final diff = currentPeriod.attendancePercentage -
+        previousPeriod.attendancePercentage;
+
     // Use a small epsilon to avoid floating point precision issues
     if (diff > 0.001) return AnalyticsTrend.improving;
     if (diff < -0.001) return AnalyticsTrend.declining;
@@ -123,9 +126,9 @@ class AnalyticsEngine {
   ) {
     final int present = summary.effectivePresent;
     final int total = summary.effectiveTotal;
-    
+
     final currentPercentage = summary.attendancePercentage / 100.0;
-    
+
     double ifAttend = 0.0;
     double ifBunk = 0.0;
 
@@ -144,15 +147,16 @@ class AnalyticsEngine {
       if (goalPercentage >= 1.0) {
         safeBunks = 0;
         if (currentPercentage < 1.0 && total > 0) {
-           classesNeeded = -1; // impossible
+          classesNeeded = -1; // impossible
         } else {
-           classesNeeded = 0;
+          classesNeeded = 0;
         }
       } else {
         final double rawSafe = (present / goalPercentage) - total;
         safeBunks = rawSafe.isFinite && rawSafe > 0 ? rawSafe.floor() : 0;
 
-        final double rawNeeded = (goalPercentage * total - present) / (1 - goalPercentage);
+        final double rawNeeded =
+            (goalPercentage * total - present) / (1 - goalPercentage);
         if (rawNeeded > 0) {
           classesNeeded = rawNeeded.ceil();
         } else {

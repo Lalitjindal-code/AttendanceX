@@ -84,7 +84,11 @@ class Subject {
       ..minimumPercentage = map['minimumPercentage'] ?? 75.0
       ..notes = map['notes']
       ..isActive = map['isActive'] ?? true
-      ..createdAt = map['createdAt'] != null ? DateTime.fromMillisecondsSinceEpoch(map['createdAt']) : DateTime.now()
-      ..updatedAt = map['updatedAt'] != null ? DateTime.fromMillisecondsSinceEpoch(map['updatedAt']) : DateTime.now();
+      ..createdAt = map['createdAt'] != null
+          ? DateTime.fromMillisecondsSinceEpoch(map['createdAt'])
+          : DateTime.now()
+      ..updatedAt = map['updatedAt'] != null
+          ? DateTime.fromMillisecondsSinceEpoch(map['updatedAt'])
+          : DateTime.now();
   }
 }

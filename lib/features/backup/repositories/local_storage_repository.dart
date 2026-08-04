@@ -16,13 +16,13 @@ class LocalStorageRepository implements BackupRepository {
   @override
   Future<void> writeBackup(String path, List<int> data) async {
     final file = File(path);
-    
+
     // Ensure the parent directory exists
     final parentDir = file.parent;
     if (!await parentDir.exists()) {
       await parentDir.create(recursive: true);
     }
-    
+
     await file.writeAsBytes(data, flush: true);
   }
 

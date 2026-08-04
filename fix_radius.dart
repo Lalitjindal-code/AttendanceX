@@ -8,6 +8,7 @@ void main() {
 
   final signupScreen = File('lib/features/auth/screens/signup_screen.dart');
   var signupContent = signupScreen.readAsStringSync();
-  signupContent = signupContent.replaceAll('AppSpacing.radiusMd', 'AppRadius.md');
+  signupContent =
+      signupContent.replaceAll('AppSpacing.radiusMd', 'AppRadius.md');
   signupScreen.writeAsStringSync(signupContent);
 }

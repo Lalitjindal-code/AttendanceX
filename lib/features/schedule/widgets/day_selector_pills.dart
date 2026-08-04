@@ -19,7 +19,8 @@ class DaySelectorPills extends StatelessWidget {
   Widget build(BuildContext context) {
     return SingleChildScrollView(
       scrollDirection: Axis.horizontal,
-      padding: const EdgeInsets.symmetric(horizontal: AppSpacing.md, vertical: AppSpacing.sm),
+      padding: const EdgeInsets.symmetric(
+          horizontal: AppSpacing.md, vertical: AppSpacing.sm),
       child: Row(
         children: List.generate(days.length, (index) {
           final isSelected = index == selectedDayIndex;
@@ -38,11 +39,14 @@ class DaySelectorPills extends StatelessWidget {
               },
               showCheckmark: false,
               labelStyle: TextStyle(
-                color: isSelected ? Theme.of(context).colorScheme.onPrimary : Theme.of(context).colorScheme.onSurface,
+                color: isSelected
+                    ? Theme.of(context).colorScheme.onPrimary
+                    : Theme.of(context).colorScheme.onSurface,
                 fontWeight: isSelected ? FontWeight.bold : FontWeight.normal,
               ),
               selectedColor: Theme.of(context).colorScheme.primary,
-              backgroundColor: Theme.of(context).colorScheme.surfaceContainerHighest,
+              backgroundColor:
+                  Theme.of(context).colorScheme.surfaceContainerHighest,
               shape: RoundedRectangleBorder(
                 borderRadius: BorderRadius.circular(24),
               ),

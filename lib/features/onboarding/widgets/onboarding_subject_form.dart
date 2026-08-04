@@ -11,7 +11,8 @@ class OnboardingSubjectForm extends ConsumerStatefulWidget {
   const OnboardingSubjectForm({super.key, required this.onComplete});
 
   @override
-  ConsumerState<OnboardingSubjectForm> createState() => _OnboardingSubjectFormState();
+  ConsumerState<OnboardingSubjectForm> createState() =>
+      _OnboardingSubjectFormState();
 }
 
 class _OnboardingSubjectFormState extends ConsumerState<OnboardingSubjectForm> {
@@ -30,9 +31,9 @@ class _OnboardingSubjectFormState extends ConsumerState<OnboardingSubjectForm> {
 
   Future<void> _submit() async {
     if (!_formKey.currentState!.validate()) return;
-    
+
     setState(() => _isLoading = true);
-    
+
     try {
       final subject = Subject()
         ..name = _nameController.text.trim()
@@ -41,11 +42,12 @@ class _OnboardingSubjectFormState extends ConsumerState<OnboardingSubjectForm> {
         ..credits = 3;
 
       await ref.read(subjectRepositoryProvider).create(subject);
-      
+
       widget.onComplete();
     } catch (e) {
       if (mounted) {
-        ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text('Error: $e')));
+        ScaffoldMessenger.of(context)
+            .showSnackBar(SnackBar(content: Text('Error: $e')));
         setState(() => _isLoading = false);
       }
     }
@@ -87,7 +89,8 @@ class _OnboardingSubjectFormState extends ConsumerState<OnboardingSubjectForm> {
               ),
               textCapitalization: TextCapitalization.words,
               validator: (val) {
-                if (val == null || val.trim().isEmpty) return 'Please enter a name';
+                if (val == null || val.trim().isEmpty)
+                  return 'Please enter a name';
                 return null;
               },
             ),
@@ -99,11 +102,14 @@ class _OnboardingSubjectFormState extends ConsumerState<OnboardingSubjectForm> {
                 hintText: 'e.g. 75',
                 prefixIcon: Icon(Icons.track_changes),
               ),
-              keyboardType: const TextInputType.numberWithOptions(decimal: true),
+              keyboardType:
+                  const TextInputType.numberWithOptions(decimal: true),
               validator: (val) {
-                if (val == null || val.trim().isEmpty) return 'Please enter a goal';
+                if (val == null || val.trim().isEmpty)
+                  return 'Please enter a goal';
                 final parsed = double.tryParse(val);
-                if (parsed == null || parsed < 1 || parsed > 100) return 'Enter a valid percentage';
+                if (parsed == null || parsed < 1 || parsed > 100)
+                  return 'Enter a valid percentage';
                 return null;
               },
             ),
@@ -115,7 +121,8 @@ class _OnboardingSubjectFormState extends ConsumerState<OnboardingSubjectForm> {
             const SizedBox(height: AppSpacing.sm),
             SubjectColorPicker(
               selectedColor: _selectedColor,
-              onColorSelected: (color) => setState(() => _selectedColor = color),
+              onColorSelected: (color) =>
+                  setState(() => _selectedColor = color),
             ),
             const SizedBox(height: AppSpacing.xxl),
             FilledButton(
@@ -123,9 +130,12 @@ class _OnboardingSubjectFormState extends ConsumerState<OnboardingSubjectForm> {
               style: FilledButton.styleFrom(
                 padding: const EdgeInsets.all(AppSpacing.lg),
               ),
-              child: _isLoading 
-                ? const SizedBox(width: 24, height: 24, child: CircularProgressIndicator(strokeWidth: 2))
-                : const Text('Get Started'),
+              child: _isLoading
+                  ? const SizedBox(
+                      width: 24,
+                      height: 24,
+                      child: CircularProgressIndicator(strokeWidth: 2))
+                  : const Text('Get Started'),
             ),
             const SizedBox(height: AppSpacing.lg),
             TextButton(

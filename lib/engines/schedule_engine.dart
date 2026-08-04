@@ -12,11 +12,12 @@ class ScheduleEngine {
     }
     final hours = int.tryParse(parts[0]);
     final minutes = int.tryParse(parts[1]);
-    
+
     if (hours == null || minutes == null) {
-      throw const ValidationException('Invalid time format. Expected numeric HH:mm');
+      throw const ValidationException(
+          'Invalid time format. Expected numeric HH:mm');
     }
-    
+
     return hours * 60 + minutes;
   }
 
@@ -33,13 +34,15 @@ class ScheduleEngine {
   /// Checks if a [newSchedule] overlaps with any [existingSchedules].
   ///
   /// Ignores the schedule with the same ID (for editing).
-  static void checkForConflicts(Schedule newSchedule, List<Schedule> existingSchedules) {
+  static void checkForConflicts(
+      Schedule newSchedule, List<Schedule> existingSchedules) {
     final newStart = timeToMinutes(newSchedule.startTime);
     final newEnd = timeToMinutes(newSchedule.endTime);
 
     for (final existing in existingSchedules) {
       // Skip self when editing
-      if (newSchedule.id != Isar.autoIncrement && existing.id == newSchedule.id) {
+      if (newSchedule.id != Isar.autoIncrement &&
+          existing.id == newSchedule.id) {
         continue;
       }
 
