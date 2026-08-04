@@ -182,5 +182,138 @@ class _SubjectProviderElement extends AutoDisposeFutureProviderElement<Subject?>
   @override
   int get id => (origin as SubjectProvider).id;
 }
+
+String _$subjectSummaryHash() => r'e3a0cd61bb17424610ce0e41493989d6553a2678';
+
+/// See also [subjectSummary].
+@ProviderFor(subjectSummary)
+const subjectSummaryProvider = SubjectSummaryFamily();
+
+/// See also [subjectSummary].
+class SubjectSummaryFamily
+    extends Family<AsyncValue<SubjectAttendanceSummary>> {
+  /// See also [subjectSummary].
+  const SubjectSummaryFamily();
+
+  /// See also [subjectSummary].
+  SubjectSummaryProvider call(
+    int subjectId,
+  ) {
+    return SubjectSummaryProvider(
+      subjectId,
+    );
+  }
+
+  @override
+  SubjectSummaryProvider getProviderOverride(
+    covariant SubjectSummaryProvider provider,
+  ) {
+    return call(
+      provider.subjectId,
+    );
+  }
+
+  static const Iterable<ProviderOrFamily>? _dependencies = null;
+
+  @override
+  Iterable<ProviderOrFamily>? get dependencies => _dependencies;
+
+  static const Iterable<ProviderOrFamily>? _allTransitiveDependencies = null;
+
+  @override
+  Iterable<ProviderOrFamily>? get allTransitiveDependencies =>
+      _allTransitiveDependencies;
+
+  @override
+  String? get name => r'subjectSummaryProvider';
+}
+
+/// See also [subjectSummary].
+class SubjectSummaryProvider
+    extends AutoDisposeStreamProvider<SubjectAttendanceSummary> {
+  /// See also [subjectSummary].
+  SubjectSummaryProvider(
+    int subjectId,
+  ) : this._internal(
+          (ref) => subjectSummary(
+            ref as SubjectSummaryRef,
+            subjectId,
+          ),
+          from: subjectSummaryProvider,
+          name: r'subjectSummaryProvider',
+          debugGetCreateSourceHash:
+              const bool.fromEnvironment('dart.vm.product')
+                  ? null
+                  : _$subjectSummaryHash,
+          dependencies: SubjectSummaryFamily._dependencies,
+          allTransitiveDependencies:
+              SubjectSummaryFamily._allTransitiveDependencies,
+          subjectId: subjectId,
+        );
+
+  SubjectSummaryProvider._internal(
+    super._createNotifier, {
+    required super.name,
+    required super.dependencies,
+    required super.allTransitiveDependencies,
+    required super.debugGetCreateSourceHash,
+    required super.from,
+    required this.subjectId,
+  }) : super.internal();
+
+  final int subjectId;
+
+  @override
+  Override overrideWith(
+    Stream<SubjectAttendanceSummary> Function(SubjectSummaryRef provider)
+        create,
+  ) {
+    return ProviderOverride(
+      origin: this,
+      override: SubjectSummaryProvider._internal(
+        (ref) => create(ref as SubjectSummaryRef),
+        from: from,
+        name: null,
+        dependencies: null,
+        allTransitiveDependencies: null,
+        debugGetCreateSourceHash: null,
+        subjectId: subjectId,
+      ),
+    );
+  }
+
+  @override
+  AutoDisposeStreamProviderElement<SubjectAttendanceSummary> createElement() {
+    return _SubjectSummaryProviderElement(this);
+  }
+
+  @override
+  bool operator ==(Object other) {
+    return other is SubjectSummaryProvider && other.subjectId == subjectId;
+  }
+
+  @override
+  int get hashCode {
+    var hash = _SystemHash.combine(0, runtimeType.hashCode);
+    hash = _SystemHash.combine(hash, subjectId.hashCode);
+
+    return _SystemHash.finish(hash);
+  }
+}
+
+mixin SubjectSummaryRef
+    on AutoDisposeStreamProviderRef<SubjectAttendanceSummary> {
+  /// The parameter `subjectId` of this provider.
+  int get subjectId;
+}
+
+class _SubjectSummaryProviderElement
+    extends AutoDisposeStreamProviderElement<SubjectAttendanceSummary>
+    with SubjectSummaryRef {
+  _SubjectSummaryProviderElement(super.provider);
+
+  @override
+  int get subjectId => (origin as SubjectSummaryProvider).subjectId;
+}
 // ignore_for_file: type=lint
 // ignore_for_file: subtype_of_sealed_class, invalid_use_of_internal_member, invalid_use_of_visible_for_testing_member

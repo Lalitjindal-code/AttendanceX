@@ -35,7 +35,7 @@ dependencies:
   flutter_local_notifications: ^17.2.2
 
   # ── Internationalisation / Formatting ────────────────────────────────────────
-  intl: ^0.19.0
+  intl: ^0.20.3
 
   # ── Unique IDs ────────────────────────────────────────────────────────────────
   uuid: ^4.4.2
@@ -54,6 +54,8 @@ dependencies:
   rxdart: ^0.27.7
   collection: ^1.19.1
   timezone: ^0.9.4
+  crypto: ^3.0.7
+  shimmer: ^3.0.0
 
 dev_dependencies:
   flutter_test:

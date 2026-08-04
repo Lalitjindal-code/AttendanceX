@@ -12,6 +12,8 @@ part 'attendance_collection.g.dart';
 /// by [AttendanceEngine] on demand and are NEVER persisted.
 @collection
 class Attendance {
+  Attendance();
+
   /// Auto-incremented primary key.
   Id id = Isar.autoIncrement;
 
@@ -45,4 +47,31 @@ class Attendance {
   /// Updated on every [upsertAttendance] call. Used for audit trail
   /// correlation with [AttendanceHistory] and for backup delta detection.
   DateTime updatedAt = DateTime.now();
+
+  Map<String, dynamic> toMap() {
+    return {
+      'id': id,
+      'date': date.millisecondsSinceEpoch,
+      'subjectId': subjectId,
+      'scheduleId': scheduleId,
+      'status': status.name,
+      'notes': notes,
+      'holidayReason': holidayReason,
+      'createdAt': createdAt.millisecondsSinceEpoch,
+      'updatedAt': updatedAt.millisecondsSinceEpoch,
+    };
+  }
+
+  factory Attendance.fromMap(Map<String, dynamic> map) {
+    return Attendance()
+      ..id = map['id'] ?? Isar.autoIncrement
+      ..date = map['date'] != null ? DateTime.fromMillisecondsSinceEpoch(map['date']) : DateTime.now()
+      ..subjectId = map['subjectId'] ?? 0
+      ..scheduleId = map['scheduleId'] ?? 0
+      ..status = AttendanceStatus.values.firstWhere((e) => e.name == map['status'], orElse: () => AttendanceStatus.pending)
+      ..notes = map['notes']
+      ..holidayReason = map['holidayReason']
+      ..createdAt = map['createdAt'] != null ? DateTime.fromMillisecondsSinceEpoch(map['createdAt']) : DateTime.now()
+      ..updatedAt = map['updatedAt'] != null ? DateTime.fromMillisecondsSinceEpoch(map['updatedAt']) : DateTime.now();
+  }
 }

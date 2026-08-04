@@ -17,7 +17,7 @@ class FakeEnabledSettings extends Settings {
     dailyReminderEnabled: true,
     dailyReminderTime: '20:00',
     lectureReminderMinutes: 10,
-    defaultGoalPercentage: 0.75,
+    defaultGoalPercentage: 75.0,
     semesterStartDate: null,
     semesterEndDate: null,
     gtMode: GtMode.exclude,
@@ -36,7 +36,7 @@ void main() {
   setUp(() async {
     SharedPreferences.setMockInitialValues({
       PreferencesService.keyThemeMode: 'system',
-      PreferencesService.keyDefaultGoal: 0.75,
+      PreferencesService.keyDefaultGoal: 75.0,
       PreferencesService.keyMedicalCountsAsPresent: false,
       PreferencesService.keyGtMode: 'exclude',
       PreferencesService.keyNotificationsEnabled: true,
@@ -61,10 +61,14 @@ void main() {
       await tester.pumpWidget(createTestWidget());
       await tester.pumpAndSettle();
 
-      expect(find.text('Appearance'), findsOneWidget);
+      expect(find.text('APPEARANCE'), findsOneWidget);
       
       // Switch to dark mode
-      await tester.tap(find.text('Dark'));
+      final darkFinder = find.text('Dark');
+      await tester.dragUntilVisible(darkFinder, find.byType(ListView), const Offset(0, -500));
+      await tester.pumpAndSettle();
+
+      await tester.tap(darkFinder);
       await tester.pumpAndSettle();
 
       final prefs = await SharedPreferences.getInstance();
@@ -80,7 +84,7 @@ void main() {
         matching: find.byType(SwitchListTile),
       );
       
-      await tester.drag(find.byType(ListView), const Offset(0, -500));
+      await tester.dragUntilVisible(masterSwitchFinder, find.byType(ListView), const Offset(0, -500));
       await tester.pumpAndSettle();
       
       await tester.tap(masterSwitchFinder);
@@ -94,12 +98,17 @@ void main() {
       await tester.pumpWidget(createTestWidget());
       await tester.pumpAndSettle();
 
-      expect(find.text(GtMode.exclude.label), findsOneWidget);
+      final excludeFinder = find.text(GtMode.exclude.label);
+      await tester.dragUntilVisible(excludeFinder, find.byType(ListView), const Offset(0, -500));
+      await tester.pumpAndSettle();
+      
+      expect(excludeFinder, findsOneWidget);
 
-      await tester.tap(find.text(GtMode.exclude.label));
+      await tester.tap(excludeFinder);
       await tester.pumpAndSettle();
 
-      await tester.tap(find.text(GtMode.countAsPresent.label).last);
+      final countAsPresentFinder = find.text(GtMode.countAsPresent.label).last;
+      await tester.tap(countAsPresentFinder);
       await tester.pumpAndSettle();
 
       final prefs = await SharedPreferences.getInstance();
@@ -112,14 +121,13 @@ void main() {
 
       final medicalFinder = find.ancestor(
         of: find.text('Medical Leave (ML)'),
-        matching: find.byType(ListTile),
-      );
-      final switchFinder = find.descendant(
-        of: medicalFinder,
-        matching: find.byType(Switch),
+        matching: find.byType(SwitchListTile),
       );
       
-      await tester.tap(switchFinder);
+      await tester.dragUntilVisible(medicalFinder, find.byType(ListView), const Offset(0, -500));
+      await tester.pumpAndSettle();
+      
+      await tester.tap(medicalFinder);
       await tester.pumpAndSettle();
 
       final prefs = await SharedPreferences.getInstance();
@@ -133,6 +141,9 @@ void main() {
       expect(find.text('75%'), findsOneWidget); 
 
       final sliderFinder = find.byType(Slider);
+      await tester.dragUntilVisible(sliderFinder, find.byType(ListView), const Offset(0, -500));
+      await tester.pumpAndSettle();
+
       await tester.tap(sliderFinder);
       await tester.pumpAndSettle();
 
@@ -192,7 +203,7 @@ void main() {
       await setupGoldenTests();
 
       final builder = DeviceBuilder()
-        ..overrideDevicesForAllScenarios(defaultDevices)
+        ..overrideDevicesForAllScenarios(devices: defaultDevices)
         ..addScenario(
           widget: ProviderScope(
             child: const SettingsScreen(),

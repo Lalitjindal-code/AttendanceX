@@ -45,7 +45,7 @@ class AttendanceXApp extends ConsumerWidget {
       debugShowCheckedModeBanner: false,
       themeMode: settings.themeMode,
       theme: AppTheme.light,
-      darkTheme: AppTheme.dark,
+      darkTheme: settings.isAmoled ? AppTheme.amoled : AppTheme.dark,
       routerConfig: router,
     );
   }

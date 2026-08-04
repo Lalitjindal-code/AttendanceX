@@ -7,9 +7,10 @@ import '../features/dashboard/screens/dashboard_screen.dart';
 import '../features/calendar/screens/calendar_screen.dart';
 import '../features/schedule/screens/schedule_screen.dart';
 import '../features/settings/screens/settings_screen.dart';
-import '../features/subjects/screens/subject_form_screen.dart';
+import '../features/subjects/screens/subject_detail_screen.dart';
 import '../features/subjects/screens/subjects_screen.dart';
-import '../features/schedule/screens/schedule_form_screen.dart';
+import '../features/planner/screens/planner_screen.dart';
+import '../features/more/screens/more_screen.dart';
 import 'app_routes.dart';
 import 'shell_scaffold.dart';
 
@@ -50,11 +51,11 @@ GoRouter appRouter(AppRouterRef ref) {
                 builder: (context, state) => const SubjectsScreen(),
                 routes: [
                   GoRoute(
-                    path: AppRoutes.subjectForm,
+                    path: AppRoutes.subjectDetail,
                     builder: (context, state) {
-                      final id = state.uri.queryParameters['id'];
-                      return SubjectFormScreen(
-                        subjectId: id != null ? int.tryParse(id) : null,
+                      final id = state.pathParameters['id'];
+                      return SubjectDetailScreen(
+                        subjectId: int.parse(id!),
                       );
                     },
                   ),
@@ -68,43 +69,37 @@ GoRouter appRouter(AppRouterRef ref) {
               GoRoute(
                 path: AppRoutes.schedule,
                 builder: (context, state) => const ScheduleScreen(),
-                routes: [
-                  GoRoute(
-                    path: AppRoutes.scheduleForm,
-                    builder: (context, state) {
-                      final id = state.uri.queryParameters['id'];
-                      final day = state.uri.queryParameters['day'];
-                      return ScheduleFormScreen(
-                        scheduleId: id != null ? int.tryParse(id) : null,
-                        dayOfWeek: day != null ? int.tryParse(day) : null,
-                      );
-                    },
-                  ),
-                ],
               ),
             ],
           ),
-          // 📅 Branch 3: Calendar 📅
+          // 📅 Branch 3: Planner 📅
           StatefulShellBranch(
             routes: [
+              GoRoute(
+                path: AppRoutes.planner,
+                builder: (context, state) => const PlannerScreen(),
+              ),
+            ],
+          ),
+          // ⚙️ Branch 4: More ⚙️
+          StatefulShellBranch(
+            routes: [
+              GoRoute(
+                path: AppRoutes.more,
+                builder: (context, state) => const MoreScreen(),
+                routes: [
+                  // Sub-routes for More tab (no leading slash for sub-routes, but AppRoutes are absolute)
+                  // Wait, if they are absolute, we can just define them inside the branch directly instead of nested.
+                ],
+              ),
               GoRoute(
                 path: AppRoutes.calendar,
                 builder: (context, state) => const CalendarScreen(),
               ),
-            ],
-          ),
-          // 📊 Branch 4: Analytics 📊
-          StatefulShellBranch(
-            routes: [
               GoRoute(
                 path: AppRoutes.analytics,
                 builder: (context, state) => const AnalyticsScreen(),
               ),
-            ],
-          ),
-          // ⚙️ Branch 5: Settings ⚙️
-          StatefulShellBranch(
-            routes: [
               GoRoute(
                 path: AppRoutes.settings,
                 builder: (context, state) => const SettingsScreen(),

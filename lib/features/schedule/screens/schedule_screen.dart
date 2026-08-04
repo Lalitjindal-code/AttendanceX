@@ -1,11 +1,17 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
+import '../../../core/constants/app_spacing.dart';
 import '../../../core/constants/app_strings.dart';
 import '../../../core/enums/day_of_week.dart';
 import '../../../navigation/app_routes.dart';
 import '../../subjects/providers/subject_providers.dart';
 import '../providers/schedule_providers.dart';
+import '../widgets/day_selector_pills.dart';
+import '../widgets/schedule_timeline_card.dart';
+import 'schedule_form_screen.dart';
+import '../../../core/utils/haptics.dart';
+import 'package:flutter/rendering.dart';
 
 class ScheduleScreen extends ConsumerStatefulWidget {
   const ScheduleScreen({super.key});
@@ -14,27 +20,50 @@ class ScheduleScreen extends ConsumerStatefulWidget {
   ConsumerState<ScheduleScreen> createState() => _ScheduleScreenState();
 }
 
-class _ScheduleScreenState extends ConsumerState<ScheduleScreen> with SingleTickerProviderStateMixin {
-  late TabController _tabController;
+class _ScheduleScreenState extends ConsumerState<ScheduleScreen> {
+  final ScrollController _scrollController = ScrollController();
   int _currentDayIndex = 0;
+  bool _isFabExtended = true;
 
   @override
   void initState() {
     super.initState();
-    _tabController = TabController(length: DayOfWeek.weekdays.length, vsync: this);
-    _tabController.addListener(() {
-      if (!_tabController.indexIsChanging) {
-        setState(() {
-          _currentDayIndex = _tabController.index;
-        });
-      }
-    });
+    // Default to today if it's a weekday, otherwise Monday
+    final today = DateTime.now().weekday;
+    if (today >= 1 && today <= 5) {
+      _currentDayIndex = today - 1;
+    } else {
+      _currentDayIndex = 0;
+    }
+    _scrollController.addListener(_onScroll);
   }
 
   @override
   void dispose() {
-    _tabController.dispose();
+    _scrollController.removeListener(_onScroll);
+    _scrollController.dispose();
     super.dispose();
+  }
+
+  void _onScroll() {
+    if (_scrollController.position.userScrollDirection == 
+        ScrollDirection.reverse) {
+      if (_isFabExtended) {
+        setState(() => _isFabExtended = false);
+      }
+    } else if (_scrollController.position.userScrollDirection == 
+        ScrollDirection.forward) {
+      if (!_isFabExtended) {
+        setState(() => _isFabExtended = true);
+      }
+    }
+  }
+
+  Future<void> _onRefresh() async {
+    Haptics.selection();
+    ref.invalidate(subjectsProvider);
+    ref.invalidate(schedulesForDaySortedByTimeProvider);
+    await Future.delayed(const Duration(milliseconds: 500));
   }
 
   @override
@@ -42,49 +71,95 @@ class _ScheduleScreenState extends ConsumerState<ScheduleScreen> with SingleTick
     final subjectsAsync = ref.watch(subjectsProvider);
 
     return Scaffold(
-      appBar: AppBar(
-        title: const Text(AppStrings.scheduleTitle),
-        bottom: TabBar(
-          controller: _tabController,
-          isScrollable: true,
-          tabs: DayOfWeek.weekdays.map((day) => Tab(text: day.shortLabel)).toList(),
-        ),
-      ),
-      body: subjectsAsync.when(
-        data: (subjects) {
-          if (subjects.isEmpty) {
-            return Center(
-              child: Column(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  const Icon(Icons.menu_book, size: 64, color: Colors.grey),
-                  const SizedBox(height: 16),
-                  const Text('No subjects available.\nPlease create a subject first.', textAlign: TextAlign.center),
-                  const SizedBox(height: 16),
-                  ElevatedButton(
-                    onPressed: () => context.go(AppRoutes.subjects), // Assuming they go to subjects tab to add
-                    child: const Text('Go to Subjects'),
+      body: RefreshIndicator(
+        onRefresh: _onRefresh,
+        child: CustomScrollView(
+          controller: _scrollController,
+          slivers: [
+          SliverAppBar.large(
+            title: const Text(AppStrings.scheduleTitle),
+            floating: true,
+            pinned: true,
+            actions: [
+              if (subjectsAsync.valueOrNull?.isNotEmpty == true)
+                IconButton(
+                  icon: const Icon(Icons.add),
+                  onPressed: () => showScheduleFormSheet(context, dayOfWeek: DayOfWeek.weekdays[_currentDayIndex].value),
+                ),
+            ],
+          ),
+          
+          subjectsAsync.when(
+            data: (subjects) {
+              if (subjects.isEmpty) {
+                return SliverFillRemaining(
+                  hasScrollBody: false,
+                  child: Center(
+                    child: Padding(
+                      padding: const EdgeInsets.all(AppSpacing.xl),
+                      child: Column(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          Icon(
+                            Icons.menu_book_outlined,
+                            size: 72,
+                            color: Theme.of(context).colorScheme.outlineVariant,
+                          ),
+                          const SizedBox(height: AppSpacing.lg),
+                          Text(
+                            "No subjects available.\nPlease create a subject first.",
+                            textAlign: TextAlign.center,
+                            style: Theme.of(context).textTheme.bodyLarge?.copyWith(
+                                  color: Theme.of(context).colorScheme.onSurfaceVariant,
+                                ),
+                          ),
+                          const SizedBox(height: AppSpacing.xl),
+                          FilledButton.icon(
+                            onPressed: () => context.go(AppRoutes.subjects),
+                            icon: const Icon(Icons.add),
+                            label: const Text('Go to Subjects'),
+                          ),
+                        ],
+                      ),
+                    ),
                   ),
-                ],
-              ),
-            );
-          }
+                );
+              }
 
-          return TabBarView(
-            controller: _tabController,
-            children: DayOfWeek.weekdays.map((day) => _DayScheduleView(dayOfWeek: day.value)).toList(),
-          );
-        },
-        loading: () => const Center(child: CircularProgressIndicator()),
-        error: (err, stack) => Center(child: Text('Error: $err')),
+              return SliverList(
+                delegate: SliverChildListDelegate([
+                  DaySelectorPills(
+                    days: DayOfWeek.weekdays,
+                    selectedDayIndex: _currentDayIndex,
+                    onDaySelected: (index) {
+                      setState(() {
+                        _currentDayIndex = index;
+                      });
+                    },
+                  ),
+                  const SizedBox(height: AppSpacing.md),
+                  _DayScheduleView(dayOfWeek: DayOfWeek.weekdays[_currentDayIndex].value),
+                  const SizedBox(height: 80),
+                ]),
+              );
+            },
+            loading: () => const SliverFillRemaining(
+              child: Center(child: CircularProgressIndicator()),
+            ),
+            error: (err, stack) => SliverFillRemaining(
+              child: Center(child: Text('Error: $err')),
+            ),
+          ),
+        ],
+      ),
       ),
       floatingActionButton: subjectsAsync.maybeWhen(
         data: (subjects) => subjects.isNotEmpty
-            ? FloatingActionButton(
-                onPressed: () {
-                  context.push('${AppRoutes.schedule}/${AppRoutes.scheduleForm}?day=${DayOfWeek.weekdays[_currentDayIndex].value}');
-                },
-                child: const Icon(Icons.add),
+            ? FloatingActionButton.extended(
+                onPressed: () => showScheduleFormSheet(context, dayOfWeek: DayOfWeek.weekdays[_currentDayIndex].value),
+                icon: const Icon(Icons.add),
+                label: const Text('Add Class'),
+                isExtended: _isFabExtended,
               )
             : null,
         orElse: () => null,
@@ -100,60 +175,70 @@ class _DayScheduleView extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final schedulesAsync = ref.watch(schedulesForDayProvider(dayOfWeek));
+    // We use sorted by time for timeline view
+    final schedulesAsync = ref.watch(schedulesForDaySortedByTimeProvider(dayOfWeek));
 
     return schedulesAsync.when(
       data: (schedules) {
         if (schedules.isEmpty) {
-          return const Center(child: Text('No classes scheduled for this day.'));
+          return Padding(
+            padding: const EdgeInsets.all(AppSpacing.xxl),
+            child: Center(
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  Icon(
+                    Icons.event_available_outlined,
+                    size: 64,
+                    color: Theme.of(context).colorScheme.outlineVariant,
+                  ),
+                  const SizedBox(height: AppSpacing.md),
+                  Text(
+                    'No classes scheduled for today.',
+                    style: Theme.of(context).textTheme.titleMedium?.copyWith(
+                      color: Theme.of(context).colorScheme.outline,
+                    ),
+                  ),
+                ],
+              ),
+            ),
+          );
         }
         
-        return ReorderableListView.builder(
-          itemCount: schedules.length,
-          onReorder: (oldIndex, newIndex) async {
-            if (oldIndex < newIndex) {
-              newIndex -= 1;
-            }
-            final mutableSchedules = List.of(schedules);
-            final item = mutableSchedules.removeAt(oldIndex);
-            mutableSchedules.insert(newIndex, item);
-            
-            final ids = mutableSchedules.map((e) => e.id).toList();
-            await ref.read(scheduleRepositoryProvider).updateOrder(ids);
-          },
-          itemBuilder: (context, index) {
-            final schedule = schedules[index];
-            final subjectAsync = ref.watch(subjectProvider(schedule.subjectId));
-
-            return Card(
-              key: ValueKey(schedule.id),
-              margin: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
-              child: ListTile(
-                title: subjectAsync.when(
-                  data: (subject) => Text(subject?.name ?? 'Unknown Subject'),
-                  loading: () => const Text('Loading...'),
-                  error: (_, __) => const Text('Error loading subject'),
-                ),
-                subtitle: Text('${schedule.startTime} - ${schedule.endTime} • ${schedule.type.name}'),
-                trailing: Row(
-                  mainAxisSize: MainAxisSize.min,
-                  children: [
-                    const Icon(Icons.drag_handle, color: Colors.grey),
-                    IconButton(
-                      icon: const Icon(Icons.edit),
-                      onPressed: () {
-                         context.push('${AppRoutes.schedule}/${AppRoutes.scheduleForm}?id=${schedule.id}');
-                      },
-                    ),
-                  ],
-                ),
-              ),
-            );
-          },
+        return Padding(
+          padding: const EdgeInsets.symmetric(horizontal: AppSpacing.md),
+          child: Column(
+            children: List.generate(schedules.length, (index) {
+              final schedule = schedules[index];
+              final subjectAsync = ref.watch(subjectProvider(schedule.subjectId));
+              
+              return subjectAsync.when(
+                data: (subject) {
+                  if (subject == null) return const SizedBox.shrink();
+                  
+                  return ScheduleTimelineCard(
+                    schedule: schedule,
+                    subject: subject,
+                    isFirst: index == 0,
+                    isLast: index == schedules.length - 1,
+                    onEdit: () => showScheduleFormSheet(context, scheduleId: schedule.id, dayOfWeek: dayOfWeek),
+                  );
+                },
+                loading: () => const CircularProgressIndicator(),
+                error: (_, __) => const Text('Error loading subject'),
+              );
+            }),
+          ),
         );
       },
-      loading: () => const Center(child: CircularProgressIndicator()),
-      error: (err, stack) => Center(child: Text('Error: $err')),
+      loading: () => const Padding(
+        padding: EdgeInsets.all(AppSpacing.xl),
+        child: Center(child: CircularProgressIndicator()),
+      ),
+      error: (err, stack) => Padding(
+        padding: const EdgeInsets.all(AppSpacing.xl),
+        child: Center(child: Text('Error: $err')),
+      ),
     );
   }
 }

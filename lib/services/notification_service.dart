@@ -67,7 +67,11 @@ class NotificationService {
       final AndroidFlutterLocalNotificationsPlugin? androidImplementation =
           _flutterLocalNotificationsPlugin.resolvePlatformSpecificImplementation<
               AndroidFlutterLocalNotificationsPlugin>();
-      return await androidImplementation?.requestNotificationsPermission();
+      
+      final notificationsGranted = await androidImplementation?.requestNotificationsPermission();
+      final exactAlarmGranted = await androidImplementation?.requestExactAlarmsPermission();
+      
+      return notificationsGranted;
     }
     return false;
   }
@@ -116,30 +120,58 @@ class NotificationService {
       if (needsScheduling) {
         final tzDate = tz.TZDateTime.from(desired.scheduledDate, tz.local);
         
-        await _flutterLocalNotificationsPlugin.zonedSchedule(
-          desired.id,
-          desired.title,
-          desired.body,
-          tzDate,
-          const NotificationDetails(
-            android: AndroidNotificationDetails(
-              'attendancex_channel',
-              'Reminders',
-              channelDescription: 'Lecture and attendance reminders',
-              importance: Importance.high,
-              priority: Priority.high,
+        try {
+          await _flutterLocalNotificationsPlugin.zonedSchedule(
+            desired.id,
+            desired.title,
+            desired.body,
+            tzDate,
+            const NotificationDetails(
+              android: AndroidNotificationDetails(
+                'attendancex_channel',
+                'Reminders',
+                channelDescription: 'Lecture and attendance reminders',
+                importance: Importance.high,
+                priority: Priority.high,
+              ),
+              iOS: DarwinNotificationDetails(
+                presentAlert: true,
+                presentBadge: true,
+                presentSound: true,
+              ),
             ),
-            iOS: DarwinNotificationDetails(
-              presentAlert: true,
-              presentBadge: true,
-              presentSound: true,
+            androidScheduleMode: AndroidScheduleMode.exactAllowWhileIdle,
+            uiLocalNotificationDateInterpretation:
+                UILocalNotificationDateInterpretation.absoluteTime,
+            payload: desired.payload,
+          );
+        } catch (e) {
+          // Fallback to inexact if exact alarm permission is denied
+          await _flutterLocalNotificationsPlugin.zonedSchedule(
+            desired.id,
+            desired.title,
+            desired.body,
+            tzDate,
+            const NotificationDetails(
+              android: AndroidNotificationDetails(
+                'attendancex_channel',
+                'Reminders',
+                channelDescription: 'Lecture and attendance reminders',
+                importance: Importance.high,
+                priority: Priority.high,
+              ),
+              iOS: DarwinNotificationDetails(
+                presentAlert: true,
+                presentBadge: true,
+                presentSound: true,
+              ),
             ),
-          ),
-          androidScheduleMode: AndroidScheduleMode.exactAllowWhileIdle,
-          uiLocalNotificationDateInterpretation:
-              UILocalNotificationDateInterpretation.absoluteTime,
-          payload: desired.payload,
-        );
+            androidScheduleMode: AndroidScheduleMode.inexactAllowWhileIdle,
+            uiLocalNotificationDateInterpretation:
+                UILocalNotificationDateInterpretation.absoluteTime,
+            payload: desired.payload,
+          );
+        }
       }
     }
   }

@@ -3,6 +3,7 @@ import 'package:attendancex/database/collections/attendance_collection.dart';
 import 'package:attendancex/database/collections/attendance_history_collection.dart';
 import 'package:attendancex/database/collections/schedule_collection.dart';
 import 'package:attendancex/database/collections/subject_collection.dart';
+import 'package:attendancex/database/collections/academic_task_collection.dart';
 import 'package:attendancex/database/repositories/subject_repository.dart';
 import 'package:attendancex/database/repositories/schedule_repository.dart';
 import 'package:attendancex/database/repositories/attendance_repository.dart';
@@ -16,6 +17,8 @@ import 'package:attendancex/features/subjects/providers/subject_providers.dart';
 import 'package:attendancex/services/notification_service.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';
+import 'package:isar/isar.dart';
+import 'package:attendancex/database/database_providers.dart';
 
 class MockNotificationService implements NotificationService {
   List<ScheduledNotification>? lastSyncedNotifications;
@@ -92,6 +95,8 @@ class FakeAttendanceRepository implements AttendanceRepository {
   @override
   Stream<List<Attendance>> watchBySubject(int subjectId) => Stream.value([]);
   @override
+  Future<List<Attendance>> getBySubjectId(int subjectId) async => [];
+  @override
   Stream<List<AttendanceHistory>> watchHistoryBySubject(int subjectId) => Stream.value([]);
   @override
   Stream<List<Attendance>> watchByDateRange(DateTime start, DateTime end) => Stream.value([]);
@@ -101,20 +106,39 @@ class FakeAttendanceRepository implements AttendanceRepository {
 
 class FakeSettings extends Settings {
   @override
-  AppSettings build() => const AppSettings(
-    notificationsEnabled: true, 
-    lectureReminderMinutes: 10, 
-    dailyReminderEnabled: false
-  );
+  AppSettings build() =>
+      const AppSettings(notificationsEnabled: true, lectureReminderMinutes: 10, dailyReminderEnabled: false);
 }
 
 void main() {
+  late Isar isar;
+
+  setUpAll(() async {
+    TestWidgetsFlutterBinding.ensureInitialized();
+    await Isar.initializeIsarCore(download: true);
+  });
+
+  setUp(() async {
+    isar = await Isar.open(
+      [SubjectSchema, ScheduleSchema, AttendanceSchema, AttendanceHistorySchema, AcademicTaskSchema],
+      directory: '',
+      name: 'notification_test_db_${DateTime.now().microsecondsSinceEpoch}',
+    );
+  });
+
+  tearDown(() async {
+    if (isar.isOpen) {
+      await isar.writeTxn(() async => isar.clear());
+      await isar.close(deleteFromDisk: true);
+    }
+  });
   test('NotificationOrchestrator syncs generated notifications', () async {
     final mockService = MockNotificationService();
     NotificationService.setInstanceForTesting(mockService);
 
     final container = ProviderContainer(
       overrides: [
+        isarProvider.overrideWithValue(isar),
         subjectRepositoryProvider.overrideWithValue(FakeSubjectRepository()),
         scheduleRepositoryProvider.overrideWithValue(FakeScheduleRepository()),
         attendanceRepositoryProvider.overrideWithValue(FakeAttendanceRepository()),

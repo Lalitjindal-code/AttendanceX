@@ -10,6 +10,7 @@ import '../providers/settings_provider.dart';
 import '../../../database/database_providers.dart';
 import '../../../database/collections/attendance_collection.dart';
 import 'package:isar/isar.dart';
+import '../../backup/screens/backup_restore_screen.dart' as attendancex_backup_screen;
 
 class SettingsScreen extends ConsumerWidget {
   const SettingsScreen({super.key});
@@ -26,43 +27,33 @@ class SettingsScreen extends ConsumerWidget {
         children: [
           _buildAppearanceSection(context, settings, notifier, theme),
           const Divider(),
-          _buildAttendanceRulesSection(context, settings, notifier, theme),
+          _buildAcademicProfileSection(context, settings, notifier, theme),
           const Divider(),
-          _buildAcademicTermSection(context, settings, notifier, theme),
+          _buildAttendanceRulesSection(context, settings, notifier, theme),
           const Divider(),
           _buildNotificationsSection(context, settings, notifier, theme),
           const Divider(),
-          ListTile(
-            title: const Text('Import Timetable'),
-            subtitle: const Text('Load schedule from script'),
-            trailing: const Icon(Icons.download),
-            onTap: () async {
-              await ImportTimetable.run();
-              if (context.mounted) {
-                ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text('Timetable Imported! Restart app if needed.')));
-              }
-            },
-          ),
-          ListTile(
-            title: const Text('Clear Today\'s Attendance', style: TextStyle(color: Colors.red)),
-            subtitle: const Text('Deletes all attendance marked today'),
-            trailing: const Icon(Icons.delete, color: Colors.red),
-            onTap: () async {
-              final isar = ref.read(isarProvider);
-              final now = DateTime.now();
-              final todayUtc = DateTime.utc(now.year, now.month, now.day);
-              
-              await isar.writeTxn(() async {
-                await isar.attendances.filter().dateEqualTo(todayUtc).deleteAll();
-              });
-              
-              if (context.mounted) {
-                ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text('Cleared today\'s attendance!')));
-              }
-            },
-          ),
+          _buildStorageBackupSection(context, settings, notifier, theme),
+          const Divider(),
+          _buildAdvancedSection(context, ref, settings, notifier, theme),
+          const Divider(),
+          _buildAboutSection(context, theme),
           const SizedBox(height: 32),
         ],
+      ),
+    );
+  }
+
+  Widget _buildSectionHeader(String title, ThemeData theme) {
+    return Padding(
+      padding: const EdgeInsets.fromLTRB(16, 16, 16, 8),
+      child: Text(
+        title.toUpperCase(),
+        style: theme.textTheme.labelLarge?.copyWith(
+          color: theme.colorScheme.primary,
+          fontWeight: FontWeight.bold,
+          letterSpacing: 1.2,
+        ),
       ),
     );
   }
@@ -71,12 +62,10 @@ class SettingsScreen extends ConsumerWidget {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        Padding(
-          padding: const EdgeInsets.fromLTRB(16, 16, 16, 8),
-          child: Text('Appearance', style: theme.textTheme.titleMedium?.copyWith(color: theme.colorScheme.primary)),
-        ),
+        _buildSectionHeader('Appearance', theme),
         ListTile(
           title: const Text('Theme'),
+          subtitle: const Text('Select application theme'),
           trailing: SegmentedButton<ThemeMode>(
             segments: const [
               ButtonSegment(value: ThemeMode.light, label: Text('Light')),
@@ -87,71 +76,25 @@ class SettingsScreen extends ConsumerWidget {
             onSelectionChanged: (set) => notifier.updateThemeMode(set.first),
           ),
         ),
-      ],
-    );
-  }
-
-  Widget _buildAttendanceRulesSection(BuildContext context, AppSettings settings, Settings notifier, ThemeData theme) {
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        Padding(
-          padding: const EdgeInsets.fromLTRB(16, 16, 16, 8),
-          child: Text('Attendance Rules', style: theme.textTheme.titleMedium?.copyWith(color: theme.colorScheme.primary)),
-        ),
-        ListTile(
-          title: const Text('Goal Percentage'),
-          subtitle: Text('${settings.defaultGoalPercentage.toInt()}%'),
-          trailing: SizedBox(
-            width: 200,
-            child: Slider(
-              value: settings.defaultGoalPercentage,
-              min: 10.0,
-              max: 100.0,
-              divisions: 18, // Steps of 5
-              label: '${settings.defaultGoalPercentage.toInt()}%',
-              onChanged: (val) => notifier.updateDefaultGoal(val),
-            ),
-          ),
-        ),
-        ListTile(
-          title: const Text('Medical Leave (ML)'),
-          subtitle: Text(settings.medicalCountsAsPresent ? 'Counts as Present' : 'Excluded from calculation'),
-          trailing: Switch(
-            value: settings.medicalCountsAsPresent,
-            onChanged: (val) => notifier.updateMedicalPolicy(val),
-          ),
-        ),
-        ListTile(
-          title: const Text('Duty Leave (GT)'),
-          subtitle: Text(settings.gtMode.description),
-          trailing: DropdownButton<GtMode>(
-            value: settings.gtMode,
-            items: GtMode.values.map((mode) {
-              return DropdownMenuItem(
-                value: mode,
-                child: Text(mode.label),
-              );
-            }).toList(),
-            onChanged: (val) {
-              if (val != null) notifier.updateGtMode(val);
-            },
-          ),
+        SwitchListTile(
+          title: const Text('AMOLED Dark Mode'),
+          subtitle: const Text('Use true black backgrounds'),
+          value: settings.isAmoled,
+          onChanged: settings.themeMode != ThemeMode.light
+              ? (val) => notifier.updateIsAmoled(val)
+              : null, // Disabled in light mode
         ),
       ],
     );
   }
 
-  Widget _buildAcademicTermSection(BuildContext context, AppSettings settings, Settings notifier, ThemeData theme) {
+  Widget _buildAcademicProfileSection(BuildContext context, AppSettings settings, Settings notifier, ThemeData theme) {
     final dateFormat = DateFormat('MMM d, yyyy');
     
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        Padding(
-          padding: const EdgeInsets.fromLTRB(16, 16, 16, 8),
-          child: Text('Academic Term', style: theme.textTheme.titleMedium?.copyWith(color: theme.colorScheme.primary)),
-        ),
+        _buildSectionHeader('Academic Profile', theme),
         ListTile(
           title: const Text('Semester Start Date'),
           subtitle: Text(settings.semesterStartDate != null ? dateFormat.format(settings.semesterStartDate!) : 'Not set'),
@@ -200,14 +143,57 @@ class SettingsScreen extends ConsumerWidget {
     );
   }
 
+  Widget _buildAttendanceRulesSection(BuildContext context, AppSettings settings, Settings notifier, ThemeData theme) {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        _buildSectionHeader('Attendance Rules', theme),
+        ListTile(
+          title: const Text('Goal Percentage'),
+          subtitle: Text('${settings.defaultGoalPercentage.toInt()}%'),
+          trailing: SizedBox(
+            width: 200,
+            child: Slider(
+              value: settings.defaultGoalPercentage,
+              min: 10.0,
+              max: 100.0,
+              divisions: 18, // Steps of 5
+              label: '${settings.defaultGoalPercentage.toInt()}%',
+              onChanged: (val) => notifier.updateDefaultGoal(val),
+            ),
+          ),
+        ),
+        SwitchListTile(
+          title: const Text('Medical Leave (ML)'),
+          subtitle: Text(settings.medicalCountsAsPresent ? 'Counts as Present' : 'Excluded from calculation'),
+          value: settings.medicalCountsAsPresent,
+          onChanged: (val) => notifier.updateMedicalPolicy(val),
+        ),
+        ListTile(
+          title: const Text('Duty Leave (GT)'),
+          subtitle: Text(settings.gtMode.description),
+          trailing: DropdownButton<GtMode>(
+            value: settings.gtMode,
+            items: GtMode.values.map((mode) {
+              return DropdownMenuItem(
+                value: mode,
+                child: Text(mode.label),
+              );
+            }).toList(),
+            onChanged: (val) {
+              if (val != null) notifier.updateGtMode(val);
+            },
+          ),
+        ),
+      ],
+    );
+  }
+
   Widget _buildNotificationsSection(BuildContext context, AppSettings settings, Settings notifier, ThemeData theme) {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        Padding(
-          padding: const EdgeInsets.fromLTRB(16, 16, 16, 8),
-          child: Text('Notifications', style: theme.textTheme.titleMedium?.copyWith(color: theme.colorScheme.primary)),
-        ),
+        _buildSectionHeader('Notifications', theme),
         SwitchListTile(
           title: const Text('Enable Notifications'),
           subtitle: const Text('Master switch for all alerts'),
@@ -225,8 +211,8 @@ class SettingsScreen extends ConsumerWidget {
           },
         ),
         ListTile(
-          title: const Text('Lecture Reminder Offset'),
-          subtitle: const Text('Minutes before class starts'),
+          title: const Text('Lecture Reminder'),
+          subtitle: const Text('Alert before class starts'),
           enabled: settings.notificationsEnabled,
           trailing: DropdownButton<int>(
             value: [5, 10, 15, 30].contains(settings.lectureReminderMinutes) ? settings.lectureReminderMinutes : 10,
@@ -240,9 +226,28 @@ class SettingsScreen extends ConsumerWidget {
                 : null,
           ),
         ),
+        ListTile(
+          title: const Text('Task Reminder'),
+          subtitle: const Text('Default alert for new tasks'),
+          enabled: settings.notificationsEnabled,
+          trailing: DropdownButton<int>(
+            value: settings.defaultTaskReminderOffsets.isNotEmpty ? settings.defaultTaskReminderOffsets.first : 1440,
+            items: const [
+              DropdownMenuItem(value: 60, child: Text('1 hour before')),
+              DropdownMenuItem(value: 180, child: Text('3 hours before')),
+              DropdownMenuItem(value: 1440, child: Text('1 day before')),
+              DropdownMenuItem(value: 2880, child: Text('2 days before')),
+            ],
+            onChanged: settings.notificationsEnabled
+                ? (val) {
+                    if (val != null) notifier.updateDefaultTaskReminderOffsets([val]);
+                  }
+                : null,
+          ),
+        ),
         SwitchListTile(
           title: const Text('Daily Missed Reminders'),
-          subtitle: const Text('Reminds you if attendance is pending'),
+          subtitle: const Text('Alert if attendance is pending'),
           value: settings.dailyReminderEnabled,
           onChanged: settings.notificationsEnabled
               ? (val) => notifier.updateDailyReminderEnabled(val)
@@ -271,6 +276,94 @@ class SettingsScreen extends ConsumerWidget {
                   }
                 }
               : null,
+        ),
+      ],
+    );
+  }
+
+  Widget _buildStorageBackupSection(BuildContext context, AppSettings settings, Settings notifier, ThemeData theme) {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        _buildSectionHeader('Storage & Backup', theme),
+        ListTile(
+          title: const Text('Backup & Restore'),
+          subtitle: const Text('Export or import your data'),
+          leading: const Icon(Icons.cloud_upload_outlined),
+          trailing: const Icon(Icons.chevron_right),
+          onTap: () {
+            Navigator.push(
+              context,
+              MaterialPageRoute(builder: (_) => const attendancex_backup_screen.BackupRestoreScreen()),
+            );
+          },
+        ),
+      ],
+    );
+  }
+
+  Widget _buildAdvancedSection(BuildContext context, WidgetRef ref, AppSettings settings, Settings notifier, ThemeData theme) {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        _buildSectionHeader('Advanced', theme),
+        ListTile(
+          title: const Text('Import Timetable'),
+          subtitle: const Text('Load schedule from script'),
+          leading: const Icon(Icons.download),
+          onTap: () async {
+            await ImportTimetable.run();
+            if (context.mounted) {
+              ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text('Timetable Imported! Restart app if needed.')));
+            }
+          },
+        ),
+        ListTile(
+          title: Text(
+            'Clear Today\'s Attendance',
+            style: TextStyle(color: theme.colorScheme.error, fontWeight: FontWeight.bold),
+          ),
+          subtitle: const Text('Deletes all attendance marked today'),
+          leading: Icon(Icons.delete_outline, color: theme.colorScheme.error),
+          onTap: () async {
+            final isar = ref.read(isarProvider);
+            final now = DateTime.now();
+            final todayUtc = DateTime.utc(now.year, now.month, now.day);
+            
+            await isar.writeTxn(() async {
+              await isar.attendances.filter().dateEqualTo(todayUtc).deleteAll();
+            });
+            
+            if (context.mounted) {
+              ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text('Cleared today\'s attendance!')));
+            }
+          },
+        ),
+      ],
+    );
+  }
+
+  Widget _buildAboutSection(BuildContext context, ThemeData theme) {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        _buildSectionHeader('About', theme),
+        const ListTile(
+          title: Text('App Version'),
+          subtitle: Text('1.0.0 (Beta)'),
+          leading: Icon(Icons.info_outline),
+        ),
+        const ListTile(
+          title: Text('Feedback'),
+          subtitle: Text('Coming Soon'),
+          leading: Icon(Icons.feedback_outlined),
+          enabled: false,
+        ),
+        const ListTile(
+          title: Text('Privacy Policy'),
+          subtitle: Text('Coming Soon'),
+          leading: Icon(Icons.privacy_tip_outlined),
+          enabled: false,
         ),
       ],
     );

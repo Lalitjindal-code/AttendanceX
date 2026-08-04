@@ -9,6 +9,8 @@ part 'subject_collection.g.dart';
 /// [AttendanceEngine] on demand and never persisted.
 @collection
 class Subject {
+  Subject();
+
   /// Auto-incremented primary key.
   Id id = Isar.autoIncrement;
 
@@ -50,4 +52,39 @@ class Subject {
 
   /// Timestamp when this subject was last modified.
   DateTime updatedAt = DateTime.now();
+
+  Map<String, dynamic> toMap() {
+    return {
+      'id': id,
+      'name': name,
+      'facultyName': facultyName,
+      'facultyEmail': facultyEmail,
+      'facultyPhone': facultyPhone,
+      'credits': credits,
+      'colorValue': colorValue,
+      'goalPercentage': goalPercentage,
+      'minimumPercentage': minimumPercentage,
+      'notes': notes,
+      'isActive': isActive,
+      'createdAt': createdAt.millisecondsSinceEpoch,
+      'updatedAt': updatedAt.millisecondsSinceEpoch,
+    };
+  }
+
+  factory Subject.fromMap(Map<String, dynamic> map) {
+    return Subject()
+      ..id = map['id'] ?? Isar.autoIncrement
+      ..name = map['name'] ?? 'Unknown'
+      ..facultyName = map['facultyName']
+      ..facultyEmail = map['facultyEmail']
+      ..facultyPhone = map['facultyPhone']
+      ..credits = map['credits'] ?? 3
+      ..colorValue = map['colorValue'] ?? 0xFF1565C0
+      ..goalPercentage = map['goalPercentage'] ?? 75.0
+      ..minimumPercentage = map['minimumPercentage'] ?? 75.0
+      ..notes = map['notes']
+      ..isActive = map['isActive'] ?? true
+      ..createdAt = map['createdAt'] != null ? DateTime.fromMillisecondsSinceEpoch(map['createdAt']) : DateTime.now()
+      ..updatedAt = map['updatedAt'] != null ? DateTime.fromMillisecondsSinceEpoch(map['updatedAt']) : DateTime.now();
+  }
 }

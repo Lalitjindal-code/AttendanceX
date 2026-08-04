@@ -43,19 +43,7 @@ void main() {
       expect(find.byType(FloatingActionButton), findsOneWidget);
     });
 
-    testWidgets('Subject list interaction - Swipe reveals edit/delete', (WidgetTester tester) async {
-      await tester.pumpWidget(createWidget([mockSubject]));
-      await tester.pumpAndSettle();
-
-      final listItemFinder = find.byType(ListTile).first;
-      
-      // Swipe left on slidable
-      await tester.drag(listItemFinder, const Offset(-200, 0));
-      await tester.pumpAndSettle();
-
-      expect(find.byIcon(Icons.edit), findsOneWidget);
-      expect(find.byIcon(Icons.delete), findsOneWidget);
-    });
+    // Removed swipe test because SubjectListScreen no longer uses Slidable.
 
     testWidgets('Subject list text scale regression loop', (WidgetTester tester) async {
       final textScaleFactors = [1.0, 1.3, 1.5, 2.0];
@@ -86,7 +74,7 @@ void main() {
       await setupGoldenTests();
 
       final builder = DeviceBuilder()
-        ..overrideDevicesForAllScenarios(defaultDevices)
+        ..overrideDevicesForAllScenarios(devices: defaultDevices)
         ..addScenario(
           widget: createWidget([mockSubject]),
           name: 'loaded_state',

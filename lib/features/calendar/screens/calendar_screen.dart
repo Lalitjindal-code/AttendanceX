@@ -1,14 +1,14 @@
-import 'package:attendancex/core/enums/attendance_status.dart';
-import 'package:attendancex/database/collections/attendance_collection.dart';
-import 'package:attendancex/database/collections/subject_collection.dart';
-import 'package:attendancex/features/attendance/providers/attendance_providers.dart';
-import 'package:attendancex/features/calendar/models/calendar_state.dart';
-import 'package:attendancex/features/calendar/providers/calendar_provider.dart';
-import 'package:attendancex/features/calendar/widgets/daily_attendance_card.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:intl/intl.dart';
-import 'package:table_calendar/table_calendar.dart';
+import '../../../core/constants/app_spacing.dart';
+import '../../../core/enums/attendance_status.dart';
+import '../../../database/collections/attendance_collection.dart';
+import '../../../database/collections/subject_collection.dart';
+import '../../attendance/providers/attendance_providers.dart';
+import '../models/calendar_state.dart';
+import '../providers/calendar_provider.dart';
+import '../widgets/calendar_widget.dart';
+import '../widgets/day_detail_panel.dart';
 
 class CalendarScreen extends ConsumerWidget {
   const CalendarScreen({super.key});
@@ -18,89 +18,27 @@ class CalendarScreen extends ConsumerWidget {
     final calendarStateAsync = ref.watch(calendarNotifierProvider);
 
     return Scaffold(
-      appBar: AppBar(
-        title: const Text('Calendar'),
-      ),
       body: calendarStateAsync.when(
         data: (state) {
-          return Column(
-            children: [
-              TableCalendar<AttendanceStatus>(
-                firstDay: DateTime(2020, 1, 1),
-                lastDay: DateTime(2030, 12, 31),
-                focusedDay: state.focusedDate,
-                selectedDayPredicate: (day) => isSameDay(state.selectedDate, day),
-                onDaySelected: (selectedDay, focusedDay) {
-                  ref.read(calendarSelectedDateProvider.notifier).setDate(selectedDay);
-                  ref.read(calendarFocusedDateProvider.notifier).setDate(focusedDay);
-                },
-                onPageChanged: (focusedDay) {
-                  ref.read(calendarFocusedDateProvider.notifier).setDate(focusedDay);
-                  ref.read(calendarVisibleMonthProvider.notifier).setMonth(focusedDay);
-                },
-                onDayLongPressed: (selectedDay, focusedDay) {
-                  final isFuture = selectedDay.isAfter(DateTime.now());
-                  if (isFuture) {
-                    ScaffoldMessenger.of(context).showSnackBar(
-                      const SnackBar(content: Text('Cannot mark attendance for future dates')),
-                    );
-                    return;
-                  }
-                  
-                  ref.read(calendarSelectedDateProvider.notifier).setDate(selectedDay);
-                  ref.read(calendarFocusedDateProvider.notifier).setDate(focusedDay);
-                  _showAddManualAttendanceDialog(context, ref, state, selectedDay);
-                },
-                eventLoader: (day) {
-                  final normalizedDate = DateTime(day.year, day.month, day.day);
-                  return state.attendanceMarkers[normalizedDate] ?? [];
-                },
-                calendarBuilders: CalendarBuilders(
-                  markerBuilder: (context, date, events) {
-                    if (events.isEmpty) return const SizedBox();
-
-                    return Row(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: events.take(4).map((status) {
-                        return Container(
-                          margin: const EdgeInsets.symmetric(horizontal: 1.0),
-                          width: 6,
-                          height: 6,
-                          decoration: BoxDecoration(
-                            shape: BoxShape.circle,
-                            color: _getStatusColor(status),
-                          ),
-                        );
-                      }).toList(),
-                    );
-                  },
-                ),
-                headerStyle: const HeaderStyle(
-                  formatButtonVisible: false,
-                  titleCentered: true,
+          return CustomScrollView(
+            slivers: [
+              const SliverAppBar.large(
+                title: Text('Calendar'),
+                floating: true,
+                pinned: true,
+              ),
+              SliverToBoxAdapter(
+                child: CalendarWidget(state: state),
+              ),
+              const SliverToBoxAdapter(
+                child: Padding(
+                  padding: EdgeInsets.symmetric(horizontal: AppSpacing.md),
+                  child: Divider(),
                 ),
               ),
-              const Divider(),
-              Expanded(
-                child: state.selectedDayDetails.items.isEmpty
-                    ? Center(
-                        child: Text(
-                          'No classes scheduled for ${DateFormat('MMMM d, yyyy').format(state.selectedDate)}',
-                          style: Theme.of(context).textTheme.bodyLarge?.copyWith(
-                            color: Theme.of(context).colorScheme.onSurfaceVariant,
-                          ),
-                        ),
-                      )
-                    : ListView.builder(
-                        itemCount: state.selectedDayDetails.items.length,
-                        itemBuilder: (context, index) {
-                          final item = state.selectedDayDetails.items[index];
-                          return DailyAttendanceCard(
-                            item: item,
-                            date: state.selectedDate,
-                          );
-                        },
-                      ),
+              DayDetailPanel(state: state),
+              const SliverToBoxAdapter(
+                child: SizedBox(height: 80),
               ),
             ],
           );
@@ -109,23 +47,6 @@ class CalendarScreen extends ConsumerWidget {
         error: (err, stack) => Center(child: Text('Error: $err')),
       ),
     );
-  }
-
-  Color _getStatusColor(AttendanceStatus status) {
-    switch (status) {
-      case AttendanceStatus.present:
-        return Colors.green;
-      case AttendanceStatus.absent:
-        return Colors.red;
-      case AttendanceStatus.medical:
-        return Colors.orange;
-      case AttendanceStatus.holiday:
-        return Colors.blue;
-      case AttendanceStatus.gt:
-        return Colors.purple;
-      case AttendanceStatus.pending:
-        return Colors.grey;
-    }
   }
 
   void _showAddManualAttendanceDialog(
@@ -151,6 +72,7 @@ class CalendarScreen extends ConsumerWidget {
                 mainAxisSize: MainAxisSize.min,
                 children: [
                   DropdownButtonFormField<Subject>(
+                    key: const Key('subject_dropdown'),
                     decoration: const InputDecoration(labelText: 'Subject'),
                     value: selectedSubject,
                     items: state.allSubjects.map((s) {
@@ -163,25 +85,13 @@ class CalendarScreen extends ConsumerWidget {
                   ),
                   const SizedBox(height: 16),
                   DropdownButtonFormField<AttendanceStatus>(
+                    key: const Key('status_dropdown'),
                     decoration: const InputDecoration(labelText: 'Status'),
                     value: selectedStatus,
                     items: AttendanceStatus.values.map((status) {
                       return DropdownMenuItem(
                         value: status,
-                        child: Row(
-                          children: [
-                            Container(
-                              width: 12,
-                              height: 12,
-                              margin: const EdgeInsets.only(right: 8),
-                              decoration: BoxDecoration(
-                                shape: BoxShape.circle,
-                                color: _getStatusColor(status),
-                              ),
-                            ),
-                            Text(status.name.toUpperCase()),
-                          ],
-                        ),
+                        child: Text(status.name.toUpperCase()),
                       );
                     }).toList(),
                     onChanged: (val) => setState(() => selectedStatus = val),
@@ -193,7 +103,7 @@ class CalendarScreen extends ConsumerWidget {
                   onPressed: () => Navigator.pop(context),
                   child: const Text('Cancel'),
                 ),
-                ElevatedButton(
+                FilledButton(
                   onPressed: selectedSubject != null && selectedStatus != null
                       ? () {
                           final repo = ref.read(attendanceRepositoryProvider);

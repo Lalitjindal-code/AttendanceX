@@ -13,7 +13,7 @@ Future<void> setupGoldenTests() async {
   await loadAppFonts();
 }
 
-WidgetBuilderWrapper materialWrapper({ThemeData? theme}) {
+WidgetWrapper materialWrapper({ThemeData? theme}) {
   return (Widget child) => MaterialApp(
         theme: theme ?? ThemeData.light(),
         debugShowCheckedModeBanner: false,

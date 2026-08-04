@@ -18,6 +18,8 @@ part 'attendance_history_collection.g.dart';
 /// - Backup: Full history included in JSON export.
 @collection
 class AttendanceHistory {
+  AttendanceHistory();
+
   /// Auto-incremented primary key.
   Id id = Isar.autoIncrement;
 
@@ -44,4 +46,27 @@ class AttendanceHistory {
 
   /// Exact timestamp when this status change occurred.
   DateTime changedAt = DateTime.now();
+
+  Map<String, dynamic> toMap() {
+    return {
+      'id': id,
+      'attendanceId': attendanceId,
+      'subjectId': subjectId,
+      'date': date.millisecondsSinceEpoch,
+      'previousStatus': previousStatus.name,
+      'newStatus': newStatus.name,
+      'changedAt': changedAt.millisecondsSinceEpoch,
+    };
+  }
+
+  factory AttendanceHistory.fromMap(Map<String, dynamic> map) {
+    return AttendanceHistory()
+      ..id = map['id'] ?? Isar.autoIncrement
+      ..attendanceId = map['attendanceId'] ?? 0
+      ..subjectId = map['subjectId'] ?? 0
+      ..date = map['date'] != null ? DateTime.fromMillisecondsSinceEpoch(map['date']) : DateTime.now()
+      ..previousStatus = AttendanceStatus.values.firstWhere((e) => e.name == map['previousStatus'], orElse: () => AttendanceStatus.pending)
+      ..newStatus = AttendanceStatus.values.firstWhere((e) => e.name == map['newStatus'], orElse: () => AttendanceStatus.pending)
+      ..changedAt = map['changedAt'] != null ? DateTime.fromMillisecondsSinceEpoch(map['changedAt']) : DateTime.now();
+  }
 }

@@ -1,6 +1,7 @@
 import '../../../database/collections/attendance_collection.dart';
 import '../../../database/collections/schedule_collection.dart';
 import '../../../database/collections/subject_collection.dart';
+import 'package:attendancex/database/collections/academic_task_collection.dart';
 import 'attendance_summary.dart';
 import 'smart_suggestion.dart';
 
@@ -20,6 +21,24 @@ class LectureCardModel {
   });
 }
 
+class QuickStats {
+  final int attendedToday;
+  final int totalToday;
+  final int attendedThisWeek;
+  final int totalThisWeek;
+  final int attendedThisMonth;
+  final int totalThisMonth;
+
+  const QuickStats({
+    this.attendedToday = 0,
+    this.totalToday = 0,
+    this.attendedThisWeek = 0,
+    this.totalThisWeek = 0,
+    this.attendedThisMonth = 0,
+    this.totalThisMonth = 0,
+  });
+}
+
 class DashboardState {
   final bool isLoading;
   final String? errorMessage;
@@ -29,6 +48,8 @@ class DashboardState {
   final double todayProgressPercentage;
   final OverallAttendanceSummary? overallSummary;
   final SmartSuggestion? overallSuggestion;
+  final List<AcademicTask> upcomingTasks;
+  final QuickStats quickStats;
 
   const DashboardState({
     this.isLoading = true,
@@ -39,5 +60,7 @@ class DashboardState {
     this.todayProgressPercentage = 0.0,
     this.overallSummary,
     this.overallSuggestion,
+    this.upcomingTasks = const [],
+    this.quickStats = const QuickStats(),
   });
 }

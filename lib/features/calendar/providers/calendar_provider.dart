@@ -4,9 +4,11 @@ import 'package:attendancex/database/collections/subject_collection.dart';
 import 'package:attendancex/features/attendance/providers/attendance_providers.dart';
 import 'package:attendancex/features/schedule/providers/schedule_providers.dart';
 import 'package:attendancex/features/subjects/providers/subject_providers.dart';
+import 'package:attendancex/features/planner/providers/planner_provider.dart';
 import 'package:attendancex/features/calendar/engines/calendar_engine.dart';
 import 'package:attendancex/features/calendar/models/calendar_state.dart';
 import 'package:attendancex/features/calendar/models/daily_attendance_details.dart';
+import 'package:attendancex/database/collections/academic_task_collection.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 import 'package:rxdart/rxdart.dart' hide Subject;
 
@@ -58,6 +60,7 @@ class CalendarNotifier extends _$CalendarNotifier {
     final subjectRepo = ref.watch(subjectRepositoryProvider);
     final scheduleRepo = ref.watch(scheduleRepositoryProvider);
     final attendanceRepo = ref.watch(attendanceRepositoryProvider);
+    final plannerRepo = ref.watch(plannerRepositoryProvider);
     
     // We listen to the dates. Because this is a StreamProvider, watching these
     // will cause build() to re-run and return a new Stream when they change.
@@ -71,35 +74,42 @@ class CalendarNotifier extends _$CalendarNotifier {
     final startDate = DateTime(visibleMonth.year, visibleMonth.month - 1, 1);
     final endDate = DateTime(visibleMonth.year, visibleMonth.month + 2, 0); // End of next month
 
-    return Rx.combineLatest3(
+    return Rx.combineLatest4(
       subjectRepo.watchAll(),
       scheduleRepo.watchAll(),
       attendanceRepo.watchByDateRange(startDate, endDate),
-      (List<Subject> subjects, List<Schedule> schedules, List<Attendance> attendances) {
+      plannerRepo.watchAllTasks(),
+      (List<Subject> subjects, List<Schedule> schedules, List<Attendance> attendances, List<AcademicTask> tasks) {
         if (subjects.isEmpty) {
           return CalendarState(
             selectedDate: selectedDate,
             focusedDate: focusedDate,
             attendanceMarkers: CalendarEngine.generateMarkers([]),
+            taskMarkers: CalendarEngine.generateTaskMarkers([]),
             selectedDayDetails: DailyAttendanceDetails(date: selectedDate),
+            selectedDayTasks: [],
             allSubjects: [],
             isLoading: false,
           );
         }
 
         final markers = CalendarEngine.generateMarkers(attendances);
+        final taskMarkersMap = CalendarEngine.generateTaskMarkers(tasks);
         final details = CalendarEngine.buildDailyDetails(
           selectedDate,
           subjects,
           schedules,
           attendances,
         );
+        final tasksForDay = CalendarEngine.getTasksForDate(selectedDate, tasks);
 
         return CalendarState(
           selectedDate: selectedDate,
           focusedDate: focusedDate,
           attendanceMarkers: markers,
+          taskMarkers: taskMarkersMap,
           selectedDayDetails: details,
+          selectedDayTasks: tasksForDay,
           allSubjects: subjects,
           isLoading: false,
         );

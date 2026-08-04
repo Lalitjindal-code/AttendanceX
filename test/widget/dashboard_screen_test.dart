@@ -25,8 +25,8 @@ class FakeDashboardNotifier extends DashboardNotifier {
   FakeDashboardNotifier(this._mockState);
 
   @override
-  Stream<DashboardState> build() async* {
-    yield _mockState;
+  Stream<DashboardState> build() {
+    return Stream.value(_mockState);
   }
 
   @override
@@ -121,11 +121,16 @@ void main() {
       final fakeNotifier = FakeDashboardNotifier(loadedState);
 
       await tester.pumpWidget(ProviderScope(
+        key: const Key('loadedScope'),
         overrides: [
           dashboardNotifierProvider.overrideWith(() => fakeNotifier),
         ],
         child: const MaterialApp(home: DashboardScreen()),
       ));
+      await tester.pumpAndSettle();
+
+      // Scroll to make sure Present/Absent buttons are visible
+      await tester.ensureVisible(find.text('Present'));
       await tester.pumpAndSettle();
 
       // Tap Present
@@ -135,6 +140,8 @@ void main() {
       expect(fakeNotifier.lastMarkedScheduleId, 1);
 
       // Tap Absent
+      await tester.ensureVisible(find.text('Absent'));
+      await tester.pumpAndSettle();
       await tester.tap(find.text('Absent'));
       await tester.pumpAndSettle();
       expect(fakeNotifier.lastMarkedStatus, AttendanceStatus.absent);
@@ -160,15 +167,21 @@ void main() {
 
       final fakeNotifierMarked = FakeDashboardNotifier(markedState);
       await tester.pumpWidget(ProviderScope(
+        key: const Key('markedScope'),
         overrides: [
           dashboardNotifierProvider.overrideWith(() => fakeNotifierMarked),
         ],
         child: const MaterialApp(home: DashboardScreen()),
       ));
+      await tester.pump(const Duration(milliseconds: 50));
       await tester.pumpAndSettle();
 
-      expect(find.text('Present'), findsWidgets);
+      expect(find.text('Present', skipOffstage: false), findsWidgets);
       
+      // Scroll to Edit Attendance button if necessary
+      await tester.ensureVisible(find.text('Edit Attendance', skipOffstage: false));
+      await tester.pumpAndSettle();
+
       // Tap Edit
       await tester.tap(find.text('Edit Attendance'));
       await tester.pumpAndSettle();

@@ -5,6 +5,7 @@ import 'collections/attendance_collection.dart';
 import 'collections/attendance_history_collection.dart';
 import 'collections/schedule_collection.dart';
 import 'collections/subject_collection.dart';
+import 'collections/academic_task_collection.dart';
 
 /// Singleton service that manages the Isar database instance lifecycle.
 ///
@@ -52,6 +53,7 @@ class IsarService {
         ScheduleSchema,
         AttendanceSchema,
         AttendanceHistorySchema,
+        AcademicTaskSchema,
       ],
       directory: dirPath,
       name: AppConfig.isarDbName,

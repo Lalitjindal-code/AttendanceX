@@ -1,6 +1,8 @@
 import 'monthly_trend.dart';
 import 'subject_statistics.dart';
 import 'attendance_forecast.dart';
+import 'planner_metrics.dart';
+import 'package:attendancex/features/dashboard/models/attendance_summary.dart';
 
 class AnalyticsState {
   final bool isLoading;
@@ -8,6 +10,8 @@ class AnalyticsState {
   final List<MonthlyTrend> monthlyTrends;
   final List<SubjectStatistics> subjectStats;
   final AttendanceForecast? overallForecast;
+  final OverallAttendanceSummary? overallSummary;
+  final PlannerMetrics? plannerMetrics;
 
   const AnalyticsState({
     this.isLoading = true,
@@ -15,6 +19,8 @@ class AnalyticsState {
     this.monthlyTrends = const [],
     this.subjectStats = const [],
     this.overallForecast,
+    this.overallSummary,
+    this.plannerMetrics,
   });
 
   AnalyticsState copyWith({
@@ -23,6 +29,8 @@ class AnalyticsState {
     List<MonthlyTrend>? monthlyTrends,
     List<SubjectStatistics>? subjectStats,
     AttendanceForecast? overallForecast,
+    OverallAttendanceSummary? overallSummary,
+    PlannerMetrics? plannerMetrics,
   }) {
     return AnalyticsState(
       isLoading: isLoading ?? this.isLoading,
@@ -30,6 +38,8 @@ class AnalyticsState {
       monthlyTrends: monthlyTrends ?? this.monthlyTrends,
       subjectStats: subjectStats ?? this.subjectStats,
       overallForecast: overallForecast ?? this.overallForecast,
+      overallSummary: overallSummary ?? this.overallSummary,
+      plannerMetrics: plannerMetrics ?? this.plannerMetrics,
     );
   }
 }

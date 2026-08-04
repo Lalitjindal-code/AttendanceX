@@ -8,6 +8,9 @@ import 'package:attendancex/features/settings/models/app_settings.dart';
 import 'package:attendancex/features/settings/providers/settings_provider.dart';
 import 'package:attendancex/features/subjects/providers/subject_providers.dart';
 import 'package:attendancex/services/notification_service.dart';
+import 'package:attendancex/database/collections/academic_task_collection.dart';
+import 'package:attendancex/features/planner/providers/planner_provider.dart';
+import 'package:attendancex/engines/planner_engine.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 import 'package:rxdart/rxdart.dart' hide Subject;
 
@@ -20,14 +23,16 @@ class NotificationOrchestrator extends _$NotificationOrchestrator {
     final subjectRepo = ref.watch(subjectRepositoryProvider);
     final scheduleRepo = ref.watch(scheduleRepositoryProvider);
     final attendanceRepo = ref.watch(attendanceRepositoryProvider);
+    final plannerRepo = ref.watch(plannerRepositoryProvider);
     final settings = ref.watch(settingsProvider);
 
-    return Rx.combineLatest3(
+    return Rx.combineLatest4(
       subjectRepo.watchAll(),
       scheduleRepo.watchAll(),
       attendanceRepo.watchAll(),
-      (List<Subject> subjects, List<Schedule> schedules, List<Attendance> attendances) {
-        return _syncNotifications(subjects, schedules, attendances, settings);
+      plannerRepo.watchAllTasks(),
+      (List<Subject> subjects, List<Schedule> schedules, List<Attendance> attendances, List<AcademicTask> tasks) {
+        return _syncNotifications(subjects, schedules, attendances, tasks, settings);
       },
     ).asyncMap((_) async {}); // Convert to Stream<void>
   }
@@ -36,6 +41,7 @@ class NotificationOrchestrator extends _$NotificationOrchestrator {
     List<Subject> subjects,
     List<Schedule> schedules,
     List<Attendance> attendances,
+    List<AcademicTask> tasks,
     AppSettings settings,
   ) async {
     final now = DateTime.now();
@@ -47,7 +53,15 @@ class NotificationOrchestrator extends _$NotificationOrchestrator {
       settings: settings,
       now: now,
     );
+    
+    final taskNotifications = PlannerEngine.generateTaskNotifications(
+      tasks,
+      subjects,
+      now,
+    );
+    
+    final allNotifications = [...desiredNotifications, ...taskNotifications];
 
-    await NotificationService.instance.syncNotifications(desiredNotifications);
+    await NotificationService.instance.syncNotifications(allNotifications);
   }
 }

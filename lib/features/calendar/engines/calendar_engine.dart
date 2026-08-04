@@ -6,6 +6,7 @@ import 'package:attendancex/database/collections/schedule_collection.dart';
 import 'package:attendancex/database/collections/subject_collection.dart';
 import 'package:attendancex/features/calendar/models/daily_attendance_details.dart';
 import 'package:attendancex/features/calendar/models/daily_attendance_item.dart';
+import 'package:attendancex/database/collections/academic_task_collection.dart';
 
 class CalendarEngine {
   static DateTime _normalizeDate(DateTime date) {
@@ -23,6 +24,24 @@ class CalendarEngine {
       map[date]!.add(a.status);
     }
     return UnmodifiableMapView(map);
+  }
+
+  static UnmodifiableMapView<DateTime, List<AcademicTask>> generateTaskMarkers(
+      List<AcademicTask> tasks) {
+    final Map<DateTime, List<AcademicTask>> map = {};
+    for (final t in tasks) {
+      final date = _normalizeDate(t.dueDate);
+      if (!map.containsKey(date)) {
+        map[date] = [];
+      }
+      map[date]!.add(t);
+    }
+    return UnmodifiableMapView(map);
+  }
+
+  static List<AcademicTask> getTasksForDate(DateTime targetDate, List<AcademicTask> tasks) {
+    final date = _normalizeDate(targetDate);
+    return tasks.where((t) => _normalizeDate(t.dueDate) == date).toList();
   }
 
   static DailyAttendanceDetails buildDailyDetails(

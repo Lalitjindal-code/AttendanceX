@@ -203,11 +203,13 @@ const _ScheduletypeEnumValueMap = {
   r'lecture': r'lecture',
   r'lab': r'lab',
   r'tutorial': r'tutorial',
+  r'internship': r'internship',
 };
 const _ScheduletypeValueEnumMap = {
   r'lecture': LectureType.lecture,
   r'lab': LectureType.lab,
   r'tutorial': LectureType.tutorial,
+  r'internship': LectureType.internship,
 };
 
 Id _scheduleGetId(Schedule object) {

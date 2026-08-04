@@ -57,7 +57,7 @@ final calendarVisibleMonthProvider =
 );
 
 typedef _$CalendarVisibleMonth = AutoDisposeNotifier<DateTime>;
-String _$calendarNotifierHash() => r'dcd2728427cb6e260c9ce5f600ad24861d59b642';
+String _$calendarNotifierHash() => r'3de57617a42a946a7b35da378c23b9418a7376a0';
 
 /// See also [CalendarNotifier].
 @ProviderFor(CalendarNotifier)

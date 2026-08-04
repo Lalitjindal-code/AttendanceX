@@ -14,6 +14,8 @@ part 'schedule_collection.g.dart';
 /// - The [order] field is only used for drag-and-drop in the Schedule editing screen.
 @collection
 class Schedule {
+  Schedule();
+
   /// Auto-incremented primary key.
   Id id = Isar.autoIncrement;
 
@@ -51,4 +53,33 @@ class Schedule {
 
   /// Timestamp when this schedule entry was created.
   DateTime createdAt = DateTime.now();
+
+  Map<String, dynamic> toMap() {
+    return {
+      'id': id,
+      'dayOfWeek': dayOfWeek,
+      'subjectId': subjectId,
+      'startTime': startTime,
+      'endTime': endTime,
+      'room': room,
+      'facultyOverride': facultyOverride,
+      'type': type.name,
+      'order': order,
+      'createdAt': createdAt.millisecondsSinceEpoch,
+    };
+  }
+
+  factory Schedule.fromMap(Map<String, dynamic> map) {
+    return Schedule()
+      ..id = map['id'] ?? Isar.autoIncrement
+      ..dayOfWeek = map['dayOfWeek'] ?? 1
+      ..subjectId = map['subjectId'] ?? 0
+      ..startTime = map['startTime'] ?? '09:00'
+      ..endTime = map['endTime'] ?? '10:00'
+      ..room = map['room']
+      ..facultyOverride = map['facultyOverride']
+      ..type = LectureType.values.firstWhere((e) => e.name == map['type'], orElse: () => LectureType.lecture)
+      ..order = map['order'] ?? 0
+      ..createdAt = map['createdAt'] != null ? DateTime.fromMillisecondsSinceEpoch(map['createdAt']) : DateTime.now();
+  }
 }

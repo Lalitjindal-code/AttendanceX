@@ -14,7 +14,11 @@ void main() {
   Widget createWidget(List<Schedule> mockSchedules) {
     return ProviderScope(
       overrides: [
-        schedulesForDayProvider(1).overrideWith((ref) => Stream.value(mockSchedules)),
+        schedulesForDaySortedByTimeProvider(1).overrideWith((ref) => Stream.value(mockSchedules)),
+        schedulesForDaySortedByTimeProvider(2).overrideWith((ref) => Stream.value(mockSchedules)),
+        schedulesForDaySortedByTimeProvider(3).overrideWith((ref) => Stream.value(mockSchedules)),
+        schedulesForDaySortedByTimeProvider(4).overrideWith((ref) => Stream.value(mockSchedules)),
+        schedulesForDaySortedByTimeProvider(5).overrideWith((ref) => Stream.value(mockSchedules)),
         subjectProvider(1).overrideWith((ref) => Future.value(Subject()..name = 'Math'..colorValue = Colors.blue.value..id = 1)),
         subjectsProvider.overrideWith((ref) => Stream.value([Subject()..name = 'Math'..colorValue = Colors.blue.value..id = 1])),
       ],
@@ -37,34 +41,25 @@ void main() {
       await tester.pumpWidget(createWidget([]));
       await tester.pumpAndSettle();
 
-      expect(find.text('No classes scheduled for this day.'), findsOneWidget);
+      await tester.tap(find.text('Mon'));
+      await tester.pumpAndSettle();
+
+      expect(find.text('No classes scheduled for today.'), findsOneWidget);
     });
 
     testWidgets('Schedule renders loaded state and interacts with floating button', (WidgetTester tester) async {
       await tester.pumpWidget(createWidget([mockSchedule]));
       await tester.pumpAndSettle();
 
+      await tester.tap(find.text('Mon'));
+      await tester.pumpAndSettle();
+
       expect(find.text('Math'), findsOneWidget);
-      expect(find.text('10:00 - 11:00 • lecture'), findsOneWidget);
+      expect(find.text('10:00'), findsOneWidget);
+      expect(find.text('11:00'), findsOneWidget);
+      expect(find.text('LECTURE'), findsOneWidget);
 
-      await tester.tap(find.byType(FloatingActionButton));
-      await tester.pumpAndSettle();
-      // Since it uses GoRouter usually, without router it might just do nothing or throw. 
-      // But we just test the existence of the button and that we can tap it.
-    });
-
-    testWidgets('Schedule card reveals edit/delete (swipe interaction simulated)', (WidgetTester tester) async {
-      await tester.pumpWidget(createWidget([mockSchedule]));
-      await tester.pumpAndSettle();
-
-      final listItemFinder = find.byType(ListTile).first;
-      
-      // Simulate swipe to reveal delete/edit buttons (Slidable)
-      await tester.drag(listItemFinder, const Offset(-200, 0));
-      await tester.pumpAndSettle();
-
-      expect(find.byIcon(Icons.edit), findsOneWidget);
-      expect(find.byIcon(Icons.delete), findsOneWidget);
+      expect(find.byType(FloatingActionButton), findsOneWidget);
     });
 
     testWidgets('Schedule text scale factor regression loop', (WidgetTester tester) async {
@@ -73,8 +68,13 @@ void main() {
       for (final scale in textScaleFactors) {
         await tester.pumpWidget(ProviderScope(
           overrides: [
-            schedulesForDayProvider(1).overrideWith((ref) => Stream.value([mockSchedule])),
+            schedulesForDaySortedByTimeProvider(1).overrideWith((ref) => Stream.value([mockSchedule])),
+            schedulesForDaySortedByTimeProvider(2).overrideWith((ref) => Stream.value([mockSchedule])),
+            schedulesForDaySortedByTimeProvider(3).overrideWith((ref) => Stream.value([mockSchedule])),
+            schedulesForDaySortedByTimeProvider(4).overrideWith((ref) => Stream.value([mockSchedule])),
+            schedulesForDaySortedByTimeProvider(5).overrideWith((ref) => Stream.value([mockSchedule])),
             subjectProvider(1).overrideWith((ref) => Future.value(Subject()..name = 'Math'..colorValue = Colors.blue.value..id = 1)),
+            subjectsProvider.overrideWith((ref) => Stream.value([Subject()..name = 'Math'..colorValue = Colors.blue.value..id = 1])),
           ],
           child: MaterialApp(
             builder: (context, child) {
@@ -87,6 +87,10 @@ void main() {
           ),
         ));
         await tester.pumpAndSettle();
+        
+        await tester.tap(find.text('Mon'));
+        await tester.pumpAndSettle();
+        
         expect(tester.takeException(), isNull);
       }
     });
@@ -98,7 +102,7 @@ void main() {
       await setupGoldenTests();
 
       final builder = DeviceBuilder()
-        ..overrideDevicesForAllScenarios(defaultDevices)
+        ..overrideDevicesForAllScenarios(devices: defaultDevices)
         ..addScenario(
           widget: createWidget([mockSchedule]),
           name: 'loaded_state',

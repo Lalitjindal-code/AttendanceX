@@ -4,6 +4,7 @@ import 'package:riverpod_annotation/riverpod_annotation.dart';
 import 'package:rxdart/rxdart.dart' hide Subject;
 
 import '../../../core/enums/attendance_status.dart';
+import '../../../core/enums/gt_mode.dart';
 import '../../../core/enums/day_of_week.dart';
 import '../../../database/collections/attendance_collection.dart';
 import '../../../database/collections/schedule_collection.dart';
@@ -13,6 +14,9 @@ import '../../settings/providers/settings_provider.dart';
 import '../../schedule/providers/schedule_providers.dart';
 import '../../subjects/providers/subject_providers.dart';
 import '../../attendance/providers/attendance_providers.dart';
+import '../../planner/providers/planner_provider.dart';
+import '../../../engines/planner_engine.dart';
+import '../../../database/collections/academic_task_collection.dart';
 import '../models/dashboard_state.dart';
 
 part 'dashboard_provider.g.dart';
@@ -30,12 +34,14 @@ class DashboardNotifier extends _$DashboardNotifier {
     final scheduleStream = ref.watch(scheduleRepositoryProvider).watchByDaySortedByTime(dayOfWeek.value);
     final subjectStream = ref.watch(subjectRepositoryProvider).watchAllActive();
     final attendanceStream = ref.watch(attendanceRepositoryProvider).watchAll();
+    final plannerStream = ref.watch(plannerRepositoryProvider).watchAllTasks();
     
-    return Rx.combineLatest3(
+    return Rx.combineLatest4(
       scheduleStream,
       subjectStream,
       attendanceStream,
-      (List<Schedule> schedules, List<Subject> subjects, List<Attendance> allAttendances) {
+      plannerStream,
+      (List<Schedule> schedules, List<Subject> subjects, List<Attendance> allAttendances, List<AcademicTask> tasks) {
         
         final overallSummary = AttendanceEngine.calculateOverallSummary(allAttendances, settings);
         
@@ -93,6 +99,62 @@ class DashboardNotifier extends _$DashboardNotifier {
         final todayProgressPercentage = totalClasses == 0 ? 0.0 : (markedCount / totalClasses);
         final todayProgressText = '$markedCount / $totalClasses Classes Marked';
 
+        // Upcoming tasks
+        final upcomingTasks = PlannerEngine.getDashboardUpcomingDeadlines(tasks);
+
+        // Quick Stats calculation
+        int attendedToday = 0;
+        int totalToday = 0;
+        int attendedThisWeek = 0;
+        int totalThisWeek = 0;
+        int attendedThisMonth = 0;
+        int totalThisMonth = 0;
+        
+        final startOfWeek = todayUtc.subtract(Duration(days: todayUtc.weekday - 1));
+        final endOfWeek = startOfWeek.add(const Duration(days: 6, hours: 23, minutes: 59, seconds: 59));
+        
+        for (final attendance in allAttendances) {
+          if (attendance.status == AttendanceStatus.pending || attendance.status == AttendanceStatus.holiday) continue;
+          
+          bool isPresent = attendance.status == AttendanceStatus.present || 
+            (attendance.status == AttendanceStatus.medical && settings.medicalCountsAsPresent) ||
+            (attendance.status == AttendanceStatus.gt && settings.gtMode == GtMode.countAsPresent);
+            
+          bool isCounted = attendance.status == AttendanceStatus.present || 
+            attendance.status == AttendanceStatus.absent ||
+            (attendance.status == AttendanceStatus.medical && settings.medicalCountsAsPresent) ||
+            (attendance.status == AttendanceStatus.gt && settings.gtMode != GtMode.exclude);
+
+          if (!isCounted) continue;
+
+          // Today
+          if (attendance.date.year == todayUtc.year && attendance.date.month == todayUtc.month && attendance.date.day == todayUtc.day) {
+            totalToday++;
+            if (isPresent) attendedToday++;
+          }
+          
+          // This week
+          if (attendance.date.isAfter(startOfWeek.subtract(const Duration(seconds: 1))) && attendance.date.isBefore(endOfWeek.add(const Duration(seconds: 1)))) {
+            totalThisWeek++;
+            if (isPresent) attendedThisWeek++;
+          }
+          
+          // This month
+          if (attendance.date.year == todayUtc.year && attendance.date.month == todayUtc.month) {
+            totalThisMonth++;
+            if (isPresent) attendedThisMonth++;
+          }
+        }
+        
+        final quickStats = QuickStats(
+          attendedToday: attendedToday,
+          totalToday: totalToday,
+          attendedThisWeek: attendedThisWeek,
+          totalThisWeek: totalThisWeek,
+          attendedThisMonth: attendedThisMonth,
+          totalThisMonth: totalThisMonth,
+        );
+
         return DashboardState(
           isLoading: false,
           pendingLectures: pendingLectures,
@@ -101,6 +163,8 @@ class DashboardNotifier extends _$DashboardNotifier {
           todayProgressPercentage: todayProgressPercentage,
           overallSummary: overallSummary,
           overallSuggestion: overallSuggestion,
+          upcomingTasks: upcomingTasks,
+          quickStats: quickStats,
         );
       },
     ).handleError((error) {

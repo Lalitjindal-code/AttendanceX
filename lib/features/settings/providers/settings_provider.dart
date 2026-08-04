@@ -31,6 +31,7 @@ class Settings extends _$Settings {
 
     final startStr = _prefs.getStringNullable(PreferencesService.keySemesterStart);
     final endStr = _prefs.getStringNullable(PreferencesService.keySemesterEnd);
+    final lastBackupStr = _prefs.getStringNullable(PreferencesService.keyLastBackupDate);
 
     return AppSettings(
       themeMode: themeMode,
@@ -64,6 +65,15 @@ class Settings extends _$Settings {
         PreferencesService.keyLectureReminderMinutes,
         defaultValue: AppConfig.defaultLectureReminderMinutes,
       ),
+      defaultTaskReminderOffsets: _prefs.getStringList(
+        PreferencesService.keyDefaultTaskReminderOffsets,
+        defaultValue: ['60', '1440'],
+      ).map((e) => int.tryParse(e) ?? 0).toList(),
+      isAmoled: _prefs.getBool(
+        PreferencesService.keyIsAmoled,
+        defaultValue: false,
+      ),
+      lastBackupDate: lastBackupStr != null ? DateTime.tryParse(lastBackupStr) : null,
     );
   }
 
@@ -121,8 +131,33 @@ class Settings extends _$Settings {
     await _prefs.setString(PreferencesService.keyDailyReminderTime, time);
   }
 
+  Future<void> updatePlannerReminderTime(String time) async {
+    // Note: not currently used, but kept for future compatibility
+    await _prefs.setString(PreferencesService.keyPlannerReminderTime, time);
+  }
+
   Future<void> updateLectureReminderMinutes(int minutes) async {
     state = state.copyWith(lectureReminderMinutes: minutes);
     await _prefs.setInt(PreferencesService.keyLectureReminderMinutes, minutes);
+  }
+
+  Future<void> updateDefaultTaskReminderOffsets(List<int> offsets) async {
+    state = state.copyWith(defaultTaskReminderOffsets: offsets);
+    await _prefs.setStringList(
+      PreferencesService.keyDefaultTaskReminderOffsets,
+      offsets.map((e) => e.toString()).toList(),
+    );
+  }
+
+  /// Toggle the AMOLED true-black theme.
+  /// Only takes visual effect when [ThemeMode] is dark.
+  Future<void> updateIsAmoled(bool isAmoled) async {
+    state = state.copyWith(isAmoled: isAmoled);
+    await _prefs.setBool(PreferencesService.keyIsAmoled, isAmoled);
+  }
+
+  Future<void> updateLastBackupDate(DateTime date) async {
+    state = state.copyWith(lastBackupDate: date);
+    await _prefs.setString(PreferencesService.keyLastBackupDate, date.toIso8601String());
   }
 }

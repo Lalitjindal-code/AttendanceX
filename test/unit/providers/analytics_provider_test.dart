@@ -7,6 +7,7 @@ import 'package:attendancex/database/collections/subject_collection.dart';
 import 'package:attendancex/database/collections/attendance_collection.dart';
 import 'package:attendancex/database/collections/schedule_collection.dart';
 import 'package:attendancex/database/collections/attendance_history_collection.dart';
+import 'package:attendancex/database/collections/academic_task_collection.dart';
 import 'package:attendancex/core/enums/attendance_status.dart';
 import 'package:attendancex/features/analytics/providers/analytics_provider.dart';
 import 'package:attendancex/features/analytics/models/analytics_trend.dart';
@@ -27,7 +28,7 @@ void main() {
 
   setUp(() async {
     isar = await Isar.open(
-      [SubjectSchema, ScheduleSchema, AttendanceSchema, AttendanceHistorySchema],
+      [SubjectSchema, ScheduleSchema, AttendanceSchema, AttendanceHistorySchema, AcademicTaskSchema],
       directory: '',
       name: 'analytics_test_db_${DateTime.now().microsecondsSinceEpoch}',
     );

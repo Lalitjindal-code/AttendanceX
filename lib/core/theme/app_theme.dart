@@ -4,13 +4,15 @@ import '../constants/app_radius.dart';
 import 'app_color_scheme.dart';
 import 'app_text_theme.dart';
 
-/// Material 3 [ThemeData] definitions for AttendanceX.
+/// Material 3 [ThemeData] definitions for Attendify — Meridian design language.
 ///
-/// Provides [light] and [dark] getters. Both themes are built from the
-/// single [AppColorScheme.seedColor] using [ColorScheme.fromSeed], ensuring
-/// colour harmony across every component.
+/// Provides [light], [dark], and [amoled] theme getters.
+/// All three themes share the same component styling logic; only the
+/// [ColorScheme] differs between them.
 abstract final class AppTheme {
   AppTheme._();
+
+  // ── Theme Getters ─────────────────────────────────────────────────────────────
 
   /// Light theme.
   static ThemeData get light =>
@@ -19,6 +21,11 @@ abstract final class AppTheme {
   /// Dark theme.
   static ThemeData get dark =>
       _build(AppColorScheme.dark, Brightness.dark);
+
+  /// AMOLED / true-black dark theme.
+  /// Uses [AppColorScheme.amoled] which has a pure #000000 surface.
+  static ThemeData get amoled =>
+      _build(AppColorScheme.amoled, Brightness.dark);
 
   // ── Builder ───────────────────────────────────────────────────────────────────
 
@@ -32,9 +39,10 @@ abstract final class AppTheme {
       textTheme: AppTextTheme.build(base.textTheme),
       appBarTheme: _appBar(scheme, brightness),
       cardTheme: _card(scheme),
-      filledButtonTheme: _filledButton(),
+      filledButtonTheme: _filledButton(scheme),
       outlinedButtonTheme: _outlinedButton(scheme),
-      textButtonTheme: _textButton(),
+      textButtonTheme: _textButton(scheme),
+      elevatedButtonTheme: _elevatedButton(scheme),
       inputDecorationTheme: _inputDecoration(scheme),
       navigationBarTheme: _navigationBar(scheme),
       chipTheme: _chip(scheme),
@@ -45,6 +53,10 @@ abstract final class AppTheme {
       dividerTheme: _divider(scheme),
       listTileTheme: _listTile(scheme),
       switchTheme: _switch(scheme),
+      progressIndicatorTheme: _progressIndicator(scheme),
+      badgeTheme: _badge(scheme),
+      tooltipTheme: _tooltip(scheme),
+      tabBarTheme: _tabBar(scheme),
     );
   }
 
@@ -53,15 +65,32 @@ abstract final class AppTheme {
   static AppBarTheme _appBar(ColorScheme scheme, Brightness brightness) {
     return AppBarTheme(
       backgroundColor: scheme.surface,
+      surfaceTintColor: Colors.transparent,
       foregroundColor: scheme.onSurface,
       elevation: 0,
-      scrolledUnderElevation: 1,
+      scrolledUnderElevation: 0.5,
+      shadowColor: scheme.shadow.withAlpha(30),
       centerTitle: false,
+      titleSpacing: 20,
+      titleTextStyle: TextStyle(
+        color: scheme.onSurface,
+        fontSize: 20,
+        fontWeight: FontWeight.w700,
+        letterSpacing: -0.3,
+        fontFamily: 'PlusJakartaSans',
+      ),
       systemOverlayStyle: brightness == Brightness.light
           ? SystemUiOverlayStyle.dark
-              .copyWith(statusBarColor: Colors.transparent)
-          : SystemUiOverlayStyle.light
-              .copyWith(statusBarColor: Colors.transparent),
+              .copyWith(
+                statusBarColor: Colors.transparent,
+                systemNavigationBarColor: scheme.surface,
+                systemNavigationBarIconBrightness: Brightness.dark,
+              )
+          : SystemUiOverlayStyle.light.copyWith(
+              statusBarColor: Colors.transparent,
+              systemNavigationBarColor: scheme.surface,
+              systemNavigationBarIconBrightness: Brightness.light,
+            ),
     );
   }
 
@@ -78,13 +107,18 @@ abstract final class AppTheme {
     );
   }
 
-  static FilledButtonThemeData _filledButton() {
+  static FilledButtonThemeData _filledButton(ColorScheme scheme) {
     return FilledButtonThemeData(
       style: FilledButton.styleFrom(
-        minimumSize: const Size(64, 48),
-        padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 12),
+        minimumSize: const Size(64, 52),
+        padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 14),
         shape: RoundedRectangleBorder(
           borderRadius: BorderRadius.circular(AppRadius.button),
+        ),
+        textStyle: const TextStyle(
+          fontSize: 14,
+          fontWeight: FontWeight.w600,
+          letterSpacing: 0.1,
         ),
       ),
     );
@@ -93,23 +127,54 @@ abstract final class AppTheme {
   static OutlinedButtonThemeData _outlinedButton(ColorScheme scheme) {
     return OutlinedButtonThemeData(
       style: OutlinedButton.styleFrom(
-        minimumSize: const Size(64, 48),
-        padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 12),
+        minimumSize: const Size(64, 52),
+        padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 14),
         shape: RoundedRectangleBorder(
           borderRadius: BorderRadius.circular(AppRadius.button),
         ),
-        side: BorderSide(color: scheme.outline),
+        side: BorderSide(color: scheme.outline, width: 1.5),
+        textStyle: const TextStyle(
+          fontSize: 14,
+          fontWeight: FontWeight.w600,
+          letterSpacing: 0.1,
+        ),
       ),
     );
   }
 
-  static TextButtonThemeData _textButton() {
+  static TextButtonThemeData _textButton(ColorScheme scheme) {
     return TextButtonThemeData(
       style: TextButton.styleFrom(
         minimumSize: const Size(48, 48),
-        padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+        padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
         shape: RoundedRectangleBorder(
           borderRadius: BorderRadius.circular(AppRadius.button),
+        ),
+        textStyle: const TextStyle(
+          fontSize: 14,
+          fontWeight: FontWeight.w600,
+          letterSpacing: 0.1,
+        ),
+      ),
+    );
+  }
+
+  static ElevatedButtonThemeData _elevatedButton(ColorScheme scheme) {
+    return ElevatedButtonThemeData(
+      style: ElevatedButton.styleFrom(
+        minimumSize: const Size(64, 52),
+        padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 14),
+        backgroundColor: scheme.surfaceContainerHigh,
+        foregroundColor: scheme.onSurface,
+        elevation: 0,
+        shadowColor: Colors.transparent,
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(AppRadius.button),
+        ),
+        textStyle: const TextStyle(
+          fontSize: 14,
+          fontWeight: FontWeight.w600,
+          letterSpacing: 0.1,
         ),
       ),
     );
@@ -118,14 +183,14 @@ abstract final class AppTheme {
   static InputDecorationTheme _inputDecoration(ColorScheme scheme) {
     return InputDecorationTheme(
       filled: true,
-      fillColor: scheme.surfaceContainerHighest.withAlpha(77),
+      fillColor: scheme.surfaceContainerLow,
       border: OutlineInputBorder(
         borderRadius: BorderRadius.circular(AppRadius.md),
         borderSide: BorderSide.none,
       ),
       enabledBorder: OutlineInputBorder(
         borderRadius: BorderRadius.circular(AppRadius.md),
-        borderSide: BorderSide(color: scheme.outlineVariant),
+        borderSide: BorderSide(color: scheme.outlineVariant, width: 1.5),
       ),
       focusedBorder: OutlineInputBorder(
         borderRadius: BorderRadius.circular(AppRadius.md),
@@ -133,44 +198,75 @@ abstract final class AppTheme {
       ),
       errorBorder: OutlineInputBorder(
         borderRadius: BorderRadius.circular(AppRadius.md),
-        borderSide: BorderSide(color: scheme.error),
+        borderSide: BorderSide(color: scheme.error, width: 1.5),
       ),
       focusedErrorBorder: OutlineInputBorder(
         borderRadius: BorderRadius.circular(AppRadius.md),
         borderSide: BorderSide(color: scheme.error, width: 2),
       ),
-      contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
+      contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 16),
       floatingLabelBehavior: FloatingLabelBehavior.auto,
+      prefixIconColor: WidgetStateColor.resolveWith((states) {
+        if (states.contains(WidgetState.focused)) return scheme.primary;
+        return scheme.onSurfaceVariant;
+      }),
+      labelStyle: TextStyle(
+        color: scheme.onSurfaceVariant,
+        fontWeight: FontWeight.w500,
+      ),
+      floatingLabelStyle: WidgetStateTextStyle.resolveWith((states) {
+        if (states.contains(WidgetState.focused)) {
+          return TextStyle(
+            color: scheme.primary,
+            fontWeight: FontWeight.w600,
+          );
+        }
+        return TextStyle(
+          color: scheme.onSurfaceVariant,
+          fontWeight: FontWeight.w500,
+        );
+      }),
     );
   }
 
   static NavigationBarThemeData _navigationBar(ColorScheme scheme) {
     return NavigationBarThemeData(
+      // The nav bar background blends with the surface
       backgroundColor: scheme.surface,
       surfaceTintColor: Colors.transparent,
+      shadowColor: Colors.transparent,
+      // Meridian: pill-shaped selected indicator (wider, tighter height)
       indicatorColor: scheme.primaryContainer,
+      indicatorShape: const StadiumBorder(),
       elevation: 0,
+      height: 72,
       labelBehavior: NavigationDestinationLabelBehavior.alwaysShow,
       iconTheme: WidgetStateProperty.resolveWith((states) {
         if (states.contains(WidgetState.selected)) {
-          return IconThemeData(color: scheme.onPrimaryContainer, size: 24);
+          return IconThemeData(
+            color: scheme.onPrimaryContainer,
+            size: 22,
+          );
         }
-        return IconThemeData(color: scheme.onSurfaceVariant, size: 24);
+        return IconThemeData(
+          color: scheme.onSurfaceVariant,
+          size: 22,
+        );
       }),
       labelTextStyle: WidgetStateProperty.resolveWith((states) {
         if (states.contains(WidgetState.selected)) {
           return TextStyle(
             color: scheme.primary,
-            fontSize: 10,
-            fontWeight: FontWeight.w600,
-            overflow: TextOverflow.visible,
+            fontSize: 11,
+            fontWeight: FontWeight.w700,
+            letterSpacing: 0.2,
           );
         }
         return TextStyle(
           color: scheme.onSurfaceVariant,
-          fontSize: 10,
-          fontWeight: FontWeight.w400,
-          overflow: TextOverflow.visible,
+          fontSize: 11,
+          fontWeight: FontWeight.w500,
+          letterSpacing: 0.2,
         );
       }),
     );
@@ -179,41 +275,75 @@ abstract final class AppTheme {
   static ChipThemeData _chip(ColorScheme scheme) {
     return ChipThemeData(
       backgroundColor: scheme.surfaceContainerLow,
-      labelStyle: TextStyle(color: scheme.onSurface, fontSize: 12),
-      side: BorderSide(color: scheme.outlineVariant),
-      shape: RoundedRectangleBorder(
-        borderRadius: BorderRadius.circular(AppRadius.sm),
+      selectedColor: scheme.primaryContainer,
+      checkmarkColor: scheme.onPrimaryContainer,
+      labelStyle: TextStyle(
+        color: scheme.onSurface,
+        fontSize: 13,
+        fontWeight: FontWeight.w500,
       ),
-      padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+      secondaryLabelStyle: TextStyle(
+        color: scheme.onPrimaryContainer,
+        fontSize: 13,
+        fontWeight: FontWeight.w600,
+      ),
+      side: BorderSide(color: scheme.outlineVariant),
+      // Meridian: fully rounded pill chips
+      shape: const StadiumBorder(),
+      padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+      labelPadding: const EdgeInsets.symmetric(horizontal: 4),
     );
   }
 
   static SnackBarThemeData _snackBar(ColorScheme scheme) {
     return SnackBarThemeData(
       backgroundColor: scheme.inverseSurface,
-      contentTextStyle: TextStyle(color: scheme.onInverseSurface),
-      behavior: SnackBarBehavior.floating,
-      shape: RoundedRectangleBorder(
-        borderRadius: BorderRadius.circular(AppRadius.sm),
+      contentTextStyle: TextStyle(
+        color: scheme.onInverseSurface,
+        fontSize: 14,
+        fontWeight: FontWeight.w500,
       ),
+      actionTextColor: scheme.inversePrimary,
+      behavior: SnackBarBehavior.floating,
+      elevation: 6,
+      shape: RoundedRectangleBorder(
+        borderRadius: BorderRadius.circular(AppRadius.md),
+      ),
+      insetPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
     );
   }
 
   static DialogThemeData _dialog(ColorScheme scheme) {
     return DialogThemeData(
       backgroundColor: scheme.surfaceContainerHigh,
-      elevation: 3,
+      surfaceTintColor: Colors.transparent,
+      elevation: 0,
+      shadowColor: Colors.transparent,
       shape: RoundedRectangleBorder(
         borderRadius: BorderRadius.circular(AppRadius.dialog),
+      ),
+      titleTextStyle: TextStyle(
+        color: scheme.onSurface,
+        fontSize: 20,
+        fontWeight: FontWeight.w700,
+        letterSpacing: -0.2,
+      ),
+      contentTextStyle: TextStyle(
+        color: scheme.onSurfaceVariant,
+        fontSize: 14,
+        fontWeight: FontWeight.w400,
+        height: 1.5,
       ),
     );
   }
 
   static BottomSheetThemeData _bottomSheet(ColorScheme scheme) {
     return BottomSheetThemeData(
-      backgroundColor: scheme.surfaceContainerLow,
+      backgroundColor: scheme.surfaceContainerHigh,
       surfaceTintColor: Colors.transparent,
-      elevation: 1,
+      elevation: 0,
+      modalBackgroundColor: scheme.surfaceContainerHigh,
+      modalElevation: 0,
       shape: const RoundedRectangleBorder(
         borderRadius: BorderRadius.only(
           topLeft: Radius.circular(AppRadius.bottomSheet),
@@ -221,17 +351,27 @@ abstract final class AppTheme {
         ),
       ),
       clipBehavior: Clip.antiAlias,
+      dragHandleColor: scheme.onSurfaceVariant.withAlpha(76),
+      dragHandleSize: const Size(32, 4),
+      showDragHandle: true,
     );
   }
 
   static FloatingActionButtonThemeData _fab(ColorScheme scheme) {
     return FloatingActionButtonThemeData(
-      backgroundColor: scheme.primaryContainer,
-      foregroundColor: scheme.onPrimaryContainer,
-      elevation: 2,
-      highlightElevation: 4,
-      shape: RoundedRectangleBorder(
-        borderRadius: BorderRadius.circular(AppRadius.card),
+      // Meridian: primary-colored FAB, pill shape
+      backgroundColor: scheme.primary,
+      foregroundColor: scheme.onPrimary,
+      elevation: 0,
+      focusElevation: 0,
+      hoverElevation: 0,
+      highlightElevation: 0,
+      shape: const StadiumBorder(),
+      extendedPadding: const EdgeInsets.symmetric(horizontal: 24, vertical: 16),
+      extendedTextStyle: const TextStyle(
+        fontSize: 14,
+        fontWeight: FontWeight.w600,
+        letterSpacing: 0.1,
       ),
     );
   }
@@ -250,28 +390,96 @@ abstract final class AppTheme {
       titleTextStyle: TextStyle(
         color: scheme.onSurface,
         fontSize: 16,
-        fontWeight: FontWeight.w400,
+        fontWeight: FontWeight.w500,
       ),
       subtitleTextStyle: TextStyle(
         color: scheme.onSurfaceVariant,
-        fontSize: 14,
+        fontSize: 13,
+        height: 1.4,
       ),
       minLeadingWidth: 24,
       contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 4),
+      shape: RoundedRectangleBorder(
+        borderRadius: BorderRadius.circular(AppRadius.sm),
+      ),
     );
   }
 
   static SwitchThemeData _switch(ColorScheme scheme) {
     return SwitchThemeData(
       thumbColor: WidgetStateProperty.resolveWith((states) {
-        if (states.contains(WidgetState.selected)) return scheme.primary;
+        if (states.contains(WidgetState.selected)) return scheme.onPrimary;
         return scheme.outline;
       }),
       trackColor: WidgetStateProperty.resolveWith((states) {
         if (states.contains(WidgetState.selected)) {
-          return scheme.primaryContainer;
+          return scheme.primary;
         }
         return scheme.surfaceContainerHighest;
+      }),
+      trackOutlineColor: WidgetStateProperty.resolveWith((states) {
+        if (states.contains(WidgetState.selected)) return Colors.transparent;
+        return scheme.outline;
+      }),
+    );
+  }
+
+  static ProgressIndicatorThemeData _progressIndicator(ColorScheme scheme) {
+    return ProgressIndicatorThemeData(
+      color: scheme.primary,
+      linearTrackColor: scheme.surfaceContainerHighest,
+      circularTrackColor: scheme.surfaceContainerHighest,
+      linearMinHeight: 6,
+      borderRadius: BorderRadius.circular(AppRadius.circular),
+    );
+  }
+
+  static BadgeThemeData _badge(ColorScheme scheme) {
+    return BadgeThemeData(
+      backgroundColor: scheme.error,
+      textColor: scheme.onError,
+      smallSize: 6,
+      largeSize: 16,
+      textStyle: const TextStyle(fontSize: 10, fontWeight: FontWeight.w700),
+    );
+  }
+
+  static TooltipThemeData _tooltip(ColorScheme scheme) {
+    return TooltipThemeData(
+      decoration: BoxDecoration(
+        color: scheme.inverseSurface,
+        borderRadius: BorderRadius.circular(AppRadius.sm),
+      ),
+      textStyle: TextStyle(
+        color: scheme.onInverseSurface,
+        fontSize: 12,
+        fontWeight: FontWeight.w500,
+      ),
+      padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+      preferBelow: true,
+    );
+  }
+
+  static TabBarThemeData _tabBar(ColorScheme scheme) {
+    return TabBarThemeData(
+      labelColor: scheme.primary,
+      unselectedLabelColor: scheme.onSurfaceVariant,
+      indicatorColor: scheme.primary,
+      indicatorSize: TabBarIndicatorSize.tab,
+      labelStyle: const TextStyle(fontSize: 14, fontWeight: FontWeight.w600),
+      unselectedLabelStyle: const TextStyle(
+        fontSize: 14,
+        fontWeight: FontWeight.w500,
+      ),
+      dividerColor: scheme.outlineVariant,
+      overlayColor: WidgetStateProperty.resolveWith((states) {
+        if (states.contains(WidgetState.pressed)) {
+          return scheme.primary.withAlpha(20);
+        }
+        if (states.contains(WidgetState.hovered)) {
+          return scheme.primary.withAlpha(10);
+        }
+        return Colors.transparent;
       }),
     );
   }

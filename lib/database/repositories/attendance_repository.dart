@@ -72,6 +72,14 @@ class AttendanceRepository {
         .watch(fireImmediately: true);
   }
 
+  /// Fetches all attendance records for a specific subject.
+  Future<List<Attendance>> getBySubjectId(int subjectId) async {
+    return await _isar.attendances
+        .filter()
+        .subjectIdEqualTo(subjectId)
+        .findAll();
+  }
+
   /// Returns a stream of all attendance records across a date range.
   Stream<List<Attendance>> watchByDateRange(DateTime start, DateTime end) {
     return _isar.attendances

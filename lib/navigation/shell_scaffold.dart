@@ -5,8 +5,8 @@ import '../core/constants/app_strings.dart';
 
 /// The root scaffold for the application's bottom navigation bar.
 ///
-/// Wraps the GoRouter StatefulShellRoute branches to provide persistent
-/// navigation state between tabs.
+/// Meridian-styled: top border separator, pill indicator, custom icons.
+/// Wraps [StatefulNavigationShell] branches for persistent navigation state.
 class ShellScaffold extends StatelessWidget {
   const ShellScaffold({
     super.key,
@@ -17,49 +17,59 @@ class ShellScaffold extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final scheme = Theme.of(context).colorScheme;
+
     return Scaffold(
       body: navigationShell,
-      bottomNavigationBar: NavigationBar(
-        labelBehavior: NavigationDestinationLabelBehavior.onlyShowSelected,
-        selectedIndex: navigationShell.currentIndex,
-        onDestinationSelected: (index) {
-          navigationShell.goBranch(
-            index,
-            // A common pattern when tapping an already active tab is to pop
-            // to the initial location of that branch.
-            initialLocation: index == navigationShell.currentIndex,
-          );
-        },
-        destinations: const [
-          NavigationDestination(
-            icon: Icon(AppIcons.dashboardOutlined),
-            selectedIcon: Icon(AppIcons.dashboard),
-            label: AppStrings.navDashboard,
+      bottomNavigationBar: Column(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          // Meridian: hairline top border on nav bar
+          Divider(
+            height: 1,
+            thickness: 1,
+            color: scheme.outlineVariant,
           ),
-          NavigationDestination(
-            icon: Icon(AppIcons.subjectsOutlined),
-            selectedIcon: Icon(AppIcons.subjects),
-            label: AppStrings.navSubjects,
-          ),
-          NavigationDestination(
-            icon: Icon(AppIcons.scheduleOutlined),
-            selectedIcon: Icon(AppIcons.schedule),
-            label: AppStrings.navSchedule,
-          ),
-          NavigationDestination(
-            icon: Icon(AppIcons.calendar),
-            selectedIcon: Icon(AppIcons.calendar),
-            label: AppStrings.calendarTitle,
-          ),
-          NavigationDestination(
-            icon: Icon(AppIcons.analyticsOutlined),
-            selectedIcon: Icon(AppIcons.analytics),
-            label: AppStrings.navAnalytics,
-          ),
-          NavigationDestination(
-            icon: Icon(AppIcons.settingsOutlined),
-            selectedIcon: Icon(AppIcons.settings),
-            label: AppStrings.navSettings,
+          NavigationBar(
+            selectedIndex: navigationShell.currentIndex,
+            onDestinationSelected: (index) {
+              navigationShell.goBranch(
+                index,
+                initialLocation: index == navigationShell.currentIndex,
+              );
+            },
+            destinations: const [
+              NavigationDestination(
+                icon: Icon(AppIcons.dashboardOutlined),
+                selectedIcon: Icon(AppIcons.dashboard),
+                label: AppStrings.navDashboard,
+                tooltip: '',
+              ),
+              NavigationDestination(
+                icon: Icon(AppIcons.subjectsOutlined),
+                selectedIcon: Icon(AppIcons.subjects),
+                label: AppStrings.navSubjects,
+                tooltip: '',
+              ),
+              NavigationDestination(
+                icon: Icon(AppIcons.scheduleOutlined),
+                selectedIcon: Icon(AppIcons.schedule),
+                label: AppStrings.navSchedule,
+                tooltip: '',
+              ),
+              NavigationDestination(
+                icon: Icon(Icons.check_circle_outline_rounded),
+                selectedIcon: Icon(Icons.check_circle_rounded),
+                label: 'Planner',
+                tooltip: '',
+              ),
+              NavigationDestination(
+                icon: Icon(Icons.grid_view_outlined),
+                selectedIcon: Icon(Icons.grid_view_rounded),
+                label: 'More',
+                tooltip: '',
+              ),
+            ],
           ),
         ],
       ),

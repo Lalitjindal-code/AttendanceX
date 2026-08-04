@@ -36,6 +36,10 @@ class PreferencesService {
   static const String keyDailyReminderEnabled = 'daily_reminder_enabled';
   static const String keyDailyReminderTime = 'daily_reminder_time';
   static const String keyLectureReminderMinutes = 'lecture_reminder_minutes';
+  static const String keyPlannerReminderTime = 'planner_reminder_time';
+  static const String keyDefaultTaskReminderOffsets = 'default_task_reminder_offsets';
+  static const String keyIsAmoled = 'is_amoled';
+  static const String keyLastBackupDate = 'last_backup_date';
 
   // ── Getters ───────────────────────────────────────────────────────────────────
   String getString(String key, {required String defaultValue}) {
@@ -58,10 +62,15 @@ class PreferencesService {
     return prefs.getInt(key) ?? defaultValue;
   }
 
+  List<String> getStringList(String key, {required List<String> defaultValue}) {
+    return prefs.getStringList(key) ?? defaultValue;
+  }
+
   // ── Setters ───────────────────────────────────────────────────────────────────
   Future<void> setString(String key, String value) => prefs.setString(key, value);
   Future<void> setBool(String key, bool value) => prefs.setBool(key, value);
   Future<void> setDouble(String key, double value) => prefs.setDouble(key, value);
   Future<void> setInt(String key, int value) => prefs.setInt(key, value);
+  Future<void> setStringList(String key, List<String> value) => prefs.setStringList(key, value);
   Future<void> remove(String key) => prefs.remove(key);
 }

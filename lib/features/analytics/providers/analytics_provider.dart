@@ -6,10 +6,15 @@ import 'package:attendancex/features/analytics/models/analytics_state.dart';
 import 'package:attendancex/features/analytics/models/subject_statistics.dart';
 import 'package:attendancex/features/dashboard/models/attendance_summary.dart';
 import 'package:attendancex/features/settings/providers/settings_provider.dart';
-import 'package:attendancex/features/subjects/providers/subject_providers.dart';
 import 'package:attendancex/features/attendance/providers/attendance_providers.dart';
+import 'package:attendancex/features/planner/providers/planner_provider.dart';
+import 'package:attendancex/database/collections/academic_task_collection.dart';
+import 'package:attendancex/core/enums/task_status.dart';
+import 'package:attendancex/engines/planner_engine.dart';
+import 'package:attendancex/features/analytics/models/planner_metrics.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 import 'package:rxdart/rxdart.dart' hide Subject;
+import 'package:attendancex/features/subjects/providers/subject_providers.dart';
 
 part 'analytics_provider.g.dart';
 
@@ -19,12 +24,14 @@ class AnalyticsNotifier extends _$AnalyticsNotifier {
   Stream<AnalyticsState> build() {
     final subjectRepo = ref.watch(subjectRepositoryProvider);
     final attendanceRepo = ref.watch(attendanceRepositoryProvider);
+    final plannerRepo = ref.watch(plannerRepositoryProvider);
     final settings = ref.watch(settingsProvider);
 
-    return Rx.combineLatest2(
+    return Rx.combineLatest3(
       subjectRepo.watchAll(),
       attendanceRepo.watchAll(),
-      (List<Subject> subjects, List<Attendance> allAttendances) {
+      plannerRepo.watchAllTasks(),
+      (List<Subject> subjects, List<Attendance> allAttendances, List<AcademicTask> allTasks) {
         if (subjects.isEmpty) {
           return const AnalyticsState(isLoading: false);
         }
@@ -85,11 +92,25 @@ class AnalyticsNotifier extends _$AnalyticsNotifier {
           ));
         }
 
+        // 4. Planner Metrics
+        final completedTasks = allTasks.where((t) => t.status == TaskStatus.completed).length;
+        final overdueTasks = allTasks.where(PlannerEngine.isOverdue).length;
+        final upcomingTasks = PlannerEngine.getDashboardUpcomingDeadlines(allTasks).length;
+        
+        final plannerMetrics = PlannerMetrics(
+          totalTasks: allTasks.length,
+          completedTasks: completedTasks,
+          overdueTasks: overdueTasks,
+          upcomingTasks: upcomingTasks,
+        );
+
         return AnalyticsState(
           isLoading: false,
           monthlyTrends: monthlyTrends,
           subjectStats: subjectStats,
           overallForecast: overallForecast,
+          overallSummary: overallSummary,
+          plannerMetrics: plannerMetrics,
         );
       },
     );
