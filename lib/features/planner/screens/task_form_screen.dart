@@ -161,7 +161,7 @@ class _TaskFormSheetState extends ConsumerState<TaskFormSheet> {
               width: 32,
               height: 4,
               decoration: BoxDecoration(
-                color: Theme.of(context).colorScheme.onSurfaceVariant.withOpacity(0.4),
+                color: Theme.of(context).colorScheme.onSurfaceVariant.withValues(alpha: 0.4),
                 borderRadius: BorderRadius.circular(2),
               ),
             ),
@@ -180,6 +180,7 @@ class _TaskFormSheetState extends ConsumerState<TaskFormSheet> {
                 ),
                 IconButton(
                   icon: const Icon(Icons.close),
+                  tooltip: 'Close',
                   onPressed: () => Navigator.of(context).pop(),
                 ),
               ],
@@ -218,7 +219,7 @@ class _TaskFormSheetState extends ConsumerState<TaskFormSheet> {
                           subjectsAsync.when(
                             data: (subjects) => DropdownButtonFormField<int>(
                               decoration: const InputDecoration(labelText: 'Subject *'),
-                              value: _selectedSubjectId,
+                              initialValue: _selectedSubjectId,
                               isExpanded: true,
                               items: subjects.map((s) => DropdownMenuItem<int>(
                                 value: s.id,
@@ -236,7 +237,7 @@ class _TaskFormSheetState extends ConsumerState<TaskFormSheet> {
                               Expanded(
                                 child: DropdownButtonFormField<TaskType>(
                                   decoration: const InputDecoration(labelText: 'Task Type'),
-                                  value: _selectedType,
+                                  initialValue: _selectedType,
                                   isExpanded: true,
                                   items: TaskType.values.map((t) => DropdownMenuItem(
                                     value: t,
@@ -249,7 +250,7 @@ class _TaskFormSheetState extends ConsumerState<TaskFormSheet> {
                               Expanded(
                                 child: DropdownButtonFormField<TaskPriority>(
                                   decoration: const InputDecoration(labelText: 'Priority'),
-                                  value: _selectedPriority,
+                                  initialValue: _selectedPriority,
                                   isExpanded: true,
                                   items: TaskPriority.values.map((p) => DropdownMenuItem(
                                     value: p,

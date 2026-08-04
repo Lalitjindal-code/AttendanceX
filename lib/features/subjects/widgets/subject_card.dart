@@ -16,13 +16,16 @@ class SubjectCard extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     final summaryAsync = ref.watch(subjectSummaryProvider(subject.id));
 
-    return Card(
-      clipBehavior: Clip.antiAlias,
+    return Semantics(
+      label: '${subject.name} Subject. ${subject.credits} Credits. Goal: ${subject.goalPercentage.toInt()}%.',
+      button: true,
+      child: Card(
+        clipBehavior: Clip.antiAlias,
       elevation: 0,
       shape: RoundedRectangleBorder(
         borderRadius: BorderRadius.circular(16),
         side: BorderSide(
-          color: Theme.of(context).colorScheme.outlineVariant.withOpacity(0.5),
+          color: Theme.of(context).colorScheme.outlineVariant.withValues(alpha: 0.5),
         ),
       ),
       color: Theme.of(context).colorScheme.surfaceContainerLowest,
@@ -77,6 +80,7 @@ class SubjectCard extends ConsumerWidget {
             ],
           ),
         ),
+      ),
       ),
     );
   }

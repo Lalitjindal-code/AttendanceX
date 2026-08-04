@@ -23,7 +23,7 @@ void main() {
     ..name = 'Mathematics'
     ..credits = 4
     ..goalPercentage = 75.0
-    ..colorValue = Colors.blue.value
+    ..colorValue = Colors.blue.toARGB32()
     ..id = 1;
 
   group('Subject List Widget Tests', () {
@@ -39,7 +39,7 @@ void main() {
       await tester.pumpAndSettle();
 
       expect(find.text('Mathematics'), findsOneWidget);
-      expect(find.text('4 Credits • Goal: 75.0%'), findsOneWidget);
+      expect(find.text('4 Credits â€¢ Goal: 75.0%'), findsOneWidget);
       expect(find.byType(FloatingActionButton), findsOneWidget);
     });
 

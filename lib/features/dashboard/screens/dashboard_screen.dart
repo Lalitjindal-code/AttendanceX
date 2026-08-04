@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:collection/collection.dart';
-import '../../../core/constants/app_strings.dart';
 import '../../../navigation/app_routes.dart';
 import '../../../core/enums/attendance_status.dart';
 import '../../subjects/providers/subject_providers.dart';
@@ -10,7 +9,6 @@ import 'package:attendancex/features/planner/widgets/task_card.dart';
 import 'package:attendancex/features/planner/screens/task_form_screen.dart';
 import '../providers/dashboard_provider.dart';
 import '../models/dashboard_state.dart';
-import '../models/smart_suggestion.dart';
 import '../widgets/lecture_card.dart';
 import '../widgets/dashboard_header.dart';
 import '../widgets/hero_health_card.dart';
@@ -32,13 +30,13 @@ class DashboardScreen extends ConsumerWidget {
   String _getGreeting() {
     final hour = DateTime.now().hour;
     if (hour >= 5 && hour < 12) {
-      return "Good morning";
+      return 'Good morning';
     } else if (hour >= 12 && hour < 17) {
-      return "Good afternoon";
+      return 'Good afternoon';
     } else if (hour >= 17 && hour < 21) {
-      return "Good evening";
+      return 'Good evening';
     } else {
-      return "Hey there";
+      return 'Hey there';
     }
   }
 
@@ -70,6 +68,7 @@ class DashboardScreen extends ConsumerWidget {
                 actions: [
                   IconButton(
                     icon: const Icon(Icons.notifications_none_rounded),
+                    tooltip: 'Notifications',
                     onPressed: () {},
                   ),
                 ],
@@ -97,7 +96,7 @@ class DashboardScreen extends ConsumerWidget {
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: [
                         Text(
-                          "Upcoming Deadlines",
+                          'Upcoming Deadlines',
                           style: Theme.of(context).textTheme.titleLarge?.copyWith(
                                 fontWeight: FontWeight.bold,
                               ),
@@ -105,7 +104,7 @@ class DashboardScreen extends ConsumerWidget {
                         if (state.upcomingTasks.length > 5)
                           TextButton(
                             onPressed: () => context.go(AppRoutes.planner),
-                            child: const Text("View All →"),
+                            child: const Text('View All â†’'),
                           ),
                       ],
                     ),
@@ -189,7 +188,7 @@ class DashboardScreen extends ConsumerWidget {
                     padding: EdgeInsets.all(32.0),
                     child: Center(
                       child: Text(
-                        "No lectures scheduled for today.",
+                        'No lectures scheduled for today.',
                         style: TextStyle(fontSize: 16, color: Colors.grey),
                       ),
                     ),
@@ -201,7 +200,7 @@ class DashboardScreen extends ConsumerWidget {
                     padding: EdgeInsets.all(32.0),
                     child: Center(
                       child: Text(
-                        "All caught up for today! 🎉",
+                        'All caught up for today! ðŸŽ‰',
                         style: TextStyle(fontSize: 16, color: Colors.green, fontWeight: FontWeight.bold),
                       ),
                     ),
@@ -214,7 +213,7 @@ class DashboardScreen extends ConsumerWidget {
                   child: Padding(
                     padding: EdgeInsets.fromLTRB(16, 24, 16, 8),
                     child: Text(
-                      "Marked Classes",
+                      'Marked Classes',
                       style: TextStyle(
                         fontSize: 18,
                         fontWeight: FontWeight.bold,
@@ -272,13 +271,13 @@ class DashboardScreen extends ConsumerWidget {
                 width: 32,
                 height: 4,
                 decoration: BoxDecoration(
-                  color: Theme.of(context).colorScheme.onSurfaceVariant.withOpacity(0.4),
+                  color: Theme.of(context).colorScheme.onSurfaceVariant.withValues(alpha: 0.4),
                   borderRadius: BorderRadius.circular(2),
                 ),
               ),
               const SizedBox(height: 24),
               Text(
-                "Mark Attendance",
+                'Mark Attendance',
                 style: Theme.of(context).textTheme.titleLarge?.copyWith(
                       fontWeight: FontWeight.bold,
                     ),
@@ -296,7 +295,7 @@ class DashboardScreen extends ConsumerWidget {
                 children: [
                   _buildQuickMarkButton(
                     context, 
-                    "Present", 
+                    'Present', 
                     Icons.check_circle_rounded, 
                     Colors.green, 
                     () {
@@ -310,7 +309,7 @@ class DashboardScreen extends ConsumerWidget {
                   ),
                   _buildQuickMarkButton(
                     context, 
-                    "Absent", 
+                    'Absent', 
                     Icons.cancel_rounded, 
                     Theme.of(context).colorScheme.error, 
                     () {
@@ -339,9 +338,9 @@ class DashboardScreen extends ConsumerWidget {
         width: 100,
         padding: const EdgeInsets.symmetric(vertical: 16),
         decoration: BoxDecoration(
-          color: color.withOpacity(0.1),
+          color: color.withValues(alpha: 0.1),
           borderRadius: BorderRadius.circular(16),
-          border: Border.all(color: color.withOpacity(0.3)),
+          border: Border.all(color: color.withValues(alpha: 0.3)),
         ),
         child: Column(
           mainAxisSize: MainAxisSize.min,

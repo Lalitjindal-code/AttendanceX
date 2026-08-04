@@ -32,14 +32,14 @@ class NotificationService {
     const AndroidInitializationSettings initializationSettingsAndroid =
         AndroidInitializationSettings('@mipmap/ic_launcher');
         
-    final DarwinInitializationSettings initializationSettingsDarwin =
+    const DarwinInitializationSettings initializationSettingsDarwin =
         DarwinInitializationSettings(
       requestAlertPermission: false,
       requestBadgePermission: false,
       requestSoundPermission: false,
     );
 
-    final InitializationSettings initializationSettings = InitializationSettings(
+    const InitializationSettings initializationSettings = InitializationSettings(
       android: initializationSettingsAndroid,
       iOS: initializationSettingsDarwin,
     );
@@ -69,7 +69,7 @@ class NotificationService {
               AndroidFlutterLocalNotificationsPlugin>();
       
       final notificationsGranted = await androidImplementation?.requestNotificationsPermission();
-      final exactAlarmGranted = await androidImplementation?.requestExactAlarmsPermission();
+      await androidImplementation?.requestExactAlarmsPermission();
       
       return notificationsGranted;
     }

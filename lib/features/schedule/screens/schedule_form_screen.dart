@@ -231,10 +231,12 @@ class _ScheduleFormSheetState extends ConsumerState<ScheduleFormSheet> {
                 if (isEditing)
                   IconButton(
                     icon: Icon(Icons.delete_outline, color: Theme.of(context).colorScheme.error),
+                    tooltip: 'Delete Class',
                     onPressed: _delete,
                   ),
                 IconButton(
                   icon: const Icon(Icons.close),
+                  tooltip: 'Close',
                   onPressed: () => Navigator.of(context).pop(),
                 ),
               ],
@@ -271,7 +273,7 @@ class _ScheduleFormSheetState extends ConsumerState<ScheduleFormSheet> {
                               }
                               return DropdownButtonFormField<int>(
                                 decoration: const InputDecoration(labelText: 'Subject *'),
-                                value: _selectedSubjectId,
+                                initialValue: _selectedSubjectId,
                                 isExpanded: true,
                                 items: subjects.map((s) => DropdownMenuItem<int>(
                                   value: s.id, 
@@ -291,7 +293,7 @@ class _ScheduleFormSheetState extends ConsumerState<ScheduleFormSheet> {
                               Expanded(
                                 child: DropdownButtonFormField<DayOfWeek>(
                                   decoration: const InputDecoration(labelText: 'Day'),
-                                  value: DayOfWeek.fromInt(_dayOfWeek),
+                                  initialValue: DayOfWeek.fromInt(_dayOfWeek),
                                   items: DayOfWeek.weekdays.map((d) => DropdownMenuItem(value: d, child: Text(d.label))).toList(),
                                   onChanged: (val) {
                                     if (val != null) {
@@ -304,7 +306,7 @@ class _ScheduleFormSheetState extends ConsumerState<ScheduleFormSheet> {
                               Expanded(
                                 child: DropdownButtonFormField<LectureType>(
                                   decoration: const InputDecoration(labelText: 'Type'),
-                                  value: _selectedType,
+                                  initialValue: _selectedType,
                                   items: LectureType.values.map((t) => DropdownMenuItem(value: t, child: Text(t.name.toUpperCase()))).toList(),
                                   onChanged: (val) {
                                     if (val != null) {

@@ -49,7 +49,7 @@ class EditAttendanceBottomSheet extends StatelessWidget {
             ),
             const SizedBox(height: 8),
             Text(
-              '${subject.name} • ${model.schedule.startTime}',
+              '${subject.name} â€¢ ${model.schedule.startTime}',
               style: Theme.of(context).textTheme.bodyMedium?.copyWith(
                     color: Theme.of(context).colorScheme.onSurfaceVariant,
                   ),
@@ -77,13 +77,13 @@ class EditAttendanceBottomSheet extends StatelessWidget {
     return ActionChip(
       label: Text(status.displayName),
       avatar: Icon(status.icon, size: 18, color: isSelected ? Colors.white : color),
-      backgroundColor: isSelected ? color : color.withOpacity(0.1),
+      backgroundColor: isSelected ? color : color.withValues(alpha: 0.1),
       labelStyle: TextStyle(
         color: isSelected ? Colors.white : color,
         fontWeight: FontWeight.bold,
       ),
       side: BorderSide(
-        color: isSelected ? Colors.transparent : color.withOpacity(0.5),
+        color: isSelected ? Colors.transparent : color.withValues(alpha: 0.5),
       ),
       onPressed: () {
         HapticFeedback.lightImpact();

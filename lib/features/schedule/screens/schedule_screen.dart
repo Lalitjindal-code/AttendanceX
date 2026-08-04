@@ -84,6 +84,7 @@ class _ScheduleScreenState extends ConsumerState<ScheduleScreen> {
               if (subjectsAsync.valueOrNull?.isNotEmpty == true)
                 IconButton(
                   icon: const Icon(Icons.add),
+                  tooltip: 'Add Class',
                   onPressed: () => showScheduleFormSheet(context, dayOfWeek: DayOfWeek.weekdays[_currentDayIndex].value),
                 ),
             ],
@@ -107,7 +108,7 @@ class _ScheduleScreenState extends ConsumerState<ScheduleScreen> {
                           ),
                           const SizedBox(height: AppSpacing.lg),
                           Text(
-                            "No subjects available.\nPlease create a subject first.",
+                            'No subjects available.\nPlease create a subject first.',
                             textAlign: TextAlign.center,
                             style: Theme.of(context).textTheme.bodyLarge?.copyWith(
                                   color: Theme.of(context).colorScheme.onSurfaceVariant,
@@ -159,6 +160,7 @@ class _ScheduleScreenState extends ConsumerState<ScheduleScreen> {
                 onPressed: () => showScheduleFormSheet(context, dayOfWeek: DayOfWeek.weekdays[_currentDayIndex].value),
                 icon: const Icon(Icons.add),
                 label: const Text('Add Class'),
+                tooltip: 'Add Class',
                 isExtended: _isFabExtended,
               )
             : null,

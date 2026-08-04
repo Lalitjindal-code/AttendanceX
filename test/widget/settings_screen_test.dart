@@ -205,8 +205,8 @@ void main() {
       final builder = DeviceBuilder()
         ..overrideDevicesForAllScenarios(devices: defaultDevices)
         ..addScenario(
-          widget: ProviderScope(
-            child: const SettingsScreen(),
+          widget: const ProviderScope(
+            child: SettingsScreen(),
           ),
           name: 'default_settings',
         );

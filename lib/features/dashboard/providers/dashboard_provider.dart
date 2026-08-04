@@ -116,11 +116,11 @@ class DashboardNotifier extends _$DashboardNotifier {
         for (final attendance in allAttendances) {
           if (attendance.status == AttendanceStatus.pending || attendance.status == AttendanceStatus.holiday) continue;
           
-          bool isPresent = attendance.status == AttendanceStatus.present || 
+          final bool isPresent = attendance.status == AttendanceStatus.present || 
             (attendance.status == AttendanceStatus.medical && settings.medicalCountsAsPresent) ||
             (attendance.status == AttendanceStatus.gt && settings.gtMode == GtMode.countAsPresent);
             
-          bool isCounted = attendance.status == AttendanceStatus.present || 
+          final bool isCounted = attendance.status == AttendanceStatus.present || 
             attendance.status == AttendanceStatus.absent ||
             (attendance.status == AttendanceStatus.medical && settings.medicalCountsAsPresent) ||
             (attendance.status == AttendanceStatus.gt && settings.gtMode != GtMode.exclude);

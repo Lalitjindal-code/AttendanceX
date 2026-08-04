@@ -63,8 +63,8 @@ class _SubjectsScreenState extends ConsumerState<SubjectsScreen> {
         child: CustomScrollView(
           controller: _scrollController,
           slivers: [
-            SliverAppBar.large(
-              title: const Text(AppStrings.subjectsTitle),
+            const SliverAppBar.large(
+              title: Text(AppStrings.subjectsTitle),
               floating: true,
               pinned: true,
             ),
@@ -182,6 +182,7 @@ class _SubjectsScreenState extends ConsumerState<SubjectsScreen> {
         onPressed: () => showSubjectFormSheet(context),
         icon: const Icon(Icons.add),
         label: const Text('Add Subject'),
+        tooltip: 'Add Subject',
         isExtended: _isFabExtended,
       ),
     );

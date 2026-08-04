@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:intl/intl.dart';
 import '../../../core/enums/attendance_status.dart';
 import '../../../core/extensions/attendance_status_extension.dart';
 import '../models/dashboard_state.dart';
@@ -17,7 +16,7 @@ class LectureCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final schedule = model.schedule;
+
     final subject = model.subject;
     final attendance = model.attendance;
     final subjectColor = Color(subject.colorValue);
@@ -40,12 +39,12 @@ class LectureCard extends StatelessWidget {
           color: Theme.of(context).cardColor,
           borderRadius: BorderRadius.circular(12),
           border: Border.all(
-            color: isMarked ? accentColor.withOpacity(0.5) : Colors.transparent,
+            color: isMarked ? accentColor.withValues(alpha: 0.5) : Colors.transparent,
             width: isMarked ? 1.5 : 0,
           ),
           boxShadow: isMarked ? [] : [
             BoxShadow(
-              color: Colors.black.withOpacity(0.05),
+              color: Colors.black.withValues(alpha: 0.05),
               blurRadius: 10,
               offset: const Offset(0, 4),
             ),
@@ -220,12 +219,12 @@ class LectureCard extends StatelessWidget {
       selected: isSelected,
       showCheckmark: false,
       selectedColor: color,
-      backgroundColor: color.withOpacity(0.1),
+      backgroundColor: color.withValues(alpha: 0.1),
       labelStyle: TextStyle(
         color: isSelected ? Colors.white : color,
         fontWeight: FontWeight.bold,
       ),
-      side: BorderSide(color: isSelected ? Colors.transparent : color.withOpacity(0.5)),
+      side: BorderSide(color: isSelected ? Colors.transparent : color.withValues(alpha: 0.5)),
       onSelected: (selected) {
         if (!isSelected) {
           onMarkAttendance(status);

@@ -64,7 +64,7 @@ void main() {
   final loadedState = DashboardState(
     pendingLectures: [
       LectureCardModel(
-        subject: Subject()..name = 'Math'..colorValue = Colors.blue.value,
+        subject: Subject()..name = 'Math'..colorValue = Colors.blue.toARGB32(),
         schedule: Schedule()..id = 1..type = LectureType.lecture..startTime = '10:00'..endTime = '11:00',
         attendance: null,
         summary: defaultSummary,
@@ -151,7 +151,7 @@ void main() {
         pendingLectures: const [],
         markedLectures: [
           LectureCardModel(
-            subject: Subject()..name = 'Math'..colorValue = Colors.blue.value,
+            subject: Subject()..name = 'Math'..colorValue = Colors.blue.toARGB32(),
             schedule: Schedule()..id = 1..type = LectureType.lecture..startTime = '10:00'..endTime = '11:00',
             attendance: Attendance()..status = AttendanceStatus.present,
             summary: defaultSummary,

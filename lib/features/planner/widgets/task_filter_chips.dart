@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../../core/constants/app_spacing.dart';
 import '../../../core/enums/task_priority.dart';
-import '../../../core/enums/task_status.dart';
 import '../../subjects/providers/subject_providers.dart';
 import '../providers/planner_provider.dart';
 import '../models/planner_filter.dart';

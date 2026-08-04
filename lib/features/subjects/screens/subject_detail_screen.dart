@@ -44,6 +44,7 @@ class SubjectDetailScreen extends ConsumerWidget {
           actions: [
             IconButton(
               icon: const Icon(Icons.edit_outlined),
+              tooltip: 'Edit Subject',
               onPressed: () => showSubjectFormSheet(context, subjectId: subject.id),
             ),
           ],

@@ -173,6 +173,7 @@ class DailyAttendanceCard extends ConsumerWidget {
                     ),
                     IconButton(
                       icon: const Icon(Icons.close),
+                      tooltip: 'Close',
                       onPressed: () => Navigator.of(context).pop(),
                     ),
                   ],

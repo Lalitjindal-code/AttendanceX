@@ -52,7 +52,7 @@ class SubjectColorPicker extends StatelessWidget {
                 boxShadow: isSelected
                     ? [
                         BoxShadow(
-                          color: Color(c).withOpacity(0.4),
+                          color: Color(c).withValues(alpha: 0.4),
                           blurRadius: 8,
                           spreadRadius: 2,
                         )

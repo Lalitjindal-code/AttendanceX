@@ -116,9 +116,9 @@ class _SubjectFormSheetState extends ConsumerState<SubjectFormSheet> {
       builder: (context) => AlertDialog(
         title: const Text('Delete Subject'),
         content: Text('This subject contains:\n\n'
-            '• ${impact.schedulesCount} schedule entries\n'
-            '• ${impact.attendancesCount} attendance records\n'
-            '• ${impact.historyCount} attendance history records\n\n'
+            'â€¢ ${impact.schedulesCount} schedule entries\n'
+            'â€¢ ${impact.attendancesCount} attendance records\n'
+            'â€¢ ${impact.historyCount} attendance history records\n\n'
             'This action cannot be undone.'),
         actions: [
           TextButton(
@@ -170,7 +170,7 @@ class _SubjectFormSheetState extends ConsumerState<SubjectFormSheet> {
               width: 32,
               height: 4,
               decoration: BoxDecoration(
-                color: Theme.of(context).colorScheme.onSurfaceVariant.withOpacity(0.4),
+                color: Theme.of(context).colorScheme.onSurfaceVariant.withValues(alpha: 0.4),
                 borderRadius: BorderRadius.circular(2),
               ),
             ),
@@ -189,11 +189,13 @@ class _SubjectFormSheetState extends ConsumerState<SubjectFormSheet> {
                 if (isEditing)
                   IconButton(
                     icon: const Icon(Icons.delete_outline),
+                    tooltip: 'Delete Subject',
                     color: Theme.of(context).colorScheme.error,
                     onPressed: _delete,
                   ),
                 IconButton(
                   icon: const Icon(Icons.close),
+                  tooltip: 'Close',
                   onPressed: () => Navigator.of(context).pop(),
                 ),
               ],

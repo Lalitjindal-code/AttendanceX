@@ -8,7 +8,7 @@ import 'package:attendancex/core/enums/attendance_status.dart';
 
 void main() {
   group('AnalyticsEngine.calculateMonthlyTrends', () {
-    final settings = AppSettings();
+    const settings = AppSettings();
 
     test('Empty dataset returns empty list', () {
       final trends = AnalyticsEngine.calculateMonthlyTrends([], settings);
@@ -47,14 +47,14 @@ void main() {
 
   group('AnalyticsEngine.calculateTrend', () {
     test('Returns insufficientData when total is 0', () {
-      final current = SubjectAttendanceSummary(
+      const current = SubjectAttendanceSummary(
         subjectId: 1,
         effectivePresent: 0, effectiveTotal: 0,
         totalPresentRecords: 0, totalAbsentRecords: 0,
         totalHolidayRecords: 0, totalMedicalRecords: 0,
         totalGTRecords: 0, totalPendingRecords: 0,
       );
-      final prev = SubjectAttendanceSummary(
+      const prev = SubjectAttendanceSummary(
         subjectId: 1,
         effectivePresent: 1, effectiveTotal: 1,
         totalPresentRecords: 1, totalAbsentRecords: 0,
@@ -67,14 +67,14 @@ void main() {
     });
 
     test('Returns improving when percentage increases', () {
-      final current = SubjectAttendanceSummary(
+      const current = SubjectAttendanceSummary(
         subjectId: 1,
         effectivePresent: 2, effectiveTotal: 2,
         totalPresentRecords: 2, totalAbsentRecords: 0,
         totalHolidayRecords: 0, totalMedicalRecords: 0,
         totalGTRecords: 0, totalPendingRecords: 0,
       );
-      final prev = SubjectAttendanceSummary(
+      const prev = SubjectAttendanceSummary(
         subjectId: 1,
         effectivePresent: 1, effectiveTotal: 2,
         totalPresentRecords: 1, totalAbsentRecords: 1,
@@ -85,14 +85,14 @@ void main() {
     });
 
     test('Returns declining when percentage decreases', () {
-      final current = SubjectAttendanceSummary(
+      const current = SubjectAttendanceSummary(
         subjectId: 1,
         effectivePresent: 1, effectiveTotal: 2,
         totalPresentRecords: 1, totalAbsentRecords: 1,
         totalHolidayRecords: 0, totalMedicalRecords: 0,
         totalGTRecords: 0, totalPendingRecords: 0,
       );
-      final prev = SubjectAttendanceSummary(
+      const prev = SubjectAttendanceSummary(
         subjectId: 1,
         effectivePresent: 2, effectiveTotal: 2,
         totalPresentRecords: 2, totalAbsentRecords: 0,
@@ -103,7 +103,7 @@ void main() {
     });
 
     test('Returns stable when percentage is same', () {
-      final summary = SubjectAttendanceSummary(
+      const summary = SubjectAttendanceSummary(
         subjectId: 1,
         effectivePresent: 1, effectiveTotal: 2,
         totalPresentRecords: 1, totalAbsentRecords: 1,

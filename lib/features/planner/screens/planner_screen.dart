@@ -78,6 +78,7 @@ class _PlannerScreenState extends ConsumerState<PlannerScreen> {
             actions: [
               IconButton(
                 icon: const Icon(Icons.add),
+                tooltip: 'Add Task',
                 onPressed: () => showTaskFormSheet(context),
               ),
             ],
@@ -110,7 +111,7 @@ class _PlannerScreenState extends ConsumerState<PlannerScreen> {
                           Text(
                             ref.watch(plannerFilterProvider).isEmpty 
                                 ? "All caught up! Add a deadline when you're ready."
-                                : "No tasks match your filters.",
+                                : 'No tasks match your filters.',
                             textAlign: TextAlign.center,
                             style: Theme.of(context).textTheme.bodyLarge?.copyWith(
                                   color: Theme.of(context).colorScheme.onSurfaceVariant,
@@ -176,6 +177,7 @@ class _PlannerScreenState extends ConsumerState<PlannerScreen> {
         onPressed: () => showTaskFormSheet(context),
         icon: const Icon(Icons.add),
         label: const Text('Add Task'),
+        tooltip: 'Add Task',
         isExtended: _isFabExtended,
       ),
     );

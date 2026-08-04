@@ -1,8 +1,5 @@
-import '../core/enums/task_priority.dart';
 import '../core/enums/task_status.dart';
-import '../core/enums/task_type.dart';
 import '../database/collections/academic_task_collection.dart';
-import '../features/dashboard/models/smart_suggestion.dart';
 import '../features/notifications/models/scheduled_notification.dart';
 import '../database/collections/subject_collection.dart';
 
@@ -28,10 +25,10 @@ class PlannerEngine {
   /// Categorizes tasks and returns the top 5 for the dashboard "Upcoming Deadlines".
   static List<AcademicTask> getDashboardUpcomingDeadlines(List<AcademicTask> tasks) {
     final now = DateTime.now();
-    final today = DateTime(now.year, now.month, now.day);
+    
     
     // Filter out completed and cancelled tasks
-    var activeTasks = tasks.where((t) => t.status != TaskStatus.completed && t.status != TaskStatus.cancelled).toList();
+    final activeTasks = tasks.where((t) => t.status != TaskStatus.completed && t.status != TaskStatus.cancelled).toList();
     
     // Sort logic for Dashboard:
     // 1. Overdue
@@ -41,14 +38,14 @@ class PlannerEngine {
     // 5. Due This Week
     // ...
     activeTasks.sort((a, b) {
-      bool aIsOverdue = isOverdue(a);
-      bool bIsOverdue = isOverdue(b);
+      final bool aIsOverdue = isOverdue(a);
+      final bool bIsOverdue = isOverdue(b);
       
       if (aIsOverdue && !bIsOverdue) return -1;
       if (!aIsOverdue && bIsOverdue) return 1;
       
       // Sort by due date next
-      int dateCmp = a.dueDate.compareTo(b.dueDate);
+      final int dateCmp = a.dueDate.compareTo(b.dueDate);
       if (dateCmp != 0) return dateCmp;
       
       // Then by priority
@@ -104,7 +101,7 @@ class PlannerEngine {
     // Sort tasks by priority and date
     final sorted = sortTasks(List.from(pendingTasks));
     
-    List<String> plan = [];
+    final List<String> plan = [];
     int count = 0;
     
     for (var task in sorted) {
@@ -122,9 +119,9 @@ class PlannerEngine {
     List<Subject> subjects,
     DateTime now,
   ) {
-    List<ScheduledNotification> notifications = [];
+    final List<ScheduledNotification> notifications = [];
     
-    var activeTasks = tasks.where((t) => t.status == TaskStatus.pending || t.status == TaskStatus.inProgress);
+    final activeTasks = tasks.where((t) => t.status == TaskStatus.pending || t.status == TaskStatus.inProgress);
     
     for (var task in activeTasks) {
       if (task.notificationOffsets.isEmpty) continue;

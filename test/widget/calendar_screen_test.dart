@@ -42,7 +42,7 @@ class FakeAttendanceRepository implements AttendanceRepository {
 
 void main() {
   final testDate = DateTime(2026, 1, 15);
-  final subject = Subject()..id = 1..name = 'Physics'..colorValue = Colors.blue.value;
+  final subject = Subject()..id = 1..name = 'Physics'..colorValue = Colors.blue.toARGB32();
   
   final loadedState = CalendarState(
     selectedDate: testDate,

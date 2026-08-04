@@ -19,8 +19,8 @@ void main() {
         schedulesForDaySortedByTimeProvider(3).overrideWith((ref) => Stream.value(mockSchedules)),
         schedulesForDaySortedByTimeProvider(4).overrideWith((ref) => Stream.value(mockSchedules)),
         schedulesForDaySortedByTimeProvider(5).overrideWith((ref) => Stream.value(mockSchedules)),
-        subjectProvider(1).overrideWith((ref) => Future.value(Subject()..name = 'Math'..colorValue = Colors.blue.value..id = 1)),
-        subjectsProvider.overrideWith((ref) => Stream.value([Subject()..name = 'Math'..colorValue = Colors.blue.value..id = 1])),
+        subjectProvider(1).overrideWith((ref) => Future.value(Subject()..name = 'Math'..colorValue = Colors.blue.toARGB32()..id = 1)),
+        subjectsProvider.overrideWith((ref) => Stream.value([Subject()..name = 'Math'..colorValue = Colors.blue.toARGB32()..id = 1])),
       ],
       child: const MaterialApp(
         home: ScheduleScreen(),
@@ -73,8 +73,8 @@ void main() {
             schedulesForDaySortedByTimeProvider(3).overrideWith((ref) => Stream.value([mockSchedule])),
             schedulesForDaySortedByTimeProvider(4).overrideWith((ref) => Stream.value([mockSchedule])),
             schedulesForDaySortedByTimeProvider(5).overrideWith((ref) => Stream.value([mockSchedule])),
-            subjectProvider(1).overrideWith((ref) => Future.value(Subject()..name = 'Math'..colorValue = Colors.blue.value..id = 1)),
-            subjectsProvider.overrideWith((ref) => Stream.value([Subject()..name = 'Math'..colorValue = Colors.blue.value..id = 1])),
+            subjectProvider(1).overrideWith((ref) => Future.value(Subject()..name = 'Math'..colorValue = Colors.blue.toARGB32()..id = 1)),
+            subjectsProvider.overrideWith((ref) => Stream.value([Subject()..name = 'Math'..colorValue = Colors.blue.toARGB32()..id = 1])),
           ],
           child: MaterialApp(
             builder: (context, child) {

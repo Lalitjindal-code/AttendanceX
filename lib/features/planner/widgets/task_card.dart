@@ -56,13 +56,16 @@ class TaskCard extends ConsumerWidget {
       child: AnimatedOpacity(
         opacity: isCompleted ? 0.6 : 1.0,
         duration: const Duration(milliseconds: 200),
-        child: Card(
-          clipBehavior: Clip.antiAlias,
+        child: Semantics(
+          label: 'Task: ${task.title}. Priority: ${task.priority.name}. ${isCompleted ? "Completed." : (isOverdue ? "Overdue." : "Pending.")}',
+          button: true,
+          child: Card(
+            clipBehavior: Clip.antiAlias,
           elevation: 0,
           shape: RoundedRectangleBorder(
             borderRadius: BorderRadius.circular(12), // radiusMD
             side: BorderSide(
-              color: Theme.of(context).colorScheme.outlineVariant.withOpacity(0.5),
+              color: Theme.of(context).colorScheme.outlineVariant.withValues(alpha: 0.5),
             ),
           ),
           color: Theme.of(context).colorScheme.surfaceContainerLowest,
@@ -118,7 +121,7 @@ class TaskCard extends ConsumerWidget {
                                       ),
                                       const SizedBox(width: AppSpacing.sm),
                                       Text(
-                                        '•',
+                                        'â€¢',
                                         style: Theme.of(context).textTheme.bodySmall?.copyWith(
                                           color: Theme.of(context).colorScheme.outline,
                                         ),
@@ -149,6 +152,7 @@ class TaskCard extends ConsumerWidget {
                                   ? Theme.of(context).colorScheme.primary 
                                   : Theme.of(context).colorScheme.outline,
                             ),
+                            tooltip: isCompleted ? 'Mark as incomplete' : 'Mark as complete',
                             onPressed: () {
                               ref.read(plannerNotifierProvider.notifier).toggleTaskCompletion(task);
                               Haptics.light();
@@ -163,6 +167,7 @@ class TaskCard extends ConsumerWidget {
             ),
           ),
         ),
+      ),
       ),
     );
   }

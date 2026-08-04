@@ -87,10 +87,10 @@ GoRouter appRouter(AppRouterRef ref) {
               GoRoute(
                 path: AppRoutes.more,
                 builder: (context, state) => const MoreScreen(),
-                routes: [
+                routes: const <RouteBase>[],
                   // Sub-routes for More tab (no leading slash for sub-routes, but AppRoutes are absolute)
                   // Wait, if they are absolute, we can just define them inside the branch directly instead of nested.
-                ],
+                  // Wait, if they are absolute, we can just define them inside the branch directly instead of nested.
               ),
               GoRoute(
                 path: AppRoutes.calendar,

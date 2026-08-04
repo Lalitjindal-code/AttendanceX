@@ -24,7 +24,7 @@ final sortedPlannerTasksProvider = Provider<AsyncValue<List<AcademicTask>>>((ref
   final filter = ref.watch(plannerFilterProvider);
   
   return tasksAsync.whenData((tasks) {
-    var filtered = tasks.where((t) {
+    final filtered = tasks.where((t) {
       if (filter.subjectId != null && t.subjectId != filter.subjectId) return false;
       if (filter.priority != null && t.priority != filter.priority) return false;
       if (filter.status != null && t.status != filter.status) return false;

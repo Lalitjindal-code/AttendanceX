@@ -9,7 +9,6 @@ import 'package:shared_preferences/shared_preferences.dart';
 
 class ImportTimetable {
   static Future<void> run() async {
-    print("Starting Timetable Import...");
     
     final isar = IsarService.instance.isar;
 
@@ -18,45 +17,45 @@ class ImportTimetable {
         'AI-302': Subject()
           ..name = 'AI-302 Artificial Intelligence'
           ..facultyName = 'Dr. Rashi Kumar'
-          ..colorValue = Colors.indigo.value
+          ..colorValue = Colors.indigo.toARGB32()
           ..credits = 3,
         'AI-303': Subject()
           ..name = 'AI-303 Object Oriented Programming with Java'
           ..facultyName = 'Dr. Shaila Chugh'
-          ..colorValue = Colors.teal.value
+          ..colorValue = Colors.teal.toARGB32()
           ..credits = 4,
         'AI-304': Subject()
           ..name = 'AI-304 Operating System'
           ..facultyName = 'Prof. Sumeet Dhilon'
-          ..colorValue = Colors.orange.value
+          ..colorValue = Colors.orange.toARGB32()
           ..credits = 4,
         'AI-305': Subject()
           ..name = 'AI-305 Computer System Organization'
           ..facultyName = 'Prof. Jyothi Sonkar'
-          ..colorValue = Colors.purple.value
+          ..colorValue = Colors.purple.toARGB32()
           ..credits = 3,
         'AI-306': Subject()
           ..name = 'AI-306 Web Application Development'
           ..facultyName = 'SMD'
-          ..colorValue = Colors.blue.value
+          ..colorValue = Colors.blue.toARGB32()
           ..credits = 3,
         'MAB-301': Subject()
           ..name = 'MAB-301 Discrete Mathematics'
           ..facultyName = 'Prof. Poonam Lata Prabhakar'
-          ..colorValue = Colors.red.value
+          ..colorValue = Colors.red.toARGB32()
           ..credits = 3,
         'AI-307': Subject()
           ..name = 'AI-307 Internship-I'
           ..facultyName = 'Prof. Jyothi Sonkar, Prof. Ankur Mishra, Prof. Garima Jain'
-          ..colorValue = Colors.green.value
+          ..colorValue = Colors.green.toARGB32()
           ..credits = 2,
       };
 
       final savedSubjects = <String, Subject>{};
 
       for (final entry in subjects.entries) {
-        var existingList = await isar.subjects.filter().nameEqualTo(entry.value.name).findAll();
-        var existing = existingList.isEmpty ? null : existingList.first;
+        final existingList = await isar.subjects.filter().nameEqualTo(entry.value.name).findAll();
+        final existing = existingList.isEmpty ? null : existingList.first;
         if (existing == null) {
           final id = await isar.subjects.put(entry.value);
           savedSubjects[entry.key] = entry.value..id = id;
@@ -130,6 +129,5 @@ class ImportTimetable {
     final prefs = await SharedPreferences.getInstance();
     await prefs.setString(PreferencesService.keySemesterStart, '2026-07-13');
 
-    print("Timetable imported successfully!");
   }
 }

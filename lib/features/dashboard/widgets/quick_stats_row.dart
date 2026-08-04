@@ -15,7 +15,7 @@ class QuickStatsRow extends StatelessWidget {
         children: [
           _buildStatCard(
             context,
-            title: "Today",
+            title: 'Today',
             attended: quickStats.attendedToday,
             total: quickStats.totalToday,
             icon: Icons.today_rounded,
@@ -23,7 +23,7 @@ class QuickStatsRow extends StatelessWidget {
           const SizedBox(width: 8),
           _buildStatCard(
             context,
-            title: "This Week",
+            title: 'This Week',
             attended: quickStats.attendedThisWeek,
             total: quickStats.totalThisWeek,
             icon: Icons.view_week_rounded,
@@ -31,7 +31,7 @@ class QuickStatsRow extends StatelessWidget {
           const SizedBox(width: 8),
           _buildStatCard(
             context,
-            title: "This Month",
+            title: 'This Month',
             attended: quickStats.attendedThisMonth,
             total: quickStats.totalThisMonth,
             icon: Icons.calendar_month_rounded,
@@ -46,10 +46,10 @@ class QuickStatsRow extends StatelessWidget {
       child: Container(
         padding: const EdgeInsets.symmetric(vertical: 16, horizontal: 8),
         decoration: BoxDecoration(
-          color: Theme.of(context).colorScheme.surfaceContainerHighest.withOpacity(0.4),
+          color: Theme.of(context).colorScheme.surfaceContainerHighest.withValues(alpha: 0.4),
           borderRadius: BorderRadius.circular(16),
           border: Border.all(
-            color: Theme.of(context).colorScheme.outlineVariant.withOpacity(0.5),
+            color: Theme.of(context).colorScheme.outlineVariant.withValues(alpha: 0.5),
             width: 1,
           ),
         ),
@@ -62,7 +62,7 @@ class QuickStatsRow extends StatelessWidget {
             ),
             const SizedBox(height: 8),
             Text(
-              "$attended / $total",
+              '$attended / $total',
               style: Theme.of(context).textTheme.titleMedium?.copyWith(
                     fontWeight: FontWeight.bold,
                     color: Theme.of(context).colorScheme.onSurface,

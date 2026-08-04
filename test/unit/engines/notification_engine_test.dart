@@ -33,7 +33,7 @@ void main() {
       ..room = '102';
 
     test('Returns empty when notifications are disabled', () {
-      final settings = const AppSettings(notificationsEnabled: false);
+      const settings = AppSettings(notificationsEnabled: false);
       final result = NotificationEngine.generateNotifications(
         subjects: [dummySubject],
         schedules: [upcomingSchedule],
@@ -45,7 +45,7 @@ void main() {
     });
 
     test('Generates lecture reminder for upcoming lecture', () {
-      final settings = const AppSettings(
+      const settings = AppSettings(
         notificationsEnabled: true,
         lectureReminderMinutes: 10,
         dailyReminderEnabled: false,
@@ -66,7 +66,7 @@ void main() {
     });
     
     test('Does not generate lecture reminder if it is already in the past', () {
-      final settings = const AppSettings(
+      const settings = AppSettings(
         notificationsEnabled: true,
         lectureReminderMinutes: 10,
         dailyReminderEnabled: false,
@@ -84,7 +84,7 @@ void main() {
     });
 
     test('Generates daily reminder if missed attendance exists', () {
-      final settings = const AppSettings(
+      const settings = AppSettings(
         notificationsEnabled: true,
         dailyReminderEnabled: true,
         dailyReminderTime: '20:00',
@@ -105,7 +105,7 @@ void main() {
     });
 
     test('Does not generate daily reminder if all attendances are marked', () {
-      final settings = const AppSettings(
+      const settings = AppSettings(
         notificationsEnabled: true,
         dailyReminderEnabled: true,
         dailyReminderTime: '20:00',
@@ -131,7 +131,7 @@ void main() {
     });
     
     test('Generates deterministic IDs for the same input', () {
-      final settings = const AppSettings(
+      const settings = AppSettings(
         notificationsEnabled: true,
         lectureReminderMinutes: 10,
         dailyReminderEnabled: true,

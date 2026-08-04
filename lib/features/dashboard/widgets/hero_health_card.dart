@@ -16,36 +16,40 @@ class HeroHealthCard extends StatelessWidget {
     final double percentage = summary?.attendancePercentage ?? 0.0;
     
     Color statusColor = Theme.of(context).colorScheme.primary;
-    String statusText = "No Data";
+    String statusText = 'No Data';
     IconData statusIcon = Icons.info_outline;
 
     if (suggestion != null) {
       switch (suggestion.type) {
         case SmartSuggestionType.safeBunk:
           statusColor = Colors.green;
-          statusText = "Safe Zone";
+          statusText = 'Safe Zone';
           statusIcon = Icons.check_circle;
           break;
         case SmartSuggestionType.attendMore:
           statusColor = Theme.of(context).colorScheme.error;
-          statusText = "At Risk";
+          statusText = 'At Risk';
           statusIcon = Icons.warning_amber_rounded;
           break;
         case SmartSuggestionType.onTrack:
           statusColor = Colors.blue;
-          statusText = "On Track";
+          statusText = 'On Track';
           statusIcon = Icons.track_changes;
           break;
         case SmartSuggestionType.noData:
           statusColor = Colors.grey;
-          statusText = "No Data";
+          statusText = 'No Data';
           statusIcon = Icons.info_outline;
           break;
       }
     }
 
-    return Container(
-      height: 160,
+    return Semantics(
+      label: 'Overall Attendance: ${(percentage * 100).toInt()}%. Status: $statusText',
+      container: true,
+      excludeSemantics: true,
+      child: Container(
+        height: 160,
       margin: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
       padding: const EdgeInsets.all(20),
       decoration: BoxDecoration(
@@ -111,7 +115,7 @@ class HeroHealthCard extends StatelessWidget {
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
                 Text(
-                  "Overall Attendance",
+                  'Overall Attendance',
                   style: Theme.of(context).textTheme.labelLarge?.copyWith(
                         color: Theme.of(context).colorScheme.onSurfaceVariant,
                         letterSpacing: 0.5,
@@ -158,6 +162,7 @@ class HeroHealthCard extends StatelessWidget {
             ),
           ),
         ],
+      ),
       ),
     );
   }

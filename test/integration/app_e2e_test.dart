@@ -1,5 +1,4 @@
 import 'dart:io';
-import 'package:attendancex/core/config/app_config.dart';
 import 'package:attendancex/database/isar_service.dart';
 import 'package:attendancex/main.dart';
 import 'package:attendancex/services/notification_service.dart';

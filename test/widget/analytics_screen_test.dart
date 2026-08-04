@@ -48,7 +48,7 @@ void main() {
   });
 
   testWidgets('Analytics renders loaded state with subject stats', (WidgetTester tester) async {
-    final mockSummary = const SubjectAttendanceSummary(
+    const mockSummary = SubjectAttendanceSummary(
       subjectId: 1,
       effectivePresent: 45,
       effectiveTotal: 50,
@@ -59,7 +59,7 @@ void main() {
       totalGTRecords: 0,
       totalPendingRecords: 0,
     );
-    final mockOverallSummary = const OverallAttendanceSummary(
+    const mockOverallSummary = OverallAttendanceSummary(
       effectivePresent: 45,
       effectiveTotal: 50,
       totalPresentRecords: 45,
@@ -69,7 +69,7 @@ void main() {
       totalGTRecords: 0,
       totalPendingRecords: 0,
     );
-    final mockForecast = const AttendanceForecast(
+    const mockForecast = AttendanceForecast(
       currentPercentage: 0.90,
       projectedPercentageIfAttendNext: 0.91,
       projectedPercentageIfBunkNext: 0.89,
@@ -92,7 +92,7 @@ void main() {
         SubjectStatistics(
           subject: Subject()
             ..name = 'Physics'
-            ..colorValue = Colors.blue.value,
+            ..colorValue = Colors.blue.toARGB32(),
           summary: mockSummary,
           forecast: mockForecast,
           trend: AnalyticsTrend.stable,

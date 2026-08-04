@@ -2,7 +2,6 @@ import 'dart:io';
 import 'package:isar/isar.dart';
 import 'package:path_provider/path_provider.dart';
 import '../engines/backup_engine.dart';
-import '../models/backup_model.dart';
 import '../repositories/local_storage_repository.dart';
 import '../../settings/models/app_settings.dart';
 import '../../settings/providers/settings_provider.dart';
@@ -88,7 +87,7 @@ class BackupRestoreService {
     final history = await isar.attendanceHistorys.where().findAll();
     final tasks = await isar.academicTasks.where().findAll();
     // Assuming settingsNotifier state represents current AppSettings
-    final currentSettings = settingsNotifier.state; 
+    final currentSettings = settingsNotifier.currentSettings; 
 
     // We use a LocalStorageRepository explicitly for the temp backup
     final tempEngine = BackupEngine(LocalStorageRepository());

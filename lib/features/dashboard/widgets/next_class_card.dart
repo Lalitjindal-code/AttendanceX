@@ -18,7 +18,7 @@ class NextClassCard extends StatefulWidget {
 
 class _NextClassCardState extends State<NextClassCard> {
   Timer? _timer;
-  String _countdownText = "";
+  String _countdownText = '';
 
   @override
   void initState() {
@@ -54,11 +54,11 @@ class _NextClassCardState extends State<NextClassCard> {
     final difference = lectureDate.difference(now);
 
     if (difference.isNegative) {
-      if (mounted) setState(() => _countdownText = "Started");
+      if (mounted) setState(() => _countdownText = 'Started');
     } else if (difference.inHours > 0) {
-      if (mounted) setState(() => _countdownText = "Starts in ${difference.inHours}h ${difference.inMinutes.remainder(60)}m");
+      if (mounted) setState(() => _countdownText = 'Starts in ${difference.inHours}h ${difference.inMinutes.remainder(60)}m');
     } else {
-      if (mounted) setState(() => _countdownText = "Starts in ${difference.inMinutes} minutes");
+      if (mounted) setState(() => _countdownText = 'Starts in ${difference.inMinutes} minutes');
     }
   }
 
@@ -71,7 +71,7 @@ class _NextClassCardState extends State<NextClassCard> {
         borderRadius: BorderRadius.circular(20),
         boxShadow: [
           BoxShadow(
-            color: Theme.of(context).colorScheme.primary.withOpacity(0.3),
+            color: Theme.of(context).colorScheme.primary.withValues(alpha: 0.3),
             blurRadius: 12,
             offset: const Offset(0, 4),
           ),
@@ -93,11 +93,11 @@ class _NextClassCardState extends State<NextClassCard> {
                     Container(
                       padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
                       decoration: BoxDecoration(
-                        color: Theme.of(context).colorScheme.onPrimary.withOpacity(0.2),
+                        color: Theme.of(context).colorScheme.onPrimary.withValues(alpha: 0.2),
                         borderRadius: BorderRadius.circular(12),
                       ),
                       child: Text(
-                        "Next Class",
+                        'Next Class',
                         style: Theme.of(context).textTheme.labelSmall?.copyWith(
                               color: Theme.of(context).colorScheme.onPrimary,
                               fontWeight: FontWeight.bold,
@@ -107,7 +107,7 @@ class _NextClassCardState extends State<NextClassCard> {
                     Text(
                       _countdownText,
                       style: Theme.of(context).textTheme.labelMedium?.copyWith(
-                            color: Theme.of(context).colorScheme.onPrimary.withOpacity(0.9),
+                            color: Theme.of(context).colorScheme.onPrimary.withValues(alpha: 0.9),
                             fontWeight: FontWeight.w600,
                           ),
                     ),
@@ -129,13 +129,13 @@ class _NextClassCardState extends State<NextClassCard> {
                     Icon(
                       Icons.schedule_rounded,
                       size: 16,
-                      color: Theme.of(context).colorScheme.onPrimary.withOpacity(0.8),
+                      color: Theme.of(context).colorScheme.onPrimary.withValues(alpha: 0.8),
                     ),
                     const SizedBox(width: 6),
                     Text(
-                      "${widget.lecture.schedule.startTime} - ${widget.lecture.schedule.endTime}",
+                      '${widget.lecture.schedule.startTime} - ${widget.lecture.schedule.endTime}',
                       style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                            color: Theme.of(context).colorScheme.onPrimary.withOpacity(0.9),
+                            color: Theme.of(context).colorScheme.onPrimary.withValues(alpha: 0.9),
                           ),
                     ),
                     if (widget.lecture.schedule.room != null && widget.lecture.schedule.room!.isNotEmpty) ...[
@@ -143,13 +143,13 @@ class _NextClassCardState extends State<NextClassCard> {
                       Icon(
                         Icons.room_rounded,
                         size: 16,
-                        color: Theme.of(context).colorScheme.onPrimary.withOpacity(0.8),
+                        color: Theme.of(context).colorScheme.onPrimary.withValues(alpha: 0.8),
                       ),
                       const SizedBox(width: 6),
                       Text(
                         widget.lecture.schedule.room!,
                         style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                              color: Theme.of(context).colorScheme.onPrimary.withOpacity(0.9),
+                              color: Theme.of(context).colorScheme.onPrimary.withValues(alpha: 0.9),
                             ),
                       ),
                     ],

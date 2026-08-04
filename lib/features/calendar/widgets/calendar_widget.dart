@@ -196,7 +196,7 @@ class _CalendarWidgetState extends ConsumerState<CalendarWidget> {
                   DropdownButtonFormField<Subject>(
                     key: const Key('subject_dropdown'),
                     decoration: const InputDecoration(labelText: 'Subject'),
-                    value: selectedSubject,
+                    initialValue: selectedSubject,
                     items: state.allSubjects.map((s) {
                       return DropdownMenuItem(
                         value: s,
@@ -209,7 +209,7 @@ class _CalendarWidgetState extends ConsumerState<CalendarWidget> {
                   DropdownButtonFormField<AttendanceStatus>(
                     key: const Key('status_dropdown'),
                     decoration: const InputDecoration(labelText: 'Status'),
-                    value: selectedStatus,
+                    initialValue: selectedStatus,
                     items: AttendanceStatus.values.map((status) {
                       return DropdownMenuItem(
                         value: status,

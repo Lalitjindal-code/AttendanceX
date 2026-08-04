@@ -21,6 +21,8 @@ class Settings extends _$Settings {
     return _loadSettings();
   }
 
+  AppSettings get currentSettings => state;
+
   AppSettings _loadSettings() {
     final themeStr = _prefs.getString(PreferencesService.keyThemeMode, defaultValue: 'system');
     final ThemeMode themeMode = switch (themeStr) {
