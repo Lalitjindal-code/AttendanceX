@@ -1,9 +1,9 @@
-import 'package:attendancex/core/enums/attendance_status.dart';
-import 'package:attendancex/database/collections/attendance_collection.dart';
-import 'package:attendancex/database/collections/schedule_collection.dart';
-import 'package:attendancex/database/collections/subject_collection.dart';
-import 'package:attendancex/features/notifications/engines/notification_engine.dart';
-import 'package:attendancex/features/settings/models/app_settings.dart';
+import 'package:attendify/core/enums/attendance_status.dart';
+import 'package:attendify/database/collections/attendance_collection.dart';
+import 'package:attendify/database/collections/schedule_collection.dart';
+import 'package:attendify/database/collections/subject_collection.dart';
+import 'package:attendify/features/notifications/engines/notification_engine.dart';
+import 'package:attendify/features/settings/models/app_settings.dart';
 import 'package:flutter_test/flutter_test.dart';
 
 void main() {

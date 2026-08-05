@@ -26,8 +26,11 @@ class TaskFilterChips extends ConsumerWidget {
             Padding(
               padding: const EdgeInsets.only(right: AppSpacing.sm),
               child: ActionChip(
-                avatar: const Icon(Icons.close, size: 16),
-                label: const Text('Clear'),
+                avatar: const Icon(Icons.close, size: 16, color: Colors.white),
+                label: const Text('Clear', style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold)),
+                backgroundColor: const Color(0xFF16162C),
+                side: BorderSide(color: Colors.white.withValues(alpha: 0.05)),
+                shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(24)),
                 onPressed: () {
                   ref.read(plannerFilterProvider.notifier).state =
                       const PlannerFilter();
@@ -40,13 +43,18 @@ class TaskFilterChips extends ConsumerWidget {
           Padding(
             padding: const EdgeInsets.only(right: AppSpacing.sm),
             child: FilterChip(
-              label: const Text('Show Completed'),
+              label: Text('Show Completed', style: TextStyle(color: !filter.hideCompleted ? Colors.white : Colors.white.withValues(alpha: 0.6), fontWeight: !filter.hideCompleted ? FontWeight.bold : FontWeight.w600)),
               selected: !filter.hideCompleted,
               onSelected: (selected) {
                 ref.read(plannerFilterProvider.notifier).state =
                     filter.copyWith(hideCompleted: !selected);
                 Haptics.selection();
               },
+              showCheckmark: false,
+              selectedColor: const Color(0xFF7E73FF),
+              backgroundColor: const Color(0xFF16162C),
+              side: !filter.hideCompleted ? BorderSide.none : BorderSide(color: Colors.white.withValues(alpha: 0.05)),
+              shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(24)),
             ),
           ),
 
@@ -55,13 +63,18 @@ class TaskFilterChips extends ConsumerWidget {
                 padding: const EdgeInsets.only(right: AppSpacing.sm),
                 child: FilterChip(
                   label: Text(priority.name.substring(0, 1).toUpperCase() +
-                      priority.name.substring(1)),
+                      priority.name.substring(1), style: TextStyle(color: filter.priority == priority ? Colors.white : Colors.white.withValues(alpha: 0.6), fontWeight: filter.priority == priority ? FontWeight.bold : FontWeight.w600)),
                   selected: filter.priority == priority,
                   onSelected: (selected) {
                     ref.read(plannerFilterProvider.notifier).state = filter
                         .copyWith(priority: priority, clearPriority: !selected);
                     Haptics.selection();
                   },
+                  showCheckmark: false,
+                  selectedColor: const Color(0xFF7E73FF),
+                  backgroundColor: const Color(0xFF16162C),
+                  side: filter.priority == priority ? BorderSide.none : BorderSide(color: Colors.white.withValues(alpha: 0.05)),
+                  shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(24)),
                 ),
               )),
 
@@ -70,7 +83,7 @@ class TaskFilterChips extends ConsumerWidget {
             ...subjectsAsync.valueOrNull!.map((subject) => Padding(
                   padding: const EdgeInsets.only(right: AppSpacing.sm),
                   child: FilterChip(
-                    label: Text(subject.name),
+                    label: Text(subject.name, style: TextStyle(color: filter.subjectId == subject.id ? Colors.white : Colors.white.withValues(alpha: 0.6), fontWeight: filter.subjectId == subject.id ? FontWeight.bold : FontWeight.w600)),
                     selected: filter.subjectId == subject.id,
                     onSelected: (selected) {
                       ref.read(plannerFilterProvider.notifier).state =
@@ -78,10 +91,15 @@ class TaskFilterChips extends ConsumerWidget {
                               subjectId: subject.id, clearSubject: !selected);
                       Haptics.selection();
                     },
+                    showCheckmark: false,
                     avatar: CircleAvatar(
-                      backgroundColor: Color(subject.colorValue),
+                      backgroundColor: filter.subjectId == subject.id ? Colors.white : Color(subject.colorValue),
                       radius: 8,
                     ),
+                    selectedColor: Color(subject.colorValue).withValues(alpha: 0.8),
+                    backgroundColor: const Color(0xFF16162C),
+                    side: filter.subjectId == subject.id ? BorderSide.none : BorderSide(color: Colors.white.withValues(alpha: 0.05)),
+                    shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(24)),
                   ),
                 )),
         ],

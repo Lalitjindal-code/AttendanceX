@@ -42,6 +42,7 @@ class PreferencesService {
   static const String keyIsAmoled = 'is_amoled';
   static const String keyLastBackupDate = 'last_backup_date';
   static const String keyIsOnboardingComplete = 'is_onboarding_complete';
+  static const String keyIsAppLockEnabled = 'is_app_lock_enabled';
 
   // ── Getters ───────────────────────────────────────────────────────────────────
   String getString(String key, {required String defaultValue}) {

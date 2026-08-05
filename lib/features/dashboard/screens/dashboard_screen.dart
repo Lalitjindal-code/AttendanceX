@@ -5,8 +5,8 @@ import 'package:collection/collection.dart';
 import '../../../navigation/app_routes.dart';
 import '../../../core/enums/attendance_status.dart';
 import '../../subjects/providers/subject_providers.dart';
-import 'package:attendancex/features/planner/widgets/task_card.dart';
-import 'package:attendancex/features/planner/screens/task_form_screen.dart';
+import 'package:attendify/features/planner/widgets/task_card.dart';
+import 'package:attendify/features/planner/screens/task_form_screen.dart';
 import '../providers/dashboard_provider.dart';
 import '../models/dashboard_state.dart';
 import '../widgets/lecture_card.dart';
@@ -14,6 +14,9 @@ import '../widgets/dashboard_header.dart';
 import '../widgets/hero_health_card.dart';
 import '../widgets/quick_stats_row.dart';
 import '../widgets/next_class_card.dart';
+import '../widgets/timeline_connector.dart';
+import '../../auth/providers/auth_provider.dart';
+import 'package:flutter_animate/flutter_animate.dart';
 import 'package:shimmer/shimmer.dart';
 import '../../../core/utils/haptics.dart';
 
@@ -27,24 +30,34 @@ class DashboardScreen extends ConsumerWidget {
     await Future.delayed(const Duration(milliseconds: 500));
   }
 
-  String _getGreeting() {
+  String _getGreeting(String? userName) {
     final hour = DateTime.now().hour;
+    String greeting = '';
     if (hour >= 5 && hour < 12) {
-      return 'Good morning';
+      greeting = 'Good morning';
     } else if (hour >= 12 && hour < 17) {
-      return 'Good afternoon';
+      greeting = 'Good afternoon';
     } else if (hour >= 17 && hour < 21) {
-      return 'Good evening';
+      greeting = 'Good evening';
     } else {
-      return 'Hey there';
+      greeting = 'Hey there';
     }
+    
+    if (userName != null && userName.isNotEmpty) {
+      final firstName = userName.split(' ')[0];
+      return '$greeting, $firstName';
+    }
+    return greeting;
   }
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final stateStream = ref.watch(dashboardNotifierProvider);
+    final user = ref.watch(authStateProvider).valueOrNull;
+    final userName = user?.displayName;
 
     return Scaffold(
+      backgroundColor: const Color(0xFF0B0B13),
       body: stateStream.when(
         data: (state) {
           if (state.isLoading) {
@@ -58,33 +71,48 @@ class DashboardScreen extends ConsumerWidget {
           final pendingLectures = state.pendingLectures;
           final markedLectures = state.markedLectures;
 
-          return RefreshIndicator(
-            onRefresh: () => _onRefresh(ref),
-            child: CustomScrollView(
+          final pendingCount = pendingLectures.length;
+          final taskCount = state.upcomingTasks.length;
+          String subtitle = '';
+          if (pendingCount > 0 && taskCount > 0) {
+            subtitle = 'You have $pendingCount classes & $taskCount deadlines today';
+          } else if (pendingCount > 0) {
+            subtitle = 'You have $pendingCount classes remaining today';
+          } else if (taskCount > 0) {
+            subtitle = 'You have $taskCount deadlines coming up';
+          } else {
+            subtitle = 'You are all caught up! 🌟';
+          }
+
+          return SafeArea(
+            child: RefreshIndicator(
+              onRefresh: () => _onRefresh(ref),
+              color: const Color(0xFF7E73FF),
+              backgroundColor: const Color(0xFF1D1743),
+              child: CustomScrollView(
               physics: const AlwaysScrollableScrollPhysics(),
               slivers: [
-                SliverAppBar.large(
-                  title: Text(_getGreeting()),
-                  actions: [
-                    IconButton(
-                      icon: const Icon(Icons.notifications_none_rounded),
-                      tooltip: 'Notifications',
-                      onPressed: () {},
-                    ),
-                  ],
-                ),
-                const SliverToBoxAdapter(
-                  child: DashboardHeader(),
+                SliverToBoxAdapter(
+                  child: DashboardHeader(
+                    subtitle: subtitle,
+                    userName: userName ?? 'User',
+                  ).animate().fade(duration: 400.ms).slideY(begin: 0.1, duration: 400.ms, curve: Curves.easeOutQuad),
                 ),
 
                 // Hero Attendance Health Card
                 SliverToBoxAdapter(
-                  child: HeroHealthCard(state: state),
+                  child: HeroHealthCard(state: state)
+                      .animate()
+                      .fade(delay: 100.ms, duration: 400.ms)
+                      .slideY(begin: 0.1, delay: 100.ms, duration: 400.ms, curve: Curves.easeOutQuad),
                 ),
 
                 // Quick Stats Row
                 SliverToBoxAdapter(
-                  child: QuickStatsRow(quickStats: state.quickStats),
+                  child: QuickStatsRow(quickStats: state.quickStats)
+                      .animate()
+                      .fade(delay: 200.ms, duration: 400.ms)
+                      .slideY(begin: 0.1, delay: 200.ms, duration: 400.ms, curve: Curves.easeOutQuad),
                 ),
 
                 // Upcoming Deadlines Section
@@ -173,50 +201,115 @@ class DashboardScreen extends ConsumerWidget {
                 if (pendingLectures.length > 1)
                   SliverToBoxAdapter(
                     child: Column(
-                      children: pendingLectures.skip(1).map((lecture) {
-                        return LectureCard(
-                          key: ValueKey('pending_${lecture.schedule.id}'),
-                          model: lecture,
-                          onMarkAttendance: (status) {
-                            ref
-                                .read(dashboardNotifierProvider.notifier)
-                                .markAttendance(
-                                  lecture.schedule.id,
-                                  lecture.subject.id,
-                                  status,
-                                );
-                          },
+                      children: pendingLectures.skip(1).mapIndexed((index, lecture) {
+                        return TimelineConnector(
+                          isLast: index == pendingLectures.length - 2 && markedLectures.isEmpty,
+                          child: LectureCard(
+                            key: ValueKey('pending_${lecture.schedule.id}'),
+                            model: lecture,
+                            onMarkAttendance: (status) {
+                              ref
+                                  .read(dashboardNotifierProvider.notifier)
+                                  .markAttendance(
+                                    lecture.schedule.id,
+                                    lecture.subject.id,
+                                    status,
+                                  );
+                            },
+                          ),
                         );
                       }).toList(),
-                    ),
+                    ).animate().fade(delay: 400.ms).slideY(begin: 0.1),
                   ),
 
                 if (pendingLectures.isEmpty && markedLectures.isEmpty)
-                  const SliverToBoxAdapter(
+                  SliverToBoxAdapter(
                     child: Padding(
-                      padding: EdgeInsets.all(32.0),
+                      padding: const EdgeInsets.all(48.0),
                       child: Center(
-                        child: Text(
-                          'No lectures scheduled for today.',
-                          style: TextStyle(fontSize: 16, color: Colors.grey),
+                        child: Column(
+                          mainAxisSize: MainAxisSize.min,
+                          children: [
+                            Icon(Icons.event_busy_rounded, size: 64, color: Theme.of(context).colorScheme.surfaceContainerHighest),
+                            const SizedBox(height: 16),
+                            const Text(
+                              'No lectures scheduled for today.',
+                              style: TextStyle(fontSize: 16, color: Colors.grey),
+                            ),
+                          ],
                         ),
                       ),
-                    ),
+                    ).animate().fade(delay: 300.ms).scale(begin: const Offset(0.9, 0.9)),
                   )
                 else if (pendingLectures.isEmpty)
-                  const SliverToBoxAdapter(
+                  SliverToBoxAdapter(
                     child: Padding(
-                      padding: EdgeInsets.all(32.0),
-                      child: Center(
-                        child: Text(
-                          'All caught up for today! 🎉',
-                          style: TextStyle(
-                              fontSize: 16,
-                              color: Colors.green,
-                              fontWeight: FontWeight.bold),
+                      padding: const EdgeInsets.symmetric(horizontal: 24.0, vertical: 8.0),
+                      child: Container(
+                        padding: const EdgeInsets.all(24),
+                        decoration: BoxDecoration(
+                          color: const Color(0xFF16162C),
+                          borderRadius: BorderRadius.circular(20),
+                          border: Border.all(
+                            color: Colors.white.withValues(alpha: 0.05),
+                            width: 1,
+                          ),
+                        ),
+                        child: Row(
+                          children: [
+                            Container(
+                              width: 80,
+                              height: 80,
+                              decoration: BoxDecoration(
+                                shape: BoxShape.circle,
+                                gradient: RadialGradient(
+                                  colors: [
+                                    Colors.greenAccent.withValues(alpha: 0.2),
+                                    Colors.transparent,
+                                  ],
+                                ),
+                              ),
+                              child: Center(
+                                child: Container(
+                                  width: 48,
+                                  height: 48,
+                                  decoration: const BoxDecoration(
+                                    color: Colors.greenAccent,
+                                    shape: BoxShape.circle,
+                                  ),
+                                  child: const Icon(Icons.check_rounded, color: Colors.white, size: 32),
+                                ),
+                              ),
+                            ),
+                            const SizedBox(width: 16),
+                            Expanded(
+                              child: Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
+                                  const Text(
+                                    'All caught up for today!',
+                                    style: TextStyle(
+                                      fontSize: 16,
+                                      fontWeight: FontWeight.bold,
+                                      color: Colors.greenAccent,
+                                    ),
+                                  ),
+                                  const SizedBox(height: 4),
+                                  Text(
+                                    'Great job! You have no pending classes.',
+                                    style: TextStyle(
+                                      fontSize: 12,
+                                      color: Colors.white.withValues(alpha: 0.6),
+                                    ),
+                                  ),
+                                ],
+                              ),
+                            ),
+                            const Text('🎉', style: TextStyle(fontSize: 32)),
+                          ],
                         ),
                       ),
-                    ),
+                    ).animate().fade(delay: 300.ms).scale(begin: const Offset(0.9, 0.9)),
                   ),
 
                 // Marked Classes
@@ -236,27 +329,32 @@ class DashboardScreen extends ConsumerWidget {
                   ),
                   SliverToBoxAdapter(
                     child: Column(
-                      children: markedLectures.map((lecture) {
-                        return LectureCard(
-                          key: ValueKey('marked_${lecture.schedule.id}'),
-                          model: lecture,
-                          onMarkAttendance: (status) {
-                            ref
-                                .read(dashboardNotifierProvider.notifier)
-                                .markAttendance(
-                                  lecture.schedule.id,
-                                  lecture.subject.id,
-                                  status,
-                                );
-                          },
+                      children: markedLectures.mapIndexed((index, lecture) {
+                        return TimelineConnector(
+                          isLast: index == markedLectures.length - 1,
+                          isPast: true,
+                          child: LectureCard(
+                            key: ValueKey('marked_${lecture.schedule.id}'),
+                            model: lecture,
+                            onMarkAttendance: (status) {
+                              ref
+                                  .read(dashboardNotifierProvider.notifier)
+                                  .markAttendance(
+                                    lecture.schedule.id,
+                                    lecture.subject.id,
+                                    status,
+                                  );
+                            },
+                          ),
                         );
                       }).toList(),
-                    ),
+                    ).animate().fade(delay: 500.ms).slideY(begin: 0.1),
                   ),
                 ],
                 const SliverToBoxAdapter(child: SizedBox(height: 32)),
               ],
             ),
+          ),
           );
         },
         loading: () => _buildSkeleton(context),

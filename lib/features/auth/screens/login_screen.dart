@@ -1,11 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
-import 'package:attendancex/core/theme/app_theme.dart';
-import 'package:attendancex/core/constants/app_spacing.dart';
-import 'package:attendancex/core/constants/app_radius.dart';
-import 'package:attendancex/features/auth/providers/auth_provider.dart';
-import 'package:attendancex/features/sync/services/firebase_sync_service.dart';
+import 'package:attendify/core/theme/app_theme.dart';
+import 'package:attendify/core/constants/app_spacing.dart';
+import 'package:attendify/core/constants/app_radius.dart';
+import 'package:attendify/features/auth/providers/auth_provider.dart';
+import 'package:attendify/features/sync/services/firebase_sync_service.dart';
+import 'package:attendify/features/settings/providers/settings_provider.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 
 class LoginScreen extends ConsumerStatefulWidget {
@@ -40,6 +41,9 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
             _passwordController.text.trim(),
           );
 
+      // Existing user logging in with email/password, so skip onboarding
+      await ref.read(settingsProvider.notifier).setOnboardingStatus(true);
+
       // Wait for the auth state to settle, then restore data
       await ref.read(firebaseSyncServiceProvider).restoreData();
 
@@ -70,6 +74,14 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
     try {
       final credential = await ref.read(authProvider).signInWithGoogle();
       if (credential != null) {
+        if (credential.additionalUserInfo?.isNewUser != true) {
+          // Existing user logging in with Google, skip onboarding
+          await ref.read(settingsProvider.notifier).setOnboardingStatus(true);
+        } else {
+          // It's technically a new user who clicked login with Google.
+          // Let them go through onboarding.
+          await ref.read(settingsProvider.notifier).setOnboardingStatus(false);
+        }
         // Wait for the auth state to settle, then restore data
         await ref.read(firebaseSyncServiceProvider).restoreData();
         // Navigation handled by auth state listener
@@ -111,7 +123,7 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
                 ),
                 const SizedBox(height: AppSpacing.md),
                 Text(
-                  'Welcome to AttendanceX',
+                  'Welcome to Attendify',
                   style: theme.textTheme.headlineMedium?.copyWith(
                     fontWeight: FontWeight.bold,
                   ),
@@ -188,9 +200,23 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
                 const SizedBox(height: AppSpacing.md),
                 OutlinedButton.icon(
                   onPressed: _isLoading ? null : _signInWithGoogle,
-                  icon: Image.network(
-                    'https://upload.wikimedia.org/wikipedia/commons/c/c1/Google_%22G%22_logo.svg',
+                  icon: Container(
+                    width: 20,
                     height: 20,
+                    decoration: const BoxDecoration(
+                      shape: BoxShape.circle,
+                      color: Colors.white,
+                    ),
+                    child: const Center(
+                      child: Text(
+                        'G',
+                        style: TextStyle(
+                          fontSize: 13,
+                          fontWeight: FontWeight.bold,
+                          color: Color(0xFF4285F4),
+                        ),
+                      ),
+                    ),
                   ),
                   label: const Text('Continue with Google'),
                   style: OutlinedButton.styleFrom(

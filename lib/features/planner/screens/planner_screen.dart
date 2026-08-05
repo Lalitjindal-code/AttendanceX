@@ -66,18 +66,24 @@ class _PlannerScreenState extends ConsumerState<PlannerScreen> {
     final subjectsAsync = ref.watch(subjectsProvider);
 
     return Scaffold(
+      backgroundColor: const Color(0xFF0B0B13),
       body: RefreshIndicator(
+        color: const Color(0xFF7E73FF),
+        backgroundColor: const Color(0xFF16162C),
         onRefresh: _onRefresh,
         child: CustomScrollView(
           controller: _scrollController,
           slivers: [
             SliverAppBar.large(
-              title: const Text('Planner'),
+              title: const Text('Planner', style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold)),
               floating: true,
               pinned: true,
+              backgroundColor: const Color(0xFF0B0B13),
+              surfaceTintColor: Colors.transparent,
+              iconTheme: const IconThemeData(color: Colors.white),
               actions: [
                 IconButton(
-                  icon: const Icon(Icons.add),
+                  icon: const Icon(Icons.add, color: Colors.white),
                   tooltip: 'Add Task',
                   onPressed: () => showTaskFormSheet(context),
                 ),
@@ -99,38 +105,66 @@ class _PlannerScreenState extends ConsumerState<PlannerScreen> {
                     child: Center(
                       child: Padding(
                         padding: const EdgeInsets.all(AppSpacing.xl),
-                        child: Column(
-                          mainAxisAlignment: MainAxisAlignment.center,
-                          children: [
-                            Icon(
-                              Icons.assignment_turned_in_outlined,
-                              size: 72,
-                              color:
-                                  Theme.of(context).colorScheme.outlineVariant,
+                        child: Container(
+                          padding: const EdgeInsets.all(32),
+                          decoration: BoxDecoration(
+                            color: const Color(0xFF16162C),
+                            borderRadius: BorderRadius.circular(24),
+                            border: Border.all(
+                              color: Colors.white.withValues(alpha: 0.05),
                             ),
-                            const SizedBox(height: AppSpacing.lg),
-                            Text(
-                              ref.watch(plannerFilterProvider).isEmpty
-                                  ? "All caught up! Add a deadline when you're ready."
-                                  : 'No tasks match your filters.',
-                              textAlign: TextAlign.center,
-                              style: Theme.of(context)
-                                  .textTheme
-                                  .bodyLarge
-                                  ?.copyWith(
-                                    color: Theme.of(context)
-                                        .colorScheme
-                                        .onSurfaceVariant,
-                                  ),
-                            ),
-                            const SizedBox(height: AppSpacing.xl),
-                            if (ref.watch(plannerFilterProvider).isEmpty)
-                              FilledButton.icon(
-                                onPressed: () => showTaskFormSheet(context),
-                                icon: const Icon(Icons.add),
-                                label: const Text('Add Task'),
+                          ),
+                          child: Column(
+                            mainAxisSize: MainAxisSize.min,
+                            children: [
+                              Container(
+                                padding: const EdgeInsets.all(20),
+                                decoration: BoxDecoration(
+                                  color: const Color(0xFF7E73FF).withValues(alpha: 0.2),
+                                  shape: BoxShape.circle,
+                                ),
+                                child: const Icon(
+                                  Icons.assignment_turned_in_rounded,
+                                  size: 48,
+                                  color: Color(0xFF7E73FF),
+                                ),
                               ),
-                          ],
+                              const SizedBox(height: AppSpacing.lg),
+                              Text(
+                                ref.watch(plannerFilterProvider).isEmpty
+                                    ? "All caught up!"
+                                    : 'No tasks found.',
+                                textAlign: TextAlign.center,
+                                style: Theme.of(context).textTheme.titleLarge?.copyWith(
+                                      color: Colors.white,
+                                      fontWeight: FontWeight.bold,
+                                    ),
+                              ),
+                              const SizedBox(height: AppSpacing.sm),
+                              Text(
+                                ref.watch(plannerFilterProvider).isEmpty
+                                    ? "Add a deadline when you're ready."
+                                    : 'No tasks match your filters.',
+                                textAlign: TextAlign.center,
+                                style: Theme.of(context).textTheme.bodyMedium?.copyWith(
+                                      color: Colors.white.withValues(alpha: 0.6),
+                                    ),
+                              ),
+                              const SizedBox(height: AppSpacing.xl),
+                              if (ref.watch(plannerFilterProvider).isEmpty)
+                                FilledButton.icon(
+                                  onPressed: () => showTaskFormSheet(context),
+                                  style: FilledButton.styleFrom(
+                                    backgroundColor: const Color(0xFF7E73FF),
+                                    foregroundColor: Colors.white,
+                                    padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 12),
+                                    shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+                                  ),
+                                  icon: const Icon(Icons.add_rounded),
+                                  label: const Text('Add Task'),
+                                ),
+                            ],
+                          ),
                         ),
                       ),
                     ),
@@ -207,12 +241,31 @@ class _PlannerScreenState extends ConsumerState<PlannerScreen> {
           ],
         ),
       ),
-      floatingActionButton: FloatingActionButton.extended(
-        onPressed: () => showTaskFormSheet(context),
-        icon: const Icon(Icons.add),
-        label: const Text('Add Task'),
-        tooltip: 'Add Task',
-        isExtended: _isFabExtended,
+      floatingActionButton: Container(
+        decoration: BoxDecoration(
+          gradient: const LinearGradient(
+            colors: [Color(0xFF8E2DE2), Color(0xFF4A00E0)],
+            begin: Alignment.topLeft,
+            end: Alignment.bottomRight,
+          ),
+          borderRadius: BorderRadius.circular(16),
+          boxShadow: [
+            BoxShadow(
+              color: const Color(0xFF8E2DE2).withValues(alpha: 0.4),
+              blurRadius: 12,
+              offset: const Offset(0, 4),
+            ),
+          ],
+        ),
+        child: FloatingActionButton.extended(
+          backgroundColor: Colors.transparent,
+          elevation: 0,
+          highlightElevation: 0,
+          onPressed: () => showTaskFormSheet(context),
+          icon: const Icon(Icons.add, color: Colors.white),
+          label: const Text('Add Task', style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold)),
+          isExtended: _isFabExtended,
+        ),
       ),
     );
   }

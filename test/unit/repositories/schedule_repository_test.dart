@@ -1,5 +1,5 @@
-import 'package:attendancex/database/collections/schedule_collection.dart';
-import 'package:attendancex/database/repositories/schedule_repository.dart';
+import 'package:attendify/database/collections/schedule_collection.dart';
+import 'package:attendify/database/repositories/schedule_repository.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:isar/isar.dart';
 

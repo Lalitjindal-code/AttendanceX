@@ -35,6 +35,7 @@ class BunkHeatmapChart extends StatelessWidget {
             'Bunk Heatmap (Last 4 Weeks)',
             style: theme.textTheme.titleLarge?.copyWith(
               fontWeight: FontWeight.bold,
+              color: Colors.white,
             ),
           ),
           const SizedBox(height: AppSpacing.md),
@@ -101,7 +102,7 @@ class BunkHeatmapChart extends StatelessWidget {
       child: Text(
         text,
         style: theme.textTheme.labelSmall?.copyWith(
-          color: theme.colorScheme.onSurfaceVariant,
+          color: Colors.white.withValues(alpha: 0.6),
         ),
       ),
     );
@@ -111,7 +112,7 @@ class BunkHeatmapChart extends StatelessWidget {
     return Row(
       mainAxisAlignment: MainAxisAlignment.end,
       children: [
-        Text('Less', style: theme.textTheme.labelSmall),
+        Text('Less', style: theme.textTheme.labelSmall?.copyWith(color: Colors.white.withValues(alpha: 0.6))),
         const SizedBox(width: 4),
         _buildLegendBox(0, theme),
         const SizedBox(width: 4),
@@ -121,7 +122,7 @@ class BunkHeatmapChart extends StatelessWidget {
         const SizedBox(width: 4),
         _buildLegendBox(5, theme),
         const SizedBox(width: 4),
-        Text('More', style: theme.textTheme.labelSmall),
+        Text('More', style: theme.textTheme.labelSmall?.copyWith(color: Colors.white.withValues(alpha: 0.6))),
       ],
     );
   }
@@ -134,30 +135,20 @@ class BunkHeatmapChart extends StatelessWidget {
         color: _getColor(count, theme),
         borderRadius: BorderRadius.circular(2),
         border: Border.all(
-          color: theme.colorScheme.outlineVariant.withValues(alpha: 0.3),
+          color: Colors.white.withValues(alpha: 0.1),
         ),
       ),
     );
   }
 
-  Widget _buildDayLabel(String text, ThemeData theme) {
-    return SizedBox(
-      height: 24, // Matches the rough height of a grid item + spacing
-      child: Center(
-        child: Text(
-          text,
-          style: theme.textTheme.labelSmall?.copyWith(
-            color: theme.colorScheme.onSurfaceVariant,
-          ),
-        ),
-      ),
-    );
-  }
+
 
   Color _getColor(int missedClasses, ThemeData theme) {
-    if (missedClasses == 0)
-      return theme.colorScheme.surfaceContainerHighest.withValues(alpha: 0.3);
-    if (missedClasses <= 1) return Colors.orange.shade300;
+    if (missedClasses == 0) {
+      return Colors.white.withValues(alpha: 0.05);
+    }
+    if (missedClasses <= 1) return const Color(0xFFFFB74D); // orange 300
+
     if (missedClasses <= 2) return Colors.deepOrange.shade400;
     if (missedClasses <= 4) return Colors.red.shade600;
     return Colors.red.shade900;

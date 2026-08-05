@@ -3,7 +3,7 @@ import 'subject_statistics.dart';
 import 'attendance_forecast.dart';
 import 'planner_metrics.dart';
 import 'day_of_week_trend.dart';
-import 'package:attendancex/features/dashboard/models/attendance_summary.dart';
+import 'package:attendify/features/dashboard/models/attendance_summary.dart';
 
 class AnalyticsState {
   final bool isLoading;

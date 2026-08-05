@@ -1,5 +1,5 @@
-import 'package:attendancex/engines/attendance_engine.dart';
-import 'package:attendancex/features/dashboard/models/smart_suggestion.dart';
+import 'package:attendify/engines/attendance_engine.dart';
+import 'package:attendify/features/dashboard/models/smart_suggestion.dart';
 import 'package:flutter_test/flutter_test.dart';
 
 void main() {

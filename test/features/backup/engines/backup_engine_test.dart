@@ -1,9 +1,9 @@
 import 'dart:io';
 import 'package:flutter_test/flutter_test.dart';
-import 'package:attendancex/features/backup/engines/backup_engine.dart';
-import 'package:attendancex/features/backup/repositories/local_storage_repository.dart';
-import 'package:attendancex/features/settings/models/app_settings.dart';
-import 'package:attendancex/database/collections/subject_collection.dart';
+import 'package:attendify/features/backup/engines/backup_engine.dart';
+import 'package:attendify/features/backup/repositories/local_storage_repository.dart';
+import 'package:attendify/features/settings/models/app_settings.dart';
+import 'package:attendify/database/collections/subject_collection.dart';
 
 void main() {
   group('BackupEngine Tests', () {

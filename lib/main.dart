@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:firebase_core/firebase_core.dart';
 
@@ -11,9 +10,10 @@ import 'features/notifications/providers/notification_provider.dart';
 import 'navigation/app_router.dart';
 import 'services/preferences_service.dart';
 import 'services/notification_service.dart';
-import 'services/notification_service.dart';
 import 'firebase_options.dart';
 import 'features/sync/services/firebase_sync_service.dart';
+import 'features/security/widgets/app_lock_wrapper.dart';
+import 'services/widget_service.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -32,15 +32,19 @@ void main() async {
   // 3. Initialize Notifications singleton
   await NotificationService.instance.init();
 
+  // 4. Initialize + refresh home screen widget
+  await WidgetService.instance.initialize();
+  WidgetService.instance.updateWidget(); // fire-and-forget
+
   runApp(
     const ProviderScope(
-      child: AttendanceXApp(),
+      child: AttendifyApp(),
     ),
   );
 }
 
-class AttendanceXApp extends ConsumerWidget {
-  const AttendanceXApp({super.key});
+class AttendifyApp extends ConsumerWidget {
+  const AttendifyApp({super.key});
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
@@ -59,6 +63,9 @@ class AttendanceXApp extends ConsumerWidget {
       theme: AppTheme.light,
       darkTheme: settings.isAmoled ? AppTheme.amoled : AppTheme.dark,
       routerConfig: router,
+      builder: (context, child) {
+        return AppLockWrapper(child: child!);
+      },
     );
   }
 }

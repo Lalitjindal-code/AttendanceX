@@ -1,12 +1,12 @@
 import 'dart:convert';
 
-import 'package:attendancex/core/enums/attendance_status.dart';
-import 'package:attendancex/core/enums/day_of_week.dart';
-import 'package:attendancex/database/collections/attendance_collection.dart';
-import 'package:attendancex/database/collections/schedule_collection.dart';
-import 'package:attendancex/database/collections/subject_collection.dart';
-import 'package:attendancex/features/notifications/models/scheduled_notification.dart';
-import 'package:attendancex/features/settings/models/app_settings.dart';
+import 'package:attendify/core/enums/attendance_status.dart';
+import 'package:attendify/core/enums/day_of_week.dart';
+import 'package:attendify/database/collections/attendance_collection.dart';
+import 'package:attendify/database/collections/schedule_collection.dart';
+import 'package:attendify/database/collections/subject_collection.dart';
+import 'package:attendify/features/notifications/models/scheduled_notification.dart';
+import 'package:attendify/features/settings/models/app_settings.dart';
 
 class NotificationEngine {
   static const int _typeLecture = 1;

@@ -1,9 +1,9 @@
 import 'package:flutter_test/flutter_test.dart';
-import 'package:attendancex/core/enums/task_priority.dart';
-import 'package:attendancex/core/enums/task_status.dart';
-import 'package:attendancex/core/enums/task_type.dart';
-import 'package:attendancex/database/collections/academic_task_collection.dart';
-import 'package:attendancex/engines/planner_engine.dart';
+import 'package:attendify/core/enums/task_priority.dart';
+import 'package:attendify/core/enums/task_status.dart';
+import 'package:attendify/core/enums/task_type.dart';
+import 'package:attendify/database/collections/academic_task_collection.dart';
+import 'package:attendify/engines/planner_engine.dart';
 
 void main() {
   group('PlannerEngine Tests', () {

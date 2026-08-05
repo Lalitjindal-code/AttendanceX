@@ -41,7 +41,6 @@ class AtdLineChart extends StatelessWidget {
         'to $lastMonthStr at ${(lastTrend.percentage * 100).toStringAsFixed(1)}%.';
 
     final theme = Theme.of(context);
-    final isDark = theme.brightness == Brightness.dark;
 
     return Semantics(
       label: semanticLabel,
@@ -59,7 +58,7 @@ class AtdLineChart extends StatelessWidget {
               drawVerticalLine: false,
               horizontalInterval: 25,
               getDrawingHorizontalLine: (value) => FlLine(
-                color: theme.colorScheme.outlineVariant.withValues(alpha: 0.5),
+                color: Colors.white.withValues(alpha: 0.1),
                 strokeWidth: 1,
                 dashArray: [5, 5],
               ),
@@ -86,7 +85,7 @@ class AtdLineChart extends StatelessWidget {
                       child: Text(
                         DateFormat('MMM').format(date),
                         style: theme.textTheme.labelSmall?.copyWith(
-                          color: theme.colorScheme.onSurfaceVariant,
+                          color: Colors.white.withValues(alpha: 0.6),
                         ),
                       ),
                     );
@@ -102,7 +101,7 @@ class AtdLineChart extends StatelessWidget {
                     return Text(
                       '${value.toInt()}%',
                       style: theme.textTheme.labelSmall?.copyWith(
-                        color: theme.colorScheme.onSurfaceVariant,
+                        color: Colors.white.withValues(alpha: 0.6),
                       ),
                     );
                   },
@@ -112,8 +111,7 @@ class AtdLineChart extends StatelessWidget {
             ),
             lineTouchData: LineTouchData(
               touchTooltipData: LineTouchTooltipData(
-                getTooltipColor: (touchedSpot) =>
-                    theme.colorScheme.surfaceContainerHighest,
+                getTooltipColor: (touchedSpot) => const Color(0xFF16162C),
                 getTooltipItems: (touchedSpots) {
                   return touchedSpots.map((spot) {
                     final index = spot.x.toInt();
@@ -124,12 +122,12 @@ class AtdLineChart extends StatelessWidget {
                     return LineTooltipItem(
                       '${spot.y.toStringAsFixed(1)}%\n',
                       theme.textTheme.labelLarge!
-                          .copyWith(fontWeight: FontWeight.bold),
+                          .copyWith(fontWeight: FontWeight.bold, color: Colors.white),
                       children: [
                         TextSpan(
                           text: dateStr,
                           style: theme.textTheme.labelSmall?.copyWith(
-                            color: theme.colorScheme.onSurfaceVariant,
+                            color: Colors.white.withValues(alpha: 0.6),
                           ),
                         ),
                       ],
@@ -148,17 +146,21 @@ class AtdLineChart extends StatelessWidget {
                 spots: spots,
                 isCurved: true,
                 curveSmoothness: 0.35,
-                color: theme.colorScheme.primary,
+                color: const Color(0xFF7E73FF),
                 barWidth: 4,
                 isStrokeCapRound: true,
+                shadow: const Shadow(
+                  color: Color(0xFF7E73FF),
+                  blurRadius: 8,
+                ),
                 dotData: FlDotData(
                   show: true,
                   getDotPainter: (spot, percent, barData, index) {
                     return FlDotCirclePainter(
                       radius: 4,
-                      color: theme.colorScheme.surface,
+                      color: const Color(0xFF0B0B13),
                       strokeWidth: 2,
-                      strokeColor: theme.colorScheme.primary,
+                      strokeColor: const Color(0xFF7E73FF),
                     );
                   },
                 ),
@@ -168,9 +170,8 @@ class AtdLineChart extends StatelessWidget {
                     begin: Alignment.topCenter,
                     end: Alignment.bottomCenter,
                     colors: [
-                      theme.colorScheme.primary
-                          .withValues(alpha: isDark ? 0.3 : 0.2),
-                      theme.colorScheme.primary.withValues(alpha: 0.0),
+                      const Color(0xFF7E73FF).withValues(alpha: 0.3),
+                      const Color(0xFF7E73FF).withValues(alpha: 0.0),
                     ],
                   ),
                 ),

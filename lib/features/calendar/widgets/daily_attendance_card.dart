@@ -43,106 +43,123 @@ class DailyAttendanceCard extends ConsumerWidget {
         statusColor = colorScheme.outlineVariant;
     }
 
-    return Card(
+    return Container(
       margin: const EdgeInsets.only(bottom: AppSpacing.sm),
-      elevation: 0,
-      color: item.status != null
-          ? statusColor.withValues(alpha: 0.05)
-          : colorScheme.surfaceContainerHighest.withValues(alpha: 0.3),
-      shape: RoundedRectangleBorder(
+      decoration: BoxDecoration(
+        color: const Color(0xFF16162C),
         borderRadius: BorderRadius.circular(16),
-        side: BorderSide(
+        border: Border.all(
           color: item.status != null
               ? statusColor.withValues(alpha: 0.3)
-              : colorScheme.outlineVariant,
+              : Colors.white.withValues(alpha: 0.05),
         ),
+        boxShadow: [
+          BoxShadow(
+            color: Colors.black.withValues(alpha: 0.2),
+            blurRadius: 10,
+            offset: const Offset(0, 4),
+          ),
+        ],
       ),
       clipBehavior: Clip.antiAlias,
-      child: InkWell(
-        onTap: () => _showEditSheet(context, ref),
-        child: IntrinsicHeight(
-          child: Row(
-            crossAxisAlignment: CrossAxisAlignment.stretch,
-            children: [
-              // Color indicator bar on the left
-              Container(
-                width: 6,
-                color: subjectColor,
-              ),
-              Expanded(
-                child: Padding(
-                  padding: const EdgeInsets.all(AppSpacing.md),
-                  child: Row(
-                    children: [
-                      Expanded(
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            Text(
-                              item.subject.name,
-                              style: theme.textTheme.titleMedium?.copyWith(
-                                fontWeight: FontWeight.bold,
-                              ),
-                            ),
-                            const SizedBox(height: AppSpacing.xs),
-                            if (item.schedule != null)
-                              Row(
-                                children: [
-                                  Icon(Icons.access_time,
-                                      size: 14,
-                                      color: colorScheme.onSurfaceVariant),
-                                  const SizedBox(width: 4),
-                                  Text(
-                                    '${item.schedule!.startTime} - ${item.schedule!.endTime}',
-                                    style: theme.textTheme.bodySmall?.copyWith(
-                                      color: colorScheme.onSurfaceVariant,
-                                    ),
-                                  ),
-                                ],
-                              )
-                            else
-                              Row(
-                                children: [
-                                  Icon(Icons.info_outline,
-                                      size: 14,
-                                      color: colorScheme.onSurfaceVariant),
-                                  const SizedBox(width: 4),
-                                  Text(
-                                    'Manual Attendance',
-                                    style: theme.textTheme.bodySmall?.copyWith(
-                                      color: colorScheme.onSurfaceVariant,
-                                      fontStyle: FontStyle.italic,
-                                    ),
-                                  ),
-                                ],
-                              ),
-                          ],
-                        ),
-                      ),
-                      Container(
-                        padding: const EdgeInsets.symmetric(
-                            horizontal: 10, vertical: 6),
-                        decoration: BoxDecoration(
-                          color: item.status != null
-                              ? statusColor.withValues(alpha: 0.15)
-                              : colorScheme.surfaceContainerHighest,
-                          borderRadius: BorderRadius.circular(20),
-                        ),
-                        child: Text(
-                          item.status?.name.toUpperCase() ?? 'PENDING',
-                          style: theme.textTheme.labelMedium?.copyWith(
-                            color: item.status != null
-                                ? statusColor
-                                : colorScheme.onSurfaceVariant,
-                            fontWeight: FontWeight.bold,
-                          ),
-                        ),
+      child: Material(
+        color: Colors.transparent,
+        child: InkWell(
+          onTap: () => _showEditSheet(context, ref),
+          borderRadius: BorderRadius.circular(16),
+          child: IntrinsicHeight(
+            child: Row(
+              crossAxisAlignment: CrossAxisAlignment.stretch,
+              children: [
+                // Glowing Color indicator bar on the left
+                Container(
+                  width: 6,
+                  decoration: BoxDecoration(
+                    color: subjectColor,
+                    boxShadow: [
+                      BoxShadow(
+                        color: subjectColor.withValues(alpha: 0.6),
+                        blurRadius: 6,
                       ),
                     ],
                   ),
                 ),
-              ),
-            ],
+                Expanded(
+                  child: Padding(
+                    padding: const EdgeInsets.all(AppSpacing.md),
+                    child: Row(
+                      children: [
+                        Expanded(
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Text(
+                                item.subject.name,
+                                style: theme.textTheme.titleMedium?.copyWith(
+                                  fontWeight: FontWeight.bold,
+                                  color: Colors.white,
+                                ),
+                              ),
+                              const SizedBox(height: AppSpacing.xs),
+                              if (item.schedule != null)
+                                Row(
+                                  children: [
+                                    Icon(Icons.access_time,
+                                        size: 14,
+                                        color: Colors.white.withValues(alpha: 0.5)),
+                                    const SizedBox(width: 4),
+                                    Text(
+                                      '${item.schedule!.startTime} - ${item.schedule!.endTime}',
+                                      style: theme.textTheme.bodySmall?.copyWith(
+                                        color: Colors.white.withValues(alpha: 0.6),
+                                      ),
+                                    ),
+                                  ],
+                                )
+                              else
+                                Row(
+                                  children: [
+                                    Icon(Icons.info_outline,
+                                        size: 14,
+                                        color: Colors.white.withValues(alpha: 0.5)),
+                                    const SizedBox(width: 4),
+                                    Text(
+                                      'Manual Attendance',
+                                      style: theme.textTheme.bodySmall?.copyWith(
+                                        color: Colors.white.withValues(alpha: 0.6),
+                                        fontStyle: FontStyle.italic,
+                                      ),
+                                    ),
+                                  ],
+                                ),
+                            ],
+                          ),
+                        ),
+                        Container(
+                          padding: const EdgeInsets.symmetric(
+                              horizontal: 10, vertical: 6),
+                          decoration: BoxDecoration(
+                            color: item.status != null
+                                ? statusColor.withValues(alpha: 0.15)
+                                : Colors.white.withValues(alpha: 0.05),
+                            borderRadius: BorderRadius.circular(20),
+                          ),
+                          child: Text(
+                            item.status?.name.toUpperCase() ?? 'PENDING',
+                            style: theme.textTheme.labelMedium?.copyWith(
+                              color: item.status != null
+                                  ? statusColor
+                                  : Colors.white.withValues(alpha: 0.6),
+                              fontWeight: FontWeight.bold,
+                            ),
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                ),
+              ],
+            ),
           ),
         ),
       ),

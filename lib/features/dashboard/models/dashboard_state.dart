@@ -1,7 +1,7 @@
 import '../../../database/collections/attendance_collection.dart';
 import '../../../database/collections/schedule_collection.dart';
 import '../../../database/collections/subject_collection.dart';
-import 'package:attendancex/database/collections/academic_task_collection.dart';
+import 'package:attendify/database/collections/academic_task_collection.dart';
 import 'attendance_summary.dart';
 import 'smart_suggestion.dart';
 

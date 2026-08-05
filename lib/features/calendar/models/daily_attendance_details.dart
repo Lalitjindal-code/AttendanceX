@@ -1,4 +1,4 @@
-import 'package:attendancex/features/calendar/models/daily_attendance_item.dart';
+import 'package:attendify/features/calendar/models/daily_attendance_item.dart';
 
 class DailyAttendanceDetails {
   final DateTime date;

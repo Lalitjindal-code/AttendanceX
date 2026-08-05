@@ -13,6 +13,7 @@ abstract final class AppRoutes {
   static const String calendar = '/calendar';
   static const String analytics = '/analytics';
   static const String settings = '/settings';
+  static const String notifications = '/notifications';
   static const String profile = '/profile';
   static const String onboarding = '/onboarding';
   static const String login = '/login';

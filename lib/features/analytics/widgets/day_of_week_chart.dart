@@ -20,7 +20,6 @@ class DayOfWeekChart extends StatelessWidget {
     }
 
     final theme = Theme.of(context);
-    final colorScheme = theme.colorScheme;
 
     // Find highest percentage to scale Y axis slightly above it, max 100
     double maxPct = 0;
@@ -43,20 +42,20 @@ class DayOfWeekChart extends StatelessWidget {
           barTouchData: BarTouchData(
             enabled: true,
             touchTooltipData: BarTouchTooltipData(
-              getTooltipColor: (group) => colorScheme.surfaceContainerHighest,
+              getTooltipColor: (group) => const Color(0xFF16162C),
               getTooltipItem: (group, groupIndex, rod, rodIndex) {
                 final trend = trends.firstWhere((t) => t.weekday == group.x);
                 final dayName = _getDayName(trend.weekday);
                 return BarTooltipItem(
                   '$dayName\n',
                   theme.textTheme.labelLarge!
-                      .copyWith(fontWeight: FontWeight.bold),
+                      .copyWith(fontWeight: FontWeight.bold, color: Colors.white),
                   children: [
                     if (trend.totalCount == 0)
                       TextSpan(
                         text: 'No Classes',
                         style: theme.textTheme.labelSmall?.copyWith(
-                          color: colorScheme.onSurfaceVariant,
+                          color: Colors.white.withValues(alpha: 0.6),
                         ),
                       )
                     else
@@ -64,7 +63,7 @@ class DayOfWeekChart extends StatelessWidget {
                         text:
                             '${(trend.percentage * 100).toStringAsFixed(1)}%\n${trend.presentCount}/${trend.totalCount} Attended',
                         style: theme.textTheme.labelSmall?.copyWith(
-                          color: colorScheme.onSurfaceVariant,
+                          color: Colors.white.withValues(alpha: 0.6),
                         ),
                       ),
                   ],
@@ -83,7 +82,7 @@ class DayOfWeekChart extends StatelessWidget {
                     child: Text(
                       _getDayShortName(value.toInt()),
                       style: theme.textTheme.labelSmall?.copyWith(
-                        color: colorScheme.onSurfaceVariant,
+                        color: Colors.white.withValues(alpha: 0.6),
                       ),
                     ),
                   );
@@ -100,7 +99,7 @@ class DayOfWeekChart extends StatelessWidget {
                   return Text(
                     '${value.toInt()}%',
                     style: theme.textTheme.labelSmall?.copyWith(
-                      color: colorScheme.onSurfaceVariant,
+                      color: Colors.white.withValues(alpha: 0.6),
                     ),
                   );
                 },
@@ -116,7 +115,7 @@ class DayOfWeekChart extends StatelessWidget {
             drawVerticalLine: false,
             horizontalInterval: 20,
             getDrawingHorizontalLine: (value) => FlLine(
-              color: colorScheme.outlineVariant.withValues(alpha: 0.5),
+              color: Colors.white.withValues(alpha: 0.1),
               strokeWidth: 1,
               dashArray: [5, 5],
             ),
@@ -128,7 +127,7 @@ class DayOfWeekChart extends StatelessWidget {
               barRods: [
                 BarChartRodData(
                   toY: trend.percentage * 100,
-                  color: colorScheme.primary,
+                  color: const Color(0xFF7E73FF),
                   width: 16,
                   borderRadius: const BorderRadius.only(
                     topLeft: Radius.circular(4),

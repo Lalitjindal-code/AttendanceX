@@ -1,20 +1,20 @@
 import 'dart:collection';
-import 'package:attendancex/core/enums/attendance_status.dart';
-import 'package:attendancex/core/enums/lecture_type.dart';
-import 'package:attendancex/database/collections/attendance_collection.dart';
-import 'package:attendancex/database/collections/schedule_collection.dart';
-import 'package:attendancex/database/collections/subject_collection.dart';
-import 'package:attendancex/features/calendar/models/calendar_state.dart';
-import 'package:attendancex/features/calendar/models/daily_attendance_details.dart';
-import 'package:attendancex/features/calendar/models/daily_attendance_item.dart';
-import 'package:attendancex/features/calendar/providers/calendar_provider.dart';
-import 'package:attendancex/features/calendar/screens/calendar_screen.dart';
+import 'package:attendify/core/enums/attendance_status.dart';
+import 'package:attendify/core/enums/lecture_type.dart';
+import 'package:attendify/database/collections/attendance_collection.dart';
+import 'package:attendify/database/collections/schedule_collection.dart';
+import 'package:attendify/database/collections/subject_collection.dart';
+import 'package:attendify/features/calendar/models/calendar_state.dart';
+import 'package:attendify/features/calendar/models/daily_attendance_details.dart';
+import 'package:attendify/features/calendar/models/daily_attendance_item.dart';
+import 'package:attendify/features/calendar/providers/calendar_provider.dart';
+import 'package:attendify/features/calendar/screens/calendar_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:golden_toolkit/golden_toolkit.dart';
-import 'package:attendancex/database/repositories/attendance_repository.dart';
-import 'package:attendancex/features/attendance/providers/attendance_providers.dart';
+import 'package:attendify/database/repositories/attendance_repository.dart';
+import 'package:attendify/features/attendance/providers/attendance_providers.dart';
 import '../helpers/golden_helper.dart';
 
 class FakeCalendarNotifier extends CalendarNotifier {

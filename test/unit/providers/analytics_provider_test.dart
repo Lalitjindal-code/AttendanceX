@@ -1,19 +1,19 @@
 import 'package:flutter_test/flutter_test.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:attendancex/database/database_providers.dart';
-import 'package:attendancex/features/subjects/providers/subject_providers.dart';
-import 'package:attendancex/features/attendance/providers/attendance_providers.dart';
-import 'package:attendancex/database/collections/subject_collection.dart';
-import 'package:attendancex/database/collections/attendance_collection.dart';
-import 'package:attendancex/database/collections/schedule_collection.dart';
-import 'package:attendancex/database/collections/attendance_history_collection.dart';
-import 'package:attendancex/database/collections/academic_task_collection.dart';
-import 'package:attendancex/core/enums/attendance_status.dart';
-import 'package:attendancex/features/analytics/providers/analytics_provider.dart';
-import 'package:attendancex/features/analytics/models/analytics_trend.dart';
+import 'package:attendify/database/database_providers.dart';
+import 'package:attendify/features/subjects/providers/subject_providers.dart';
+import 'package:attendify/features/attendance/providers/attendance_providers.dart';
+import 'package:attendify/database/collections/subject_collection.dart';
+import 'package:attendify/database/collections/attendance_collection.dart';
+import 'package:attendify/database/collections/schedule_collection.dart';
+import 'package:attendify/database/collections/attendance_history_collection.dart';
+import 'package:attendify/database/collections/academic_task_collection.dart';
+import 'package:attendify/core/enums/attendance_status.dart';
+import 'package:attendify/features/analytics/providers/analytics_provider.dart';
+import 'package:attendify/features/analytics/models/analytics_trend.dart';
 import 'package:isar/isar.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-import 'package:attendancex/services/preferences_service.dart';
+import 'package:attendify/services/preferences_service.dart';
 
 void main() {
   late Isar isar;

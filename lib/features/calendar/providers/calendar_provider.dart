@@ -1,14 +1,14 @@
-import 'package:attendancex/database/collections/attendance_collection.dart';
-import 'package:attendancex/database/collections/schedule_collection.dart';
-import 'package:attendancex/database/collections/subject_collection.dart';
-import 'package:attendancex/features/attendance/providers/attendance_providers.dart';
-import 'package:attendancex/features/schedule/providers/schedule_providers.dart';
-import 'package:attendancex/features/subjects/providers/subject_providers.dart';
-import 'package:attendancex/features/planner/providers/planner_provider.dart';
-import 'package:attendancex/features/calendar/engines/calendar_engine.dart';
-import 'package:attendancex/features/calendar/models/calendar_state.dart';
-import 'package:attendancex/features/calendar/models/daily_attendance_details.dart';
-import 'package:attendancex/database/collections/academic_task_collection.dart';
+import 'package:attendify/database/collections/attendance_collection.dart';
+import 'package:attendify/database/collections/schedule_collection.dart';
+import 'package:attendify/database/collections/subject_collection.dart';
+import 'package:attendify/features/attendance/providers/attendance_providers.dart';
+import 'package:attendify/features/schedule/providers/schedule_providers.dart';
+import 'package:attendify/features/subjects/providers/subject_providers.dart';
+import 'package:attendify/features/planner/providers/planner_provider.dart';
+import 'package:attendify/features/calendar/engines/calendar_engine.dart';
+import 'package:attendify/features/calendar/models/calendar_state.dart';
+import 'package:attendify/features/calendar/models/daily_attendance_details.dart';
+import 'package:attendify/database/collections/academic_task_collection.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 import 'package:rxdart/rxdart.dart' hide Subject;
 

@@ -1,8 +1,8 @@
-import 'package:attendancex/features/dashboard/models/attendance_summary.dart';
-import 'package:attendancex/features/settings/models/app_settings.dart';
-import 'package:attendancex/database/collections/attendance_collection.dart';
-import 'package:attendancex/engines/attendance_engine.dart';
-import 'package:attendancex/core/enums/attendance_status.dart';
+import 'package:attendify/features/dashboard/models/attendance_summary.dart';
+import 'package:attendify/features/settings/models/app_settings.dart';
+import 'package:attendify/database/collections/attendance_collection.dart';
+import 'package:attendify/engines/attendance_engine.dart';
+import 'package:attendify/core/enums/attendance_status.dart';
 
 import '../models/analytics_trend.dart';
 import '../models/monthly_trend.dart';

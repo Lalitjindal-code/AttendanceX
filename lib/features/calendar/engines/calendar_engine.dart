@@ -1,12 +1,12 @@
 import 'dart:collection';
-import 'package:attendancex/core/enums/attendance_status.dart';
-import 'package:attendancex/core/enums/day_of_week.dart';
-import 'package:attendancex/database/collections/attendance_collection.dart';
-import 'package:attendancex/database/collections/schedule_collection.dart';
-import 'package:attendancex/database/collections/subject_collection.dart';
-import 'package:attendancex/features/calendar/models/daily_attendance_details.dart';
-import 'package:attendancex/features/calendar/models/daily_attendance_item.dart';
-import 'package:attendancex/database/collections/academic_task_collection.dart';
+import 'package:attendify/core/enums/attendance_status.dart';
+import 'package:attendify/core/enums/day_of_week.dart';
+import 'package:attendify/database/collections/attendance_collection.dart';
+import 'package:attendify/database/collections/schedule_collection.dart';
+import 'package:attendify/database/collections/subject_collection.dart';
+import 'package:attendify/features/calendar/models/daily_attendance_details.dart';
+import 'package:attendify/features/calendar/models/daily_attendance_item.dart';
+import 'package:attendify/database/collections/academic_task_collection.dart';
 
 class CalendarEngine {
   static DateTime _normalizeDate(DateTime date) {

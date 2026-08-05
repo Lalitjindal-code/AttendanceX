@@ -1,5 +1,6 @@
 import 'package:isar/isar.dart';
 import '../collections/schedule_collection.dart';
+import '../../services/widget_service.dart';
 
 /// Repository for [Schedule] operations following clean architecture constraints.
 ///
@@ -45,6 +46,7 @@ class ScheduleRepository {
     await _isar.writeTxn(() async {
       await _isar.schedules.put(schedule);
     });
+    WidgetService.instance.updateWidget();
   }
 
   /// Updates an existing schedule.
@@ -52,6 +54,7 @@ class ScheduleRepository {
     await _isar.writeTxn(() async {
       await _isar.schedules.put(schedule);
     });
+    WidgetService.instance.updateWidget();
   }
 
   /// Deletes a schedule by its ID.
@@ -59,6 +62,7 @@ class ScheduleRepository {
     await _isar.writeTxn(() async {
       await _isar.schedules.delete(id);
     });
+    WidgetService.instance.updateWidget();
   }
 
   /// Batch updates the order field of multiple schedules for drag-and-drop.

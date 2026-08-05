@@ -1,7 +1,7 @@
-import 'package:attendancex/core/enums/attendance_status.dart';
-import 'package:attendancex/database/collections/attendance_collection.dart';
-import 'package:attendancex/database/collections/attendance_history_collection.dart';
-import 'package:attendancex/database/repositories/attendance_repository.dart';
+import 'package:attendify/core/enums/attendance_status.dart';
+import 'package:attendify/database/collections/attendance_collection.dart';
+import 'package:attendify/database/collections/attendance_history_collection.dart';
+import 'package:attendify/database/repositories/attendance_repository.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:isar/isar.dart';
 

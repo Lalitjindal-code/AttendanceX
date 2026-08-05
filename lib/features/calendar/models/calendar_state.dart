@@ -1,8 +1,8 @@
 import 'dart:collection';
-import 'package:attendancex/core/enums/attendance_status.dart';
-import 'package:attendancex/database/collections/academic_task_collection.dart';
-import 'package:attendancex/features/calendar/models/daily_attendance_details.dart';
-import 'package:attendancex/database/collections/subject_collection.dart';
+import 'package:attendify/core/enums/attendance_status.dart';
+import 'package:attendify/database/collections/academic_task_collection.dart';
+import 'package:attendify/features/calendar/models/daily_attendance_details.dart';
+import 'package:attendify/database/collections/subject_collection.dart';
 
 class CalendarState {
   final DateTime selectedDate;

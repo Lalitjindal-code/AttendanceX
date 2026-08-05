@@ -87,6 +87,10 @@ class Settings extends _$Settings {
       ),
       lastBackupDate:
           lastBackupStr != null ? DateTime.tryParse(lastBackupStr) : null,
+      isAppLockEnabled: _prefs.getBool(
+        PreferencesService.keyIsAppLockEnabled,
+        defaultValue: false,
+      ),
     );
   }
 
@@ -184,5 +188,15 @@ class Settings extends _$Settings {
   Future<void> completeOnboarding() async {
     state = state.copyWith(isOnboardingComplete: true);
     await _prefs.setBool(PreferencesService.keyIsOnboardingComplete, true);
+  }
+
+  Future<void> updateIsAppLockEnabled(bool enabled) async {
+    state = state.copyWith(isAppLockEnabled: enabled);
+    await _prefs.setBool(PreferencesService.keyIsAppLockEnabled, enabled);
+  }
+
+  Future<void> setOnboardingStatus(bool isComplete) async {
+    state = state.copyWith(isOnboardingComplete: isComplete);
+    await _prefs.setBool(PreferencesService.keyIsOnboardingComplete, isComplete);
   }
 }

@@ -1,11 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
-import 'package:attendancex/core/theme/app_theme.dart';
-import 'package:attendancex/core/constants/app_spacing.dart';
-import 'package:attendancex/core/constants/app_radius.dart';
-import 'package:attendancex/features/auth/providers/auth_provider.dart';
-import 'package:attendancex/features/sync/services/firebase_sync_service.dart';
+import 'package:attendify/core/theme/app_theme.dart';
+import 'package:attendify/core/constants/app_spacing.dart';
+import 'package:attendify/core/constants/app_radius.dart';
+import 'package:attendify/features/auth/providers/auth_provider.dart';
+import 'package:attendify/features/sync/services/firebase_sync_service.dart';
+import 'package:attendify/features/settings/providers/settings_provider.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 
 class SignupScreen extends ConsumerStatefulWidget {
@@ -50,6 +51,9 @@ class _SignupScreenState extends ConsumerState<SignupScreen> {
     try {
       await ref.read(authProvider).signUpWithEmailPassword(email, password);
 
+      // New user logging in with email/password, ensure onboarding is not skipped
+      await ref.read(settingsProvider.notifier).setOnboardingStatus(false);
+
       // Since it's a new account, upload current local data as their first backup
       await ref.read(firebaseSyncServiceProvider).backupData();
 
@@ -80,6 +84,13 @@ class _SignupScreenState extends ConsumerState<SignupScreen> {
     try {
       final credential = await ref.read(authProvider).signInWithGoogle();
       if (credential != null) {
+        if (credential.additionalUserInfo?.isNewUser != true) {
+          // Existing user who clicked Google Sign up, skip onboarding
+          await ref.read(settingsProvider.notifier).setOnboardingStatus(true);
+        } else {
+          // Actual new user via Google, don't skip onboarding
+          await ref.read(settingsProvider.notifier).setOnboardingStatus(false);
+        }
         // Wait for the auth state to settle, then restore data
         await ref.read(firebaseSyncServiceProvider).restoreData();
         // Navigation handled by auth state listener
@@ -218,9 +229,23 @@ class _SignupScreenState extends ConsumerState<SignupScreen> {
                 const SizedBox(height: AppSpacing.md),
                 OutlinedButton.icon(
                   onPressed: _isLoading ? null : _signInWithGoogle,
-                  icon: Image.network(
-                    'https://upload.wikimedia.org/wikipedia/commons/c/c1/Google_%22G%22_logo.svg',
+                  icon: Container(
+                    width: 20,
                     height: 20,
+                    decoration: const BoxDecoration(
+                      shape: BoxShape.circle,
+                      color: Colors.white,
+                    ),
+                    child: const Center(
+                      child: Text(
+                        'G',
+                        style: TextStyle(
+                          fontSize: 13,
+                          fontWeight: FontWeight.bold,
+                          color: Color(0xFF4285F4),
+                        ),
+                      ),
+                    ),
                   ),
                   label: const Text('Sign up with Google'),
                   style: OutlinedButton.styleFrom(

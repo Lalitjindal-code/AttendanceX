@@ -41,14 +41,21 @@ class _CalendarWidgetState extends ConsumerState<CalendarWidget> {
 
   @override
   Widget build(BuildContext context) {
-    return Card(
+    return Container(
       margin: const EdgeInsets.all(AppSpacing.md),
-      elevation: 0,
-      shape: RoundedRectangleBorder(
-        borderRadius: BorderRadius.circular(24), // radius2XL
-        side: BorderSide(
-          color: Theme.of(context).colorScheme.outlineVariant,
+      decoration: BoxDecoration(
+        color: const Color(0xFF16162C),
+        borderRadius: BorderRadius.circular(24),
+        border: Border.all(
+          color: Colors.white.withValues(alpha: 0.05),
         ),
+        boxShadow: [
+          BoxShadow(
+            color: Colors.black.withValues(alpha: 0.2),
+            blurRadius: 10,
+            offset: const Offset(0, 4),
+          ),
+        ],
       ),
       clipBehavior: Clip.antiAlias,
       child: TableCalendar<Object>(
@@ -102,24 +109,21 @@ class _CalendarWidgetState extends ConsumerState<CalendarWidget> {
         calendarStyle: CalendarStyle(
           outsideDaysVisible: true,
           outsideTextStyle: TextStyle(
-              color: Theme.of(context)
-                  .colorScheme
-                  .onSurfaceVariant
-                  .withValues(alpha: 0.5)),
+              color: Colors.white.withValues(alpha: 0.3)),
           defaultTextStyle:
-              TextStyle(color: Theme.of(context).colorScheme.onSurface),
+              const TextStyle(color: Colors.white),
           weekendTextStyle:
-              TextStyle(color: Theme.of(context).colorScheme.primary),
-          selectedDecoration: BoxDecoration(
-            color: Theme.of(context).colorScheme.primary,
+              TextStyle(color: Colors.white.withValues(alpha: 0.6)),
+          selectedDecoration: const BoxDecoration(
+            color: Color(0xFF7E73FF),
             shape: BoxShape.circle,
           ),
           todayDecoration: BoxDecoration(
-            color: Theme.of(context).colorScheme.primaryContainer,
+            color: const Color(0xFF7E73FF).withValues(alpha: 0.3),
             shape: BoxShape.circle,
           ),
-          todayTextStyle: TextStyle(
-            color: Theme.of(context).colorScheme.onPrimaryContainer,
+          todayTextStyle: const TextStyle(
+            color: Colors.white,
             fontWeight: FontWeight.bold,
           ),
           markersMaxCount: 4,
@@ -130,15 +134,16 @@ class _CalendarWidgetState extends ConsumerState<CalendarWidget> {
           titleCentered: false,
           formatButtonShowsNext: false,
           formatButtonDecoration: BoxDecoration(
-            color: Theme.of(context).colorScheme.surfaceContainerHighest,
+            color: const Color(0xFF7E73FF).withValues(alpha: 0.2),
             borderRadius: BorderRadius.circular(16),
           ),
-          formatButtonTextStyle: TextStyle(
-            color: Theme.of(context).colorScheme.onSurface,
-            fontWeight: FontWeight.w500,
+          formatButtonTextStyle: const TextStyle(
+            color: Color(0xFF7E73FF),
+            fontWeight: FontWeight.bold,
             fontSize: 13,
           ),
           titleTextStyle: Theme.of(context).textTheme.titleMedium!.copyWith(
+                color: Colors.white,
                 fontWeight: FontWeight.bold,
               ),
         ),

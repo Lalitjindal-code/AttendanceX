@@ -52,3 +52,13 @@ isar.dll
 # Android build directory
 /android/build/
 
+# Temporary and local test files
+analyze.txt
+test_google.dart
+fix_radius.dart
+
+# Firebase/Environment files
+.env
+google-services.json
+GoogleService-Info.plist
+

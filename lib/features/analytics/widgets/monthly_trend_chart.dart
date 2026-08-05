@@ -1,6 +1,6 @@
 import 'package:fl_chart/fl_chart.dart';
 import 'package:flutter/material.dart';
-import 'package:attendancex/features/analytics/models/monthly_trend.dart';
+import 'package:attendify/features/analytics/models/monthly_trend.dart';
 import 'package:intl/intl.dart';
 
 class MonthlyTrendChart extends StatelessWidget {

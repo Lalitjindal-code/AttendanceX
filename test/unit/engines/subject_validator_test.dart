@@ -1,4 +1,4 @@
-import 'package:attendancex/engines/subject_validator.dart';
+import 'package:attendify/engines/subject_validator.dart';
 import 'package:flutter_test/flutter_test.dart';
 
 void main() {

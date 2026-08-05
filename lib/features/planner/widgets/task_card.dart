@@ -81,167 +81,153 @@ class TaskCard extends ConsumerWidget {
           label:
               'Task: ${task.title}. Priority: ${task.priority.name}. ${isCompleted ? "Completed." : (isOverdue ? "Overdue." : "Pending.")}',
           button: true,
-          child: Card(
-            clipBehavior: Clip.antiAlias,
-            elevation: 0,
-            shape: RoundedRectangleBorder(
-              borderRadius: BorderRadius.circular(12), // radiusMD
-              side: BorderSide(
-                color: Theme.of(context)
-                    .colorScheme
-                    .outlineVariant
-                    .withValues(alpha: 0.5),
+          child: Container(
+            decoration: BoxDecoration(
+              color: const Color(0xFF16162C),
+              borderRadius: BorderRadius.circular(16),
+              border: Border.all(
+                color: Colors.white.withValues(alpha: 0.05),
               ),
+              boxShadow: [
+                BoxShadow(
+                  color: Colors.black.withValues(alpha: 0.2),
+                  blurRadius: 10,
+                  offset: const Offset(0, 4),
+                ),
+              ],
             ),
-            color: Theme.of(context).colorScheme.surfaceContainerLowest,
             margin: const EdgeInsets.only(bottom: AppSpacing.md),
-            child: InkWell(
-              onTap: isCompleted ? null : onEdit,
-              onLongPress: () => _showOptions(context, ref),
-              child: IntrinsicHeight(
-                child: Row(
-                  crossAxisAlignment: CrossAxisAlignment.stretch,
-                  children: [
-                    // Left color stripe
-                    Container(
-                      width: 6,
-                      color: stripeColor,
-                    ),
-                    Expanded(
-                      child: Padding(
-                        padding: const EdgeInsets.all(AppSpacing.md),
-                        child: Row(
+            child: Material(
+              color: Colors.transparent,
+              child: InkWell(
+                onTap: isCompleted ? null : onEdit,
+                onLongPress: () => _showOptions(context, ref),
+                borderRadius: BorderRadius.circular(16),
+                child: Padding(
+                  padding: const EdgeInsets.all(AppSpacing.md),
+                  child: Row(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      // Glowing Type Icon
+                      Container(
+                        width: 40,
+                        height: 40,
+                        decoration: BoxDecoration(
+                          color: stripeColor.withValues(alpha: 0.2),
+                          shape: BoxShape.circle,
+                        ),
+                        child: Icon(
+                          typeIcon,
+                          color: stripeColor,
+                          size: 20,
+                        ),
+                      ),
+                      const SizedBox(width: AppSpacing.md),
+
+                      // Content
+                      Expanded(
+                        child: Column(
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
-                            // Type Icon
-                            Icon(
-                              typeIcon,
-                              size: 20,
-                              color: Theme.of(context)
-                                  .colorScheme
-                                  .onSurfaceVariant,
+                            AnimatedDefaultTextStyle(
+                              duration: const Duration(milliseconds: 300),
+                              style: Theme.of(context)
+                                  .textTheme
+                                  .titleMedium!
+                                  .copyWith(
+                                    decoration: isCompleted
+                                        ? TextDecoration.lineThrough
+                                        : TextDecoration.none,
+                                    color: isCompleted
+                                        ? Colors.white.withValues(alpha: 0.3)
+                                        : Colors.white,
+                                    fontWeight: FontWeight.bold,
+                                  ),
+                              child: Text(task.title),
                             ),
-                            const SizedBox(width: AppSpacing.md),
-
-                            // Content
-                            Expanded(
-                              child: Column(
-                                crossAxisAlignment: CrossAxisAlignment.start,
-                                children: [
-                                  AnimatedDefaultTextStyle(
-                                    duration: const Duration(milliseconds: 300),
+                            const SizedBox(height: AppSpacing.xs),
+                            Row(
+                              children: [
+                                if (subject != null) ...[
+                                  Flexible(
+                                    child: Text(
+                                      subject!.name,
+                                      style: Theme.of(context)
+                                          .textTheme
+                                          .bodySmall
+                                          ?.copyWith(
+                                            color: Colors.white.withValues(alpha: 0.6),
+                                          ),
+                                      overflow: TextOverflow.ellipsis,
+                                    ),
+                                  ),
+                                  const SizedBox(width: AppSpacing.sm),
+                                  Text(
+                                    '•',
                                     style: Theme.of(context)
                                         .textTheme
-                                        .titleMedium!
-                                        .copyWith(
-                                          decoration: isCompleted
-                                              ? TextDecoration.lineThrough
-                                              : TextDecoration.none,
-                                          color: isCompleted
-                                              ? Theme.of(context)
-                                                  .colorScheme
-                                                  .outline
-                                              : Theme.of(context)
-                                                  .colorScheme
-                                                  .onSurface,
+                                        .bodySmall
+                                        ?.copyWith(
+                                          color: Colors.white.withValues(alpha: 0.3),
                                         ),
-                                    child: Text(task.title),
                                   ),
-                                  const SizedBox(height: AppSpacing.xs),
-                                  Row(
-                                    children: [
-                                      if (subject != null) ...[
-                                        Flexible(
-                                          child: Text(
-                                            subject!.name,
-                                            style: Theme.of(context)
-                                                .textTheme
-                                                .bodySmall
-                                                ?.copyWith(
-                                                  color: Theme.of(context)
-                                                      .colorScheme
-                                                      .onSurfaceVariant,
-                                                ),
-                                            overflow: TextOverflow.ellipsis,
-                                          ),
-                                        ),
-                                        const SizedBox(width: AppSpacing.sm),
-                                        Text(
-                                          '•',
-                                          style: Theme.of(context)
-                                              .textTheme
-                                              .bodySmall
-                                              ?.copyWith(
-                                                color: Theme.of(context)
-                                                    .colorScheme
-                                                    .outline,
-                                              ),
-                                        ),
-                                        const SizedBox(width: AppSpacing.sm),
-                                      ],
-                                      Flexible(
-                                        child: Text(
-                                          PlannerEngine.generateDueLabel(task),
-                                          style: Theme.of(context)
-                                              .textTheme
-                                              .bodySmall
-                                              ?.copyWith(
-                                                color: isOverdue && !isCompleted
-                                                    ? Theme.of(context)
-                                                        .colorScheme
-                                                        .error
-                                                    : Theme.of(context)
-                                                        .colorScheme
-                                                        .onSurfaceVariant,
-                                                fontWeight:
-                                                    isOverdue && !isCompleted
-                                                        ? FontWeight.bold
-                                                        : FontWeight.normal,
-                                              ),
-                                          overflow: TextOverflow.ellipsis,
-                                        ),
-                                      ),
-                                    ],
-                                  ),
+                                  const SizedBox(width: AppSpacing.sm),
                                 ],
-                              ),
-                            ),
-
-                            // Checkbox
-                            const SizedBox(width: AppSpacing.sm),
-                            IconButton(
-                              icon: AnimatedSwitcher(
-                                duration: const Duration(milliseconds: 300),
-                                transitionBuilder: (Widget child,
-                                    Animation<double> animation) {
-                                  return ScaleTransition(
-                                      scale: animation, child: child);
-                                },
-                                child: Icon(
-                                  isCompleted
-                                      ? Icons.check_circle
-                                      : Icons.circle_outlined,
-                                  key: ValueKey<bool>(isCompleted),
-                                  color: isCompleted
-                                      ? Theme.of(context).colorScheme.primary
-                                      : Theme.of(context).colorScheme.outline,
+                                Flexible(
+                                  child: Text(
+                                    PlannerEngine.generateDueLabel(task),
+                                    style: Theme.of(context)
+                                        .textTheme
+                                        .bodySmall
+                                        ?.copyWith(
+                                          color: isOverdue && !isCompleted
+                                              ? const Color(0xFFFF1744)
+                                              : Colors.white.withValues(alpha: 0.6),
+                                          fontWeight:
+                                              isOverdue && !isCompleted
+                                                  ? FontWeight.bold
+                                                  : FontWeight.normal,
+                                        ),
+                                    overflow: TextOverflow.ellipsis,
+                                  ),
                                 ),
-                              ),
-                              tooltip: isCompleted
-                                  ? 'Mark as incomplete'
-                                  : 'Mark as complete',
-                              onPressed: () {
-                                ref
-                                    .read(plannerNotifierProvider.notifier)
-                                    .toggleTaskCompletion(task);
-                                Haptics.light();
-                              },
+                              ],
                             ),
                           ],
                         ),
                       ),
-                    ),
-                  ],
+                      // Checkbox
+                      const SizedBox(width: AppSpacing.sm),
+                      IconButton(
+                        icon: AnimatedSwitcher(
+                          duration: const Duration(milliseconds: 300),
+                          transitionBuilder: (Widget child,
+                              Animation<double> animation) {
+                            return ScaleTransition(
+                                scale: animation, child: child);
+                          },
+                          child: Icon(
+                            isCompleted
+                                ? Icons.check_circle
+                                : Icons.circle_outlined,
+                            key: ValueKey<bool>(isCompleted),
+                            color: isCompleted
+                                ? const Color(0xFF00E676)
+                                : Colors.white.withValues(alpha: 0.3),
+                          ),
+                        ),
+                        tooltip: isCompleted
+                            ? 'Mark as incomplete'
+                            : 'Mark as complete',
+                        onPressed: () {
+                          ref
+                              .read(plannerNotifierProvider.notifier)
+                              .toggleTaskCompletion(task);
+                          Haptics.light();
+                        },
+                      ),
+                    ],
+                  ),
                 ),
               ),
             ),

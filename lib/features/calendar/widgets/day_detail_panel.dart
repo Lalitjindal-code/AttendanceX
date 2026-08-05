@@ -26,19 +26,19 @@ class DayDetailPanel extends ConsumerWidget {
                 Icon(
                   Icons.event_busy_outlined,
                   size: 64,
-                  color: Theme.of(context).colorScheme.outlineVariant,
+                  color: Colors.white.withValues(alpha: 0.2),
                 ),
                 const SizedBox(height: AppSpacing.md),
                 Text(
                   'No classes or tasks scheduled for',
                   style: Theme.of(context).textTheme.titleMedium?.copyWith(
-                        color: Theme.of(context).colorScheme.onSurfaceVariant,
+                        color: Colors.white.withValues(alpha: 0.6),
                       ),
                 ),
                 Text(
                   DateFormat('MMMM d, yyyy').format(state.selectedDate),
                   style: Theme.of(context).textTheme.titleSmall?.copyWith(
-                        color: Theme.of(context).colorScheme.onSurfaceVariant,
+                        color: Colors.white,
                         fontWeight: FontWeight.bold,
                       ),
                 ),
@@ -68,7 +68,7 @@ class DayDetailPanel extends ConsumerWidget {
                     'Classes',
                     style: Theme.of(context).textTheme.titleMedium?.copyWith(
                           fontWeight: FontWeight.bold,
-                          color: Theme.of(context).colorScheme.primary,
+                          color: const Color(0xFF7E73FF),
                         ),
                   ),
                 ),
@@ -91,7 +91,7 @@ class DayDetailPanel extends ConsumerWidget {
                     'Tasks & Deadlines',
                     style: Theme.of(context).textTheme.titleMedium?.copyWith(
                           fontWeight: FontWeight.bold,
-                          color: Theme.of(context).colorScheme.primary,
+                          color: const Color(0xFF7E73FF),
                         ),
                   ),
                 ),

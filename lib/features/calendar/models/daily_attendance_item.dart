@@ -1,7 +1,7 @@
-import 'package:attendancex/core/enums/attendance_status.dart';
-import 'package:attendancex/database/collections/attendance_collection.dart';
-import 'package:attendancex/database/collections/schedule_collection.dart';
-import 'package:attendancex/database/collections/subject_collection.dart';
+import 'package:attendify/core/enums/attendance_status.dart';
+import 'package:attendify/database/collections/attendance_collection.dart';
+import 'package:attendify/database/collections/schedule_collection.dart';
+import 'package:attendify/database/collections/subject_collection.dart';
 
 class DailyAttendanceItem {
   final Subject subject;

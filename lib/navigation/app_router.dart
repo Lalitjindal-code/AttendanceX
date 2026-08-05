@@ -11,6 +11,7 @@ import '../features/subjects/screens/subject_detail_screen.dart';
 import '../features/subjects/screens/subjects_screen.dart';
 import '../features/planner/screens/planner_screen.dart';
 import '../features/more/screens/more_screen.dart';
+import '../features/notifications/screens/notifications_screen.dart';
 import '../features/onboarding/screens/onboarding_screen.dart';
 import '../features/settings/providers/settings_provider.dart';
 import '../features/auth/screens/login_screen.dart';
@@ -155,6 +156,10 @@ GoRouter appRouter(AppRouterRef ref) {
               GoRoute(
                 path: AppRoutes.settings,
                 builder: (context, state) => const SettingsScreen(),
+              ),
+              GoRoute(
+                path: AppRoutes.notifications,
+                builder: (context, state) => const NotificationsScreen(),
               ),
             ],
           ),

@@ -1,6 +1,6 @@
-import 'package:attendancex/core/errors/app_exception.dart';
-import 'package:attendancex/database/collections/schedule_collection.dart';
-import 'package:attendancex/engines/schedule_engine.dart';
+import 'package:attendify/core/errors/app_exception.dart';
+import 'package:attendify/database/collections/schedule_collection.dart';
+import 'package:attendify/engines/schedule_engine.dart';
 import 'package:flutter_test/flutter_test.dart';
 
 void main() {

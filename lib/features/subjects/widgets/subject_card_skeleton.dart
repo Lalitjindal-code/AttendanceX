@@ -7,15 +7,13 @@ class SubjectCardSkeleton extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Shimmer.fromColors(
-      baseColor: Theme.of(context).colorScheme.surfaceContainerHighest,
-      highlightColor: Theme.of(context)
-          .colorScheme
-          .surfaceContainerHighest
-          .withValues(alpha: 0.5),
+      baseColor: const Color(0xFF16162C),
+      highlightColor: const Color(0xFF7E73FF).withValues(alpha: 0.1),
       child: Container(
+        height: 120,
         decoration: BoxDecoration(
-          color: Theme.of(context).colorScheme.surfaceContainerHighest,
-          borderRadius: BorderRadius.circular(16),
+          color: const Color(0xFF16162C),
+          borderRadius: BorderRadius.circular(20),
         ),
       ),
     );

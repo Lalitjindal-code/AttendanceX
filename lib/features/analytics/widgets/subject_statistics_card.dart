@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:attendancex/features/analytics/models/subject_statistics.dart';
-import 'package:attendancex/features/analytics/models/analytics_trend.dart';
+import 'package:attendify/features/analytics/models/subject_statistics.dart';
+import 'package:attendify/features/analytics/models/analytics_trend.dart';
 
 class SubjectStatisticsCard extends StatelessWidget {
   final SubjectStatistics stats;

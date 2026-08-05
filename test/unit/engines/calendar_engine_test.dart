@@ -1,10 +1,10 @@
 import 'package:flutter_test/flutter_test.dart';
-import 'package:attendancex/core/enums/attendance_status.dart';
-import 'package:attendancex/core/enums/day_of_week.dart';
-import 'package:attendancex/database/collections/attendance_collection.dart';
-import 'package:attendancex/database/collections/schedule_collection.dart';
-import 'package:attendancex/database/collections/subject_collection.dart';
-import 'package:attendancex/features/calendar/engines/calendar_engine.dart';
+import 'package:attendify/core/enums/attendance_status.dart';
+import 'package:attendify/core/enums/day_of_week.dart';
+import 'package:attendify/database/collections/attendance_collection.dart';
+import 'package:attendify/database/collections/schedule_collection.dart';
+import 'package:attendify/database/collections/subject_collection.dart';
+import 'package:attendify/features/calendar/engines/calendar_engine.dart';
 
 void main() {
   group('CalendarEngine', () {

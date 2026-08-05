@@ -20,6 +20,7 @@ class AppSettings {
     this.lectureReminderMinutes = AppConfig.defaultLectureReminderMinutes,
     this.defaultTaskReminderOffsets = const [60, 1440], // 1 hour, 1 day
     this.lastBackupDate,
+    this.isAppLockEnabled = false,
   });
 
   final ThemeMode themeMode;
@@ -40,6 +41,7 @@ class AppSettings {
   final int lectureReminderMinutes;
   final List<int> defaultTaskReminderOffsets;
   final DateTime? lastBackupDate;
+  final bool isAppLockEnabled;
 
   AppSettings copyWith({
     ThemeMode? themeMode,
@@ -56,6 +58,7 @@ class AppSettings {
     int? lectureReminderMinutes,
     List<int>? defaultTaskReminderOffsets,
     DateTime? lastBackupDate,
+    bool? isAppLockEnabled,
   }) {
     return AppSettings(
       themeMode: themeMode ?? this.themeMode,
@@ -76,6 +79,7 @@ class AppSettings {
       defaultTaskReminderOffsets:
           defaultTaskReminderOffsets ?? this.defaultTaskReminderOffsets,
       lastBackupDate: lastBackupDate ?? this.lastBackupDate,
+      isAppLockEnabled: isAppLockEnabled ?? this.isAppLockEnabled,
     );
   }
 
@@ -95,6 +99,7 @@ class AppSettings {
       'lectureReminderMinutes': lectureReminderMinutes,
       'defaultTaskReminderOffsets': defaultTaskReminderOffsets,
       'lastBackupDate': lastBackupDate?.millisecondsSinceEpoch,
+      'isAppLockEnabled': isAppLockEnabled,
     };
   }
 
@@ -125,6 +130,7 @@ class AppSettings {
       lastBackupDate: map['lastBackupDate'] != null
           ? DateTime.fromMillisecondsSinceEpoch(map['lastBackupDate'])
           : null,
+      isAppLockEnabled: map['isAppLockEnabled'] ?? false,
     );
   }
 }

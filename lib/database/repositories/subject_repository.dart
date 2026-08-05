@@ -1,6 +1,7 @@
 import 'package:isar/isar.dart';
 import '../../core/errors/app_exception.dart';
 import '../../engines/subject_validator.dart';
+import '../../services/widget_service.dart';
 import '../collections/attendance_collection.dart';
 import '../collections/attendance_history_collection.dart';
 import '../collections/schedule_collection.dart';
@@ -72,6 +73,7 @@ class SubjectRepository {
     await _isar.writeTxn(() async {
       await _isar.subjects.put(subject);
     });
+    WidgetService.instance.updateWidget();
   }
 
   /// Updates an existing subject. Prevents renaming to an existing subject's name.
@@ -98,6 +100,7 @@ class SubjectRepository {
     await _isar.writeTxn(() async {
       await _isar.subjects.put(subject);
     });
+    WidgetService.instance.updateWidget();
   }
 
   /// Calculates how many dependent records will be deleted.
@@ -137,5 +140,6 @@ class SubjectRepository {
       // 4. Delete the Subject
       await _isar.subjects.delete(subjectId);
     });
+    WidgetService.instance.updateWidget();
   }
 }

@@ -1,4 +1,4 @@
-/// Global compile-time constants for the AttendanceX application.
+/// Global compile-time constants for the Attendify application.
 ///
 /// These are fixed at build time. User-overridable preferences are
 /// managed by [PreferencesService] and exposed via [AppSettings].

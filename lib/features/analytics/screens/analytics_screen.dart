@@ -19,10 +19,11 @@ class AnalyticsScreen extends ConsumerWidget {
     final theme = Theme.of(context);
 
     return Scaffold(
+      backgroundColor: const Color(0xFF0B0B13),
       body: stateAsync.when(
         data: (state) {
           if (state.isLoading) {
-            return const Center(child: CircularProgressIndicator());
+            return const Center(child: CircularProgressIndicator(color: Color(0xFF7E73FF)));
           }
 
           if (state.subjectStats.isEmpty) {
@@ -36,9 +37,12 @@ class AnalyticsScreen extends ConsumerWidget {
           return CustomScrollView(
             slivers: [
               const SliverAppBar.large(
-                title: Text('Analytics'),
+                title: Text('Analytics', style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold)),
                 floating: true,
                 pinned: true,
+                backgroundColor: Color(0xFF0B0B13),
+                surfaceTintColor: Colors.transparent,
+                iconTheme: IconThemeData(color: Colors.white),
               ),
 
               // 1. Overview Donut Chart & Cards
@@ -52,6 +56,7 @@ class AnalyticsScreen extends ConsumerWidget {
                         'Overview',
                         style: theme.textTheme.titleLarge?.copyWith(
                           fontWeight: FontWeight.bold,
+                          color: Colors.white,
                         ),
                       ),
                       const SizedBox(height: AppSpacing.md),
@@ -61,22 +66,22 @@ class AnalyticsScreen extends ConsumerWidget {
                         title1: 'Total Classes',
                         value1: '${summary.effectiveTotal}',
                         icon1: Icons.class_outlined,
-                        color1: theme.colorScheme.primary,
+                        color1: const Color(0xFF7E73FF),
                         title2: 'Attended',
                         value2: '${summary.effectivePresent}',
                         icon2: Icons.check_circle_outline,
-                        color2: Colors.green,
+                        color2: const Color(0xFF00E676),
                       ),
                       const SizedBox(height: AppSpacing.md),
                       AnalyticsSummaryCards(
                         title1: 'Bunks Available',
                         value1: '${forecast?.safeBunksRemaining ?? 0}',
                         icon1: Icons.event_available_outlined,
-                        color1: Colors.blue,
+                        color1: Colors.blueAccent,
                         title2: 'Classes Needed',
                         value2: '${forecast?.classesNeededToReachGoal ?? 0}',
                         icon2: Icons.event_busy_outlined,
-                        color2: Colors.orange,
+                        color2: Colors.orangeAccent,
                       ),
                       const SizedBox(height: AppSpacing.md),
                       TopBottomSubjectsCards(subjectStats: state.subjectStats),
@@ -88,7 +93,7 @@ class AnalyticsScreen extends ConsumerWidget {
               const SliverToBoxAdapter(
                 child: Padding(
                   padding: EdgeInsets.symmetric(horizontal: AppSpacing.md),
-                  child: Divider(),
+                  child: Divider(color: Colors.white10),
                 ),
               ),
 
@@ -104,6 +109,7 @@ class AnalyticsScreen extends ConsumerWidget {
                           'Attendance Trend',
                           style: theme.textTheme.titleLarge?.copyWith(
                             fontWeight: FontWeight.bold,
+                            color: Colors.white,
                           ),
                         ),
                         const SizedBox(height: AppSpacing.sm),
@@ -116,7 +122,7 @@ class AnalyticsScreen extends ConsumerWidget {
               const SliverToBoxAdapter(
                 child: Padding(
                   padding: EdgeInsets.symmetric(horizontal: AppSpacing.md),
-                  child: Divider(),
+                  child: Divider(color: Colors.white10),
                 ),
               ),
 
@@ -143,6 +149,7 @@ class AnalyticsScreen extends ConsumerWidget {
                           'Day of Week Analysis',
                           style: theme.textTheme.titleLarge?.copyWith(
                             fontWeight: FontWeight.bold,
+                            color: Colors.white,
                           ),
                         ),
                         const SizedBox(height: AppSpacing.sm),
@@ -155,7 +162,7 @@ class AnalyticsScreen extends ConsumerWidget {
               const SliverToBoxAdapter(
                 child: Padding(
                   padding: EdgeInsets.symmetric(horizontal: AppSpacing.md),
-                  child: Divider(),
+                  child: Divider(color: Colors.white10),
                 ),
               ),
 
@@ -173,6 +180,7 @@ class AnalyticsScreen extends ConsumerWidget {
                       'Subject Breakdown',
                       style: theme.textTheme.titleLarge?.copyWith(
                         fontWeight: FontWeight.bold,
+                        color: Colors.white,
                       ),
                     ),
                   ),
@@ -199,8 +207,8 @@ class AnalyticsScreen extends ConsumerWidget {
             ],
           );
         },
-        loading: () => const Center(child: CircularProgressIndicator()),
-        error: (err, stack) => Center(child: Text('Error: $err')),
+        loading: () => const Center(child: CircularProgressIndicator(color: Color(0xFF7E73FF))),
+        error: (err, stack) => Center(child: Text('Error: $err', style: const TextStyle(color: Colors.white))),
       ),
     );
   }
@@ -213,13 +221,13 @@ class AnalyticsScreen extends ConsumerWidget {
           Icon(
             Icons.analytics_outlined,
             size: 64,
-            color: Theme.of(context).colorScheme.outlineVariant,
+            color: Colors.white.withValues(alpha: 0.2),
           ),
           const SizedBox(height: AppSpacing.md),
           Text(
             'Nothing to analyse yet.',
             style: Theme.of(context).textTheme.titleLarge?.copyWith(
-                  color: Theme.of(context).colorScheme.onSurface,
+                  color: Colors.white.withValues(alpha: 0.6),
                   fontWeight: FontWeight.bold,
                 ),
           ),
@@ -227,7 +235,7 @@ class AnalyticsScreen extends ConsumerWidget {
           Text(
             'Start marking attendance to see insights.',
             style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                  color: Theme.of(context).colorScheme.onSurfaceVariant,
+                  color: Colors.white.withValues(alpha: 0.4),
                 ),
           ),
         ],

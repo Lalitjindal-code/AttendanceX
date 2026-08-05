@@ -58,15 +58,20 @@ class _SubjectsScreenState extends ConsumerState<SubjectsScreen> {
     final subjectsAsync = ref.watch(subjectsProvider);
 
     return Scaffold(
+      backgroundColor: const Color(0xFF0B0B13),
       body: RefreshIndicator(
+        color: const Color(0xFF7E73FF),
+        backgroundColor: const Color(0xFF16162C),
         onRefresh: _onRefresh,
         child: CustomScrollView(
           controller: _scrollController,
           slivers: [
-            const SliverAppBar.large(
-              title: Text(AppStrings.subjectsTitle),
+            SliverAppBar.large(
+              title: const Text('Subjects', style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold)),
               floating: true,
               pinned: true,
+              backgroundColor: const Color(0xFF0B0B13),
+              surfaceTintColor: Colors.transparent,
             ),
             subjectsAsync.when(
               data: (subjects) {
@@ -76,35 +81,60 @@ class _SubjectsScreenState extends ConsumerState<SubjectsScreen> {
                     child: Center(
                       child: Padding(
                         padding: const EdgeInsets.all(AppSpacing.xl),
-                        child: Column(
-                          mainAxisAlignment: MainAxisAlignment.center,
-                          children: [
-                            Icon(
-                              Icons.library_books_outlined,
-                              size: 72,
-                              color:
-                                  Theme.of(context).colorScheme.outlineVariant,
+                        child: Container(
+                          padding: const EdgeInsets.all(32),
+                          decoration: BoxDecoration(
+                            color: const Color(0xFF16162C),
+                            borderRadius: BorderRadius.circular(24),
+                            border: Border.all(
+                              color: Colors.white.withValues(alpha: 0.05),
                             ),
-                            const SizedBox(height: AppSpacing.lg),
-                            Text(
-                              AppStrings.subjectsEmpty,
-                              textAlign: TextAlign.center,
-                              style: Theme.of(context)
-                                  .textTheme
-                                  .bodyLarge
-                                  ?.copyWith(
-                                    color: Theme.of(context)
-                                        .colorScheme
-                                        .onSurfaceVariant,
-                                  ),
-                            ),
-                            const SizedBox(height: AppSpacing.xl),
-                            FilledButton.icon(
-                              onPressed: () => showSubjectFormSheet(context),
-                              icon: const Icon(Icons.add),
-                              label: const Text('Add First Subject'),
-                            ),
-                          ],
+                          ),
+                          child: Column(
+                            mainAxisSize: MainAxisSize.min,
+                            children: [
+                              Container(
+                                padding: const EdgeInsets.all(20),
+                                decoration: BoxDecoration(
+                                  color: const Color(0xFF7E73FF).withValues(alpha: 0.2),
+                                  shape: BoxShape.circle,
+                                ),
+                                child: const Icon(
+                                  Icons.library_books_rounded,
+                                  size: 48,
+                                  color: Color(0xFF7E73FF),
+                                ),
+                              ),
+                              const SizedBox(height: AppSpacing.lg),
+                              Text(
+                                'No Subjects Yet',
+                                style: Theme.of(context).textTheme.titleLarge?.copyWith(
+                                      color: Colors.white,
+                                      fontWeight: FontWeight.bold,
+                                    ),
+                              ),
+                              const SizedBox(height: AppSpacing.sm),
+                              Text(
+                                'Add your first subject to start tracking attendance.',
+                                textAlign: TextAlign.center,
+                                style: Theme.of(context).textTheme.bodyMedium?.copyWith(
+                                      color: Colors.white.withValues(alpha: 0.6),
+                                    ),
+                              ),
+                              const SizedBox(height: AppSpacing.xl),
+                              FilledButton.icon(
+                                onPressed: () => showSubjectFormSheet(context),
+                                style: FilledButton.styleFrom(
+                                  backgroundColor: const Color(0xFF7E73FF),
+                                  foregroundColor: Colors.white,
+                                  padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 12),
+                                  shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+                                ),
+                                icon: const Icon(Icons.add_rounded),
+                                label: const Text('Add Subject'),
+                              ),
+                            ],
+                          ),
                         ),
                       ),
                     ),
@@ -116,38 +146,22 @@ class _SubjectsScreenState extends ConsumerState<SubjectsScreen> {
                     horizontal: AppSpacing.md,
                     vertical: AppSpacing.md,
                   ),
-                  sliver: SliverGrid(
-                    gridDelegate:
-                        const SliverGridDelegateWithFixedCrossAxisCount(
-                      crossAxisCount: 2,
-                      mainAxisSpacing: AppSpacing.md,
-                      crossAxisSpacing: AppSpacing.md,
-                      childAspectRatio: 0.85,
-                    ),
+                  sliver: SliverList(
                     delegate: SliverChildBuilderDelegate(
                       (context, index) {
-                        final delay = index * 100;
                         return TweenAnimationBuilder<double>(
                           tween: Tween(begin: 0.0, end: 1.0),
                           duration: const Duration(milliseconds: 400),
                           curve: Curves.easeOutCubic,
                           builder: (context, value, child) {
-                            // Simple delay logic
-                            if (value == 0.0) {
-                              Future.delayed(Duration(milliseconds: delay), () {
-                                if (context.mounted) {
-                                  // Trigger rebuild but TweenAnimationBuilder manages its own animation so this trick isn't perfect.
-                                  // Instead we can animate the transform with a staggered begin value if we write a custom implicit animation,
-                                  // but for simplicity TweenAnimationBuilder starting immediately with a translation looks fine.
-                                }
-                              });
-                            }
-                            // Better staggered approach with tween:
                             return Transform.translate(
                               offset: Offset(0, 50 * (1 - value)),
                               child: Opacity(
                                 opacity: value,
-                                child: SubjectCard(subject: subjects[index]),
+                                child: Padding(
+                                  padding: const EdgeInsets.only(bottom: AppSpacing.md),
+                                  child: SubjectCard(subject: subjects[index]),
+                                ),
                               ),
                             );
                           },
@@ -163,34 +177,49 @@ class _SubjectsScreenState extends ConsumerState<SubjectsScreen> {
                   horizontal: AppSpacing.md,
                   vertical: AppSpacing.md,
                 ),
-                sliver: SliverGrid(
-                  gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-                    crossAxisCount: 2,
-                    mainAxisSpacing: AppSpacing.md,
-                    crossAxisSpacing: AppSpacing.md,
-                    childAspectRatio: 0.85,
-                  ),
+                sliver: SliverList(
                   delegate: SliverChildBuilderDelegate(
-                    (context, index) => const SubjectCardSkeleton(),
-                    childCount: 6,
+                    (context, index) => Padding(
+                      padding: const EdgeInsets.only(bottom: AppSpacing.md),
+                      child: const SubjectCardSkeleton(),
+                    ),
+                    childCount: 4,
                   ),
                 ),
               ),
               error: (error, stack) => SliverFillRemaining(
-                child: Center(child: Text('Error: $error')),
+                child: Center(child: Text('Error: $error', style: const TextStyle(color: Colors.red))),
               ),
             ),
-            // Bottom padding to ensure last item is not hidden behind the bottom nav bar or FAB
             const SliverPadding(padding: EdgeInsets.only(bottom: 80)),
           ],
         ),
       ),
-      floatingActionButton: FloatingActionButton.extended(
-        onPressed: () => showSubjectFormSheet(context),
-        icon: const Icon(Icons.add),
-        label: const Text('Add Subject'),
-        tooltip: 'Add Subject',
-        isExtended: _isFabExtended,
+      floatingActionButton: Container(
+        decoration: BoxDecoration(
+          gradient: const LinearGradient(
+            colors: [Color(0xFF8E2DE2), Color(0xFF4A00E0)],
+            begin: Alignment.topLeft,
+            end: Alignment.bottomRight,
+          ),
+          borderRadius: BorderRadius.circular(16),
+          boxShadow: [
+            BoxShadow(
+              color: const Color(0xFF8E2DE2).withValues(alpha: 0.4),
+              blurRadius: 12,
+              offset: const Offset(0, 4),
+            ),
+          ],
+        ),
+        child: FloatingActionButton.extended(
+          backgroundColor: Colors.transparent,
+          elevation: 0,
+          highlightElevation: 0,
+          onPressed: () => showSubjectFormSheet(context),
+          icon: const Icon(Icons.add, color: Colors.white),
+          label: const Text('Add Subject', style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold)),
+          isExtended: _isFabExtended,
+        ),
       ),
     );
   }

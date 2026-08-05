@@ -1,4 +1,4 @@
-name: attendancex
+name: attendify
 description: A premium offline-first attendance tracker for college students.
 version: 1.0.0+1
 publish_to: none
@@ -60,6 +60,11 @@ dependencies:
   firebase_auth: ^6.5.7
   cloud_firestore: ^6.8.0
   google_sign_in: ^6.2.1
+  flutter_animate: ^4.5.2
+  local_auth: ^3.0.2
+
+  # ── Home Screen Widget ───────────────────────────────────────────────────────
+  home_widget: ^0.7.0
 
 dev_dependencies:
   flutter_test:

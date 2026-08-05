@@ -1,5 +1,5 @@
-import 'package:attendancex/features/dashboard/models/attendance_summary.dart';
-import 'package:attendancex/database/collections/subject_collection.dart';
+import 'package:attendify/features/dashboard/models/attendance_summary.dart';
+import 'package:attendify/database/collections/subject_collection.dart';
 import 'analytics_trend.dart';
 import 'attendance_forecast.dart';
 

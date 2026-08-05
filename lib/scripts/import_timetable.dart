@@ -1,8 +1,8 @@
-import 'package:attendancex/core/enums/lecture_type.dart';
-import 'package:attendancex/database/collections/schedule_collection.dart';
-import 'package:attendancex/database/collections/subject_collection.dart';
-import 'package:attendancex/database/isar_service.dart';
-import 'package:attendancex/services/preferences_service.dart';
+import 'package:attendify/core/enums/lecture_type.dart';
+import 'package:attendify/database/collections/schedule_collection.dart';
+import 'package:attendify/database/collections/subject_collection.dart';
+import 'package:attendify/database/isar_service.dart';
+import 'package:attendify/services/preferences_service.dart';
 import 'package:flutter/material.dart';
 import 'package:isar/isar.dart';
 import 'package:shared_preferences/shared_preferences.dart';

@@ -87,13 +87,14 @@ class ScheduleTimelineCard extends ConsumerWidget {
                 Text(
                   schedule.startTime,
                   style: Theme.of(context).textTheme.titleSmall?.copyWith(
+                        color: Colors.white,
                         fontWeight: FontWeight.bold,
                       ),
                 ),
                 Text(
                   schedule.endTime,
                   style: Theme.of(context).textTheme.bodySmall?.copyWith(
-                        color: Theme.of(context).colorScheme.onSurfaceVariant,
+                        color: Colors.white.withValues(alpha: 0.5),
                       ),
                 ),
               ],
@@ -110,18 +111,24 @@ class ScheduleTimelineCard extends ConsumerWidget {
                 height: 16,
                 color: isFirst
                     ? Colors.transparent
-                    : Theme.of(context).colorScheme.outlineVariant,
+                    : subjectColor.withValues(alpha: 0.3),
               ),
               Container(
-                width: 12,
-                height: 12,
+                width: 14,
+                height: 14,
                 decoration: BoxDecoration(
                   color: subjectColor,
                   shape: BoxShape.circle,
                   border: Border.all(
-                    color: Theme.of(context).colorScheme.surface,
-                    width: 2,
+                    color: const Color(0xFF0B0B13),
+                    width: 3,
                   ),
+                  boxShadow: [
+                    BoxShadow(
+                      color: subjectColor.withValues(alpha: 0.6),
+                      blurRadius: 8,
+                    ),
+                  ],
                 ),
               ),
               Expanded(
@@ -129,7 +136,7 @@ class ScheduleTimelineCard extends ConsumerWidget {
                   width: 2,
                   color: isLast
                       ? Colors.transparent
-                      : Theme.of(context).colorScheme.outlineVariant,
+                      : subjectColor.withValues(alpha: 0.3),
                 ),
               ),
             ],
@@ -157,7 +164,7 @@ class ScheduleTimelineCard extends ConsumerWidget {
                 background: Container(
                   margin: const EdgeInsets.symmetric(vertical: 4),
                   decoration: BoxDecoration(
-                    color: Colors.green.withValues(alpha: 0.8),
+                    color: const Color(0xFF00E676).withValues(alpha: 0.8),
                     borderRadius: BorderRadius.circular(16),
                   ),
                   alignment: Alignment.centerLeft,
@@ -168,10 +175,7 @@ class ScheduleTimelineCard extends ConsumerWidget {
                 secondaryBackground: Container(
                   margin: const EdgeInsets.symmetric(vertical: 4),
                   decoration: BoxDecoration(
-                    color: Theme.of(context)
-                        .colorScheme
-                        .error
-                        .withValues(alpha: 0.8),
+                    color: const Color(0xFFFF1744).withValues(alpha: 0.8),
                     borderRadius: BorderRadius.circular(16),
                   ),
                   alignment: Alignment.centerRight,
@@ -179,93 +183,98 @@ class ScheduleTimelineCard extends ConsumerWidget {
                   child:
                       const Icon(Icons.cancel, color: Colors.white, size: 32),
                 ),
-                child: Card(
-                  elevation: 0,
-                  margin: EdgeInsets.zero,
-                  color: subjectColor.withValues(alpha: 0.1),
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(16), // radiusLG
-                    side: BorderSide(
-                      color: subjectColor.withValues(alpha: 0.3),
-                    ),
-                  ),
-                  child: InkWell(
-                    onTap: onEdit,
+                child: Container(
+                  decoration: BoxDecoration(
+                    color: const Color(0xFF16162C),
                     borderRadius: BorderRadius.circular(16),
-                    child: Padding(
-                      padding: const EdgeInsets.all(AppSpacing.md),
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          Row(
-                            children: [
-                              Expanded(
-                                child: Text(
-                                  subject.name,
-                                  style: Theme.of(context)
-                                      .textTheme
-                                      .titleMedium
-                                      ?.copyWith(
-                                        fontWeight: FontWeight.bold,
-                                      ),
-                                ),
-                              ),
-                              Container(
-                                padding: const EdgeInsets.symmetric(
-                                    horizontal: 8, vertical: 4),
-                                decoration: BoxDecoration(
-                                  color: subjectColor.withValues(alpha: 0.2),
-                                  borderRadius: BorderRadius.circular(8),
-                                ),
-                                child: Text(
-                                  schedule.type.name.toUpperCase(),
-                                  style: TextStyle(
-                                    fontSize: 10,
-                                    fontWeight: FontWeight.bold,
-                                    color: subjectColor,
-                                  ),
-                                ),
-                              ),
-                            ],
-                          ),
-                          const SizedBox(height: AppSpacing.xs),
-                          if (schedule.room != null ||
-                              schedule.facultyOverride != null) ...[
+                    border: Border.all(
+                      color: Colors.white.withValues(alpha: 0.05),
+                    ),
+                    boxShadow: [
+                      BoxShadow(
+                        color: Colors.black.withValues(alpha: 0.2),
+                        blurRadius: 10,
+                        offset: const Offset(0, 4),
+                      ),
+                    ],
+                  ),
+                  child: Material(
+                    color: Colors.transparent,
+                    child: InkWell(
+                      onTap: onEdit,
+                      borderRadius: BorderRadius.circular(16),
+                      child: Padding(
+                        padding: const EdgeInsets.all(AppSpacing.md),
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
                             Row(
                               children: [
-                                if (schedule.room != null) ...[
-                                  Icon(Icons.location_on_outlined,
-                                      size: 14,
-                                      color: Theme.of(context)
-                                          .colorScheme
-                                          .onSurfaceVariant),
-                                  const SizedBox(width: 4),
-                                  Text(schedule.room!,
-                                      style: Theme.of(context)
-                                          .textTheme
-                                          .bodySmall),
-                                  const SizedBox(width: AppSpacing.sm),
-                                ],
-                                if (schedule.facultyOverride != null) ...[
-                                  Icon(Icons.person_outline,
-                                      size: 14,
-                                      color: Theme.of(context)
-                                          .colorScheme
-                                          .onSurfaceVariant),
-                                  const SizedBox(width: 4),
-                                  Expanded(
-                                    child: Text(
-                                      schedule.facultyOverride!,
-                                      style:
-                                          Theme.of(context).textTheme.bodySmall,
-                                      overflow: TextOverflow.ellipsis,
+                                Expanded(
+                                  child: Text(
+                                    subject.name,
+                                    style: Theme.of(context)
+                                        .textTheme
+                                        .titleMedium
+                                        ?.copyWith(
+                                          color: Colors.white,
+                                          fontWeight: FontWeight.bold,
+                                        ),
+                                  ),
+                                ),
+                                Container(
+                                  padding: const EdgeInsets.symmetric(
+                                      horizontal: 8, vertical: 4),
+                                  decoration: BoxDecoration(
+                                    color: subjectColor.withValues(alpha: 0.2),
+                                    borderRadius: BorderRadius.circular(8),
+                                  ),
+                                  child: Text(
+                                    schedule.type.name.toUpperCase(),
+                                    style: TextStyle(
+                                      fontSize: 10,
+                                      fontWeight: FontWeight.bold,
+                                      color: subjectColor,
                                     ),
                                   ),
-                                ],
+                                ),
                               ],
                             ),
+                            const SizedBox(height: AppSpacing.xs),
+                            if (schedule.room != null ||
+                                schedule.facultyOverride != null) ...[
+                              Row(
+                                children: [
+                                  if (schedule.room != null) ...[
+                                    Icon(Icons.location_on_outlined,
+                                        size: 14,
+                                        color: Colors.white.withValues(alpha: 0.5)),
+                                    const SizedBox(width: 4),
+                                    Text(schedule.room!,
+                                        style: Theme.of(context)
+                                            .textTheme
+                                            .bodySmall?.copyWith(color: Colors.white.withValues(alpha: 0.7))),
+                                    const SizedBox(width: AppSpacing.sm),
+                                  ],
+                                  if (schedule.facultyOverride != null) ...[
+                                    Icon(Icons.person_outline,
+                                        size: 14,
+                                        color: Colors.white.withValues(alpha: 0.5)),
+                                    const SizedBox(width: 4),
+                                    Expanded(
+                                      child: Text(
+                                        schedule.facultyOverride!,
+                                        style:
+                                            Theme.of(context).textTheme.bodySmall?.copyWith(color: Colors.white.withValues(alpha: 0.7)),
+                                        overflow: TextOverflow.ellipsis,
+                                      ),
+                                    ),
+                                  ],
+                                ],
+                              ),
+                            ],
                           ],
-                        ],
+                        ),
                       ),
                     ),
                   ),

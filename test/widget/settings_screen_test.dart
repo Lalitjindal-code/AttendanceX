@@ -1,12 +1,12 @@
-import 'package:attendancex/core/enums/gt_mode.dart';
-import 'package:attendancex/features/settings/screens/settings_screen.dart';
-import 'package:attendancex/services/preferences_service.dart';
+import 'package:attendify/core/enums/gt_mode.dart';
+import 'package:attendify/features/settings/screens/settings_screen.dart';
+import 'package:attendify/services/preferences_service.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-import 'package:attendancex/features/settings/providers/settings_provider.dart';
-import 'package:attendancex/features/settings/models/app_settings.dart';
+import 'package:attendify/features/settings/providers/settings_provider.dart';
+import 'package:attendify/features/settings/models/app_settings.dart';
 import 'package:golden_toolkit/golden_toolkit.dart';
 import '../helpers/golden_helper.dart';
 

@@ -18,6 +18,7 @@ import '../../planner/providers/planner_provider.dart';
 import '../../../engines/planner_engine.dart';
 import '../../../database/collections/academic_task_collection.dart';
 import '../models/dashboard_state.dart';
+import '../../../services/widget_service.dart';
 
 part 'dashboard_provider.g.dart';
 
@@ -220,5 +221,8 @@ class DashboardNotifier extends _$DashboardNotifier {
       ..status = status;
 
     await repo.upsertAttendance(attendance);
+
+    // Refresh the home screen widget with the latest attendance %
+    WidgetService.instance.updateWidget();
   }
 }

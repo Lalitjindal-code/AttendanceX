@@ -1,4 +1,6 @@
-# Attendify (formerly AttendanceX)
+# Attendify (formerly Attendify)
+
+[![Flutter CI](https://github.com/Lalitjindal-code/Attendify/actions/workflows/ci.yml/badge.svg)](https://github.com/Lalitjindal-code/Attendify/actions/workflows/ci.yml)
 
 Attendify is a production-grade, offline-first Flutter application designed for students to track their academic attendance with precision, smart analytics, and a buttery smooth user interface. 
 
@@ -18,6 +20,7 @@ Attendify is a production-grade, offline-first Flutter application designed for 
 *   **Framework**: Flutter (Dart)
 *   **State Management**: Riverpod (`flutter_riverpod` + `riverpod_annotation`)
 *   **Database**: Isar Database (Offline NoSQL)
+*   **Backend / Auth**: Firebase (Auth, Firestore)
 *   **Architecture**: Modular layer-based architecture (Repositories, Providers, Engines, and UI Features).
 
 ## 📂 Architecture Overview
@@ -58,5 +61,7 @@ flutter test
 ```
 
 ## ✨ Recent Updates
+* **GitHub Actions CI/CD**: Added automated workflow for linting, testing, and building Android/iOS apps.
+* **Firebase Integration**: Added Firebase Auth and Cloud Firestore dependencies.
 * **Dashboard Overhaul**: Seamlessly split Pending vs Marked classes with dynamic progress rings, clean badges, and reusable BottomSheets.
 * **Date Sync Fixes**: Improved time-zone resilient UTC/Local `DateTime` comparisons for daily tracking!

@@ -1,4 +1,4 @@
-import 'package:attendancex/features/notifications/models/scheduled_notification.dart';
+import 'package:attendify/features/notifications/models/scheduled_notification.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:timezone/data/latest_all.dart' as tz;
 import 'package:timezone/timezone.dart' as tz;
@@ -137,7 +137,7 @@ class NotificationService {
             tzDate,
             const NotificationDetails(
               android: AndroidNotificationDetails(
-                'attendancex_channel',
+                'Attendify_channel',
                 'Reminders',
                 channelDescription: 'Lecture and attendance reminders',
                 importance: Importance.high,
@@ -163,7 +163,7 @@ class NotificationService {
             tzDate,
             const NotificationDetails(
               android: AndroidNotificationDetails(
-                'attendancex_channel',
+                'Attendify_channel',
                 'Reminders',
                 channelDescription: 'Lecture and attendance reminders',
                 importance: Importance.high,
@@ -183,5 +183,43 @@ class NotificationService {
         }
       }
     }
+  }
+
+  /// Returns a list of currently pending notifications.
+  Future<List<PendingNotificationRequest>> getPendingNotifications() async {
+    if (!_isInitialized) await init();
+    return await _flutterLocalNotificationsPlugin.pendingNotificationRequests();
+  }
+
+  /// Shows an immediate test notification.
+  Future<void> showTestNotification() async {
+    if (!_isInitialized) await init();
+
+    const AndroidNotificationDetails androidPlatformChannelSpecifics =
+        AndroidNotificationDetails(
+      'test_channel',
+      'Test Notifications',
+      channelDescription: 'Used for testing if notifications work',
+      importance: Importance.max,
+      priority: Priority.high,
+      ticker: 'ticker',
+    );
+    const DarwinNotificationDetails iOSPlatformChannelSpecifics =
+        DarwinNotificationDetails(
+      presentAlert: true,
+      presentBadge: true,
+      presentSound: true,
+    );
+    const NotificationDetails platformChannelSpecifics = NotificationDetails(
+      android: androidPlatformChannelSpecifics,
+      iOS: iOSPlatformChannelSpecifics,
+    );
+    await _flutterLocalNotificationsPlugin.show(
+      0,
+      'Test Notification 🚀',
+      'If you see this, notifications are working properly!',
+      platformChannelSpecifics,
+      payload: 'test_payload',
+    );
   }
 }
