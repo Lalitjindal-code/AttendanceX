@@ -14,8 +14,12 @@ class Subject {
   /// Auto-incremented primary key.
   Id id = Isar.autoIncrement;
 
+  /// Foreign key referencing [Semester.id].
+  @Index()
+  int semesterId = 0;
+
   /// Subject name — unique (case-insensitive), max 60 characters.
-  @Index(unique: true, replace: false, caseSensitive: false)
+  @Index(unique: false, replace: false, caseSensitive: false)
   late String name;
 
   /// Faculty or instructor name. Optional.
@@ -42,6 +46,9 @@ class Subject {
   /// Optional personal notes about the subject. Max 300 characters.
   String? notes;
 
+  /// Whether the subject's attendance is calculated in the overall percentage.
+  bool isIncludedInOverall = true;
+
   /// Whether the subject is active (not archived).
   ///
   /// Set to [false] to archive without deleting — supports future archive feature.
@@ -56,6 +63,7 @@ class Subject {
   Map<String, dynamic> toMap() {
     return {
       'id': id,
+      'semesterId': semesterId,
       'name': name,
       'facultyName': facultyName,
       'facultyEmail': facultyEmail,
@@ -65,6 +73,7 @@ class Subject {
       'goalPercentage': goalPercentage,
       'minimumPercentage': minimumPercentage,
       'notes': notes,
+      'isIncludedInOverall': isIncludedInOverall,
       'isActive': isActive,
       'createdAt': createdAt.millisecondsSinceEpoch,
       'updatedAt': updatedAt.millisecondsSinceEpoch,
@@ -74,6 +83,7 @@ class Subject {
   factory Subject.fromMap(Map<String, dynamic> map) {
     return Subject()
       ..id = map['id'] ?? Isar.autoIncrement
+      ..semesterId = map['semesterId'] ?? 0
       ..name = map['name'] ?? 'Unknown'
       ..facultyName = map['facultyName']
       ..facultyEmail = map['facultyEmail']
@@ -83,6 +93,7 @@ class Subject {
       ..goalPercentage = map['goalPercentage'] ?? 75.0
       ..minimumPercentage = map['minimumPercentage'] ?? 75.0
       ..notes = map['notes']
+      ..isIncludedInOverall = map['isIncludedInOverall'] ?? true
       ..isActive = map['isActive'] ?? true
       ..createdAt = map['createdAt'] != null
           ? DateTime.fromMillisecondsSinceEpoch(map['createdAt'])

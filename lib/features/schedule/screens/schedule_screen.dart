@@ -12,6 +12,7 @@ import '../widgets/schedule_timeline_card.dart';
 import 'schedule_form_screen.dart';
 import '../../../core/utils/haptics.dart';
 import 'package:flutter/rendering.dart';
+import '../../../core/widgets/banner_ad_widget.dart';
 
 class ScheduleScreen extends ConsumerStatefulWidget {
   const ScheduleScreen({super.key});
@@ -179,6 +180,8 @@ class _ScheduleScreenState extends ConsumerState<ScheduleScreen> {
                     const SizedBox(height: AppSpacing.md),
                     _DayScheduleView(
                         dayOfWeek: DayOfWeek.weekdays[_currentDayIndex].value),
+                    const SizedBox(height: 16),
+                    const BannerAdWidget(),
                     const SizedBox(height: 80),
                   ]),
                 );
@@ -211,6 +214,7 @@ class _ScheduleScreenState extends ConsumerState<ScheduleScreen> {
                 ],
               ),
               child: FloatingActionButton.extended(
+                heroTag: 'schedule_fab',
                 backgroundColor: Colors.transparent,
                 elevation: 0,
                 highlightElevation: 0,

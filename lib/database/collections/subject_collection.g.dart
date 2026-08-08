@@ -57,23 +57,33 @@ const SubjectSchema = CollectionSchema(
       name: r'isActive',
       type: IsarType.bool,
     ),
-    r'minimumPercentage': PropertySchema(
+    r'isIncludedInOverall': PropertySchema(
       id: 8,
+      name: r'isIncludedInOverall',
+      type: IsarType.bool,
+    ),
+    r'minimumPercentage': PropertySchema(
+      id: 9,
       name: r'minimumPercentage',
       type: IsarType.double,
     ),
     r'name': PropertySchema(
-      id: 9,
+      id: 10,
       name: r'name',
       type: IsarType.string,
     ),
     r'notes': PropertySchema(
-      id: 10,
+      id: 11,
       name: r'notes',
       type: IsarType.string,
     ),
+    r'semesterId': PropertySchema(
+      id: 12,
+      name: r'semesterId',
+      type: IsarType.long,
+    ),
     r'updatedAt': PropertySchema(
-      id: 11,
+      id: 13,
       name: r'updatedAt',
       type: IsarType.dateTime,
     )
@@ -84,10 +94,23 @@ const SubjectSchema = CollectionSchema(
   deserializeProp: _subjectDeserializeProp,
   idName: r'id',
   indexes: {
+    r'semesterId': IndexSchema(
+      id: -4385212551819087598,
+      name: r'semesterId',
+      unique: false,
+      replace: false,
+      properties: [
+        IndexPropertySchema(
+          name: r'semesterId',
+          type: IndexType.value,
+          caseSensitive: false,
+        )
+      ],
+    ),
     r'name': IndexSchema(
       id: 879695947855722453,
       name: r'name',
-      unique: true,
+      unique: false,
       replace: false,
       properties: [
         IndexPropertySchema(
@@ -154,10 +177,12 @@ void _subjectSerialize(
   writer.writeString(offsets[5], object.facultyPhone);
   writer.writeDouble(offsets[6], object.goalPercentage);
   writer.writeBool(offsets[7], object.isActive);
-  writer.writeDouble(offsets[8], object.minimumPercentage);
-  writer.writeString(offsets[9], object.name);
-  writer.writeString(offsets[10], object.notes);
-  writer.writeDateTime(offsets[11], object.updatedAt);
+  writer.writeBool(offsets[8], object.isIncludedInOverall);
+  writer.writeDouble(offsets[9], object.minimumPercentage);
+  writer.writeString(offsets[10], object.name);
+  writer.writeString(offsets[11], object.notes);
+  writer.writeLong(offsets[12], object.semesterId);
+  writer.writeDateTime(offsets[13], object.updatedAt);
 }
 
 Subject _subjectDeserialize(
@@ -176,10 +201,12 @@ Subject _subjectDeserialize(
   object.goalPercentage = reader.readDouble(offsets[6]);
   object.id = id;
   object.isActive = reader.readBool(offsets[7]);
-  object.minimumPercentage = reader.readDouble(offsets[8]);
-  object.name = reader.readString(offsets[9]);
-  object.notes = reader.readStringOrNull(offsets[10]);
-  object.updatedAt = reader.readDateTime(offsets[11]);
+  object.isIncludedInOverall = reader.readBool(offsets[8]);
+  object.minimumPercentage = reader.readDouble(offsets[9]);
+  object.name = reader.readString(offsets[10]);
+  object.notes = reader.readStringOrNull(offsets[11]);
+  object.semesterId = reader.readLong(offsets[12]);
+  object.updatedAt = reader.readDateTime(offsets[13]);
   return object;
 }
 
@@ -207,12 +234,16 @@ P _subjectDeserializeProp<P>(
     case 7:
       return (reader.readBool(offset)) as P;
     case 8:
-      return (reader.readDouble(offset)) as P;
+      return (reader.readBool(offset)) as P;
     case 9:
-      return (reader.readString(offset)) as P;
+      return (reader.readDouble(offset)) as P;
     case 10:
-      return (reader.readStringOrNull(offset)) as P;
+      return (reader.readString(offset)) as P;
     case 11:
+      return (reader.readStringOrNull(offset)) as P;
+    case 12:
+      return (reader.readLong(offset)) as P;
+    case 13:
       return (reader.readDateTime(offset)) as P;
     default:
       throw IsarError('Unknown property with id $propertyId');
@@ -231,64 +262,18 @@ void _subjectAttach(IsarCollection<dynamic> col, Id id, Subject object) {
   object.id = id;
 }
 
-extension SubjectByIndex on IsarCollection<Subject> {
-  Future<Subject?> getByName(String name) {
-    return getByIndex(r'name', [name]);
-  }
-
-  Subject? getByNameSync(String name) {
-    return getByIndexSync(r'name', [name]);
-  }
-
-  Future<bool> deleteByName(String name) {
-    return deleteByIndex(r'name', [name]);
-  }
-
-  bool deleteByNameSync(String name) {
-    return deleteByIndexSync(r'name', [name]);
-  }
-
-  Future<List<Subject?>> getAllByName(List<String> nameValues) {
-    final values = nameValues.map((e) => [e]).toList();
-    return getAllByIndex(r'name', values);
-  }
-
-  List<Subject?> getAllByNameSync(List<String> nameValues) {
-    final values = nameValues.map((e) => [e]).toList();
-    return getAllByIndexSync(r'name', values);
-  }
-
-  Future<int> deleteAllByName(List<String> nameValues) {
-    final values = nameValues.map((e) => [e]).toList();
-    return deleteAllByIndex(r'name', values);
-  }
-
-  int deleteAllByNameSync(List<String> nameValues) {
-    final values = nameValues.map((e) => [e]).toList();
-    return deleteAllByIndexSync(r'name', values);
-  }
-
-  Future<Id> putByName(Subject object) {
-    return putByIndex(r'name', object);
-  }
-
-  Id putByNameSync(Subject object, {bool saveLinks = true}) {
-    return putByIndexSync(r'name', object, saveLinks: saveLinks);
-  }
-
-  Future<List<Id>> putAllByName(List<Subject> objects) {
-    return putAllByIndex(r'name', objects);
-  }
-
-  List<Id> putAllByNameSync(List<Subject> objects, {bool saveLinks = true}) {
-    return putAllByIndexSync(r'name', objects, saveLinks: saveLinks);
-  }
-}
-
 extension SubjectQueryWhereSort on QueryBuilder<Subject, Subject, QWhere> {
   QueryBuilder<Subject, Subject, QAfterWhere> anyId() {
     return QueryBuilder.apply(this, (query) {
       return query.addWhereClause(const IdWhereClause.any());
+    });
+  }
+
+  QueryBuilder<Subject, Subject, QAfterWhere> anySemesterId() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addWhereClause(
+        const IndexWhereClause.any(indexName: r'semesterId'),
+      );
     });
   }
 }
@@ -354,6 +339,96 @@ extension SubjectQueryWhere on QueryBuilder<Subject, Subject, QWhereClause> {
         lower: lowerId,
         includeLower: includeLower,
         upper: upperId,
+        includeUpper: includeUpper,
+      ));
+    });
+  }
+
+  QueryBuilder<Subject, Subject, QAfterWhereClause> semesterIdEqualTo(
+      int semesterId) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addWhereClause(IndexWhereClause.equalTo(
+        indexName: r'semesterId',
+        value: [semesterId],
+      ));
+    });
+  }
+
+  QueryBuilder<Subject, Subject, QAfterWhereClause> semesterIdNotEqualTo(
+      int semesterId) {
+    return QueryBuilder.apply(this, (query) {
+      if (query.whereSort == Sort.asc) {
+        return query
+            .addWhereClause(IndexWhereClause.between(
+              indexName: r'semesterId',
+              lower: [],
+              upper: [semesterId],
+              includeUpper: false,
+            ))
+            .addWhereClause(IndexWhereClause.between(
+              indexName: r'semesterId',
+              lower: [semesterId],
+              includeLower: false,
+              upper: [],
+            ));
+      } else {
+        return query
+            .addWhereClause(IndexWhereClause.between(
+              indexName: r'semesterId',
+              lower: [semesterId],
+              includeLower: false,
+              upper: [],
+            ))
+            .addWhereClause(IndexWhereClause.between(
+              indexName: r'semesterId',
+              lower: [],
+              upper: [semesterId],
+              includeUpper: false,
+            ));
+      }
+    });
+  }
+
+  QueryBuilder<Subject, Subject, QAfterWhereClause> semesterIdGreaterThan(
+    int semesterId, {
+    bool include = false,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addWhereClause(IndexWhereClause.between(
+        indexName: r'semesterId',
+        lower: [semesterId],
+        includeLower: include,
+        upper: [],
+      ));
+    });
+  }
+
+  QueryBuilder<Subject, Subject, QAfterWhereClause> semesterIdLessThan(
+    int semesterId, {
+    bool include = false,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addWhereClause(IndexWhereClause.between(
+        indexName: r'semesterId',
+        lower: [],
+        upper: [semesterId],
+        includeUpper: include,
+      ));
+    });
+  }
+
+  QueryBuilder<Subject, Subject, QAfterWhereClause> semesterIdBetween(
+    int lowerSemesterId,
+    int upperSemesterId, {
+    bool includeLower = true,
+    bool includeUpper = true,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addWhereClause(IndexWhereClause.between(
+        indexName: r'semesterId',
+        lower: [lowerSemesterId],
+        includeLower: includeLower,
+        upper: [upperSemesterId],
         includeUpper: includeUpper,
       ));
     });
@@ -1134,6 +1209,16 @@ extension SubjectQueryFilter
   }
 
   QueryBuilder<Subject, Subject, QAfterFilterCondition>
+      isIncludedInOverallEqualTo(bool value) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.equalTo(
+        property: r'isIncludedInOverall',
+        value: value,
+      ));
+    });
+  }
+
+  QueryBuilder<Subject, Subject, QAfterFilterCondition>
       minimumPercentageEqualTo(
     double value, {
     double epsilon = Query.epsilon,
@@ -1475,6 +1560,59 @@ extension SubjectQueryFilter
     });
   }
 
+  QueryBuilder<Subject, Subject, QAfterFilterCondition> semesterIdEqualTo(
+      int value) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.equalTo(
+        property: r'semesterId',
+        value: value,
+      ));
+    });
+  }
+
+  QueryBuilder<Subject, Subject, QAfterFilterCondition> semesterIdGreaterThan(
+    int value, {
+    bool include = false,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.greaterThan(
+        include: include,
+        property: r'semesterId',
+        value: value,
+      ));
+    });
+  }
+
+  QueryBuilder<Subject, Subject, QAfterFilterCondition> semesterIdLessThan(
+    int value, {
+    bool include = false,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.lessThan(
+        include: include,
+        property: r'semesterId',
+        value: value,
+      ));
+    });
+  }
+
+  QueryBuilder<Subject, Subject, QAfterFilterCondition> semesterIdBetween(
+    int lower,
+    int upper, {
+    bool includeLower = true,
+    bool includeUpper = true,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.between(
+        property: r'semesterId',
+        lower: lower,
+        includeLower: includeLower,
+        upper: upper,
+        includeUpper: includeUpper,
+      ));
+    });
+  }
+
   QueryBuilder<Subject, Subject, QAfterFilterCondition> updatedAtEqualTo(
       DateTime value) {
     return QueryBuilder.apply(this, (query) {
@@ -1632,6 +1770,18 @@ extension SubjectQuerySortBy on QueryBuilder<Subject, Subject, QSortBy> {
     });
   }
 
+  QueryBuilder<Subject, Subject, QAfterSortBy> sortByIsIncludedInOverall() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'isIncludedInOverall', Sort.asc);
+    });
+  }
+
+  QueryBuilder<Subject, Subject, QAfterSortBy> sortByIsIncludedInOverallDesc() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'isIncludedInOverall', Sort.desc);
+    });
+  }
+
   QueryBuilder<Subject, Subject, QAfterSortBy> sortByMinimumPercentage() {
     return QueryBuilder.apply(this, (query) {
       return query.addSortBy(r'minimumPercentage', Sort.asc);
@@ -1665,6 +1815,18 @@ extension SubjectQuerySortBy on QueryBuilder<Subject, Subject, QSortBy> {
   QueryBuilder<Subject, Subject, QAfterSortBy> sortByNotesDesc() {
     return QueryBuilder.apply(this, (query) {
       return query.addSortBy(r'notes', Sort.desc);
+    });
+  }
+
+  QueryBuilder<Subject, Subject, QAfterSortBy> sortBySemesterId() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'semesterId', Sort.asc);
+    });
+  }
+
+  QueryBuilder<Subject, Subject, QAfterSortBy> sortBySemesterIdDesc() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'semesterId', Sort.desc);
     });
   }
 
@@ -1791,6 +1953,18 @@ extension SubjectQuerySortThenBy
     });
   }
 
+  QueryBuilder<Subject, Subject, QAfterSortBy> thenByIsIncludedInOverall() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'isIncludedInOverall', Sort.asc);
+    });
+  }
+
+  QueryBuilder<Subject, Subject, QAfterSortBy> thenByIsIncludedInOverallDesc() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'isIncludedInOverall', Sort.desc);
+    });
+  }
+
   QueryBuilder<Subject, Subject, QAfterSortBy> thenByMinimumPercentage() {
     return QueryBuilder.apply(this, (query) {
       return query.addSortBy(r'minimumPercentage', Sort.asc);
@@ -1824,6 +1998,18 @@ extension SubjectQuerySortThenBy
   QueryBuilder<Subject, Subject, QAfterSortBy> thenByNotesDesc() {
     return QueryBuilder.apply(this, (query) {
       return query.addSortBy(r'notes', Sort.desc);
+    });
+  }
+
+  QueryBuilder<Subject, Subject, QAfterSortBy> thenBySemesterId() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'semesterId', Sort.asc);
+    });
+  }
+
+  QueryBuilder<Subject, Subject, QAfterSortBy> thenBySemesterIdDesc() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'semesterId', Sort.desc);
     });
   }
 
@@ -1893,6 +2079,12 @@ extension SubjectQueryWhereDistinct
     });
   }
 
+  QueryBuilder<Subject, Subject, QDistinct> distinctByIsIncludedInOverall() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addDistinctBy(r'isIncludedInOverall');
+    });
+  }
+
   QueryBuilder<Subject, Subject, QDistinct> distinctByMinimumPercentage() {
     return QueryBuilder.apply(this, (query) {
       return query.addDistinctBy(r'minimumPercentage');
@@ -1910,6 +2102,12 @@ extension SubjectQueryWhereDistinct
       {bool caseSensitive = true}) {
     return QueryBuilder.apply(this, (query) {
       return query.addDistinctBy(r'notes', caseSensitive: caseSensitive);
+    });
+  }
+
+  QueryBuilder<Subject, Subject, QDistinct> distinctBySemesterId() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addDistinctBy(r'semesterId');
     });
   }
 
@@ -1976,6 +2174,12 @@ extension SubjectQueryProperty
     });
   }
 
+  QueryBuilder<Subject, bool, QQueryOperations> isIncludedInOverallProperty() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addPropertyName(r'isIncludedInOverall');
+    });
+  }
+
   QueryBuilder<Subject, double, QQueryOperations> minimumPercentageProperty() {
     return QueryBuilder.apply(this, (query) {
       return query.addPropertyName(r'minimumPercentage');
@@ -1991,6 +2195,12 @@ extension SubjectQueryProperty
   QueryBuilder<Subject, String?, QQueryOperations> notesProperty() {
     return QueryBuilder.apply(this, (query) {
       return query.addPropertyName(r'notes');
+    });
+  }
+
+  QueryBuilder<Subject, int, QQueryOperations> semesterIdProperty() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addPropertyName(r'semesterId');
     });
   }
 

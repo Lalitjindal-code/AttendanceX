@@ -4,6 +4,7 @@ import '../../../core/constants/app_spacing.dart';
 import '../providers/calendar_provider.dart';
 import '../widgets/calendar_widget.dart';
 import '../widgets/day_detail_panel.dart';
+import '../../../core/widgets/banner_ad_widget.dart';
 
 class CalendarScreen extends ConsumerWidget {
   const CalendarScreen({super.key});
@@ -37,6 +38,12 @@ class CalendarScreen extends ConsumerWidget {
                 ),
               ),
               DayDetailPanel(state: state),
+              const SliverToBoxAdapter(
+                child: Padding(
+                  padding: EdgeInsets.only(top: 16),
+                  child: BannerAdWidget(),
+                ),
+              ),
               const SliverToBoxAdapter(
                 child: SizedBox(height: 80),
               ),

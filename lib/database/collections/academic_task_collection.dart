@@ -9,8 +9,14 @@ part 'academic_task_collection.g.dart';
 class AcademicTask {
   AcademicTask();
 
+  /// Auto-incremented primary key.
   Id id = Isar.autoIncrement;
 
+  /// Foreign key referencing [Semester.id].
+  @Index()
+  int semesterId = 0;
+
+  /// The title of the task. Max 100 characters.
   late String title;
 
   String? description;
@@ -61,6 +67,7 @@ class AcademicTask {
   Map<String, dynamic> toMap() {
     return {
       'id': id,
+      'semesterId': semesterId,
       'title': title,
       'description': description,
       'subjectId': subjectId,
@@ -85,6 +92,7 @@ class AcademicTask {
   factory AcademicTask.fromMap(Map<String, dynamic> map) {
     return AcademicTask()
       ..id = map['id'] ?? Isar.autoIncrement
+      ..semesterId = map['semesterId'] ?? 0
       ..title = map['title'] ?? 'Untitled Task'
       ..description = map['description']
       ..subjectId = map['subjectId'] ?? 0

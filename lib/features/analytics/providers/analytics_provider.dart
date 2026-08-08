@@ -6,6 +6,7 @@ import 'package:attendify/features/analytics/models/analytics_state.dart';
 import 'package:attendify/features/analytics/models/subject_statistics.dart';
 import 'package:attendify/features/dashboard/models/attendance_summary.dart';
 import 'package:attendify/features/settings/providers/settings_provider.dart';
+import 'package:attendify/features/settings/providers/semester_provider.dart';
 import 'package:attendify/features/attendance/providers/attendance_providers.dart';
 import 'package:attendify/features/planner/providers/planner_provider.dart';
 import 'package:attendify/database/collections/academic_task_collection.dart';
@@ -31,12 +32,17 @@ class AnalyticsNotifier extends _$AnalyticsNotifier {
     final plannerRepo = ref.watch(plannerRepositoryProvider);
     final scheduleRepo = ref.watch(scheduleRepositoryProvider);
     final settings = ref.watch(settingsProvider);
+    final semester = ref.watch(semesterStateProvider);
+
+    if (semester == null) {
+      return Stream.value(const AnalyticsState(isLoading: false));
+    }
 
     return Rx.combineLatest4(
-      subjectRepo.watchAll(),
-      attendanceRepo.watchAll(),
-      plannerRepo.watchAllTasks(),
-      scheduleRepo.watchAll(),
+      subjectRepo.watchAll(semester.id),
+      attendanceRepo.watchAll(semester.id),
+      plannerRepo.watchAllTasks(semester.id),
+      scheduleRepo.watchAll(semester.id),
       (List<Subject> subjects, List<Attendance> allAttendances,
           List<AcademicTask> allTasks, List<Schedule> allSchedules) {
         if (subjects.isEmpty) {
@@ -45,17 +51,17 @@ class AnalyticsNotifier extends _$AnalyticsNotifier {
 
         // 1. Overall Monthly Trends
         final monthlyTrends =
-            AnalyticsEngine.calculateMonthlyTrends(allAttendances, settings);
+            AnalyticsEngine.calculateMonthlyTrends(allAttendances, settings, semester);
 
         // 1.5. Day of Week Trends & Bunk Heatmap
         final dayOfWeekTrends =
-            AnalyticsEngine.calculateDayOfWeekTrends(allAttendances, settings);
+            AnalyticsEngine.calculateDayOfWeekTrends(allAttendances, settings, semester);
         final bunkHeatmap =
             AnalyticsEngine.calculateBunkHeatmap(allAttendances);
 
         // 2. Overall Forecast
         final overallSummary =
-            AttendanceEngine.calculateOverallSummary(allAttendances, settings);
+            AttendanceEngine.calculateOverallSummary(allAttendances, settings, semester);
 
         double avgGoal = 0.0;
         for (var sub in subjects) {
@@ -91,19 +97,21 @@ class AnalyticsNotifier extends _$AnalyticsNotifier {
               allAttendances.where((a) => a.subjectId == subject.id).toList();
 
           final summary = AttendanceEngine.calculateSubjectSummary(
-              subject.id, subjectAttendances, settings);
+              subject.id, subjectAttendances, settings, semester);
           final lectureSummary = AttendanceEngine.calculateSubjectSummaryByType(
               subject.id,
               LectureType.lecture,
               subjectAttendances,
               allSchedules,
-              settings);
+              settings,
+              semester);
           final labSummary = AttendanceEngine.calculateSubjectSummaryByType(
               subject.id,
               LectureType.lab,
               subjectAttendances,
               allSchedules,
-              settings);
+              settings,
+              semester);
 
           final forecast = AnalyticsEngine.calculateForecast(
               summary, subject.goalPercentage / 100.0);
@@ -118,9 +126,9 @@ class AnalyticsNotifier extends _$AnalyticsNotifier {
               .toList();
 
           final currentSummary = AttendanceEngine.calculateSubjectSummary(
-              subject.id, currentMonthAttendances, settings);
+              subject.id, currentMonthAttendances, settings, semester);
           final prevSummary = AttendanceEngine.calculateSubjectSummary(
-              subject.id, prevMonthAttendances, settings);
+              subject.id, prevMonthAttendances, settings, semester);
 
           final trend =
               AnalyticsEngine.calculateTrend(currentSummary, prevSummary);

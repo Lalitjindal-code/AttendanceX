@@ -6,12 +6,11 @@ part of 'settings_provider.dart';
 // RiverpodGenerator
 // **************************************************************************
 
-String _$settingsHash() => r'd00d0fd0d5ac5d86bd8e5d36fa004c5f881d4ca8';
+String _$settingsHash() => r'2a3f48293e13c2c56e91f000821a18686b2f2d74';
 
 /// Riverpod provider managing application settings state.
 ///
-/// Reads from and writes to [PreferencesService]. Changes to state immediately
-/// trigger UI rebuilds (e.g., ThemeMode changes).
+/// Reads from and writes to [PreferencesService] and Isar [Profile].
 ///
 /// Copied from [Settings].
 @ProviderFor(Settings)

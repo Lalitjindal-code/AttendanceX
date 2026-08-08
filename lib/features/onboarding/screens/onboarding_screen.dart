@@ -6,6 +6,8 @@ import '../../../navigation/app_routes.dart';
 import '../../settings/providers/settings_provider.dart';
 import '../widgets/onboarding_page.dart';
 import '../widgets/onboarding_subject_form.dart';
+import '../widgets/onboarding_semester_form.dart';
+import '../../college/providers/college_auth_provider.dart';
 
 class OnboardingScreen extends ConsumerStatefulWidget {
   const OnboardingScreen({super.key});
@@ -25,7 +27,7 @@ class _OnboardingScreenState extends ConsumerState<OnboardingScreen> {
   }
 
   void _onNext() {
-    if (_currentPage < 2) {
+    if (_currentPage < 3) {
       _pageController.nextPage(
         duration: const Duration(milliseconds: 300),
         curve: Curves.easeIn,
@@ -42,6 +44,9 @@ class _OnboardingScreenState extends ConsumerState<OnboardingScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final isCollegeUser = ref.watch(isCollegeUserProvider);
+    final totalPages = isCollegeUser ? 3 : 4;
+
     return Scaffold(
       body: SafeArea(
         child: Column(
@@ -53,7 +58,7 @@ class _OnboardingScreenState extends ConsumerState<OnboardingScreen> {
               child: Row(
                 mainAxisAlignment: MainAxisAlignment.end,
                 children: [
-                  if (_currentPage < 2)
+                  if (_currentPage == totalPages - 1)
                     TextButton(
                       onPressed: _completeOnboarding,
                       child: const Text('Skip'),
@@ -79,16 +84,20 @@ class _OnboardingScreenState extends ConsumerState<OnboardingScreen> {
                         'Set attendance goals, track your progress, and get smart suggestions on when it is safe to bunk.',
                     color: Theme.of(context).colorScheme.primary,
                   ),
-                  OnboardingPage(
+                  const OnboardingPage(
                     iconData: Icons.insert_chart_outlined,
                     title: 'Smart Analytics at your fingertips',
                     subtitle:
                         'Beautiful charts help you visualize your attendance trends across the entire semester.',
                     color: Colors.blue,
                   ),
-                  OnboardingSubjectForm(
-                    onComplete: _completeOnboarding,
+                  OnboardingSemesterForm(
+                    onComplete: isCollegeUser ? _completeOnboarding : _onNext,
                   ),
+                  if (!isCollegeUser)
+                    OnboardingSubjectForm(
+                      onComplete: _completeOnboarding,
+                    ),
                 ],
               ),
             ),
@@ -103,7 +112,7 @@ class _OnboardingScreenState extends ConsumerState<OnboardingScreen> {
                     // Dot indicators
                     Row(
                       children: List.generate(
-                        3,
+                        totalPages,
                         (index) => AnimatedContainer(
                           duration: const Duration(milliseconds: 300),
                           margin: const EdgeInsets.only(right: 8),
@@ -121,6 +130,7 @@ class _OnboardingScreenState extends ConsumerState<OnboardingScreen> {
 
                     // Next Button
                     FloatingActionButton(
+                      heroTag: 'onboarding_fab',
                       onPressed: _onNext,
                       elevation: 0,
                       child: const Icon(Icons.arrow_forward),

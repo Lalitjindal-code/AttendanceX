@@ -67,8 +67,9 @@ class MonthlyTrendChart extends StatelessWidget {
                     interval: 1,
                     getTitlesWidget: (value, meta) {
                       final index = value.toInt();
-                      if (index < 0 || index >= displayTrends.length)
+                      if (index < 0 || index >= displayTrends.length) {
                         return const SizedBox.shrink();
+                      }
                       final trend = displayTrends[index];
                       final date = DateTime(trend.year, trend.month);
                       return SideTitleWidget(

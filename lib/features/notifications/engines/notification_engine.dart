@@ -5,6 +5,7 @@ import 'package:attendify/core/enums/day_of_week.dart';
 import 'package:attendify/database/collections/attendance_collection.dart';
 import 'package:attendify/database/collections/schedule_collection.dart';
 import 'package:attendify/database/collections/subject_collection.dart';
+import 'package:attendify/database/collections/semester_collection.dart';
 import 'package:attendify/features/notifications/models/scheduled_notification.dart';
 import 'package:attendify/features/settings/models/app_settings.dart';
 
@@ -19,6 +20,7 @@ class NotificationEngine {
     required List<Schedule> schedules,
     required List<Attendance> attendances,
     required AppSettings settings,
+    required Semester? semester,
     required DateTime now,
   }) {
     if (!settings.notificationsEnabled) {
@@ -38,6 +40,7 @@ class NotificationEngine {
         schedules: schedules,
         attendances: attendances,
         settings: settings,
+        semester: semester,
         now: now,
       ));
 
@@ -49,6 +52,7 @@ class NotificationEngine {
           schedules: schedules,
           attendances: attendances,
           settings: settings,
+          semester: semester,
           now: now,
         );
         if (reminder != null) {
@@ -66,9 +70,17 @@ class NotificationEngine {
     required List<Schedule> schedules,
     required List<Attendance> attendances,
     required AppSettings settings,
+    required Semester? semester,
     required DateTime now,
   }) {
     final alerts = <ScheduledNotification>[];
+    
+    // Check if target date is within semester
+    if (semester != null) {
+      if (targetDate.isBefore(_normalizeDate(semester.startDate))) return alerts;
+      if (semester.endDate != null && targetDate.isAfter(_normalizeDate(semester.endDate!))) return alerts;
+    }
+
     final dayOfWeek = DayOfWeek.fromInt(targetDate.weekday).value;
     final todaysSchedules =
         schedules.where((s) => s.dayOfWeek == dayOfWeek).toList();
@@ -85,8 +97,9 @@ class NotificationEngine {
       final attendance = todaysAttendances
           .where((a) => a.scheduleId == schedule.id)
           .firstOrNull;
-      if (attendance != null && attendance.status != AttendanceStatus.pending)
+      if (attendance != null && attendance.status != AttendanceStatus.pending) {
         continue;
+      }
 
       // Calculate start time
       final timeParts = schedule.startTime.split(':');
@@ -128,8 +141,15 @@ class NotificationEngine {
     required List<Schedule> schedules,
     required List<Attendance> attendances,
     required AppSettings settings,
+    required Semester? semester,
     required DateTime now,
   }) {
+    // Check if target date is within semester
+    if (semester != null) {
+      if (targetDate.isBefore(_normalizeDate(semester.startDate))) return null;
+      if (semester.endDate != null && targetDate.isAfter(_normalizeDate(semester.endDate!))) return null;
+    }
+
     // Parse daily reminder time
     final timeParts = settings.dailyReminderTime.split(':');
     if (timeParts.length != 2) return null;
@@ -191,8 +211,7 @@ class NotificationEngine {
         final checkDate = targetDate.subtract(Duration(days: i));
 
         // We only care if `checkDate` is on or after the semester start date?
-        if (settings.semesterStartDate != null &&
-            checkDate.isBefore(_normalizeDate(settings.semesterStartDate!))) {
+        if (semester != null && checkDate.isBefore(_normalizeDate(semester.startDate))) {
           continue;
         }
 

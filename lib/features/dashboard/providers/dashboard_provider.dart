@@ -10,14 +10,17 @@ import '../../../database/collections/attendance_collection.dart';
 import '../../../database/collections/schedule_collection.dart';
 import '../../../database/collections/subject_collection.dart';
 import '../../../engines/attendance_engine.dart';
-import '../../settings/providers/settings_provider.dart';
+import 'package:attendify/features/settings/providers/settings_provider.dart';
+import 'package:attendify/features/settings/providers/semester_provider.dart';
 import '../../schedule/providers/schedule_providers.dart';
 import '../../subjects/providers/subject_providers.dart';
 import '../../attendance/providers/attendance_providers.dart';
 import '../../planner/providers/planner_provider.dart';
 import '../../../engines/planner_engine.dart';
 import '../../../database/collections/academic_task_collection.dart';
-import '../models/dashboard_state.dart';
+import '../models/dashboard_state.dart'; // Provides LectureCardModel
+import '../models/attendance_summary.dart'; // Provides SubjectAttendanceSummary
+import '../models/smart_suggestion.dart'; // Provides SmartSuggestion
 import '../../../services/widget_service.dart';
 
 part 'dashboard_provider.g.dart';
@@ -27,6 +30,11 @@ class DashboardNotifier extends _$DashboardNotifier {
   @override
   Stream<DashboardState> build() {
     final settings = ref.watch(settingsProvider);
+    final semester = ref.watch(semesterStateProvider);
+
+    if (semester == null) {
+      return Stream.value(const DashboardState(isLoading: false));
+    }
 
     final now = DateTime.now();
     final todayUtc = DateTime.utc(now.year, now.month, now.day);
@@ -34,10 +42,10 @@ class DashboardNotifier extends _$DashboardNotifier {
 
     final scheduleStream = ref
         .watch(scheduleRepositoryProvider)
-        .watchByDaySortedByTime(dayOfWeek.value);
-    final subjectStream = ref.watch(subjectRepositoryProvider).watchAllActive();
-    final attendanceStream = ref.watch(attendanceRepositoryProvider).watchAll();
-    final plannerStream = ref.watch(plannerRepositoryProvider).watchAllTasks();
+        .watchByDaySortedByTime(semester.id, dayOfWeek.value);
+    final subjectStream = ref.watch(subjectRepositoryProvider).watchAllActive(semester.id);
+    final attendanceStream = ref.watch(attendanceRepositoryProvider).watchAll(semester.id);
+    final plannerStream = ref.watch(plannerRepositoryProvider).watchAllTasks(semester.id);
 
     return Rx.combineLatest4(
       scheduleStream,
@@ -46,8 +54,16 @@ class DashboardNotifier extends _$DashboardNotifier {
       plannerStream,
       (List<Schedule> schedules, List<Subject> subjects,
           List<Attendance> allAttendances, List<AcademicTask> tasks) {
+        final includedSubjectIds = subjects
+            .where((s) => s.isIncludedInOverall)
+            .map((s) => s.id)
+            .toSet();
+        final includedAttendances = allAttendances
+            .where((a) => includedSubjectIds.contains(a.subjectId))
+            .toList();
+
         final overallSummary =
-            AttendanceEngine.calculateOverallSummary(allAttendances, settings);
+            AttendanceEngine.calculateOverallSummary(includedAttendances, settings, semester);
 
         final overallSuggestion = AttendanceEngine.calculateSmartSuggestion(
           effectivePresent: overallSummary.effectivePresent,
@@ -63,6 +79,23 @@ class DashboardNotifier extends _$DashboardNotifier {
                     a.date.day == now.day))
             .toList();
 
+        // ── Pre-compute per-subject summaries ONCE (O(n) per stream tick) ──
+        // Previously this was computed inside the per-schedule loop → O(n*m) jank
+        final subjectSummaryMap = <int, SubjectAttendanceSummary>{};
+        final subjectSuggestionMap = <int, SmartSuggestion>{};
+        for (final subject in subjects) {
+          final summary = AttendanceEngine.calculateSubjectSummary(
+            subject.id, allAttendances, settings, semester);
+          final suggestion = AttendanceEngine.calculateSmartSuggestion(
+            subjectId: subject.id,
+            effectivePresent: summary.effectivePresent,
+            effectiveTotal: summary.effectiveTotal,
+            goalPercentage: subject.goalPercentage,
+          );
+          subjectSummaryMap[subject.id] = summary;
+          subjectSuggestionMap[subject.id] = suggestion;
+        }
+
         final todaysLectures = schedules
             .map((schedule) {
               final subject =
@@ -72,18 +105,9 @@ class DashboardNotifier extends _$DashboardNotifier {
               final attendanceForThisSlot = todaysAttendances
                   .firstWhereOrNull((a) => a.scheduleId == schedule.id);
 
-              final subjectSummary = AttendanceEngine.calculateSubjectSummary(
-                subject.id,
-                allAttendances,
-                settings,
-              );
-
-              final suggestion = AttendanceEngine.calculateSmartSuggestion(
-                subjectId: subject.id,
-                effectivePresent: subjectSummary.effectivePresent,
-                effectiveTotal: subjectSummary.effectiveTotal,
-                goalPercentage: subject.goalPercentage,
-              );
+              // Use pre-computed values — no more inner loops!
+              final subjectSummary = subjectSummaryMap[subject.id]!;
+              final suggestion = subjectSuggestionMap[subject.id]!;
 
               return LectureCardModel(
                 schedule: schedule,
@@ -136,9 +160,11 @@ class DashboardNotifier extends _$DashboardNotifier {
         final endOfWeek = startOfWeek
             .add(const Duration(days: 6, hours: 23, minutes: 59, seconds: 59));
 
-        for (final attendance in allAttendances) {
+        for (final attendance in includedAttendances) {
           if (attendance.status == AttendanceStatus.pending ||
-              attendance.status == AttendanceStatus.holiday) continue;
+              attendance.status == AttendanceStatus.holiday) {
+            continue;
+          }
 
           final bool isPresent =
               attendance.status == AttendanceStatus.present ||
@@ -214,7 +240,11 @@ class DashboardNotifier extends _$DashboardNotifier {
     final now = DateTime.now();
     final todayUtc = DateTime.utc(now.year, now.month, now.day);
 
+    final semester = ref.read(semesterStateProvider);
+    if (semester == null) return;
+
     final attendance = Attendance()
+      ..semesterId = semester.id
       ..scheduleId = scheduleId
       ..subjectId = subjectId
       ..date = todayUtc

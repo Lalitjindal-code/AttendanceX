@@ -18,6 +18,8 @@ abstract final class AppRoutes {
   static const String onboarding = '/onboarding';
   static const String login = '/login';
   static const String signup = '/signup';
+  static const String collegeZone = '/college-zone';
+  static const String feedback = '/feedback';
 
   // Sub-routes
   static const String subjectDetail = 'detail/:id';

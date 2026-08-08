@@ -4,6 +4,7 @@ import '../../../core/constants/app_spacing.dart';
 import '../../../core/enums/attendance_status.dart';
 import '../../../database/collections/attendance_collection.dart';
 import '../../attendance/providers/attendance_providers.dart';
+import '../../settings/providers/semester_provider.dart';
 import '../models/daily_attendance_item.dart';
 
 class DailyAttendanceCard extends ConsumerWidget {
@@ -243,7 +244,28 @@ class DailyAttendanceCard extends ConsumerWidget {
                         },
                       ),
                     );
-                  }).toList(),
+                  }).cast<Widget>().toList()..add(
+                    // Add a delete/clear option if an attendance record exists
+                    item.attendance != null
+                        ? Padding(
+                            padding: const EdgeInsets.only(top: AppSpacing.sm, bottom: AppSpacing.xs),
+                            child: ListTile(
+                              shape: RoundedRectangleBorder(
+                                  borderRadius: BorderRadius.circular(12)),
+                              leading: const Icon(Icons.delete_outline, color: Colors.redAccent),
+                              title: const Text(
+                                'Remove Attendance',
+                                style: TextStyle(color: Colors.redAccent),
+                              ),
+                              onTap: () {
+                                final repo = ref.read(attendanceRepositoryProvider);
+                                repo.delete(item.attendance!.id);
+                                Navigator.pop(context);
+                              },
+                            ),
+                          )
+                        : const SizedBox.shrink(),
+                  ),
                 ),
               ),
             ],
@@ -255,9 +277,13 @@ class DailyAttendanceCard extends ConsumerWidget {
 
   void _updateAttendance(WidgetRef ref, AttendanceStatus newStatus) {
     final repo = ref.read(attendanceRepositoryProvider);
+    final semester = ref.read(semesterStateProvider);
+    if (semester == null) return;
+    
     final att = item.attendance ?? Attendance()
+      ..semesterId = semester.id
       ..subjectId = item.subject.id
-      ..scheduleId = item.schedule?.id ?? -1
+      ..scheduleId = item.schedule?.id
       ..date = DateTime(date.year, date.month, date.day);
 
     att.status = newStatus;

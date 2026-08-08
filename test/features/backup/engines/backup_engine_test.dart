@@ -35,6 +35,8 @@ void main() {
       // 1. Export Backup
       await engine.exportBackup(
         path: testPath,
+        profiles: [],
+        semesters: [],
         subjects: [dummySubject],
         schedules: [],
         attendanceRecords: [],
@@ -65,6 +67,8 @@ void main() {
       // 1. Export valid backup
       await engine.exportBackup(
         path: testPath,
+        profiles: [],
+        semesters: [],
         subjects: [],
         schedules: [],
         attendanceRecords: [],

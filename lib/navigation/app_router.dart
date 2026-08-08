@@ -12,12 +12,14 @@ import '../features/subjects/screens/subjects_screen.dart';
 import '../features/planner/screens/planner_screen.dart';
 import '../features/more/screens/more_screen.dart';
 import '../features/notifications/screens/notifications_screen.dart';
+import '../features/settings/screens/feedback_screen.dart';
 import '../features/onboarding/screens/onboarding_screen.dart';
 import '../features/settings/providers/settings_provider.dart';
 import '../features/auth/screens/login_screen.dart';
 import '../features/auth/screens/signup_screen.dart';
 import '../features/auth/providers/auth_provider.dart';
 import '../features/profile/screens/profile_screen.dart';
+import '../features/college/screens/college_zone_screen.dart';
 import 'app_routes.dart';
 import 'shell_scaffold.dart';
 
@@ -78,6 +80,10 @@ GoRouter appRouter(AppRouterRef ref) {
         path: AppRoutes.onboarding,
         builder: (context, state) => const OnboardingScreen(),
       ),
+      GoRoute(
+        path: AppRoutes.collegeZone,
+        builder: (context, state) => const CollegeZoneScreen(),
+      ),
       StatefulShellRoute.indexedStack(
         builder: (context, state, navigationShell) {
           return ShellScaffold(navigationShell: navigationShell);
@@ -103,9 +109,13 @@ GoRouter appRouter(AppRouterRef ref) {
                     path: AppRoutes.subjectDetail,
                     builder: (context, state) {
                       final id = state.pathParameters['id'];
-                      return SubjectDetailScreen(
-                        subjectId: int.parse(id!),
-                      );
+                      final subjectId = int.tryParse(id ?? '');
+                      if (subjectId == null) {
+                        return const Scaffold(
+                          body: Center(child: Text('Invalid subject ID')),
+                        );
+                      }
+                      return SubjectDetailScreen(subjectId: subjectId);
                     },
                   ),
                 ],
@@ -160,6 +170,10 @@ GoRouter appRouter(AppRouterRef ref) {
               GoRoute(
                 path: AppRoutes.notifications,
                 builder: (context, state) => const NotificationsScreen(),
+              ),
+              GoRoute(
+                path: AppRoutes.feedback,
+                builder: (context, state) => const FeedbackScreen(),
               ),
             ],
           ),

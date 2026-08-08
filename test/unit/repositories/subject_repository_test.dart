@@ -7,6 +7,8 @@ import 'package:attendify/database/collections/attendance_collection.dart';
 import 'package:attendify/database/collections/attendance_history_collection.dart';
 import 'package:attendify/database/collections/schedule_collection.dart';
 import 'package:attendify/database/collections/subject_collection.dart';
+import 'package:attendify/core/enums/task_type.dart';
+import 'package:attendify/database/collections/academic_task_collection.dart';
 import 'package:attendify/database/repositories/subject_repository.dart';
 
 void main() {
@@ -25,7 +27,8 @@ void main() {
         SubjectSchema,
         ScheduleSchema,
         AttendanceSchema,
-        AttendanceHistorySchema
+        AttendanceHistorySchema,
+        AcademicTaskSchema
       ],
       directory: tempDir.path,
     );
@@ -38,7 +41,9 @@ void main() {
 
   group('SubjectRepository CRUD', () {
     test('creates a subject successfully', () async {
-      final subject = Subject()..name = 'Math';
+      final subject = Subject()
+        ..name = 'Math'
+        ..goalPercentage = 75.0;
       await repository.create(subject);
 
       final fetched = await repository.getById(subject.id);
@@ -48,39 +53,32 @@ void main() {
 
     test('throws DuplicateException on duplicate name', () async {
       final sub1 = Subject()..name = 'Math';
-      await repository.create(sub1);
+      final sub2 = Subject()..name = 'Math';
 
-      final sub2 = Subject()..name = ' math ';
-      expect(
-        () => repository.create(sub2),
-        throwsA(isA<DuplicateException>()),
-      );
+      await repository.create(sub1);
+      expect(() => repository.create(sub2), throwsA(isA<DuplicateException>()));
     });
 
     test('updates a subject successfully', () async {
       final subject = Subject()..name = 'Math';
       await repository.create(subject);
 
-      subject.name = 'Advanced Math';
+      subject.name = 'Physics';
       await repository.update(subject);
 
       final fetched = await repository.getById(subject.id);
-      expect(fetched!.name, 'Advanced Math');
+      expect(fetched!.name, 'Physics');
     });
 
-    test('throws DuplicateException when updating to an existing name',
-        () async {
+    test('throws DuplicateException when updating to an existing name', () async {
       final sub1 = Subject()..name = 'Math';
-      await repository.create(sub1);
+      final sub2 = Subject()..name = 'Physics';
 
-      final sub2 = Subject()..name = 'Science';
+      await repository.create(sub1);
       await repository.create(sub2);
 
       sub2.name = 'Math';
-      expect(
-        () => repository.update(sub2),
-        throwsA(isA<DuplicateException>()),
-      );
+      expect(() => repository.update(sub2), throwsA(isA<DuplicateException>()));
     });
   });
 
@@ -101,12 +99,18 @@ void main() {
         await isar.attendances.put(Attendance()
           ..subjectId = subject.id
           ..date = DateTime.now());
+        await isar.academicTasks.put(AcademicTask()
+          ..subjectId = subject.id
+          ..title = 'Homework 1'
+          ..type = TaskType.assignment
+          ..dueDate = DateTime.now());
       });
 
       final impact = await repository.getDeletionImpact(subject.id);
       expect(impact.schedulesCount, 2);
       expect(impact.attendancesCount, 1);
       expect(impact.historyCount, 0);
+      expect(impact.tasksCount, 1);
       expect(impact.hasAnyData, true);
     });
 
@@ -122,6 +126,11 @@ void main() {
         await isar.attendances.put(Attendance()
           ..subjectId = subject.id
           ..date = DateTime.now());
+        await isar.academicTasks.put(AcademicTask()
+          ..subjectId = subject.id
+          ..title = 'Homework 1'
+          ..type = TaskType.assignment
+          ..dueDate = DateTime.now());
       });
 
       await repository.deletePermanently(subject.id);
@@ -129,6 +138,7 @@ void main() {
       final impactAfter = await repository.getDeletionImpact(subject.id);
       expect(impactAfter.schedulesCount, 0);
       expect(impactAfter.attendancesCount, 0);
+      expect(impactAfter.tasksCount, 0);
 
       final fetchedSubject = await repository.getById(subject.id);
       expect(fetchedSubject, isNull);

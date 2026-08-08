@@ -7,6 +7,7 @@ import 'package:attendify/core/enums/attendance_status.dart';
 import '../models/analytics_trend.dart';
 import '../models/monthly_trend.dart';
 import '../models/attendance_forecast.dart';
+import '../../../database/collections/semester_collection.dart';
 import '../models/day_of_week_trend.dart';
 
 class AnalyticsEngine {
@@ -14,6 +15,7 @@ class AnalyticsEngine {
   static List<DayOfWeekTrend> calculateDayOfWeekTrends(
     List<Attendance> attendances,
     AppSettings settings,
+    Semester semester,
   ) {
     final Map<int, List<Attendance>> grouped = {
       for (var i = 1; i <= 7; i++) i: []
@@ -26,7 +28,7 @@ class AnalyticsEngine {
     final trends = <DayOfWeekTrend>[];
     for (var i = 1; i <= 7; i++) {
       final list = grouped[i]!;
-      final summary = AttendanceEngine.calculateOverallSummary(list, settings);
+      final summary = AttendanceEngine.calculateOverallSummary(list, settings, semester);
 
       trends.add(DayOfWeekTrend(
         weekday: i,
@@ -60,6 +62,7 @@ class AnalyticsEngine {
   static List<MonthlyTrend> calculateMonthlyTrends(
     List<Attendance> attendances,
     AppSettings settings,
+    Semester semester,
   ) {
     if (attendances.isEmpty) return [];
 
@@ -79,7 +82,7 @@ class AnalyticsEngine {
       final month = int.parse(parts[1]);
 
       final summary =
-          AttendanceEngine.calculateOverallSummary(entry.value, settings);
+          AttendanceEngine.calculateOverallSummary(entry.value, settings, semester);
 
       trends.add(MonthlyTrend(
         year: year,

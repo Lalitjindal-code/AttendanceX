@@ -15,7 +15,18 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:golden_toolkit/golden_toolkit.dart';
 import 'package:attendify/database/repositories/attendance_repository.dart';
 import 'package:attendify/features/attendance/providers/attendance_providers.dart';
+import 'package:attendify/features/settings/providers/semester_provider.dart';
+import 'package:attendify/database/collections/semester_collection.dart';
 import '../helpers/golden_helper.dart';
+
+class FakeSemesterState extends SemesterState {
+  @override
+  Semester? build() => Semester()
+    ..id = 1
+    ..name = 'Semester 1'
+    ..startDate = DateTime(2023, 1, 1)
+    ..endDate = DateTime(2030, 1, 1);
+}
 
 class FakeCalendarNotifier extends CalendarNotifier {
   final CalendarState _mockState;
@@ -108,6 +119,7 @@ void main() {
         overrides: [
           calendarNotifierProvider.overrideWith(() => fakeNotifier),
           attendanceRepositoryProvider.overrideWithValue(fakeAttendanceRepo),
+          semesterStateProvider.overrideWith(() => FakeSemesterState()),
         ],
         child: const MaterialApp(home: CalendarScreen()),
       ));

@@ -8,6 +8,8 @@ import 'package:attendify/database/collections/attendance_collection.dart';
 import 'package:attendify/database/collections/schedule_collection.dart';
 import 'package:attendify/database/collections/attendance_history_collection.dart';
 import 'package:attendify/database/collections/academic_task_collection.dart';
+import 'package:attendify/database/collections/profile_collection.dart';
+import 'package:attendify/database/collections/semester_collection.dart';
 import 'package:attendify/core/enums/attendance_status.dart';
 import 'package:attendify/features/analytics/providers/analytics_provider.dart';
 import 'package:attendify/features/analytics/models/analytics_trend.dart';
@@ -29,6 +31,8 @@ void main() {
   setUp(() async {
     isar = await Isar.open(
       [
+        ProfileSchema,
+        SemesterSchema,
         SubjectSchema,
         ScheduleSchema,
         AttendanceSchema,
@@ -38,6 +42,16 @@ void main() {
       directory: '',
       name: 'analytics_test_db_${DateTime.now().microsecondsSinceEpoch}',
     );
+
+    final semester = Semester()
+      ..id = 1
+      ..profileId = 1
+      ..name = 'Semester 1'
+      ..startDate = DateTime(2023, 1, 1)
+      ..endDate = DateTime(2030, 1, 1);
+    await isar.writeTxn(() async {
+      await isar.semesters.put(semester);
+    });
 
     container = ProviderContainer(
       overrides: [
@@ -66,12 +80,14 @@ void main() {
     final attendanceRepo = container.read(attendanceRepositoryProvider);
 
     final sub1 = Subject()
+      ..semesterId = 1
       ..name = 'Physics'
       ..goalPercentage = 75.0;
     await subjectRepo.create(sub1);
 
     final now = DateTime.now();
     final a1 = Attendance()
+      ..semesterId = 1
       ..subjectId = sub1.id
       ..scheduleId = 1
       ..date = DateTime.utc(now.year, now.month, now.day)

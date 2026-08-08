@@ -47,18 +47,23 @@ const ScheduleSchema = CollectionSchema(
       name: r'room',
       type: IsarType.string,
     ),
-    r'startTime': PropertySchema(
+    r'semesterId': PropertySchema(
       id: 6,
+      name: r'semesterId',
+      type: IsarType.long,
+    ),
+    r'startTime': PropertySchema(
+      id: 7,
       name: r'startTime',
       type: IsarType.string,
     ),
     r'subjectId': PropertySchema(
-      id: 7,
+      id: 8,
       name: r'subjectId',
       type: IsarType.long,
     ),
     r'type': PropertySchema(
-      id: 8,
+      id: 9,
       name: r'type',
       type: IsarType.string,
       enumMap: _ScheduletypeEnumValueMap,
@@ -70,6 +75,19 @@ const ScheduleSchema = CollectionSchema(
   deserializeProp: _scheduleDeserializeProp,
   idName: r'id',
   indexes: {
+    r'semesterId': IndexSchema(
+      id: -4385212551819087598,
+      name: r'semesterId',
+      unique: false,
+      replace: false,
+      properties: [
+        IndexPropertySchema(
+          name: r'semesterId',
+          type: IndexType.value,
+          caseSensitive: false,
+        )
+      ],
+    ),
     r'dayOfWeek': IndexSchema(
       id: -5516657708462385134,
       name: r'dayOfWeek',
@@ -141,9 +159,10 @@ void _scheduleSerialize(
   writer.writeString(offsets[3], object.facultyOverride);
   writer.writeLong(offsets[4], object.order);
   writer.writeString(offsets[5], object.room);
-  writer.writeString(offsets[6], object.startTime);
-  writer.writeLong(offsets[7], object.subjectId);
-  writer.writeString(offsets[8], object.type.name);
+  writer.writeLong(offsets[6], object.semesterId);
+  writer.writeString(offsets[7], object.startTime);
+  writer.writeLong(offsets[8], object.subjectId);
+  writer.writeString(offsets[9], object.type.name);
 }
 
 Schedule _scheduleDeserialize(
@@ -160,10 +179,11 @@ Schedule _scheduleDeserialize(
   object.id = id;
   object.order = reader.readLong(offsets[4]);
   object.room = reader.readStringOrNull(offsets[5]);
-  object.startTime = reader.readString(offsets[6]);
-  object.subjectId = reader.readLong(offsets[7]);
+  object.semesterId = reader.readLong(offsets[6]);
+  object.startTime = reader.readString(offsets[7]);
+  object.subjectId = reader.readLong(offsets[8]);
   object.type =
-      _ScheduletypeValueEnumMap[reader.readStringOrNull(offsets[8])] ??
+      _ScheduletypeValueEnumMap[reader.readStringOrNull(offsets[9])] ??
           LectureType.lecture;
   return object;
 }
@@ -188,10 +208,12 @@ P _scheduleDeserializeProp<P>(
     case 5:
       return (reader.readStringOrNull(offset)) as P;
     case 6:
-      return (reader.readString(offset)) as P;
-    case 7:
       return (reader.readLong(offset)) as P;
+    case 7:
+      return (reader.readString(offset)) as P;
     case 8:
+      return (reader.readLong(offset)) as P;
+    case 9:
       return (_ScheduletypeValueEnumMap[reader.readStringOrNull(offset)] ??
           LectureType.lecture) as P;
     default:
@@ -228,6 +250,14 @@ extension ScheduleQueryWhereSort on QueryBuilder<Schedule, Schedule, QWhere> {
   QueryBuilder<Schedule, Schedule, QAfterWhere> anyId() {
     return QueryBuilder.apply(this, (query) {
       return query.addWhereClause(const IdWhereClause.any());
+    });
+  }
+
+  QueryBuilder<Schedule, Schedule, QAfterWhere> anySemesterId() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addWhereClause(
+        const IndexWhereClause.any(indexName: r'semesterId'),
+      );
     });
   }
 
@@ -309,6 +339,96 @@ extension ScheduleQueryWhere on QueryBuilder<Schedule, Schedule, QWhereClause> {
         lower: lowerId,
         includeLower: includeLower,
         upper: upperId,
+        includeUpper: includeUpper,
+      ));
+    });
+  }
+
+  QueryBuilder<Schedule, Schedule, QAfterWhereClause> semesterIdEqualTo(
+      int semesterId) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addWhereClause(IndexWhereClause.equalTo(
+        indexName: r'semesterId',
+        value: [semesterId],
+      ));
+    });
+  }
+
+  QueryBuilder<Schedule, Schedule, QAfterWhereClause> semesterIdNotEqualTo(
+      int semesterId) {
+    return QueryBuilder.apply(this, (query) {
+      if (query.whereSort == Sort.asc) {
+        return query
+            .addWhereClause(IndexWhereClause.between(
+              indexName: r'semesterId',
+              lower: [],
+              upper: [semesterId],
+              includeUpper: false,
+            ))
+            .addWhereClause(IndexWhereClause.between(
+              indexName: r'semesterId',
+              lower: [semesterId],
+              includeLower: false,
+              upper: [],
+            ));
+      } else {
+        return query
+            .addWhereClause(IndexWhereClause.between(
+              indexName: r'semesterId',
+              lower: [semesterId],
+              includeLower: false,
+              upper: [],
+            ))
+            .addWhereClause(IndexWhereClause.between(
+              indexName: r'semesterId',
+              lower: [],
+              upper: [semesterId],
+              includeUpper: false,
+            ));
+      }
+    });
+  }
+
+  QueryBuilder<Schedule, Schedule, QAfterWhereClause> semesterIdGreaterThan(
+    int semesterId, {
+    bool include = false,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addWhereClause(IndexWhereClause.between(
+        indexName: r'semesterId',
+        lower: [semesterId],
+        includeLower: include,
+        upper: [],
+      ));
+    });
+  }
+
+  QueryBuilder<Schedule, Schedule, QAfterWhereClause> semesterIdLessThan(
+    int semesterId, {
+    bool include = false,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addWhereClause(IndexWhereClause.between(
+        indexName: r'semesterId',
+        lower: [],
+        upper: [semesterId],
+        includeUpper: include,
+      ));
+    });
+  }
+
+  QueryBuilder<Schedule, Schedule, QAfterWhereClause> semesterIdBetween(
+    int lowerSemesterId,
+    int upperSemesterId, {
+    bool includeLower = true,
+    bool includeUpper = true,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addWhereClause(IndexWhereClause.between(
+        indexName: r'semesterId',
+        lower: [lowerSemesterId],
+        includeLower: includeLower,
+        upper: [upperSemesterId],
         includeUpper: includeUpper,
       ));
     });
@@ -1138,6 +1258,59 @@ extension ScheduleQueryFilter
     });
   }
 
+  QueryBuilder<Schedule, Schedule, QAfterFilterCondition> semesterIdEqualTo(
+      int value) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.equalTo(
+        property: r'semesterId',
+        value: value,
+      ));
+    });
+  }
+
+  QueryBuilder<Schedule, Schedule, QAfterFilterCondition> semesterIdGreaterThan(
+    int value, {
+    bool include = false,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.greaterThan(
+        include: include,
+        property: r'semesterId',
+        value: value,
+      ));
+    });
+  }
+
+  QueryBuilder<Schedule, Schedule, QAfterFilterCondition> semesterIdLessThan(
+    int value, {
+    bool include = false,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.lessThan(
+        include: include,
+        property: r'semesterId',
+        value: value,
+      ));
+    });
+  }
+
+  QueryBuilder<Schedule, Schedule, QAfterFilterCondition> semesterIdBetween(
+    int lower,
+    int upper, {
+    bool includeLower = true,
+    bool includeUpper = true,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.between(
+        property: r'semesterId',
+        lower: lower,
+        includeLower: includeLower,
+        upper: upper,
+        includeUpper: includeUpper,
+      ));
+    });
+  }
+
   QueryBuilder<Schedule, Schedule, QAfterFilterCondition> startTimeEqualTo(
     String value, {
     bool caseSensitive = true,
@@ -1532,6 +1705,18 @@ extension ScheduleQuerySortBy on QueryBuilder<Schedule, Schedule, QSortBy> {
     });
   }
 
+  QueryBuilder<Schedule, Schedule, QAfterSortBy> sortBySemesterId() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'semesterId', Sort.asc);
+    });
+  }
+
+  QueryBuilder<Schedule, Schedule, QAfterSortBy> sortBySemesterIdDesc() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'semesterId', Sort.desc);
+    });
+  }
+
   QueryBuilder<Schedule, Schedule, QAfterSortBy> sortByStartTime() {
     return QueryBuilder.apply(this, (query) {
       return query.addSortBy(r'startTime', Sort.asc);
@@ -1655,6 +1840,18 @@ extension ScheduleQuerySortThenBy
     });
   }
 
+  QueryBuilder<Schedule, Schedule, QAfterSortBy> thenBySemesterId() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'semesterId', Sort.asc);
+    });
+  }
+
+  QueryBuilder<Schedule, Schedule, QAfterSortBy> thenBySemesterIdDesc() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'semesterId', Sort.desc);
+    });
+  }
+
   QueryBuilder<Schedule, Schedule, QAfterSortBy> thenByStartTime() {
     return QueryBuilder.apply(this, (query) {
       return query.addSortBy(r'startTime', Sort.asc);
@@ -1734,6 +1931,12 @@ extension ScheduleQueryWhereDistinct
     });
   }
 
+  QueryBuilder<Schedule, Schedule, QDistinct> distinctBySemesterId() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addDistinctBy(r'semesterId');
+    });
+  }
+
   QueryBuilder<Schedule, Schedule, QDistinct> distinctByStartTime(
       {bool caseSensitive = true}) {
     return QueryBuilder.apply(this, (query) {
@@ -1796,6 +1999,12 @@ extension ScheduleQueryProperty
   QueryBuilder<Schedule, String?, QQueryOperations> roomProperty() {
     return QueryBuilder.apply(this, (query) {
       return query.addPropertyName(r'room');
+    });
+  }
+
+  QueryBuilder<Schedule, int, QQueryOperations> semesterIdProperty() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addPropertyName(r'semesterId');
     });
   }
 

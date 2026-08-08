@@ -73,6 +73,7 @@ class _PlannerScreenState extends ConsumerState<PlannerScreen> {
         onRefresh: _onRefresh,
         child: CustomScrollView(
           controller: _scrollController,
+          cacheExtent: 500,
           slivers: [
             SliverAppBar.large(
               title: const Text('Planner', style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold)),
@@ -96,6 +97,7 @@ class _PlannerScreenState extends ConsumerState<PlannerScreen> {
             ),
 
             tasksAsync.when(
+              skipLoadingOnReload: true,
               data: (tasks) {
                 final subjects = subjectsAsync.valueOrNull ?? [];
 
@@ -132,7 +134,7 @@ class _PlannerScreenState extends ConsumerState<PlannerScreen> {
                               const SizedBox(height: AppSpacing.lg),
                               Text(
                                 ref.watch(plannerFilterProvider).isEmpty
-                                    ? "All caught up!"
+                                    ? 'All caught up!'
                                     : 'No tasks found.',
                                 textAlign: TextAlign.center,
                                 style: Theme.of(context).textTheme.titleLarge?.copyWith(
@@ -258,6 +260,7 @@ class _PlannerScreenState extends ConsumerState<PlannerScreen> {
           ],
         ),
         child: FloatingActionButton.extended(
+          heroTag: 'planner_fab',
           backgroundColor: Colors.transparent,
           elevation: 0,
           highlightElevation: 0,

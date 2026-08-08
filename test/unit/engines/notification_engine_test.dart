@@ -2,12 +2,22 @@ import 'package:attendify/core/enums/attendance_status.dart';
 import 'package:attendify/database/collections/attendance_collection.dart';
 import 'package:attendify/database/collections/schedule_collection.dart';
 import 'package:attendify/database/collections/subject_collection.dart';
+import 'package:attendify/database/collections/semester_collection.dart';
 import 'package:attendify/features/notifications/engines/notification_engine.dart';
 import 'package:attendify/features/settings/models/app_settings.dart';
 import 'package:flutter_test/flutter_test.dart';
 
 void main() {
   group('NotificationEngine Tests', () {
+    late Semester dummySemester;
+
+    setUp(() {
+      dummySemester = Semester()
+        ..id = 1
+        ..startDate = DateTime(2023, 1, 1)
+        ..endDate = DateTime(2030, 1, 1);
+    });
+
     final now =
         DateTime(2026, 1, 1, 12, 0); // Thursday, Jan 1, 2026 at 12:00 PM
 
@@ -41,6 +51,7 @@ void main() {
         attendances: [],
         settings: settings,
         now: now,
+        semester: dummySemester,
       );
       expect(result, isEmpty);
     });
@@ -58,6 +69,7 @@ void main() {
         attendances: [],
         settings: settings,
         now: now,
+        semester: dummySemester,
       );
 
       expect(result.length, 1);
@@ -80,6 +92,7 @@ void main() {
         attendances: [],
         settings: settings,
         now: now,
+        semester: dummySemester,
       );
 
       expect(result, isEmpty);
@@ -99,6 +112,7 @@ void main() {
         attendances: [],
         settings: settings,
         now: now,
+        semester: dummySemester,
       );
 
       expect(result.length, 7); // One reminder for each day in the 7-day window
@@ -127,6 +141,7 @@ void main() {
         schedules: [passedSchedule],
         attendances: [markedAttendance],
         settings: settings,
+        semester: dummySemester,
         now: now,
       );
 
@@ -147,6 +162,7 @@ void main() {
         attendances: [],
         settings: settings,
         now: now,
+        semester: dummySemester,
       );
 
       final result2 = NotificationEngine.generateNotifications(
@@ -155,6 +171,7 @@ void main() {
         attendances: [],
         settings: settings,
         now: now,
+        semester: dummySemester,
       );
 
       expect(result1.length, 8); // 1 lecture alert + 7 daily reminders

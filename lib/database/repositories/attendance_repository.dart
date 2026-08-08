@@ -2,6 +2,7 @@ import 'package:isar/isar.dart';
 import '../../core/enums/attendance_status.dart';
 import '../collections/attendance_collection.dart';
 import '../collections/attendance_history_collection.dart';
+import '../../services/widget_service.dart';
 
 /// Repository for [Attendance] and [AttendanceHistory] operations.
 ///
@@ -21,10 +22,12 @@ class AttendanceRepository {
 
       if (attendance.id != Isar.autoIncrement) {
         existing = await _isar.attendances.get(attendance.id);
-      } else {
-        // Try to find by unique composite key just in case
+      } else if (attendance.scheduleId != null) {
+        // Fallback for scheduled classes: check unique identity
         existing = await _isar.attendances
             .filter()
+            .semesterIdEqualTo(attendance.semesterId)
+            .and()
             .dateEqualTo(attendance.date)
             .and()
             .scheduleIdEqualTo(attendance.scheduleId)
@@ -49,54 +52,62 @@ class AttendanceRepository {
       attendance.updatedAt = DateTime.now();
       await _isar.attendances.put(attendance);
 
-      // Log history if the new status is different
-      if (previousStatus != attendance.status) {
-        final history = AttendanceHistory()
-          ..attendanceId = attendance.id
-          ..subjectId = attendance.subjectId
-          ..date = attendance.date
-          ..previousStatus = previousStatus
-          ..newStatus = attendance.status
-          ..changedAt = attendance.updatedAt;
+      // Log history for the status change
+      final history = AttendanceHistory()
+        ..semesterId = attendance.semesterId
+        ..attendanceId = attendance.id
+        ..subjectId = attendance.subjectId
+        ..date = attendance.date
+        ..previousStatus = previousStatus
+        ..newStatus = attendance.status
+        ..changedAt = attendance.updatedAt;
 
-        await _isar.attendanceHistorys.put(history);
-      }
+      await _isar.attendanceHistorys.put(history);
     });
+    WidgetService.instance.updateWidget();
   }
 
-  /// Returns a stream of all attendance records for a specific subject.
-  Stream<List<Attendance>> watchBySubject(int subjectId) {
+  /// Returns a stream of all attendance records for a specific subject within a semester.
+  Stream<List<Attendance>> watchBySubject(int semesterId, int subjectId) {
     return _isar.attendances
         .filter()
+        .semesterIdEqualTo(semesterId)
+        .and()
         .subjectIdEqualTo(subjectId)
         .watch(fireImmediately: true);
   }
 
-  /// Fetches all attendance records for a specific subject.
-  Future<List<Attendance>> getBySubjectId(int subjectId) async {
+  /// Fetches all attendance records for a specific subject within a semester.
+  Future<List<Attendance>> getBySubjectId(int semesterId, int subjectId) async {
     return await _isar.attendances
         .filter()
+        .semesterIdEqualTo(semesterId)
+        .and()
         .subjectIdEqualTo(subjectId)
         .findAll();
   }
 
-  /// Returns a stream of all attendance records across a date range.
-  Stream<List<Attendance>> watchByDateRange(DateTime start, DateTime end) {
+  /// Returns a stream of all attendance records across a date range for a semester.
+  Stream<List<Attendance>> watchByDateRange(int semesterId, DateTime start, DateTime end) {
     return _isar.attendances
         .filter()
+        .semesterIdEqualTo(semesterId)
+        .and()
         .dateBetween(start, end)
         .watch(fireImmediately: true);
   }
 
-  /// Returns a stream of all attendance records.
-  Stream<List<Attendance>> watchAll() {
-    return _isar.attendances.where().watch(fireImmediately: true);
+  /// Returns a stream of all attendance records for a semester.
+  Stream<List<Attendance>> watchAll(int semesterId) {
+    return _isar.attendances.filter().semesterIdEqualTo(semesterId).watch(fireImmediately: true);
   }
 
-  /// Returns a stream of history for a specific subject.
-  Stream<List<AttendanceHistory>> watchHistoryBySubject(int subjectId) {
+  /// Returns a stream of history for a specific subject within a semester.
+  Stream<List<AttendanceHistory>> watchHistoryBySubject(int semesterId, int subjectId) {
     return _isar.attendanceHistorys
         .filter()
+        .semesterIdEqualTo(semesterId)
+        .and()
         .subjectIdEqualTo(subjectId)
         .sortByChangedAtDesc()
         .watch(fireImmediately: true);
@@ -114,7 +125,35 @@ class AttendanceRepository {
           .filter()
           .attendanceIdEqualTo(id)
           .deleteAll();
-      await _isar.attendances.delete(id);
+      final attendance = await _isar.attendances.get(id);
+      if (attendance != null) {
+        await _isar.attendances.delete(id);
+      }
     });
+    WidgetService.instance.updateWidget();
+  }
+
+  /// Clears all attendance records for a specific day transactionally.
+  Future<void> deleteAttendancesByDate(DateTime date, int semesterId) async {
+    await _isar.writeTxn(() async {
+      final toDelete = await _isar.attendances
+          .filter()
+          .semesterIdEqualTo(semesterId)
+          .and()
+          .dateEqualTo(date)
+          .findAll();
+
+      final ids = toDelete.map((a) => a.id).toList();
+
+      if (ids.isNotEmpty) {
+        await _isar.attendanceHistorys
+            .filter()
+            .anyOf(ids, (q, int id) => q.attendanceIdEqualTo(id))
+            .deleteAll();
+
+        await _isar.attendances.deleteAll(ids);
+      }
+    });
+    WidgetService.instance.updateWidget();
   }
 }

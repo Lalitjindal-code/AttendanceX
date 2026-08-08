@@ -11,6 +11,10 @@ import 'package:attendify/database/collections/attendance_history_collection.dar
 import 'package:attendify/database/collections/academic_task_collection.dart';
 import 'package:attendify/core/enums/attendance_status.dart';
 import 'package:attendify/features/calendar/providers/calendar_provider.dart';
+import 'package:attendify/database/collections/profile_collection.dart';
+import 'package:attendify/database/collections/semester_collection.dart';
+import 'package:shared_preferences/shared_preferences.dart';
+import 'package:attendify/services/preferences_service.dart';
 import 'package:isar/isar.dart';
 
 void main() {
@@ -20,11 +24,15 @@ void main() {
   setUpAll(() async {
     TestWidgetsFlutterBinding.ensureInitialized();
     await Isar.initializeIsarCore(download: true);
+    SharedPreferences.setMockInitialValues({});
+    await PreferencesService.instance.initialize();
   });
 
   setUp(() async {
     isar = await Isar.open(
       [
+        ProfileSchema,
+        SemesterSchema,
         SubjectSchema,
         ScheduleSchema,
         AttendanceSchema,
@@ -34,6 +42,16 @@ void main() {
       directory: '',
       name: 'calendar_test_db_${DateTime.now().microsecondsSinceEpoch}',
     );
+
+    final semester = Semester()
+      ..id = 1
+      ..profileId = 1
+      ..name = 'Semester 1'
+      ..startDate = DateTime(2023, 1, 1)
+      ..endDate = DateTime(2030, 1, 1);
+    await isar.writeTxn(() async {
+      await isar.semesters.put(semester);
+    });
 
     container = ProviderContainer(
       overrides: [
@@ -85,7 +103,7 @@ void main() {
     final scheduleRepo = container.read(scheduleRepositoryProvider);
     final attendanceRepo = container.read(attendanceRepositoryProvider);
 
-    final subSubject = Subject()..name = 'Math';
+    final subSubject = Subject()..semesterId = 1..name = 'Math';
     await subjectRepo.create(subSubject);
 
     final now = DateTime.now();
@@ -97,6 +115,7 @@ void main() {
     container.read(calendarFocusedDateProvider.notifier).setDate(testDate);
 
     final sch = Schedule()
+      ..semesterId = 1
       ..subjectId = subSubject.id
       ..dayOfWeek = dayOfWeek
       ..startTime = '10:00'
@@ -106,6 +125,7 @@ void main() {
     final savedSch = await isar.schedules.where().findFirst();
 
     final att = Attendance()
+      ..semesterId = 1
       ..subjectId = subSubject.id
       ..scheduleId = savedSch!.id
       ..date = testDate

@@ -21,7 +21,7 @@ final subjectRepositoryProvider = Provider<SubjectRepository>.internal(
 );
 
 typedef SubjectRepositoryRef = ProviderRef<SubjectRepository>;
-String _$subjectsHash() => r'234dd9948e32c056e6a786ba4501bea290aa4edc';
+String _$subjectsHash() => r'3e157aba416ccd0fa3f6d706362b5ec3955043c5';
 
 /// See also [subjects].
 @ProviderFor(subjects)
@@ -183,7 +183,7 @@ class _SubjectProviderElement extends AutoDisposeFutureProviderElement<Subject?>
   int get id => (origin as SubjectProvider).id;
 }
 
-String _$subjectSummaryHash() => r'e3a0cd61bb17424610ce0e41493989d6553a2678';
+String _$subjectSummaryHash() => r'd65e0a9b195d5790ae2488fefa52b9e45a0b2b12';
 
 /// See also [subjectSummary].
 @ProviderFor(subjectSummary)

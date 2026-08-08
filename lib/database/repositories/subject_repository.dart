@@ -6,21 +6,27 @@ import '../collections/attendance_collection.dart';
 import '../collections/attendance_history_collection.dart';
 import '../collections/schedule_collection.dart';
 import '../collections/subject_collection.dart';
+import '../collections/academic_task_collection.dart';
 
 /// Details about how much data will be removed when a subject is deleted.
 class SubjectDeletionImpact {
   final int schedulesCount;
   final int attendancesCount;
   final int historyCount;
+  final int tasksCount;
 
   const SubjectDeletionImpact({
     required this.schedulesCount,
     required this.attendancesCount,
     required this.historyCount,
+    required this.tasksCount,
   });
 
   bool get hasAnyData =>
-      schedulesCount > 0 || attendancesCount > 0 || historyCount > 0;
+      schedulesCount > 0 ||
+      attendancesCount > 0 ||
+      historyCount > 0 ||
+      tasksCount > 0;
 }
 
 /// Repository for [Subject] operations following clean architecture constraints.
@@ -32,17 +38,23 @@ class SubjectRepository {
   const SubjectRepository(this._isar);
 
   /// Returns a stream of all active subjects, sorted alphabetically by name.
-  Stream<List<Subject>> watchAllActive() {
+  Stream<List<Subject>> watchAllActive(int semesterId) {
     return _isar.subjects
         .filter()
+        .semesterIdEqualTo(semesterId)
+        .and()
         .isActiveEqualTo(true)
         .sortByName()
         .watch(fireImmediately: true);
   }
 
   /// Returns a stream of all subjects (including inactive), sorted by name.
-  Stream<List<Subject>> watchAll() {
-    return _isar.subjects.where().sortByName().watch(fireImmediately: true);
+  Stream<List<Subject>> watchAll(int semesterId) {
+    return _isar.subjects
+        .filter()
+        .semesterIdEqualTo(semesterId)
+        .sortByName()
+        .watch(fireImmediately: true);
   }
 
   /// Fetches a specific subject by ID.
@@ -54,9 +66,11 @@ class SubjectRepository {
   Future<void> create(Subject subject) async {
     final normalizedName = SubjectValidator.normalizeName(subject.name);
 
-    // Check for duplicates
+    // Check for duplicates within the same semester
     final exists = await _isar.subjects
             .filter()
+            .semesterIdEqualTo(subject.semesterId)
+            .and()
             .nameEqualTo(normalizedName, caseSensitive: false)
             .count() >
         0;
@@ -80,9 +94,11 @@ class SubjectRepository {
   Future<void> update(Subject subject) async {
     final normalizedName = SubjectValidator.normalizeName(subject.name);
 
-    // Check if another subject has the same name
+    // Check if another subject has the same name within the same semester
     final existingDuplicate = await _isar.subjects
         .filter()
+        .semesterIdEqualTo(subject.semesterId)
+        .and()
         .nameEqualTo(normalizedName, caseSensitive: false)
         .and()
         .not()
@@ -114,11 +130,14 @@ class SubjectRepository {
         .filter()
         .subjectIdEqualTo(subjectId)
         .count();
+    final tasksCount =
+        await _isar.academicTasks.filter().subjectIdEqualTo(subjectId).count();
 
     return SubjectDeletionImpact(
       schedulesCount: schedulesCount,
       attendancesCount: attendancesCount,
       historyCount: historyCount,
+      tasksCount: tasksCount,
     );
   }
 
@@ -137,7 +156,10 @@ class SubjectRepository {
       // 3. Delete Schedule Entries
       await _isar.schedules.filter().subjectIdEqualTo(subjectId).deleteAll();
 
-      // 4. Delete the Subject
+      // 4. Delete Academic Tasks
+      await _isar.academicTasks.filter().subjectIdEqualTo(subjectId).deleteAll();
+
+      // 5. Delete the Subject
       await _isar.subjects.delete(subjectId);
     });
     WidgetService.instance.updateWidget();

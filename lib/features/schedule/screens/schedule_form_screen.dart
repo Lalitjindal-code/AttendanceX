@@ -7,8 +7,9 @@ import '../../../core/enums/lecture_type.dart';
 import '../../../core/errors/app_exception.dart';
 import '../../../database/collections/schedule_collection.dart';
 import '../../../engines/schedule_engine.dart';
+import 'package:attendify/features/schedule/providers/schedule_providers.dart';
+import 'package:attendify/features/settings/providers/semester_provider.dart';
 import '../../subjects/providers/subject_providers.dart';
-import '../providers/schedule_providers.dart';
 
 class ScheduleFormSheet extends ConsumerStatefulWidget {
   final int? scheduleId;
@@ -46,8 +47,20 @@ class _ScheduleFormSheetState extends ConsumerState<ScheduleFormSheet> {
   }
 
   Future<void> _loadData() async {
+    final activeSemester = ref.read(semesterStateProvider);
+    if (activeSemester == null) {
+      if (mounted) {
+        Navigator.of(context).pop();
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(content: Text('No active semester selected')),
+        );
+      }
+      return;
+    }
+
     if (widget.scheduleId != null) {
       final repo = ref.read(scheduleRepositoryProvider);
+
       _existingSchedule = await repo.getById(widget.scheduleId!);
 
       if (_existingSchedule != null) {
@@ -150,10 +163,13 @@ class _ScheduleFormSheetState extends ConsumerState<ScheduleFormSheet> {
           : _facultyController.text.trim();
 
       // Check conflicts
-      final existingSchedules = await repo.getByDay(_dayOfWeek);
+      final activeSemester = ref.read(semesterStateProvider);
+      if (activeSemester == null) return;
+      final existingSchedules = await repo.getByDay(activeSemester.id, _dayOfWeek);
       ScheduleEngine.checkForConflicts(schedule, existingSchedules);
 
-      if (_existingSchedule == null) {
+       if (_existingSchedule == null) {
+        schedule.semesterId = activeSemester.id;
         // Find max order
         int maxOrder = 0;
         if (existingSchedules.isNotEmpty) {

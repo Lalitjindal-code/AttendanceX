@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:flutter_animate/flutter_animate.dart';
 import '../../../core/constants/app_spacing.dart';
-import '../../../core/constants/app_strings.dart';
 import '../providers/subject_providers.dart';
 import 'subject_form_screen.dart'; // Which now contains the sheet
 import '../widgets/subject_card.dart';
@@ -65,12 +65,13 @@ class _SubjectsScreenState extends ConsumerState<SubjectsScreen> {
         onRefresh: _onRefresh,
         child: CustomScrollView(
           controller: _scrollController,
+          cacheExtent: 500, // Pre-render more items for smooth fast scrolling
           slivers: [
-            SliverAppBar.large(
-              title: const Text('Subjects', style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold)),
+            const SliverAppBar.large(
+              title: Text('Subjects', style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold)),
               floating: true,
               pinned: true,
-              backgroundColor: const Color(0xFF0B0B13),
+              backgroundColor: Color(0xFF0B0B13),
               surfaceTintColor: Colors.transparent,
             ),
             subjectsAsync.when(
@@ -149,23 +150,15 @@ class _SubjectsScreenState extends ConsumerState<SubjectsScreen> {
                   sliver: SliverList(
                     delegate: SliverChildBuilderDelegate(
                       (context, index) {
-                        return TweenAnimationBuilder<double>(
-                          tween: Tween(begin: 0.0, end: 1.0),
-                          duration: const Duration(milliseconds: 400),
-                          curve: Curves.easeOutCubic,
-                          builder: (context, value, child) {
-                            return Transform.translate(
-                              offset: Offset(0, 50 * (1 - value)),
-                              child: Opacity(
-                                opacity: value,
-                                child: Padding(
-                                  padding: const EdgeInsets.only(bottom: AppSpacing.md),
-                                  child: SubjectCard(subject: subjects[index]),
-                                ),
-                              ),
-                            );
-                          },
-                        );
+                        return Padding(
+                          padding: const EdgeInsets.only(bottom: AppSpacing.md),
+                          child: RepaintBoundary(
+                            child: SubjectCard(subject: subjects[index]),
+                          ),
+                        )
+                        .animate(delay: Duration(milliseconds: 60 * index))
+                        .fadeIn(duration: 350.ms, curve: Curves.easeOutQuad)
+                        .slideY(begin: 0.12, duration: 350.ms, curve: Curves.easeOutQuad);
                       },
                       childCount: subjects.length,
                     ),
@@ -179,9 +172,9 @@ class _SubjectsScreenState extends ConsumerState<SubjectsScreen> {
                 ),
                 sliver: SliverList(
                   delegate: SliverChildBuilderDelegate(
-                    (context, index) => Padding(
-                      padding: const EdgeInsets.only(bottom: AppSpacing.md),
-                      child: const SubjectCardSkeleton(),
+                    (context, index) => const Padding(
+                      padding: EdgeInsets.only(bottom: AppSpacing.md),
+                      child: SubjectCardSkeleton(),
                     ),
                     childCount: 4,
                   ),
@@ -212,6 +205,7 @@ class _SubjectsScreenState extends ConsumerState<SubjectsScreen> {
           ],
         ),
         child: FloatingActionButton.extended(
+          heroTag: 'subjects_fab',
           backgroundColor: Colors.transparent,
           elevation: 0,
           highlightElevation: 0,

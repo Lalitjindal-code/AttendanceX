@@ -10,7 +10,6 @@ class MoreScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final user = FirebaseAuth.instance.currentUser;
-    final theme = Theme.of(context);
 
     return Scaffold(
       backgroundColor: const Color(0xFF0B0B13),

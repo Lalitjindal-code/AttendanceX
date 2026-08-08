@@ -29,7 +29,7 @@ class PlannerRepository {
     return await _isar.academicTasks.get(id);
   }
 
-  Stream<List<AcademicTask>> watchAllTasks() {
-    return _isar.academicTasks.where().watch(fireImmediately: true);
+  Stream<List<AcademicTask>> watchAllTasks(int semesterId) {
+    return _isar.academicTasks.filter().semesterIdEqualTo(semesterId).watch(fireImmediately: true);
   }
 }

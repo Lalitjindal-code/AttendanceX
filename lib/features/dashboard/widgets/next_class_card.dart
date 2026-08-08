@@ -56,13 +56,15 @@ class _NextClassCardState extends State<NextClassCard> {
     if (difference.isNegative) {
       if (mounted) setState(() => _countdownText = 'Started');
     } else if (difference.inHours > 0) {
-      if (mounted)
+      if (mounted) {
         setState(() => _countdownText =
             'Starts in ${difference.inHours}h ${difference.inMinutes.remainder(60)}m');
+      }
     } else {
-      if (mounted)
+      if (mounted) {
         setState(
             () => _countdownText = 'Starts in ${difference.inMinutes} minutes');
+      }
     }
   }
 

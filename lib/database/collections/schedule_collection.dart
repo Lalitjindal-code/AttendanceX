@@ -19,6 +19,10 @@ class Schedule {
   /// Auto-incremented primary key.
   Id id = Isar.autoIncrement;
 
+  /// Foreign key referencing [Semester.id].
+  @Index()
+  int semesterId = 0;
+
   /// Day of week (1 = Monday … 7 = Sunday), matching [DateTime.weekday].
   @Index()
   int dayOfWeek = 1;
@@ -57,6 +61,7 @@ class Schedule {
   Map<String, dynamic> toMap() {
     return {
       'id': id,
+      'semesterId': semesterId,
       'dayOfWeek': dayOfWeek,
       'subjectId': subjectId,
       'startTime': startTime,
@@ -72,6 +77,7 @@ class Schedule {
   factory Schedule.fromMap(Map<String, dynamic> map) {
     return Schedule()
       ..id = map['id'] ?? Isar.autoIncrement
+      ..semesterId = map['semesterId'] ?? 0
       ..dayOfWeek = map['dayOfWeek'] ?? 1
       ..subjectId = map['subjectId'] ?? 0
       ..startTime = map['startTime'] ?? '09:00'

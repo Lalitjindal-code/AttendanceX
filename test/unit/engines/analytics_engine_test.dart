@@ -4,14 +4,18 @@ import 'package:attendify/features/analytics/models/analytics_trend.dart';
 import 'package:attendify/features/dashboard/models/attendance_summary.dart';
 import 'package:attendify/features/settings/models/app_settings.dart';
 import 'package:attendify/database/collections/attendance_collection.dart';
+import 'package:attendify/database/collections/semester_collection.dart';
 import 'package:attendify/core/enums/attendance_status.dart';
 
 void main() {
   group('AnalyticsEngine.calculateMonthlyTrends', () {
     const settings = AppSettings();
+    final dummySemester = Semester()
+      ..startDate = DateTime(2020, 1, 1)
+      ..endDate = DateTime(2030, 1, 1);
 
     test('Empty dataset returns empty list', () {
-      final trends = AnalyticsEngine.calculateMonthlyTrends([], settings);
+      final trends = AnalyticsEngine.calculateMonthlyTrends([], settings, dummySemester);
       expect(trends, isEmpty);
     });
 
@@ -23,7 +27,7 @@ void main() {
         ..date = DateTime.utc(2023, 10, 2)
         ..status = AttendanceStatus.absent;
 
-      final trends = AnalyticsEngine.calculateMonthlyTrends([a1, a2], settings);
+      final trends = AnalyticsEngine.calculateMonthlyTrends([a1, a2], settings, dummySemester);
       expect(trends.length, 1);
       expect(trends[0].year, 2023);
       expect(trends[0].month, 10);
@@ -40,7 +44,7 @@ void main() {
         ..date = DateTime.utc(2024, 1, 1)
         ..status = AttendanceStatus.present;
 
-      final trends = AnalyticsEngine.calculateMonthlyTrends([a1, a2], settings);
+      final trends = AnalyticsEngine.calculateMonthlyTrends([a1, a2], settings, dummySemester);
       expect(trends.length, 2);
 
       expect(trends[0].year, 2023);

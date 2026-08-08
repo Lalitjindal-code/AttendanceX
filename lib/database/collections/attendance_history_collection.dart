@@ -23,7 +23,11 @@ class AttendanceHistory {
   /// Auto-incremented primary key.
   Id id = Isar.autoIncrement;
 
-  /// Foreign key referencing [Attendance.id] this change belongs to.
+  /// Foreign key referencing [Semester.id].
+  @Index()
+  int semesterId = 0;
+
+  /// Foreign key referencing [Attendance.id].
   @Index()
   int attendanceId = 0;
 
@@ -50,6 +54,7 @@ class AttendanceHistory {
   Map<String, dynamic> toMap() {
     return {
       'id': id,
+      'semesterId': semesterId,
       'attendanceId': attendanceId,
       'subjectId': subjectId,
       'date': date.millisecondsSinceEpoch,
@@ -62,6 +67,7 @@ class AttendanceHistory {
   factory AttendanceHistory.fromMap(Map<String, dynamic> map) {
     return AttendanceHistory()
       ..id = map['id'] ?? Isar.autoIncrement
+      ..semesterId = map['semesterId'] ?? 0
       ..attendanceId = map['attendanceId'] ?? 0
       ..subjectId = map['subjectId'] ?? 0
       ..date = map['date'] != null

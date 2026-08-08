@@ -43,8 +43,9 @@ class TaskCard extends ConsumerWidget {
         break;
     }
 
-    if (isCompleted)
+    if (isCompleted) {
       priorityColor = Theme.of(context).colorScheme.outlineVariant;
+    }
 
     // Use subject color if available, otherwise priority color
     final stripeColor = subject != null && !isCompleted

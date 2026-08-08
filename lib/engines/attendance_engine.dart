@@ -7,15 +7,32 @@ import '../features/dashboard/models/attendance_summary.dart';
 import '../features/dashboard/models/smart_suggestion.dart';
 import '../features/settings/models/app_settings.dart';
 
+import '../database/collections/semester_collection.dart';
+
 /// Pure business logic engine for calculating attendance percentages.
 /// Never stores anything in the database.
 class AttendanceEngine {
+  /// Filters attendances based on semester boundaries (local calendar dates).
+  static bool isWithinSemester(DateTime date, Semester semester) {
+    final recordDate = DateTime(date.year, date.month, date.day);
+    final start = DateTime(semester.startDate.year, semester.startDate.month, semester.startDate.day);
+    
+    if (recordDate.isBefore(start)) return false;
+    
+    if (semester.endDate != null) {
+      final end = DateTime(semester.endDate!.year, semester.endDate!.month, semester.endDate!.day);
+      if (recordDate.isAfter(end)) return false;
+    }
+    return true;
+  }
+
   /// Calculates the attendance summary for a specific subject based on the
   /// given [attendances] and global [settings].
   static SubjectAttendanceSummary calculateSubjectSummary(
     int subjectId,
     List<Attendance> attendances,
     AppSettings settings,
+    Semester semester,
   ) {
     int effectivePresent = 0;
     int effectiveTotal = 0;
@@ -29,6 +46,7 @@ class AttendanceEngine {
 
     for (final attendance in attendances) {
       if (attendance.subjectId != subjectId) continue;
+      if (!isWithinSemester(attendance.date, semester)) continue;
 
       switch (attendance.status) {
         case AttendanceStatus.present:
@@ -94,6 +112,7 @@ class AttendanceEngine {
     List<Attendance> attendances,
     List<Schedule> schedules,
     AppSettings settings,
+    Semester semester,
   ) {
     // Map schedule ID to its LectureType for quick lookup
     final scheduleTypeMap = {for (var s in schedules) s.id: s.type};
@@ -105,13 +124,14 @@ class AttendanceEngine {
       return aType == type;
     }).toList();
 
-    return calculateSubjectSummary(subjectId, filteredAttendances, settings);
+    return calculateSubjectSummary(subjectId, filteredAttendances, settings, semester);
   }
 
   /// Calculates the overall attendance summary aggregated across all subjects.
   static OverallAttendanceSummary calculateOverallSummary(
     List<Attendance> allAttendances,
     AppSettings settings,
+    Semester semester,
   ) {
     int effectivePresent = 0;
     int effectiveTotal = 0;
@@ -124,6 +144,8 @@ class AttendanceEngine {
     int totalPendingRecords = 0;
 
     for (final attendance in allAttendances) {
+      if (!isWithinSemester(attendance.date, semester)) continue;
+
       switch (attendance.status) {
         case AttendanceStatus.present:
           totalPresentRecords++;

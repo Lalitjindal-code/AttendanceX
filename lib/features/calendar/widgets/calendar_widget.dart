@@ -6,6 +6,7 @@ import '../../../core/enums/attendance_status.dart';
 import '../../../database/collections/attendance_collection.dart';
 import '../../../database/collections/subject_collection.dart';
 import '../../attendance/providers/attendance_providers.dart';
+import '../../settings/providers/semester_provider.dart';
 import '../models/calendar_state.dart';
 import '../providers/calendar_provider.dart';
 
@@ -20,6 +21,22 @@ class CalendarWidget extends ConsumerStatefulWidget {
 
 class _CalendarWidgetState extends ConsumerState<CalendarWidget> {
   CalendarFormat _calendarFormat = CalendarFormat.month;
+  late DateTime _focusedDay;
+
+  @override
+  void initState() {
+    super.initState();
+    _focusedDay = widget.state.focusedDate;
+  }
+
+  @override
+  void didUpdateWidget(CalendarWidget oldWidget) {
+    super.didUpdateWidget(oldWidget);
+    if (widget.state.focusedDate != oldWidget.state.focusedDate) {
+      // Only update if it was changed externally
+      _focusedDay = widget.state.focusedDate;
+    }
+  }
 
   Color _getStatusColor(AttendanceStatus status, BuildContext context) {
     switch (status) {
@@ -59,9 +76,10 @@ class _CalendarWidgetState extends ConsumerState<CalendarWidget> {
       ),
       clipBehavior: Clip.antiAlias,
       child: TableCalendar<Object>(
-        firstDay: DateTime(2020, 1, 1),
+        availableGestures: AvailableGestures.horizontalSwipe,
+        firstDay: DateTime(2000, 1, 1),
         lastDay: DateTime(2030, 12, 31),
-        focusedDay: widget.state.focusedDate,
+        focusedDay: _focusedDay,
         calendarFormat: _calendarFormat,
         availableCalendarFormats: const {
           CalendarFormat.month: 'Month',
@@ -71,6 +89,9 @@ class _CalendarWidgetState extends ConsumerState<CalendarWidget> {
         selectedDayPredicate: (day) =>
             isSameDay(widget.state.selectedDate, day),
         onDaySelected: (selectedDay, focusedDay) {
+          setState(() {
+            _focusedDay = focusedDay;
+          });
           ref.read(calendarSelectedDateProvider.notifier).setDate(selectedDay);
           ref.read(calendarFocusedDateProvider.notifier).setDate(focusedDay);
         },
@@ -82,7 +103,9 @@ class _CalendarWidgetState extends ConsumerState<CalendarWidget> {
           }
         },
         onPageChanged: (focusedDay) {
-          ref.read(calendarFocusedDateProvider.notifier).setDate(focusedDay);
+          setState(() {
+            _focusedDay = focusedDay;
+          });
           ref.read(calendarVisibleMonthProvider.notifier).setMonth(focusedDay);
         },
         onDayLongPressed: (selectedDay, focusedDay) {
@@ -245,9 +268,13 @@ void _showAddManualAttendanceDialog(
               FilledButton(
                 onPressed: selectedSubject != null && selectedStatus != null
                     ? () {
+                        final semester = ref.read(semesterStateProvider);
+                        if (semester == null) return;
+                        
                         final att = Attendance()
+                          ..semesterId = semester.id
                           ..subjectId = selectedSubject!.id
-                          ..scheduleId = -1
+                          ..scheduleId = null
                           ..date = DateTime(date.year, date.month, date.day)
                           ..status = selectedStatus!;
 

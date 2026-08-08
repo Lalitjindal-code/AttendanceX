@@ -9,6 +9,8 @@ import '../../../database/collections/attendance_collection.dart';
 import '../../../database/collections/attendance_history_collection.dart';
 import '../../../database/collections/schedule_collection.dart';
 import '../../../database/collections/subject_collection.dart';
+import '../../../database/collections/profile_collection.dart';
+import '../../../database/collections/semester_collection.dart';
 import '../../settings/models/app_settings.dart';
 
 class BackupEngine {
@@ -19,6 +21,8 @@ class BackupEngine {
   /// Generates a complete backup and writes it to [path].
   Future<void> exportBackup({
     required String path,
+    required List<Profile> profiles,
+    required List<Semester> semesters,
     required List<Subject> subjects,
     required List<Schedule> schedules,
     required List<Attendance> attendanceRecords,
@@ -42,6 +46,8 @@ class BackupEngine {
         checksum: '', // Placeholder, will be computed later
         compressionType: 'gzip',
       ),
+      profiles: profiles,
+      semesters: semesters,
       subjects: subjects,
       schedules: schedules,
       attendanceRecords: attendanceRecords,

@@ -19,6 +19,7 @@ import '../../auth/providers/auth_provider.dart';
 import 'package:flutter_animate/flutter_animate.dart';
 import 'package:shimmer/shimmer.dart';
 import '../../../core/utils/haptics.dart';
+import '../../../core/widgets/banner_ad_widget.dart';
 
 class DashboardScreen extends ConsumerWidget {
   const DashboardScreen({super.key});
@@ -30,26 +31,6 @@ class DashboardScreen extends ConsumerWidget {
     await Future.delayed(const Duration(milliseconds: 500));
   }
 
-  String _getGreeting(String? userName) {
-    final hour = DateTime.now().hour;
-    String greeting = '';
-    if (hour >= 5 && hour < 12) {
-      greeting = 'Good morning';
-    } else if (hour >= 12 && hour < 17) {
-      greeting = 'Good afternoon';
-    } else if (hour >= 17 && hour < 21) {
-      greeting = 'Good evening';
-    } else {
-      greeting = 'Hey there';
-    }
-    
-    if (userName != null && userName.isNotEmpty) {
-      final firstName = userName.split(' ')[0];
-      return '$greeting, $firstName';
-    }
-    return greeting;
-  }
-
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final stateStream = ref.watch(dashboardNotifierProvider);
@@ -59,6 +40,7 @@ class DashboardScreen extends ConsumerWidget {
     return Scaffold(
       backgroundColor: const Color(0xFF0B0B13),
       body: stateStream.when(
+        skipLoadingOnReload: true,
         data: (state) {
           if (state.isLoading) {
             return _buildSkeleton(context);
@@ -351,6 +333,10 @@ class DashboardScreen extends ConsumerWidget {
                     ).animate().fade(delay: 500.ms).slideY(begin: 0.1),
                   ),
                 ],
+                const SliverToBoxAdapter(child: SizedBox(height: 16)),
+                const SliverToBoxAdapter(
+                  child: BannerAdWidget(),
+                ),
                 const SliverToBoxAdapter(child: SizedBox(height: 32)),
               ],
             ),

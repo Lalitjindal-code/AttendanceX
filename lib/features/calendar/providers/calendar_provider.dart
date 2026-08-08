@@ -1,4 +1,4 @@
-import 'package:attendify/database/collections/attendance_collection.dart';
+import 'package:attendify/database/collections/attendance_collection.dart' show Attendance;
 import 'package:attendify/database/collections/schedule_collection.dart';
 import 'package:attendify/database/collections/subject_collection.dart';
 import 'package:attendify/features/attendance/providers/attendance_providers.dart';
@@ -7,8 +7,11 @@ import 'package:attendify/features/subjects/providers/subject_providers.dart';
 import 'package:attendify/features/planner/providers/planner_provider.dart';
 import 'package:attendify/features/calendar/engines/calendar_engine.dart';
 import 'package:attendify/features/calendar/models/calendar_state.dart';
+import 'package:attendify/core/enums/attendance_status.dart';
 import 'package:attendify/features/calendar/models/daily_attendance_details.dart';
 import 'package:attendify/database/collections/academic_task_collection.dart';
+import 'package:attendify/features/settings/providers/semester_provider.dart';
+import 'dart:collection';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 import 'package:rxdart/rxdart.dart' hide Subject;
 
@@ -66,20 +69,26 @@ class CalendarNotifier extends _$CalendarNotifier {
     // will cause build() to re-run and return a new Stream when they change.
     final selectedDate = ref.watch(calendarSelectedDateProvider);
     final focusedDate = ref.watch(calendarFocusedDateProvider);
-    final visibleMonth = ref.watch(calendarVisibleMonthProvider);
 
-    // Calculate a buffer for TableCalendar (previous and next month visible days)
-    // TableCalendar usually shows max 6 weeks (42 days) total.
-    // So 1 month back and 1 month forward is plenty.
-    final startDate = DateTime(visibleMonth.year, visibleMonth.month - 1, 1);
-    final endDate = DateTime(
-        visibleMonth.year, visibleMonth.month + 2, 0); // End of next month
+    final semester = ref.watch(semesterStateProvider);
+    if (semester == null) {
+      return Stream.value(CalendarState(
+        selectedDate: selectedDate,
+        focusedDate: focusedDate,
+        attendanceMarkers: UnmodifiableMapView<DateTime, List<AttendanceStatus>>({}),
+        taskMarkers: UnmodifiableMapView<DateTime, List<AcademicTask>>({}),
+        selectedDayDetails: DailyAttendanceDetails(date: selectedDate),
+        selectedDayTasks: [],
+        allSubjects: [],
+        isLoading: false,
+      ));
+    }
 
     return Rx.combineLatest4(
-      subjectRepo.watchAll(),
-      scheduleRepo.watchAll(),
-      attendanceRepo.watchByDateRange(startDate, endDate),
-      plannerRepo.watchAllTasks(),
+      subjectRepo.watchAll(semester.id),
+      scheduleRepo.watchAll(semester.id),
+      attendanceRepo.watchAll(semester.id),
+      plannerRepo.watchAllTasks(semester.id),
       (List<Subject> subjects, List<Schedule> schedules,
           List<Attendance> attendances, List<AcademicTask> tasks) {
         if (subjects.isEmpty) {

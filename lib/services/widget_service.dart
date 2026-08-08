@@ -79,8 +79,10 @@ class WidgetService {
         final present =
             subjectRecords.where((a) => a.status.name == 'present').length;
             
-        totalLecturesAll += total;
-        totalPresentAll += present;
+        if (subject.isIncludedInOverall) {
+          totalLecturesAll += total;
+          totalPresentAll += present;
+        }
             
         subjectPercentages[subject.id] =
             total == 0 ? 0.0 : (present / total) * 100.0;

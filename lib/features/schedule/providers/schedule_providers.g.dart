@@ -22,7 +22,7 @@ final scheduleRepositoryProvider = Provider<ScheduleRepository>.internal(
 );
 
 typedef ScheduleRepositoryRef = ProviderRef<ScheduleRepository>;
-String _$schedulesForDayHash() => r'f72792e4216284e1b5503bce76e1cb9ff09e1974';
+String _$schedulesForDayHash() => r'972ce5cec055bac5a64ac9f20cabed1c5044a030';
 
 /// Copied from Dart SDK
 class _SystemHash {
@@ -173,7 +173,7 @@ class _SchedulesForDayProviderElement
   int get dayOfWeek => (origin as SchedulesForDayProvider).dayOfWeek;
 }
 
-String _$allSchedulesHash() => r'99bfc3a0d3156c40f9b071c0cb05f6e1caa6c94b';
+String _$allSchedulesHash() => r'6d2b6609bc14376e9afa113dcf36bcdc091cc1b0';
 
 /// See also [allSchedules].
 @ProviderFor(allSchedules)
@@ -188,7 +188,7 @@ final allSchedulesProvider = AutoDisposeStreamProvider<List<Schedule>>.internal(
 
 typedef AllSchedulesRef = AutoDisposeStreamProviderRef<List<Schedule>>;
 String _$schedulesForDaySortedByTimeHash() =>
-    r'de3b804e7d9aea787fc281451c02adcb47322c32';
+    r'a2b9533a0b7d1ccf1c438248eca9b9ddd266d578';
 
 /// See also [schedulesForDaySortedByTime].
 @ProviderFor(schedulesForDaySortedByTime)

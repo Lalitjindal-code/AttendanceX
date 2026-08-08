@@ -1,86 +1,60 @@
 import 'package:flutter/material.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
-import '../../../core/config/app_config.dart';
+import 'package:isar/isar.dart';
 import '../../../core/enums/gt_mode.dart';
 import '../../../services/preferences_service.dart';
+import '../../../database/database_providers.dart';
+import '../../../database/collections/profile_collection.dart';
+import '../../../database/repositories/profile_repository.dart';
 import '../models/app_settings.dart';
 
 part 'settings_provider.g.dart';
 
 /// Riverpod provider managing application settings state.
 ///
-/// Reads from and writes to [PreferencesService]. Changes to state immediately
-/// trigger UI rebuilds (e.g., ThemeMode changes).
+/// Reads from and writes to [PreferencesService] and Isar [Profile].
 @Riverpod(keepAlive: true)
 class Settings extends _$Settings {
   late PreferencesService _prefs;
+  late Isar _isar;
+  late Profile _activeProfile;
 
   @override
   AppSettings build() {
     _prefs = PreferencesService.instance;
+    _isar = ref.watch(isarProvider);
     return _loadSettings();
   }
 
   AppSettings get currentSettings => state;
 
   AppSettings _loadSettings() {
-    final themeStr = _prefs.getString(PreferencesService.keyThemeMode,
-        defaultValue: 'system');
+    final themeStr = _prefs.getString(PreferencesService.keyThemeMode, defaultValue: 'system');
     final ThemeMode themeMode = switch (themeStr) {
       'light' => ThemeMode.light,
       'dark' => ThemeMode.dark,
       _ => ThemeMode.system,
     };
 
-    final startStr =
-        _prefs.getStringNullable(PreferencesService.keySemesterStart);
-    final endStr = _prefs.getStringNullable(PreferencesService.keySemesterEnd);
-    final lastBackupStr =
-        _prefs.getStringNullable(PreferencesService.keyLastBackupDate);
+    final lastBackupStr = _prefs.getStringNullable(PreferencesService.keyLastBackupDate);
+    final activeProfileId = _prefs.getInt('active_profile_id', defaultValue: 1);
+    
+    _activeProfile = _isar.profiles.getSync(activeProfileId) ?? Profile();
 
     return AppSettings(
       themeMode: themeMode,
-      defaultGoalPercentage: _prefs.getDouble(
-        PreferencesService.keyDefaultGoal,
-        defaultValue: AppConfig.defaultGoalPercentage,
-      ),
-      medicalCountsAsPresent: _prefs.getBool(
-        PreferencesService.keyMedicalCountsAsPresent,
-        defaultValue: false,
-      ),
-      isOnboardingComplete: _prefs.getBool(
-        PreferencesService.keyIsOnboardingComplete,
-        defaultValue: false,
-      ),
-      gtMode: GtMode.fromKey(_prefs.getString(
-        PreferencesService.keyGtMode,
-        defaultValue: GtMode.exclude.key,
-      )),
-      semesterStartDate: startStr != null ? DateTime.tryParse(startStr) : null,
-      semesterEndDate: endStr != null ? DateTime.tryParse(endStr) : null,
-      notificationsEnabled: _prefs.getBool(
-        PreferencesService.keyNotificationsEnabled,
-        defaultValue: true,
-      ),
-      dailyReminderEnabled: _prefs.getBool(
-        PreferencesService.keyDailyReminderEnabled,
-        defaultValue: true,
-      ),
-      dailyReminderTime: _prefs.getString(
-        PreferencesService.keyDailyReminderTime,
-        defaultValue: AppConfig.defaultDailyReminderTime,
-      ),
-      lectureReminderMinutes: _prefs.getInt(
-        PreferencesService.keyLectureReminderMinutes,
-        defaultValue: AppConfig.defaultLectureReminderMinutes,
-      ),
-      defaultTaskReminderOffsets: _prefs
-          .getStringList(
-            PreferencesService.keyDefaultTaskReminderOffsets,
-            defaultValue: ['60', '1440'],
-          )
-          .map((e) => int.tryParse(e) ?? 0)
-          .toList(),
+      defaultGoalPercentage: _activeProfile.defaultGoalPercentage,
+      medicalCountsAsPresent: _activeProfile.medicalCountsAsPresent,
+      isOnboardingComplete: _prefs.getBool(PreferencesService.keyIsOnboardingComplete, defaultValue: false),
+      gtMode: _activeProfile.gtMode,
+      semesterStartDate: null, // Removed from AppSettings (now in Semester)
+      semesterEndDate: null,   // Removed from AppSettings (now in Semester)
+
+      notificationsEnabled: _activeProfile.notificationsEnabled,
+      dailyReminderEnabled: _activeProfile.dailyReminderEnabled,
+      dailyReminderTime: _activeProfile.dailyReminderTime,
+      lectureReminderMinutes: _activeProfile.lectureReminderMinutes,
+      defaultTaskReminderOffsets: _activeProfile.defaultTaskReminderOffsets,
       isAmoled: _prefs.getBool(
         PreferencesService.keyIsAmoled,
         defaultValue: false,
@@ -101,75 +75,59 @@ class Settings extends _$Settings {
 
   Future<void> updateDefaultGoal(double goal) async {
     state = state.copyWith(defaultGoalPercentage: goal);
-    await _prefs.setDouble(PreferencesService.keyDefaultGoal, goal);
+    _activeProfile.defaultGoalPercentage = goal;
+    await ref.read(profileRepositoryProvider).upsertProfile(_activeProfile);
   }
 
   Future<void> updateMedicalPolicy(bool countsAsPresent) async {
     state = state.copyWith(medicalCountsAsPresent: countsAsPresent);
-    await _prefs.setBool(
-        PreferencesService.keyMedicalCountsAsPresent, countsAsPresent);
+    _activeProfile.medicalCountsAsPresent = countsAsPresent;
+    await ref.read(profileRepositoryProvider).upsertProfile(_activeProfile);
   }
 
   Future<void> updateGtMode(GtMode mode) async {
     state = state.copyWith(gtMode: mode);
-    await _prefs.setString(PreferencesService.keyGtMode, mode.key);
+    _activeProfile.gtMode = mode;
+    await ref.read(profileRepositoryProvider).upsertProfile(_activeProfile);
   }
 
   Future<void> updateSemesterDates(DateTime? start, DateTime? end) async {
-    final normalizedStart =
-        start != null ? DateTime(start.year, start.month, start.day) : null;
-    final normalizedEnd =
-        end != null ? DateTime(end.year, end.month, end.day) : null;
-
-    state = state.copyWith(
-        semesterStartDate: normalizedStart, semesterEndDate: normalizedEnd);
-
-    if (normalizedStart != null) {
-      await _prefs.setString(PreferencesService.keySemesterStart,
-          normalizedStart.toIso8601String());
-    } else {
-      await _prefs.remove(PreferencesService.keySemesterStart);
-    }
-
-    if (normalizedEnd != null) {
-      await _prefs.setString(
-          PreferencesService.keySemesterEnd, normalizedEnd.toIso8601String());
-    } else {
-      await _prefs.remove(PreferencesService.keySemesterEnd);
-    }
+    // Deprecated in SettingsProvider, now managed by SemesterProvider.
+    // Keeping method signature to prevent breakage until fully migrated.
   }
 
   Future<void> updateNotificationsEnabled(bool enabled) async {
     state = state.copyWith(notificationsEnabled: enabled);
-    await _prefs.setBool(PreferencesService.keyNotificationsEnabled, enabled);
+    _activeProfile.notificationsEnabled = enabled;
+    await ref.read(profileRepositoryProvider).upsertProfile(_activeProfile);
   }
 
   Future<void> updateDailyReminderEnabled(bool enabled) async {
     state = state.copyWith(dailyReminderEnabled: enabled);
-    await _prefs.setBool(PreferencesService.keyDailyReminderEnabled, enabled);
+    _activeProfile.dailyReminderEnabled = enabled;
+    await ref.read(profileRepositoryProvider).upsertProfile(_activeProfile);
   }
 
   Future<void> updateDailyReminderTime(String time) async {
     state = state.copyWith(dailyReminderTime: time);
-    await _prefs.setString(PreferencesService.keyDailyReminderTime, time);
+    _activeProfile.dailyReminderTime = time;
+    await ref.read(profileRepositoryProvider).upsertProfile(_activeProfile);
   }
 
   Future<void> updatePlannerReminderTime(String time) async {
     // Note: not currently used, but kept for future compatibility
-    await _prefs.setString(PreferencesService.keyPlannerReminderTime, time);
   }
 
   Future<void> updateLectureReminderMinutes(int minutes) async {
     state = state.copyWith(lectureReminderMinutes: minutes);
-    await _prefs.setInt(PreferencesService.keyLectureReminderMinutes, minutes);
+    _activeProfile.lectureReminderMinutes = minutes;
+    await ref.read(profileRepositoryProvider).upsertProfile(_activeProfile);
   }
 
   Future<void> updateDefaultTaskReminderOffsets(List<int> offsets) async {
     state = state.copyWith(defaultTaskReminderOffsets: offsets);
-    await _prefs.setStringList(
-      PreferencesService.keyDefaultTaskReminderOffsets,
-      offsets.map((e) => e.toString()).toList(),
-    );
+    _activeProfile.defaultTaskReminderOffsets = offsets;
+    await ref.read(profileRepositoryProvider).upsertProfile(_activeProfile);
   }
 
   /// Toggle the AMOLED true-black theme.

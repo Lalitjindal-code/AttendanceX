@@ -87,7 +87,7 @@ class _AppLockScreenState extends State<AppLockScreen> {
               Text(
                 'Authenticate to access your data.',
                 style: TextStyle(
-                  color: Colors.white.withOpacity(0.6),
+                  color: Colors.white.withValues(alpha: 0.6),
                   fontSize: 16,
                 ),
               ),

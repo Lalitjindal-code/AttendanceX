@@ -36,6 +36,7 @@ class ScheduleTimelineCard extends ConsumerWidget {
     }
 
     final attendance = Attendance()
+      ..semesterId = schedule.semesterId
       ..scheduleId = schedule.id
       ..subjectId = subject.id
       ..date = todayUtc

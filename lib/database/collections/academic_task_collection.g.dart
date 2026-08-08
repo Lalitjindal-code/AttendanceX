@@ -78,35 +78,40 @@ const AcademicTaskSchema = CollectionSchema(
       name: r'repeatRule',
       type: IsarType.string,
     ),
-    r'status': PropertySchema(
+    r'semesterId': PropertySchema(
       id: 12,
+      name: r'semesterId',
+      type: IsarType.long,
+    ),
+    r'status': PropertySchema(
+      id: 13,
       name: r'status',
       type: IsarType.string,
       enumMap: _AcademicTaskstatusEnumValueMap,
     ),
     r'subjectId': PropertySchema(
-      id: 13,
+      id: 14,
       name: r'subjectId',
       type: IsarType.long,
     ),
     r'submissionUrls': PropertySchema(
-      id: 14,
+      id: 15,
       name: r'submissionUrls',
       type: IsarType.stringList,
     ),
     r'title': PropertySchema(
-      id: 15,
+      id: 16,
       name: r'title',
       type: IsarType.string,
     ),
     r'type': PropertySchema(
-      id: 16,
+      id: 17,
       name: r'type',
       type: IsarType.string,
       enumMap: _AcademicTasktypeEnumValueMap,
     ),
     r'updatedAt': PropertySchema(
-      id: 17,
+      id: 18,
       name: r'updatedAt',
       type: IsarType.dateTime,
     )
@@ -117,6 +122,19 @@ const AcademicTaskSchema = CollectionSchema(
   deserializeProp: _academicTaskDeserializeProp,
   idName: r'id',
   indexes: {
+    r'semesterId': IndexSchema(
+      id: -4385212551819087598,
+      name: r'semesterId',
+      unique: false,
+      replace: false,
+      properties: [
+        IndexPropertySchema(
+          name: r'semesterId',
+          type: IndexType.value,
+          caseSensitive: false,
+        )
+      ],
+    ),
     r'subjectId': IndexSchema(
       id: 440306668014799972,
       name: r'subjectId',
@@ -222,12 +240,13 @@ void _academicTaskSerialize(
   writer.writeLongList(offsets[9], object.notificationOffsets);
   writer.writeString(offsets[10], object.priority.name);
   writer.writeString(offsets[11], object.repeatRule);
-  writer.writeString(offsets[12], object.status.name);
-  writer.writeLong(offsets[13], object.subjectId);
-  writer.writeStringList(offsets[14], object.submissionUrls);
-  writer.writeString(offsets[15], object.title);
-  writer.writeString(offsets[16], object.type.name);
-  writer.writeDateTime(offsets[17], object.updatedAt);
+  writer.writeLong(offsets[12], object.semesterId);
+  writer.writeString(offsets[13], object.status.name);
+  writer.writeLong(offsets[14], object.subjectId);
+  writer.writeStringList(offsets[15], object.submissionUrls);
+  writer.writeString(offsets[16], object.title);
+  writer.writeString(offsets[17], object.type.name);
+  writer.writeDateTime(offsets[18], object.updatedAt);
 }
 
 AcademicTask _academicTaskDeserialize(
@@ -252,16 +271,17 @@ AcademicTask _academicTaskDeserialize(
       _AcademicTaskpriorityValueEnumMap[reader.readStringOrNull(offsets[10])] ??
           TaskPriority.low;
   object.repeatRule = reader.readStringOrNull(offsets[11]);
+  object.semesterId = reader.readLong(offsets[12]);
   object.status =
-      _AcademicTaskstatusValueEnumMap[reader.readStringOrNull(offsets[12])] ??
+      _AcademicTaskstatusValueEnumMap[reader.readStringOrNull(offsets[13])] ??
           TaskStatus.pending;
-  object.subjectId = reader.readLong(offsets[13]);
-  object.submissionUrls = reader.readStringList(offsets[14]) ?? [];
-  object.title = reader.readString(offsets[15]);
+  object.subjectId = reader.readLong(offsets[14]);
+  object.submissionUrls = reader.readStringList(offsets[15]) ?? [];
+  object.title = reader.readString(offsets[16]);
   object.type =
-      _AcademicTasktypeValueEnumMap[reader.readStringOrNull(offsets[16])] ??
+      _AcademicTasktypeValueEnumMap[reader.readStringOrNull(offsets[17])] ??
           TaskType.assignment;
-  object.updatedAt = reader.readDateTime(offsets[17]);
+  object.updatedAt = reader.readDateTime(offsets[18]);
   return object;
 }
 
@@ -299,19 +319,21 @@ P _academicTaskDeserializeProp<P>(
     case 11:
       return (reader.readStringOrNull(offset)) as P;
     case 12:
+      return (reader.readLong(offset)) as P;
+    case 13:
       return (_AcademicTaskstatusValueEnumMap[
               reader.readStringOrNull(offset)] ??
           TaskStatus.pending) as P;
-    case 13:
-      return (reader.readLong(offset)) as P;
     case 14:
-      return (reader.readStringList(offset) ?? []) as P;
+      return (reader.readLong(offset)) as P;
     case 15:
-      return (reader.readString(offset)) as P;
+      return (reader.readStringList(offset) ?? []) as P;
     case 16:
+      return (reader.readString(offset)) as P;
+    case 17:
       return (_AcademicTasktypeValueEnumMap[reader.readStringOrNull(offset)] ??
           TaskType.assignment) as P;
-    case 17:
+    case 18:
       return (reader.readDateTime(offset)) as P;
     default:
       throw IsarError('Unknown property with id $propertyId');
@@ -398,6 +420,14 @@ extension AcademicTaskQueryWhereSort
     });
   }
 
+  QueryBuilder<AcademicTask, AcademicTask, QAfterWhere> anySemesterId() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addWhereClause(
+        const IndexWhereClause.any(indexName: r'semesterId'),
+      );
+    });
+  }
+
   QueryBuilder<AcademicTask, AcademicTask, QAfterWhere> anySubjectId() {
     return QueryBuilder.apply(this, (query) {
       return query.addWhereClause(
@@ -479,6 +509,98 @@ extension AcademicTaskQueryWhere
         lower: lowerId,
         includeLower: includeLower,
         upper: upperId,
+        includeUpper: includeUpper,
+      ));
+    });
+  }
+
+  QueryBuilder<AcademicTask, AcademicTask, QAfterWhereClause> semesterIdEqualTo(
+      int semesterId) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addWhereClause(IndexWhereClause.equalTo(
+        indexName: r'semesterId',
+        value: [semesterId],
+      ));
+    });
+  }
+
+  QueryBuilder<AcademicTask, AcademicTask, QAfterWhereClause>
+      semesterIdNotEqualTo(int semesterId) {
+    return QueryBuilder.apply(this, (query) {
+      if (query.whereSort == Sort.asc) {
+        return query
+            .addWhereClause(IndexWhereClause.between(
+              indexName: r'semesterId',
+              lower: [],
+              upper: [semesterId],
+              includeUpper: false,
+            ))
+            .addWhereClause(IndexWhereClause.between(
+              indexName: r'semesterId',
+              lower: [semesterId],
+              includeLower: false,
+              upper: [],
+            ));
+      } else {
+        return query
+            .addWhereClause(IndexWhereClause.between(
+              indexName: r'semesterId',
+              lower: [semesterId],
+              includeLower: false,
+              upper: [],
+            ))
+            .addWhereClause(IndexWhereClause.between(
+              indexName: r'semesterId',
+              lower: [],
+              upper: [semesterId],
+              includeUpper: false,
+            ));
+      }
+    });
+  }
+
+  QueryBuilder<AcademicTask, AcademicTask, QAfterWhereClause>
+      semesterIdGreaterThan(
+    int semesterId, {
+    bool include = false,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addWhereClause(IndexWhereClause.between(
+        indexName: r'semesterId',
+        lower: [semesterId],
+        includeLower: include,
+        upper: [],
+      ));
+    });
+  }
+
+  QueryBuilder<AcademicTask, AcademicTask, QAfterWhereClause>
+      semesterIdLessThan(
+    int semesterId, {
+    bool include = false,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addWhereClause(IndexWhereClause.between(
+        indexName: r'semesterId',
+        lower: [],
+        upper: [semesterId],
+        includeUpper: include,
+      ));
+    });
+  }
+
+  QueryBuilder<AcademicTask, AcademicTask, QAfterWhereClause> semesterIdBetween(
+    int lowerSemesterId,
+    int upperSemesterId, {
+    bool includeLower = true,
+    bool includeUpper = true,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addWhereClause(IndexWhereClause.between(
+        indexName: r'semesterId',
+        lower: [lowerSemesterId],
+        includeLower: includeLower,
+        upper: [upperSemesterId],
         includeUpper: includeUpper,
       ));
     });
@@ -2176,6 +2298,62 @@ extension AcademicTaskQueryFilter
     });
   }
 
+  QueryBuilder<AcademicTask, AcademicTask, QAfterFilterCondition>
+      semesterIdEqualTo(int value) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.equalTo(
+        property: r'semesterId',
+        value: value,
+      ));
+    });
+  }
+
+  QueryBuilder<AcademicTask, AcademicTask, QAfterFilterCondition>
+      semesterIdGreaterThan(
+    int value, {
+    bool include = false,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.greaterThan(
+        include: include,
+        property: r'semesterId',
+        value: value,
+      ));
+    });
+  }
+
+  QueryBuilder<AcademicTask, AcademicTask, QAfterFilterCondition>
+      semesterIdLessThan(
+    int value, {
+    bool include = false,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.lessThan(
+        include: include,
+        property: r'semesterId',
+        value: value,
+      ));
+    });
+  }
+
+  QueryBuilder<AcademicTask, AcademicTask, QAfterFilterCondition>
+      semesterIdBetween(
+    int lower,
+    int upper, {
+    bool includeLower = true,
+    bool includeUpper = true,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.between(
+        property: r'semesterId',
+        lower: lower,
+        includeLower: includeLower,
+        upper: upper,
+        includeUpper: includeUpper,
+      ));
+    });
+  }
+
   QueryBuilder<AcademicTask, AcademicTask, QAfterFilterCondition> statusEqualTo(
     TaskStatus value, {
     bool caseSensitive = true,
@@ -3051,6 +3229,19 @@ extension AcademicTaskQuerySortBy
     });
   }
 
+  QueryBuilder<AcademicTask, AcademicTask, QAfterSortBy> sortBySemesterId() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'semesterId', Sort.asc);
+    });
+  }
+
+  QueryBuilder<AcademicTask, AcademicTask, QAfterSortBy>
+      sortBySemesterIdDesc() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'semesterId', Sort.desc);
+    });
+  }
+
   QueryBuilder<AcademicTask, AcademicTask, QAfterSortBy> sortByStatus() {
     return QueryBuilder.apply(this, (query) {
       return query.addSortBy(r'status', Sort.asc);
@@ -3251,6 +3442,19 @@ extension AcademicTaskQuerySortThenBy
     });
   }
 
+  QueryBuilder<AcademicTask, AcademicTask, QAfterSortBy> thenBySemesterId() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'semesterId', Sort.asc);
+    });
+  }
+
+  QueryBuilder<AcademicTask, AcademicTask, QAfterSortBy>
+      thenBySemesterIdDesc() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'semesterId', Sort.desc);
+    });
+  }
+
   QueryBuilder<AcademicTask, AcademicTask, QAfterSortBy> thenByStatus() {
     return QueryBuilder.apply(this, (query) {
       return query.addSortBy(r'status', Sort.asc);
@@ -3393,6 +3597,12 @@ extension AcademicTaskQueryWhereDistinct
     });
   }
 
+  QueryBuilder<AcademicTask, AcademicTask, QDistinct> distinctBySemesterId() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addDistinctBy(r'semesterId');
+    });
+  }
+
   QueryBuilder<AcademicTask, AcademicTask, QDistinct> distinctByStatus(
       {bool caseSensitive = true}) {
     return QueryBuilder.apply(this, (query) {
@@ -3516,6 +3726,12 @@ extension AcademicTaskQueryProperty
   QueryBuilder<AcademicTask, String?, QQueryOperations> repeatRuleProperty() {
     return QueryBuilder.apply(this, (query) {
       return query.addPropertyName(r'repeatRule');
+    });
+  }
+
+  QueryBuilder<AcademicTask, int, QQueryOperations> semesterIdProperty() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addPropertyName(r'semesterId');
     });
   }
 

@@ -4,6 +4,8 @@ import 'package:attendify/database/collections/attendance_history_collection.dar
 import 'package:attendify/database/collections/schedule_collection.dart';
 import 'package:attendify/database/collections/subject_collection.dart';
 import 'package:attendify/database/collections/academic_task_collection.dart';
+import 'package:attendify/database/collections/semester_collection.dart';
+import 'package:attendify/database/collections/profile_collection.dart';
 import 'package:attendify/database/repositories/subject_repository.dart';
 import 'package:attendify/database/repositories/schedule_repository.dart';
 import 'package:attendify/database/repositories/attendance_repository.dart';
@@ -13,8 +15,10 @@ import 'package:attendify/features/notifications/providers/notification_provider
 import 'package:attendify/features/schedule/providers/schedule_providers.dart';
 import 'package:attendify/features/settings/models/app_settings.dart';
 import 'package:attendify/features/settings/providers/settings_provider.dart';
+import 'package:attendify/features/settings/providers/semester_provider.dart';
 import 'package:attendify/features/subjects/providers/subject_providers.dart';
 import 'package:attendify/services/notification_service.dart';
+import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:isar/isar.dart';
@@ -34,11 +38,15 @@ class MockNotificationService implements NotificationService {
 
   @override
   Future<bool?> requestPermissions() async => true;
+  @override
+  Future<List<PendingNotificationRequest>> getPendingNotifications() async => [];
+  @override
+  Future<void> showTestNotification() async {}
 }
 
 class FakeSubjectRepository implements SubjectRepository {
   @override
-  Stream<List<Subject>> watchAll() => Stream.value([
+  Stream<List<Subject>> watchAll(int semesterId) => Stream.value([
         Subject()
           ..id = 1
           ..name = 'Mock Subject'
@@ -55,14 +63,18 @@ class FakeSubjectRepository implements SubjectRepository {
   @override
   Future<SubjectDeletionImpact> getDeletionImpact(int subjectId) async =>
       const SubjectDeletionImpact(
-          schedulesCount: 0, attendancesCount: 0, historyCount: 0);
+        schedulesCount: 0,
+        attendancesCount: 0,
+        historyCount: 0,
+        tasksCount: 0,
+      );
   @override
-  Stream<List<Subject>> watchAllActive() => Stream.value([]);
+  Stream<List<Subject>> watchAllActive(int semesterId) => Stream.value([]);
 }
 
 class FakeScheduleRepository implements ScheduleRepository {
   @override
-  Stream<List<Schedule>> watchAll() => Stream.value([
+  Stream<List<Schedule>> watchAll(int semesterId) => Stream.value([
         Schedule()
           ..id = 101
           ..subjectId = 1
@@ -73,7 +85,7 @@ class FakeScheduleRepository implements ScheduleRepository {
       ]);
 
   @override
-  Future<List<Schedule>> getByDay(int dayOfWeek) async => [];
+  Future<List<Schedule>> getByDay(int dayOfWeek, int semesterId) async => [];
 
   @override
   Future<void> create(Schedule schedule) async {}
@@ -86,30 +98,32 @@ class FakeScheduleRepository implements ScheduleRepository {
   @override
   Future<void> updateOrder(List<int> scheduleIds) async {}
   @override
-  Stream<List<Schedule>> watchByDaySortedByOrder(int dayOfWeek) =>
+  Stream<List<Schedule>> watchByDaySortedByOrder(int dayOfWeek, int semesterId) =>
       Stream.value([]);
   @override
-  Stream<List<Schedule>> watchByDaySortedByTime(int dayOfWeek) =>
+  Stream<List<Schedule>> watchByDaySortedByTime(int dayOfWeek, int semesterId) =>
       Stream.value([]);
 }
 
 class FakeAttendanceRepository implements AttendanceRepository {
   @override
-  Stream<List<Attendance>> watchAll() => Stream.value([]);
+  Stream<List<Attendance>> watchAll(int semesterId) => Stream.value([]);
 
   @override
   Future<void> upsertAttendance(Attendance attendance) async {}
   @override
   Future<void> delete(int id) async {}
   @override
-  Stream<List<Attendance>> watchBySubject(int subjectId) => Stream.value([]);
+  Future<void> deleteAttendancesByDate(DateTime date, int semesterId) async {}
   @override
-  Future<List<Attendance>> getBySubjectId(int subjectId) async => [];
+  Stream<List<Attendance>> watchBySubject(int subjectId, int semesterId) => Stream.value([]);
   @override
-  Stream<List<AttendanceHistory>> watchHistoryBySubject(int subjectId) =>
+  Future<List<Attendance>> getBySubjectId(int subjectId, int semesterId) async => [];
+  @override
+  Stream<List<AttendanceHistory>> watchHistoryBySubject(int subjectId, int semesterId) =>
       Stream.value([]);
   @override
-  Stream<List<Attendance>> watchByDateRange(DateTime start, DateTime end) =>
+  Stream<List<Attendance>> watchByDateRange(int semesterId, DateTime start, DateTime end) =>
       Stream.value([]);
   @override
   Future<Attendance?> getById(int id) async => null;
@@ -123,6 +137,15 @@ class FakeSettings extends Settings {
       dailyReminderEnabled: false);
 }
 
+class FakeSemesterState extends SemesterState {
+  @override
+  Semester? build() => Semester()
+    ..id = 1
+    ..name = 'Semester 1'
+    ..startDate = DateTime(2023, 1, 1)
+    ..endDate = DateTime(2030, 1, 1);
+}
+
 void main() {
   late Isar isar;
 
@@ -134,6 +157,8 @@ void main() {
   setUp(() async {
     isar = await Isar.open(
       [
+        ProfileSchema,
+        SemesterSchema,
         SubjectSchema,
         ScheduleSchema,
         AttendanceSchema,
@@ -163,6 +188,7 @@ void main() {
         attendanceRepositoryProvider
             .overrideWithValue(FakeAttendanceRepository()),
         settingsProvider.overrideWith(() => FakeSettings()),
+        semesterStateProvider.overrideWith(() => FakeSemesterState()), // provide null or a mock semester
       ],
     );
 

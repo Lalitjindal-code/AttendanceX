@@ -12,9 +12,11 @@ class ScheduleRepository {
 
   /// Returns a stream of all schedules for a specific day, sorted by order.
   /// This is specifically for the Schedule editing screen (drag-and-drop).
-  Stream<List<Schedule>> watchByDaySortedByOrder(int dayOfWeek) {
+  Stream<List<Schedule>> watchByDaySortedByOrder(int semesterId, int dayOfWeek) {
     return _isar.schedules
         .filter()
+        .semesterIdEqualTo(semesterId)
+        .and()
         .dayOfWeekEqualTo(dayOfWeek)
         .sortByOrder()
         .watch(fireImmediately: true);
@@ -22,17 +24,19 @@ class ScheduleRepository {
 
   /// Returns a stream of all schedules for a specific day, sorted chronologically.
   /// This is used by Dashboard, Calendar, and Attendance matching.
-  Stream<List<Schedule>> watchByDaySortedByTime(int dayOfWeek) {
+  Stream<List<Schedule>> watchByDaySortedByTime(int semesterId, int dayOfWeek) {
     return _isar.schedules
         .filter()
+        .semesterIdEqualTo(semesterId)
+        .and()
         .dayOfWeekEqualTo(dayOfWeek)
         .sortByStartTime()
         .watch(fireImmediately: true);
   }
 
   /// Returns a stream of all schedules.
-  Stream<List<Schedule>> watchAll() {
-    return _isar.schedules.where().anyId().watch(fireImmediately: true);
+  Stream<List<Schedule>> watchAll(int semesterId) {
+    return _isar.schedules.filter().semesterIdEqualTo(semesterId).watch(fireImmediately: true);
   }
 
   /// Fetches a specific schedule by ID.
@@ -68,19 +72,23 @@ class ScheduleRepository {
   /// Batch updates the order field of multiple schedules for drag-and-drop.
   Future<void> updateOrder(List<int> scheduleIds) async {
     await _isar.writeTxn(() async {
-      for (var i = 0; i < scheduleIds.length; i++) {
-        final id = scheduleIds[i];
-        final schedule = await _isar.schedules.get(id);
+      final schedules = await _isar.schedules.getAll(scheduleIds);
+      final toUpdate = <Schedule>[];
+      for (var i = 0; i < schedules.length; i++) {
+        final schedule = schedules[i];
         if (schedule != null) {
           schedule.order = i;
-          await _isar.schedules.put(schedule);
+          toUpdate.add(schedule);
         }
+      }
+      if (toUpdate.isNotEmpty) {
+        await _isar.schedules.putAll(toUpdate);
       }
     });
   }
 
   /// Fetches all schedules for a specific day (used by Engine for conflict validation).
-  Future<List<Schedule>> getByDay(int dayOfWeek) async {
-    return await _isar.schedules.filter().dayOfWeekEqualTo(dayOfWeek).findAll();
+  Future<List<Schedule>> getByDay(int semesterId, int dayOfWeek) async {
+    return await _isar.schedules.filter().semesterIdEqualTo(semesterId).and().dayOfWeekEqualTo(dayOfWeek).findAll();
   }
 }

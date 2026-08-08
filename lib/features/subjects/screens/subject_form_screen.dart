@@ -6,6 +6,7 @@ import '../../../database/collections/subject_collection.dart';
 import '../../../engines/subject_validator.dart';
 import '../providers/subject_providers.dart';
 import '../widgets/subject_color_picker.dart';
+import '../../settings/providers/semester_provider.dart';
 
 class SubjectFormSheet extends ConsumerStatefulWidget {
   final int? subjectId;
@@ -96,8 +97,19 @@ class _SubjectFormSheetState extends ConsumerState<SubjectFormSheet> {
         : _notesController.text.trim();
     subject.colorValue = _selectedColor;
 
+    final activeSemester = ref.read(semesterStateProvider);
+    if (activeSemester == null) {
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(content: Text('No active semester selected')),
+        );
+      }
+      return;
+    }
+
     try {
       if (widget.subjectId == null) {
+        subject.semesterId = activeSemester.id;
         await repo.create(subject);
       } else {
         await repo.update(subject);
@@ -126,9 +138,10 @@ class _SubjectFormSheetState extends ConsumerState<SubjectFormSheet> {
       builder: (context) => AlertDialog(
         title: const Text('Delete Subject'),
         content: Text('This subject contains:\n\n'
-            'â€¢ ${impact.schedulesCount} schedule entries\n'
-            'â€¢ ${impact.attendancesCount} attendance records\n'
-            'â€¢ ${impact.historyCount} attendance history records\n\n'
+            '• ${impact.schedulesCount} schedule entries\n'
+            '• ${impact.attendancesCount} attendance records\n'
+            '• ${impact.historyCount} attendance history records\n'
+            '• ${impact.tasksCount} academic tasks\n\n'
             'This action cannot be undone.'),
         actions: [
           TextButton(

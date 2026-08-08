@@ -5,6 +5,8 @@ import 'package:attendify/database/collections/attendance_history_collection.dar
 import 'package:attendify/database/collections/schedule_collection.dart';
 import 'package:attendify/database/collections/subject_collection.dart';
 import 'package:attendify/database/collections/academic_task_collection.dart';
+import 'package:attendify/database/collections/profile_collection.dart';
+import 'package:attendify/database/collections/semester_collection.dart';
 import 'package:attendify/database/database_providers.dart';
 import 'package:attendify/features/dashboard/providers/dashboard_provider.dart';
 import 'package:attendify/features/schedule/providers/schedule_providers.dart';
@@ -29,6 +31,8 @@ void main() {
   setUp(() async {
     isar = await Isar.open(
       [
+        ProfileSchema,
+        SemesterSchema,
         SubjectSchema,
         ScheduleSchema,
         AttendanceSchema,
@@ -38,6 +42,16 @@ void main() {
       directory: '',
       name: 'dashboard_test_db_${DateTime.now().microsecondsSinceEpoch}',
     );
+
+    final semester = Semester()
+      ..id = 1
+      ..profileId = 1
+      ..name = 'Semester 1'
+      ..startDate = DateTime(2023, 1, 1)
+      ..endDate = DateTime(2030, 1, 1);
+    await isar.writeTxn(() async {
+      await isar.semesters.put(semester);
+    });
 
     container = ProviderContainer(
       overrides: [
@@ -58,14 +72,15 @@ void main() {
     final subjectRepo = container.read(subjectRepositoryProvider);
     final scheduleRepo = container.read(scheduleRepositoryProvider);
 
-    final sub1 = Subject()..name = 'Math';
-    final sub2 = Subject()..name = 'Physics';
+    final sub1 = Subject()..semesterId = 1..name = 'Math';
+    final sub2 = Subject()..semesterId = 1..name = 'Physics';
     await subjectRepo.create(sub1);
     await subjectRepo.create(sub2);
 
     final day = DayOfWeek.fromInt(DateTime.now().weekday);
 
     final s1 = Schedule()
+      ..semesterId = 1
       ..subjectId = sub1.id
       ..dayOfWeek = day.value
       ..startTime = '10:00'
@@ -73,6 +88,7 @@ void main() {
       ..type = LectureType.lecture;
 
     final s2 = Schedule()
+      ..semesterId = 1
       ..subjectId = sub2.id
       ..dayOfWeek = day.value
       ..startTime = '09:00' // should be sorted first

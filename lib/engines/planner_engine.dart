@@ -9,10 +9,12 @@ class PlannerEngine {
   static List<AcademicTask> sortTasks(List<AcademicTask> tasks) {
     tasks.sort((a, b) {
       // Completed tasks go to the bottom
-      if (a.status == TaskStatus.completed && b.status != TaskStatus.completed)
+      if (a.status == TaskStatus.completed && b.status != TaskStatus.completed) {
         return 1;
-      if (b.status == TaskStatus.completed && a.status != TaskStatus.completed)
+      }
+      if (b.status == TaskStatus.completed && a.status != TaskStatus.completed) {
         return -1;
+      }
 
       // Then by due date
       final dateCmp = a.dueDate.compareTo(b.dueDate);
@@ -62,7 +64,9 @@ class PlannerEngine {
   /// Determines if a task is overdue.
   static bool isOverdue(AcademicTask task) {
     if (task.status == TaskStatus.completed ||
-        task.status == TaskStatus.cancelled) return false;
+        task.status == TaskStatus.cancelled) {
+      return false;
+    }
 
     final now = DateTime.now();
     final today = DateTime(now.year, now.month, now.day);
@@ -102,8 +106,9 @@ class PlannerEngine {
 
   /// Generates Weekend Planner Study Plan.
   static List<String> generateWeekendPlan(List<AcademicTask> pendingTasks) {
-    if (pendingTasks.isEmpty)
+    if (pendingTasks.isEmpty) {
       return ['You have no pending tasks. Enjoy your weekend!'];
+    }
 
     // Sort tasks by priority and date
     final sorted = sortTasks(List.from(pendingTasks));

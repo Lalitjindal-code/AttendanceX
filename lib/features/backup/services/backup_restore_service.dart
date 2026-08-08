@@ -10,6 +10,8 @@ import '../../../database/collections/attendance_collection.dart';
 import '../../../database/collections/attendance_history_collection.dart';
 import '../../../database/collections/schedule_collection.dart';
 import '../../../database/collections/subject_collection.dart';
+import '../../../database/collections/profile_collection.dart';
+import '../../../database/collections/semester_collection.dart';
 
 class BackupRestoreService {
   BackupRestoreService(this.isar, this.engine, this.settingsNotifier);
@@ -53,6 +55,8 @@ class BackupRestoreService {
       await isar.writeTxn(() async {
         await isar.clear(); // Clear all collections
 
+        await isar.profiles.putAll(backupModel.profiles);
+        await isar.semesters.putAll(backupModel.semesters);
         await isar.subjects.putAll(backupModel.subjects);
         await isar.schedules.putAll(backupModel.schedules);
         await isar.attendances.putAll(backupModel.attendanceRecords);
@@ -84,6 +88,8 @@ class BackupRestoreService {
     final tempDir = await getTemporaryDirectory();
     final tempPath = '${tempDir.path}/attendify_temp_backup.atfy';
 
+    final profiles = await isar.profiles.where().findAll();
+    final semesters = await isar.semesters.where().findAll();
     final subjects = await isar.subjects.where().findAll();
     final schedules = await isar.schedules.where().findAll();
     final attendances = await isar.attendances.where().findAll();
@@ -97,6 +103,8 @@ class BackupRestoreService {
 
     await tempEngine.exportBackup(
       path: tempPath,
+      profiles: profiles,
+      semesters: semesters,
       subjects: subjects,
       schedules: schedules,
       attendanceRecords: attendances,
@@ -119,6 +127,8 @@ class BackupRestoreService {
 
     await isar.writeTxn(() async {
       await isar.clear();
+      await isar.profiles.putAll(backupModel.profiles);
+      await isar.semesters.putAll(backupModel.semesters);
       await isar.subjects.putAll(backupModel.subjects);
       await isar.schedules.putAll(backupModel.schedules);
       await isar.attendances.putAll(backupModel.attendanceRecords);

@@ -5,11 +5,12 @@ import 'package:attendify/database/isar_service.dart';
 import 'package:attendify/services/preferences_service.dart';
 import 'package:flutter/material.dart';
 import 'package:isar/isar.dart';
-import 'package:shared_preferences/shared_preferences.dart';
 
 class ImportTimetable {
   static Future<void> run() async {
     final isar = IsarService.instance.isar;
+    final prefs = PreferencesService.instance;
+    final semesterId = prefs.getInt('active_semester_id', defaultValue: 1);
 
     await isar.writeTxn(() async {
       final subjects = {
@@ -54,9 +55,12 @@ class ImportTimetable {
       final savedSubjects = <String, Subject>{};
 
       for (final entry in subjects.entries) {
+        entry.value.semesterId = semesterId;
         final existingList = await isar.subjects
             .filter()
             .nameEqualTo(entry.value.name)
+            .and()
+            .semesterIdEqualTo(semesterId)
             .findAll();
         final existing = existingList.isEmpty ? null : existingList.first;
         if (existing == null) {
@@ -78,6 +82,7 @@ class ImportTimetable {
       }) async {
         final subject = savedSubjects[subjectKey]!;
         final s = Schedule()
+          ..semesterId = semesterId
           ..subjectId = subject.id
           ..dayOfWeek = day
           ..startTime = startTime
@@ -89,7 +94,7 @@ class ImportTimetable {
         await isar.schedules.put(s);
       }
 
-      await isar.schedules.clear();
+      await isar.schedules.filter().semesterIdEqualTo(semesterId).deleteAll();
 
       // MONDAY (Day 1)
       await addSchedule(
@@ -298,7 +303,6 @@ class ImportTimetable {
           facultyOverride: 'Prof. Jyothi Sonkar');
     });
 
-    final prefs = await SharedPreferences.getInstance();
     await prefs.setString(PreferencesService.keySemesterStart, '2026-07-13');
   }
 }

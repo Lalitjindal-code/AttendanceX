@@ -1,7 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:firebase_core/firebase_core.dart';
+import 'package:google_mobile_ads/google_mobile_ads.dart';
 
+import 'core/ads/app_open_ad_manager.dart';
+import 'core/ads/app_lifecycle_reactor.dart';
 import 'core/config/app_config.dart';
 import 'core/theme/app_theme.dart';
 import 'database/isar_service.dart';
@@ -18,23 +21,30 @@ import 'services/widget_service.dart';
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
 
-  // Initialize Firebase
-  await Firebase.initializeApp(
-    options: DefaultFirebaseOptions.currentPlatform,
-  );
+  // Run critical initializations in parallel
+  // Isar needs path_provider which is ready after ensureInitialized()
+  await Future.wait([
+    Firebase.initializeApp(options: DefaultFirebaseOptions.currentPlatform),
+    PreferencesService.instance.initialize(),
+    IsarService.instance.initialize(),
+  ]);
 
-  // 1. Initialize SharedPreferences singleton
-  await PreferencesService.instance.initialize();
+  // Non-blocking background initializations
+  MobileAds.instance.initialize().then((_) {
+    final appOpenAdManager = AppOpenAdManager()..loadAd();
+    final appLifecycleReactor = AppLifecycleReactor(appOpenAdManager: appOpenAdManager);
+    appLifecycleReactor.listenToAppStateChanges();
+  });
 
-  // 2. Initialize Isar Database singleton
-  await IsarService.instance.initialize();
+  NotificationService.instance.init().then((_) {
+    if (PreferencesService.instance.getBool('notificationsEnabled', defaultValue: true)) {
+      NotificationService.instance.requestPermissions();
+    }
+  });
 
-  // 3. Initialize Notifications singleton
-  await NotificationService.instance.init();
-
-  // 4. Initialize + refresh home screen widget
-  await WidgetService.instance.initialize();
-  WidgetService.instance.updateWidget(); // fire-and-forget
+  WidgetService.instance.initialize().then((_) {
+    WidgetService.instance.updateWidget();
+  });
 
   runApp(
     const ProviderScope(

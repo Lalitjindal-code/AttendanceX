@@ -58,40 +58,44 @@ class _DashboardHeaderState extends State<DashboardHeader> {
           // Top Row: Avatar, Greeting, Notification
           Row(
             children: [
-              CircleAvatar(
+              const CircleAvatar(
                 radius: 22,
-                backgroundColor: const Color(0xFF4334A1),
-                child: const Icon(Icons.person, color: Colors.white),
+                backgroundColor: Color(0xFF4334A1),
+                child: Icon(Icons.person, color: Colors.white),
               ),
               const SizedBox(width: 12),
-              Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Text(
-                    'Hey there,',
-                    style: TextStyle(
-                      fontSize: 14,
-                      color: Colors.white.withValues(alpha: 0.7),
-                      fontWeight: FontWeight.w400,
-                    ),
-                  ),
-                  Row(
-                    children: [
-                      Text(
-                        firstName,
-                        style: const TextStyle(
-                          fontSize: 20,
-                          fontWeight: FontWeight.bold,
-                          color: Colors.white,
-                        ),
+              Expanded(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      'Hey there,',
+                      style: TextStyle(
+                        fontSize: 14,
+                        color: Colors.white.withValues(alpha: 0.7),
+                        fontWeight: FontWeight.w400,
                       ),
-                      const SizedBox(width: 4),
-                      const Text('👋', style: TextStyle(fontSize: 18)),
-                    ],
-                  ),
-                ],
+                    ),
+                    Row(
+                      children: [
+                        Flexible(
+                          child: Text(
+                            firstName,
+                            overflow: TextOverflow.ellipsis,
+                            style: const TextStyle(
+                              fontSize: 20,
+                              fontWeight: FontWeight.bold,
+                              color: Colors.white,
+                            ),
+                          ),
+                        ),
+                        const SizedBox(width: 4),
+                        const Text('👋', style: TextStyle(fontSize: 18)),
+                      ],
+                    ),
+                  ],
+                ),
               ),
-              const Spacer(),
               Stack(
                 children: [
                   IconButton(

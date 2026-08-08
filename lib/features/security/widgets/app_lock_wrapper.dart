@@ -14,7 +14,6 @@ class AppLockWrapper extends ConsumerStatefulWidget {
 
 class _AppLockWrapperState extends ConsumerState<AppLockWrapper> with WidgetsBindingObserver {
   bool _isLocked = false;
-  AppLifecycleState? _lastState;
 
   @override
   void initState() {
@@ -50,8 +49,6 @@ class _AppLockWrapperState extends ConsumerState<AppLockWrapper> with WidgetsBin
         _isLocked = true;
       });
     }
-
-    _lastState = state;
   }
 
   void _handleUnlock() {

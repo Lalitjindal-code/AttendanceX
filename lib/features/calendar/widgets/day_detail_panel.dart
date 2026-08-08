@@ -3,6 +3,8 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:intl/intl.dart';
 import '../../../core/constants/app_spacing.dart';
 import '../models/calendar_state.dart';
+import '../../settings/providers/semester_provider.dart';
+import '../../attendance/providers/attendance_providers.dart';
 import 'daily_attendance_card.dart';
 import '../../planner/widgets/task_card.dart';
 
@@ -64,12 +66,34 @@ class DayDetailPanel extends ConsumerWidget {
                 Padding(
                   padding: const EdgeInsets.only(
                       bottom: AppSpacing.sm, left: AppSpacing.xs),
-                  child: Text(
-                    'Classes',
-                    style: Theme.of(context).textTheme.titleMedium?.copyWith(
-                          fontWeight: FontWeight.bold,
-                          color: const Color(0xFF7E73FF),
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      Text(
+                        'Classes',
+                        style: Theme.of(context).textTheme.titleMedium?.copyWith(
+                              fontWeight: FontWeight.bold,
+                              color: const Color(0xFF7E73FF),
+                            ),
+                      ),
+                      TextButton.icon(
+                        onPressed: () async {
+                          final semester = ref.read(semesterStateProvider);
+                          if (semester != null) {
+                            final repo = ref.read(attendanceRepositoryProvider);
+                            await repo.deleteAttendancesByDate(state.selectedDate, semester.id);
+                          }
+                        },
+                        icon: const Icon(Icons.clear_all_rounded, size: 18),
+                        label: const Text('Clear Day'),
+                        style: TextButton.styleFrom(
+                          foregroundColor: Colors.redAccent,
+                          padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 4),
+                          minimumSize: Size.zero,
+                          tapTargetSize: MaterialTapTargetSize.shrinkWrap,
                         ),
+                      ),
+                    ],
                   ),
                 ),
               );

@@ -6,6 +6,8 @@ import '../../../database/collections/attendance_collection.dart';
 import '../../../database/collections/attendance_history_collection.dart';
 import '../../../database/collections/schedule_collection.dart';
 import '../../../database/collections/subject_collection.dart';
+import '../../../database/collections/profile_collection.dart';
+import '../../../database/collections/semester_collection.dart';
 import '../../settings/providers/settings_provider.dart';
 import '../engines/backup_engine.dart';
 import '../models/backup_model.dart';
@@ -32,6 +34,8 @@ class BackupController extends _$BackupController {
     state = 0.0;
     try {
       final isar = ref.read(isarProvider);
+      final profiles = await isar.profiles.where().findAll();
+      final semesters = await isar.semesters.where().findAll();
       final subjects = await isar.subjects.where().findAll();
       final schedules = await isar.schedules.where().findAll();
       final attendances = await isar.attendances.where().findAll();
@@ -41,6 +45,8 @@ class BackupController extends _$BackupController {
 
       await _engine.exportBackup(
         path: customPath,
+        profiles: profiles,
+        semesters: semesters,
         subjects: subjects,
         schedules: schedules,
         attendanceRecords: attendances,

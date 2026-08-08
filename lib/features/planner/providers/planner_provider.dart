@@ -7,13 +7,17 @@ import '../../../core/enums/task_status.dart';
 
 import '../models/planner_filter.dart';
 
+import '../../settings/providers/semester_provider.dart';
+
 final plannerRepositoryProvider = Provider<PlannerRepository>((ref) {
   return PlannerRepository(ref.watch(isarProvider));
 });
 
 final plannerTasksProvider = StreamProvider<List<AcademicTask>>((ref) {
   final repo = ref.watch(plannerRepositoryProvider);
-  return repo.watchAllTasks();
+  final semester = ref.watch(semesterStateProvider);
+  if (semester == null) return Stream.value([]);
+  return repo.watchAllTasks(semester.id);
 });
 
 final plannerFilterProvider =
@@ -27,14 +31,18 @@ final sortedPlannerTasksProvider =
 
   return tasksAsync.whenData((tasks) {
     final filtered = tasks.where((t) {
-      if (filter.subjectId != null && t.subjectId != filter.subjectId)
+      if (filter.subjectId != null && t.subjectId != filter.subjectId) {
         return false;
-      if (filter.priority != null && t.priority != filter.priority)
+      }
+      if (filter.priority != null && t.priority != filter.priority) {
         return false;
+      }
       if (filter.status != null && t.status != filter.status) return false;
       if (filter.hideCompleted &&
           t.status == TaskStatus.completed &&
-          filter.status != TaskStatus.completed) return false;
+          filter.status != TaskStatus.completed) {
+        return false;
+      }
       return true;
     }).toList();
 
@@ -44,12 +52,19 @@ final sortedPlannerTasksProvider =
 
 class PlannerNotifier extends StateNotifier<AsyncValue<void>> {
   final PlannerRepository _repository;
+  final Ref ref;
 
-  PlannerNotifier(this._repository) : super(const AsyncValue.data(null));
+  PlannerNotifier(this._repository, this.ref) : super(const AsyncValue.data(null));
 
   Future<void> saveTask(AcademicTask task) async {
     state = const AsyncValue.loading();
     try {
+      if (task.semesterId == 0) {
+        final semester = ref.read(semesterStateProvider);
+        if (semester != null) {
+          task.semesterId = semester.id;
+        }
+      }
       await _repository.upsertTask(task);
       state = const AsyncValue.data(null);
     } catch (e, st) {
@@ -92,6 +107,11 @@ class PlannerNotifier extends StateNotifier<AsyncValue<void>> {
       updated.status = TaskStatus.completed;
     }
 
+    final semester = ref.read(semesterStateProvider);
+    if (semester != null) {
+      updated.semesterId = semester.id;
+    }
+
     await saveTask(updated);
   }
 }
@@ -99,5 +119,5 @@ class PlannerNotifier extends StateNotifier<AsyncValue<void>> {
 final plannerNotifierProvider =
     StateNotifierProvider<PlannerNotifier, AsyncValue<void>>((ref) {
   final repo = ref.watch(plannerRepositoryProvider);
-  return PlannerNotifier(repo);
+  return PlannerNotifier(repo, ref);
 });

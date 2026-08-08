@@ -42,19 +42,24 @@ const AttendanceSchema = CollectionSchema(
       name: r'scheduleId',
       type: IsarType.long,
     ),
-    r'status': PropertySchema(
+    r'semesterId': PropertySchema(
       id: 5,
+      name: r'semesterId',
+      type: IsarType.long,
+    ),
+    r'status': PropertySchema(
+      id: 6,
       name: r'status',
       type: IsarType.string,
       enumMap: _AttendancestatusEnumValueMap,
     ),
     r'subjectId': PropertySchema(
-      id: 6,
+      id: 7,
       name: r'subjectId',
       type: IsarType.long,
     ),
     r'updatedAt': PropertySchema(
-      id: 7,
+      id: 8,
       name: r'updatedAt',
       type: IsarType.dateTime,
     )
@@ -65,6 +70,19 @@ const AttendanceSchema = CollectionSchema(
   deserializeProp: _attendanceDeserializeProp,
   idName: r'id',
   indexes: {
+    r'semesterId': IndexSchema(
+      id: -4385212551819087598,
+      name: r'semesterId',
+      unique: false,
+      replace: false,
+      properties: [
+        IndexPropertySchema(
+          name: r'semesterId',
+          type: IndexType.value,
+          caseSensitive: false,
+        )
+      ],
+    ),
     r'date': IndexSchema(
       id: -7552997827385218417,
       name: r'date',
@@ -146,9 +164,10 @@ void _attendanceSerialize(
   writer.writeString(offsets[2], object.holidayReason);
   writer.writeString(offsets[3], object.notes);
   writer.writeLong(offsets[4], object.scheduleId);
-  writer.writeString(offsets[5], object.status.name);
-  writer.writeLong(offsets[6], object.subjectId);
-  writer.writeDateTime(offsets[7], object.updatedAt);
+  writer.writeLong(offsets[5], object.semesterId);
+  writer.writeString(offsets[6], object.status.name);
+  writer.writeLong(offsets[7], object.subjectId);
+  writer.writeDateTime(offsets[8], object.updatedAt);
 }
 
 Attendance _attendanceDeserialize(
@@ -163,12 +182,13 @@ Attendance _attendanceDeserialize(
   object.holidayReason = reader.readStringOrNull(offsets[2]);
   object.id = id;
   object.notes = reader.readStringOrNull(offsets[3]);
-  object.scheduleId = reader.readLong(offsets[4]);
+  object.scheduleId = reader.readLongOrNull(offsets[4]);
+  object.semesterId = reader.readLong(offsets[5]);
   object.status =
-      _AttendancestatusValueEnumMap[reader.readStringOrNull(offsets[5])] ??
+      _AttendancestatusValueEnumMap[reader.readStringOrNull(offsets[6])] ??
           AttendanceStatus.present;
-  object.subjectId = reader.readLong(offsets[6]);
-  object.updatedAt = reader.readDateTime(offsets[7]);
+  object.subjectId = reader.readLong(offsets[7]);
+  object.updatedAt = reader.readDateTime(offsets[8]);
   return object;
 }
 
@@ -188,13 +208,15 @@ P _attendanceDeserializeProp<P>(
     case 3:
       return (reader.readStringOrNull(offset)) as P;
     case 4:
-      return (reader.readLong(offset)) as P;
+      return (reader.readLongOrNull(offset)) as P;
     case 5:
+      return (reader.readLong(offset)) as P;
+    case 6:
       return (_AttendancestatusValueEnumMap[reader.readStringOrNull(offset)] ??
           AttendanceStatus.present) as P;
-    case 6:
-      return (reader.readLong(offset)) as P;
     case 7:
+      return (reader.readLong(offset)) as P;
+    case 8:
       return (reader.readDateTime(offset)) as P;
     default:
       throw IsarError('Unknown property with id $propertyId');
@@ -235,6 +257,14 @@ extension AttendanceQueryWhereSort
   QueryBuilder<Attendance, Attendance, QAfterWhere> anyId() {
     return QueryBuilder.apply(this, (query) {
       return query.addWhereClause(const IdWhereClause.any());
+    });
+  }
+
+  QueryBuilder<Attendance, Attendance, QAfterWhere> anySemesterId() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addWhereClause(
+        const IndexWhereClause.any(indexName: r'semesterId'),
+      );
     });
   }
 
@@ -325,6 +355,96 @@ extension AttendanceQueryWhere
         lower: lowerId,
         includeLower: includeLower,
         upper: upperId,
+        includeUpper: includeUpper,
+      ));
+    });
+  }
+
+  QueryBuilder<Attendance, Attendance, QAfterWhereClause> semesterIdEqualTo(
+      int semesterId) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addWhereClause(IndexWhereClause.equalTo(
+        indexName: r'semesterId',
+        value: [semesterId],
+      ));
+    });
+  }
+
+  QueryBuilder<Attendance, Attendance, QAfterWhereClause> semesterIdNotEqualTo(
+      int semesterId) {
+    return QueryBuilder.apply(this, (query) {
+      if (query.whereSort == Sort.asc) {
+        return query
+            .addWhereClause(IndexWhereClause.between(
+              indexName: r'semesterId',
+              lower: [],
+              upper: [semesterId],
+              includeUpper: false,
+            ))
+            .addWhereClause(IndexWhereClause.between(
+              indexName: r'semesterId',
+              lower: [semesterId],
+              includeLower: false,
+              upper: [],
+            ));
+      } else {
+        return query
+            .addWhereClause(IndexWhereClause.between(
+              indexName: r'semesterId',
+              lower: [semesterId],
+              includeLower: false,
+              upper: [],
+            ))
+            .addWhereClause(IndexWhereClause.between(
+              indexName: r'semesterId',
+              lower: [],
+              upper: [semesterId],
+              includeUpper: false,
+            ));
+      }
+    });
+  }
+
+  QueryBuilder<Attendance, Attendance, QAfterWhereClause> semesterIdGreaterThan(
+    int semesterId, {
+    bool include = false,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addWhereClause(IndexWhereClause.between(
+        indexName: r'semesterId',
+        lower: [semesterId],
+        includeLower: include,
+        upper: [],
+      ));
+    });
+  }
+
+  QueryBuilder<Attendance, Attendance, QAfterWhereClause> semesterIdLessThan(
+    int semesterId, {
+    bool include = false,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addWhereClause(IndexWhereClause.between(
+        indexName: r'semesterId',
+        lower: [],
+        upper: [semesterId],
+        includeUpper: include,
+      ));
+    });
+  }
+
+  QueryBuilder<Attendance, Attendance, QAfterWhereClause> semesterIdBetween(
+    int lowerSemesterId,
+    int upperSemesterId, {
+    bool includeLower = true,
+    bool includeUpper = true,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addWhereClause(IndexWhereClause.between(
+        indexName: r'semesterId',
+        lower: [lowerSemesterId],
+        includeLower: includeLower,
+        upper: [upperSemesterId],
         includeUpper: includeUpper,
       ));
     });
@@ -510,8 +630,29 @@ extension AttendanceQueryWhere
     });
   }
 
+  QueryBuilder<Attendance, Attendance, QAfterWhereClause> scheduleIdIsNull() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addWhereClause(IndexWhereClause.equalTo(
+        indexName: r'scheduleId',
+        value: [null],
+      ));
+    });
+  }
+
+  QueryBuilder<Attendance, Attendance, QAfterWhereClause>
+      scheduleIdIsNotNull() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addWhereClause(IndexWhereClause.between(
+        indexName: r'scheduleId',
+        lower: [null],
+        includeLower: false,
+        upper: [],
+      ));
+    });
+  }
+
   QueryBuilder<Attendance, Attendance, QAfterWhereClause> scheduleIdEqualTo(
-      int scheduleId) {
+      int? scheduleId) {
     return QueryBuilder.apply(this, (query) {
       return query.addWhereClause(IndexWhereClause.equalTo(
         indexName: r'scheduleId',
@@ -521,7 +662,7 @@ extension AttendanceQueryWhere
   }
 
   QueryBuilder<Attendance, Attendance, QAfterWhereClause> scheduleIdNotEqualTo(
-      int scheduleId) {
+      int? scheduleId) {
     return QueryBuilder.apply(this, (query) {
       if (query.whereSort == Sort.asc) {
         return query
@@ -556,7 +697,7 @@ extension AttendanceQueryWhere
   }
 
   QueryBuilder<Attendance, Attendance, QAfterWhereClause> scheduleIdGreaterThan(
-    int scheduleId, {
+    int? scheduleId, {
     bool include = false,
   }) {
     return QueryBuilder.apply(this, (query) {
@@ -570,7 +711,7 @@ extension AttendanceQueryWhere
   }
 
   QueryBuilder<Attendance, Attendance, QAfterWhereClause> scheduleIdLessThan(
-    int scheduleId, {
+    int? scheduleId, {
     bool include = false,
   }) {
     return QueryBuilder.apply(this, (query) {
@@ -584,8 +725,8 @@ extension AttendanceQueryWhere
   }
 
   QueryBuilder<Attendance, Attendance, QAfterWhereClause> scheduleIdBetween(
-    int lowerScheduleId,
-    int upperScheduleId, {
+    int? lowerScheduleId,
+    int? upperScheduleId, {
     bool includeLower = true,
     bool includeUpper = true,
   }) {
@@ -1064,8 +1205,26 @@ extension AttendanceQueryFilter
     });
   }
 
+  QueryBuilder<Attendance, Attendance, QAfterFilterCondition>
+      scheduleIdIsNull() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(const FilterCondition.isNull(
+        property: r'scheduleId',
+      ));
+    });
+  }
+
+  QueryBuilder<Attendance, Attendance, QAfterFilterCondition>
+      scheduleIdIsNotNull() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(const FilterCondition.isNotNull(
+        property: r'scheduleId',
+      ));
+    });
+  }
+
   QueryBuilder<Attendance, Attendance, QAfterFilterCondition> scheduleIdEqualTo(
-      int value) {
+      int? value) {
     return QueryBuilder.apply(this, (query) {
       return query.addFilterCondition(FilterCondition.equalTo(
         property: r'scheduleId',
@@ -1076,7 +1235,7 @@ extension AttendanceQueryFilter
 
   QueryBuilder<Attendance, Attendance, QAfterFilterCondition>
       scheduleIdGreaterThan(
-    int value, {
+    int? value, {
     bool include = false,
   }) {
     return QueryBuilder.apply(this, (query) {
@@ -1090,7 +1249,7 @@ extension AttendanceQueryFilter
 
   QueryBuilder<Attendance, Attendance, QAfterFilterCondition>
       scheduleIdLessThan(
-    int value, {
+    int? value, {
     bool include = false,
   }) {
     return QueryBuilder.apply(this, (query) {
@@ -1103,6 +1262,61 @@ extension AttendanceQueryFilter
   }
 
   QueryBuilder<Attendance, Attendance, QAfterFilterCondition> scheduleIdBetween(
+    int? lower,
+    int? upper, {
+    bool includeLower = true,
+    bool includeUpper = true,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.between(
+        property: r'scheduleId',
+        lower: lower,
+        includeLower: includeLower,
+        upper: upper,
+        includeUpper: includeUpper,
+      ));
+    });
+  }
+
+  QueryBuilder<Attendance, Attendance, QAfterFilterCondition> semesterIdEqualTo(
+      int value) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.equalTo(
+        property: r'semesterId',
+        value: value,
+      ));
+    });
+  }
+
+  QueryBuilder<Attendance, Attendance, QAfterFilterCondition>
+      semesterIdGreaterThan(
+    int value, {
+    bool include = false,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.greaterThan(
+        include: include,
+        property: r'semesterId',
+        value: value,
+      ));
+    });
+  }
+
+  QueryBuilder<Attendance, Attendance, QAfterFilterCondition>
+      semesterIdLessThan(
+    int value, {
+    bool include = false,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.lessThan(
+        include: include,
+        property: r'semesterId',
+        value: value,
+      ));
+    });
+  }
+
+  QueryBuilder<Attendance, Attendance, QAfterFilterCondition> semesterIdBetween(
     int lower,
     int upper, {
     bool includeLower = true,
@@ -1110,7 +1324,7 @@ extension AttendanceQueryFilter
   }) {
     return QueryBuilder.apply(this, (query) {
       return query.addFilterCondition(FilterCondition.between(
-        property: r'scheduleId',
+        property: r'semesterId',
         lower: lower,
         includeLower: includeLower,
         upper: upper,
@@ -1427,6 +1641,18 @@ extension AttendanceQuerySortBy
     });
   }
 
+  QueryBuilder<Attendance, Attendance, QAfterSortBy> sortBySemesterId() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'semesterId', Sort.asc);
+    });
+  }
+
+  QueryBuilder<Attendance, Attendance, QAfterSortBy> sortBySemesterIdDesc() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'semesterId', Sort.desc);
+    });
+  }
+
   QueryBuilder<Attendance, Attendance, QAfterSortBy> sortByStatus() {
     return QueryBuilder.apply(this, (query) {
       return query.addSortBy(r'status', Sort.asc);
@@ -1538,6 +1764,18 @@ extension AttendanceQuerySortThenBy
     });
   }
 
+  QueryBuilder<Attendance, Attendance, QAfterSortBy> thenBySemesterId() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'semesterId', Sort.asc);
+    });
+  }
+
+  QueryBuilder<Attendance, Attendance, QAfterSortBy> thenBySemesterIdDesc() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'semesterId', Sort.desc);
+    });
+  }
+
   QueryBuilder<Attendance, Attendance, QAfterSortBy> thenByStatus() {
     return QueryBuilder.apply(this, (query) {
       return query.addSortBy(r'status', Sort.asc);
@@ -1610,6 +1848,12 @@ extension AttendanceQueryWhereDistinct
     });
   }
 
+  QueryBuilder<Attendance, Attendance, QDistinct> distinctBySemesterId() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addDistinctBy(r'semesterId');
+    });
+  }
+
   QueryBuilder<Attendance, Attendance, QDistinct> distinctByStatus(
       {bool caseSensitive = true}) {
     return QueryBuilder.apply(this, (query) {
@@ -1662,9 +1906,15 @@ extension AttendanceQueryProperty
     });
   }
 
-  QueryBuilder<Attendance, int, QQueryOperations> scheduleIdProperty() {
+  QueryBuilder<Attendance, int?, QQueryOperations> scheduleIdProperty() {
     return QueryBuilder.apply(this, (query) {
       return query.addPropertyName(r'scheduleId');
+    });
+  }
+
+  QueryBuilder<Attendance, int, QQueryOperations> semesterIdProperty() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addPropertyName(r'semesterId');
     });
   }
 

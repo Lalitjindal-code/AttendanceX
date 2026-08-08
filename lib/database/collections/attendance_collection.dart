@@ -17,7 +17,11 @@ class Attendance {
   /// Auto-incremented primary key.
   Id id = Isar.autoIncrement;
 
-  /// The calendar date this record belongs to (stored at UTC midnight).
+  /// Foreign key referencing [Semester.id].
+  @Index()
+  int semesterId = 0;
+
+  /// The local calendar date this record belongs to.
   @Index()
   late DateTime date;
 
@@ -25,9 +29,9 @@ class Attendance {
   @Index()
   int subjectId = 0;
 
-  /// Foreign key referencing [Schedule.id].
+  /// Foreign key referencing [Schedule.id]. Nullable for manual attendance.
   @Index()
-  int scheduleId = 0;
+  int? scheduleId;
 
   /// The student-chosen attendance status for this slot.
   @Enumerated(EnumType.name)
@@ -51,6 +55,7 @@ class Attendance {
   Map<String, dynamic> toMap() {
     return {
       'id': id,
+      'semesterId': semesterId,
       'date': date.millisecondsSinceEpoch,
       'subjectId': subjectId,
       'scheduleId': scheduleId,
@@ -65,11 +70,12 @@ class Attendance {
   factory Attendance.fromMap(Map<String, dynamic> map) {
     return Attendance()
       ..id = map['id'] ?? Isar.autoIncrement
+      ..semesterId = map['semesterId'] ?? 0
       ..date = map['date'] != null
           ? DateTime.fromMillisecondsSinceEpoch(map['date'])
           : DateTime.now()
       ..subjectId = map['subjectId'] ?? 0
-      ..scheduleId = map['scheduleId'] ?? 0
+      ..scheduleId = map['scheduleId']
       ..status = AttendanceStatus.values.firstWhere(
           (e) => e.name == map['status'],
           orElse: () => AttendanceStatus.pending)

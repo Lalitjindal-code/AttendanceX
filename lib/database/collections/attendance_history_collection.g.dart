@@ -44,8 +44,13 @@ const AttendanceHistorySchema = CollectionSchema(
       type: IsarType.string,
       enumMap: _AttendanceHistorypreviousStatusEnumValueMap,
     ),
-    r'subjectId': PropertySchema(
+    r'semesterId': PropertySchema(
       id: 5,
+      name: r'semesterId',
+      type: IsarType.long,
+    ),
+    r'subjectId': PropertySchema(
+      id: 6,
       name: r'subjectId',
       type: IsarType.long,
     )
@@ -56,6 +61,19 @@ const AttendanceHistorySchema = CollectionSchema(
   deserializeProp: _attendanceHistoryDeserializeProp,
   idName: r'id',
   indexes: {
+    r'semesterId': IndexSchema(
+      id: -4385212551819087598,
+      name: r'semesterId',
+      unique: false,
+      replace: false,
+      properties: [
+        IndexPropertySchema(
+          name: r'semesterId',
+          type: IndexType.value,
+          caseSensitive: false,
+        )
+      ],
+    ),
     r'attendanceId': IndexSchema(
       id: -5047753669473436316,
       name: r'attendanceId',
@@ -126,7 +144,8 @@ void _attendanceHistorySerialize(
   writer.writeDateTime(offsets[2], object.date);
   writer.writeString(offsets[3], object.newStatus.name);
   writer.writeString(offsets[4], object.previousStatus.name);
-  writer.writeLong(offsets[5], object.subjectId);
+  writer.writeLong(offsets[5], object.semesterId);
+  writer.writeLong(offsets[6], object.subjectId);
 }
 
 AttendanceHistory _attendanceHistoryDeserialize(
@@ -146,7 +165,8 @@ AttendanceHistory _attendanceHistoryDeserialize(
   object.previousStatus = _AttendanceHistorypreviousStatusValueEnumMap[
           reader.readStringOrNull(offsets[4])] ??
       AttendanceStatus.present;
-  object.subjectId = reader.readLong(offsets[5]);
+  object.semesterId = reader.readLong(offsets[5]);
+  object.subjectId = reader.readLong(offsets[6]);
   return object;
 }
 
@@ -172,6 +192,8 @@ P _attendanceHistoryDeserializeProp<P>(
               reader.readStringOrNull(offset)] ??
           AttendanceStatus.present) as P;
     case 5:
+      return (reader.readLong(offset)) as P;
+    case 6:
       return (reader.readLong(offset)) as P;
     default:
       throw IsarError('Unknown property with id $propertyId');
@@ -230,6 +252,15 @@ extension AttendanceHistoryQueryWhereSort
   QueryBuilder<AttendanceHistory, AttendanceHistory, QAfterWhere> anyId() {
     return QueryBuilder.apply(this, (query) {
       return query.addWhereClause(const IdWhereClause.any());
+    });
+  }
+
+  QueryBuilder<AttendanceHistory, AttendanceHistory, QAfterWhere>
+      anySemesterId() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addWhereClause(
+        const IndexWhereClause.any(indexName: r'semesterId'),
+      );
     });
   }
 
@@ -325,6 +356,99 @@ extension AttendanceHistoryQueryWhere
         lower: lowerId,
         includeLower: includeLower,
         upper: upperId,
+        includeUpper: includeUpper,
+      ));
+    });
+  }
+
+  QueryBuilder<AttendanceHistory, AttendanceHistory, QAfterWhereClause>
+      semesterIdEqualTo(int semesterId) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addWhereClause(IndexWhereClause.equalTo(
+        indexName: r'semesterId',
+        value: [semesterId],
+      ));
+    });
+  }
+
+  QueryBuilder<AttendanceHistory, AttendanceHistory, QAfterWhereClause>
+      semesterIdNotEqualTo(int semesterId) {
+    return QueryBuilder.apply(this, (query) {
+      if (query.whereSort == Sort.asc) {
+        return query
+            .addWhereClause(IndexWhereClause.between(
+              indexName: r'semesterId',
+              lower: [],
+              upper: [semesterId],
+              includeUpper: false,
+            ))
+            .addWhereClause(IndexWhereClause.between(
+              indexName: r'semesterId',
+              lower: [semesterId],
+              includeLower: false,
+              upper: [],
+            ));
+      } else {
+        return query
+            .addWhereClause(IndexWhereClause.between(
+              indexName: r'semesterId',
+              lower: [semesterId],
+              includeLower: false,
+              upper: [],
+            ))
+            .addWhereClause(IndexWhereClause.between(
+              indexName: r'semesterId',
+              lower: [],
+              upper: [semesterId],
+              includeUpper: false,
+            ));
+      }
+    });
+  }
+
+  QueryBuilder<AttendanceHistory, AttendanceHistory, QAfterWhereClause>
+      semesterIdGreaterThan(
+    int semesterId, {
+    bool include = false,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addWhereClause(IndexWhereClause.between(
+        indexName: r'semesterId',
+        lower: [semesterId],
+        includeLower: include,
+        upper: [],
+      ));
+    });
+  }
+
+  QueryBuilder<AttendanceHistory, AttendanceHistory, QAfterWhereClause>
+      semesterIdLessThan(
+    int semesterId, {
+    bool include = false,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addWhereClause(IndexWhereClause.between(
+        indexName: r'semesterId',
+        lower: [],
+        upper: [semesterId],
+        includeUpper: include,
+      ));
+    });
+  }
+
+  QueryBuilder<AttendanceHistory, AttendanceHistory, QAfterWhereClause>
+      semesterIdBetween(
+    int lowerSemesterId,
+    int upperSemesterId, {
+    bool includeLower = true,
+    bool includeUpper = true,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addWhereClause(IndexWhereClause.between(
+        indexName: r'semesterId',
+        lower: [lowerSemesterId],
+        includeLower: includeLower,
+        upper: [upperSemesterId],
         includeUpper: includeUpper,
       ));
     });
@@ -1109,6 +1233,62 @@ extension AttendanceHistoryQueryFilter
   }
 
   QueryBuilder<AttendanceHistory, AttendanceHistory, QAfterFilterCondition>
+      semesterIdEqualTo(int value) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.equalTo(
+        property: r'semesterId',
+        value: value,
+      ));
+    });
+  }
+
+  QueryBuilder<AttendanceHistory, AttendanceHistory, QAfterFilterCondition>
+      semesterIdGreaterThan(
+    int value, {
+    bool include = false,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.greaterThan(
+        include: include,
+        property: r'semesterId',
+        value: value,
+      ));
+    });
+  }
+
+  QueryBuilder<AttendanceHistory, AttendanceHistory, QAfterFilterCondition>
+      semesterIdLessThan(
+    int value, {
+    bool include = false,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.lessThan(
+        include: include,
+        property: r'semesterId',
+        value: value,
+      ));
+    });
+  }
+
+  QueryBuilder<AttendanceHistory, AttendanceHistory, QAfterFilterCondition>
+      semesterIdBetween(
+    int lower,
+    int upper, {
+    bool includeLower = true,
+    bool includeUpper = true,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.between(
+        property: r'semesterId',
+        lower: lower,
+        includeLower: includeLower,
+        upper: upper,
+        includeUpper: includeUpper,
+      ));
+    });
+  }
+
+  QueryBuilder<AttendanceHistory, AttendanceHistory, QAfterFilterCondition>
       subjectIdEqualTo(int value) {
     return QueryBuilder.apply(this, (query) {
       return query.addFilterCondition(FilterCondition.equalTo(
@@ -1244,6 +1424,20 @@ extension AttendanceHistoryQuerySortBy
   }
 
   QueryBuilder<AttendanceHistory, AttendanceHistory, QAfterSortBy>
+      sortBySemesterId() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'semesterId', Sort.asc);
+    });
+  }
+
+  QueryBuilder<AttendanceHistory, AttendanceHistory, QAfterSortBy>
+      sortBySemesterIdDesc() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'semesterId', Sort.desc);
+    });
+  }
+
+  QueryBuilder<AttendanceHistory, AttendanceHistory, QAfterSortBy>
       sortBySubjectId() {
     return QueryBuilder.apply(this, (query) {
       return query.addSortBy(r'subjectId', Sort.asc);
@@ -1344,6 +1538,20 @@ extension AttendanceHistoryQuerySortThenBy
   }
 
   QueryBuilder<AttendanceHistory, AttendanceHistory, QAfterSortBy>
+      thenBySemesterId() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'semesterId', Sort.asc);
+    });
+  }
+
+  QueryBuilder<AttendanceHistory, AttendanceHistory, QAfterSortBy>
+      thenBySemesterIdDesc() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'semesterId', Sort.desc);
+    });
+  }
+
+  QueryBuilder<AttendanceHistory, AttendanceHistory, QAfterSortBy>
       thenBySubjectId() {
     return QueryBuilder.apply(this, (query) {
       return query.addSortBy(r'subjectId', Sort.asc);
@@ -1397,6 +1605,13 @@ extension AttendanceHistoryQueryWhereDistinct
   }
 
   QueryBuilder<AttendanceHistory, AttendanceHistory, QDistinct>
+      distinctBySemesterId() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addDistinctBy(r'semesterId');
+    });
+  }
+
+  QueryBuilder<AttendanceHistory, AttendanceHistory, QDistinct>
       distinctBySubjectId() {
     return QueryBuilder.apply(this, (query) {
       return query.addDistinctBy(r'subjectId');
@@ -1443,6 +1658,12 @@ extension AttendanceHistoryQueryProperty
       previousStatusProperty() {
     return QueryBuilder.apply(this, (query) {
       return query.addPropertyName(r'previousStatus');
+    });
+  }
+
+  QueryBuilder<AttendanceHistory, int, QQueryOperations> semesterIdProperty() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addPropertyName(r'semesterId');
     });
   }
 

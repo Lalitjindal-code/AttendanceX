@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:go_router/go_router.dart';
 import '../core/constants/app_icons.dart';
 import '../core/constants/app_strings.dart';
@@ -33,6 +34,7 @@ class ShellScaffold extends StatelessWidget {
           NavigationBar(
             selectedIndex: navigationShell.currentIndex,
             onDestinationSelected: (index) {
+              HapticFeedback.selectionClick();
               navigationShell.goBranch(
                 index,
                 initialLocation: index == navigationShell.currentIndex,

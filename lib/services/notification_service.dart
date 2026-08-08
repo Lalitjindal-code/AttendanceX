@@ -2,6 +2,7 @@ import 'package:attendify/features/notifications/models/scheduled_notification.d
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:timezone/data/latest_all.dart' as tz;
 import 'package:timezone/timezone.dart' as tz;
+import 'package:flutter_timezone/flutter_timezone.dart';
 import 'dart:io' show Platform;
 
 import 'package:flutter/foundation.dart';
@@ -29,6 +30,8 @@ class NotificationService {
     if (_isInitialized) return;
 
     tz.initializeTimeZones();
+    final String currentTimeZone = (await FlutterTimezone.getLocalTimezone()).identifier;
+    tz.setLocalLocation(tz.getLocation(currentTimeZone));
 
     const AndroidInitializationSettings initializationSettingsAndroid =
         AndroidInitializationSettings('@mipmap/ic_launcher');

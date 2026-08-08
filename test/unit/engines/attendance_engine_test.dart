@@ -1,6 +1,7 @@
 import 'package:attendify/core/enums/attendance_status.dart';
 import 'package:attendify/core/enums/gt_mode.dart';
 import 'package:attendify/database/collections/attendance_collection.dart';
+import 'package:attendify/database/collections/semester_collection.dart';
 import 'package:attendify/engines/attendance_engine.dart';
 import 'package:attendify/features/settings/models/app_settings.dart';
 import 'package:flutter/material.dart';
@@ -9,6 +10,7 @@ import 'package:flutter_test/flutter_test.dart';
 void main() {
   group('AttendanceEngine Tests', () {
     late AppSettings baseSettings;
+    late Semester dummySemester;
 
     setUp(() {
       baseSettings = const AppSettings(
@@ -21,17 +23,22 @@ void main() {
         dailyReminderTime: '20:00',
         lectureReminderMinutes: 10,
       );
+      dummySemester = Semester()
+        ..id = 1
+        ..startDate = DateTime(2023, 1, 1)
+        ..endDate = DateTime(2030, 1, 1);
     });
 
     Attendance createAttendance(AttendanceStatus status, {int subjectId = 1}) {
       return Attendance()
         ..subjectId = subjectId
+        ..date = DateTime(2025, 6, 1)
         ..status = status;
     }
 
     test('calculateSubjectSummary with no attendance records', () {
       final summary =
-          AttendanceEngine.calculateSubjectSummary(1, [], baseSettings);
+          AttendanceEngine.calculateSubjectSummary(1, [], baseSettings, dummySemester);
       expect(summary.effectiveTotal, 0);
       expect(summary.effectivePresent, 0);
       expect(summary.attendancePercentage, 0.0);
@@ -43,7 +50,7 @@ void main() {
         createAttendance(AttendanceStatus.present),
       ];
       final summary =
-          AttendanceEngine.calculateSubjectSummary(1, records, baseSettings);
+          AttendanceEngine.calculateSubjectSummary(1, records, baseSettings, dummySemester);
 
       expect(summary.effectiveTotal, 2);
       expect(summary.effectivePresent, 2);
@@ -57,7 +64,7 @@ void main() {
         createAttendance(AttendanceStatus.absent),
       ];
       final summary =
-          AttendanceEngine.calculateSubjectSummary(1, records, baseSettings);
+          AttendanceEngine.calculateSubjectSummary(1, records, baseSettings, dummySemester);
 
       expect(summary.effectiveTotal, 2);
       expect(summary.effectivePresent, 0);
@@ -72,7 +79,7 @@ void main() {
         createAttendance(AttendanceStatus.holiday),
       ];
       final summary =
-          AttendanceEngine.calculateSubjectSummary(1, records, baseSettings);
+          AttendanceEngine.calculateSubjectSummary(1, records, baseSettings, dummySemester);
 
       expect(summary.effectiveTotal, 1);
       expect(summary.effectivePresent, 1);
@@ -86,7 +93,7 @@ void main() {
         createAttendance(AttendanceStatus.pending),
       ];
       final summary =
-          AttendanceEngine.calculateSubjectSummary(1, records, baseSettings);
+          AttendanceEngine.calculateSubjectSummary(1, records, baseSettings, dummySemester);
 
       expect(summary.effectiveTotal, 1);
       expect(summary.effectivePresent, 1);
@@ -100,7 +107,7 @@ void main() {
         final records = [createAttendance(AttendanceStatus.medical)];
 
         final summary =
-            AttendanceEngine.calculateSubjectSummary(1, records, settings);
+            AttendanceEngine.calculateSubjectSummary(1, records, settings, dummySemester);
         expect(summary.effectiveTotal, 1);
         expect(summary.effectivePresent, 1);
         expect(summary.attendancePercentage, 100.0);
@@ -112,7 +119,7 @@ void main() {
         final records = [createAttendance(AttendanceStatus.medical)];
 
         final summary =
-            AttendanceEngine.calculateSubjectSummary(1, records, settings);
+            AttendanceEngine.calculateSubjectSummary(1, records, settings, dummySemester);
         expect(summary.effectiveTotal, 0);
         expect(summary.effectivePresent, 0);
         expect(summary.attendancePercentage, 0.0);
@@ -126,7 +133,7 @@ void main() {
         final records = [createAttendance(AttendanceStatus.gt)];
 
         final summary =
-            AttendanceEngine.calculateSubjectSummary(1, records, settings);
+            AttendanceEngine.calculateSubjectSummary(1, records, settings, dummySemester);
         expect(summary.effectiveTotal, 0);
         expect(summary.effectivePresent, 0);
         expect(summary.attendancePercentage, 0.0);
@@ -138,7 +145,7 @@ void main() {
         final records = [createAttendance(AttendanceStatus.gt)];
 
         final summary =
-            AttendanceEngine.calculateSubjectSummary(1, records, settings);
+            AttendanceEngine.calculateSubjectSummary(1, records, settings, dummySemester);
         expect(summary.effectiveTotal, 1);
         expect(summary.effectivePresent, 1);
         expect(summary.attendancePercentage, 100.0);
@@ -150,7 +157,7 @@ void main() {
         final records = [createAttendance(AttendanceStatus.gt)];
 
         final summary =
-            AttendanceEngine.calculateSubjectSummary(1, records, settings);
+            AttendanceEngine.calculateSubjectSummary(1, records, settings, dummySemester);
         expect(summary.effectiveTotal, 1);
         expect(summary.effectivePresent, 0);
         expect(summary.attendancePercentage, 0.0);
@@ -164,7 +171,7 @@ void main() {
         createAttendance(AttendanceStatus.absent, subjectId: 2),
       ];
       final summary =
-          AttendanceEngine.calculateOverallSummary(records, baseSettings);
+          AttendanceEngine.calculateOverallSummary(records, baseSettings, dummySemester);
 
       expect(summary.effectiveTotal, 2);
       expect(summary.effectivePresent, 1);

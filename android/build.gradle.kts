@@ -26,6 +26,16 @@ subprojects {
         val androidExt = project.extensions.findByName("android")
         if (androidExt != null) {
             try {
+                val compileSdkVersionMethod = androidExt.javaClass.methods.find { 
+                    it.name == "compileSdkVersion" && 
+                    it.parameterTypes.size == 1 && 
+                    (it.parameterTypes[0].name == "int" || it.parameterTypes[0] == Int::class.java) 
+                }
+                compileSdkVersionMethod?.invoke(androidExt, 36)
+            } catch (e: Exception) {
+                // Ignore
+            }
+            try {
                 val getNamespace = androidExt.javaClass.methods.find { it.name == "getNamespace" }
                 val currentNamespace = getNamespace?.invoke(androidExt) as? String
                 if (currentNamespace == null || currentNamespace.isEmpty()) {

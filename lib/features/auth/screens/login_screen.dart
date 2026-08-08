@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
-import 'package:attendify/core/theme/app_theme.dart';
 import 'package:attendify/core/constants/app_spacing.dart';
 import 'package:attendify/core/constants/app_radius.dart';
 import 'package:attendify/features/auth/providers/auth_provider.dart';

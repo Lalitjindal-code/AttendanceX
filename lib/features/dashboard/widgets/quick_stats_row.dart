@@ -78,13 +78,17 @@ class QuickStatsRow extends StatelessWidget {
                 ),
               ),
               const Spacer(),
-              Text(
-                '$attended / $total',
-                style: const TextStyle(
-                  fontSize: 20,
-                  fontWeight: FontWeight.bold,
-                  color: Colors.white,
-                  letterSpacing: 1,
+              FittedBox(
+                fit: BoxFit.scaleDown,
+                alignment: Alignment.centerLeft,
+                child: Text(
+                  '$attended / $total',
+                  style: const TextStyle(
+                    fontSize: 20,
+                    fontWeight: FontWeight.bold,
+                    color: Colors.white,
+                    letterSpacing: 1,
+                  ),
                 ),
               ),
               const SizedBox(height: 4),

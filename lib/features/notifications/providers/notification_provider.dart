@@ -9,7 +9,9 @@ import 'package:attendify/features/settings/providers/settings_provider.dart';
 import 'package:attendify/features/subjects/providers/subject_providers.dart';
 import 'package:attendify/services/notification_service.dart';
 import 'package:attendify/database/collections/academic_task_collection.dart';
+import 'package:attendify/database/collections/semester_collection.dart';
 import 'package:attendify/features/planner/providers/planner_provider.dart';
+import 'package:attendify/features/settings/providers/semester_provider.dart';
 import 'package:attendify/engines/planner_engine.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 import 'package:rxdart/rxdart.dart' hide Subject;
@@ -25,16 +27,21 @@ class NotificationOrchestrator extends _$NotificationOrchestrator {
     final attendanceRepo = ref.watch(attendanceRepositoryProvider);
     final plannerRepo = ref.watch(plannerRepositoryProvider);
     final settings = ref.watch(settingsProvider);
+    final semester = ref.watch(semesterStateProvider);
+
+    if (semester == null) {
+      return Stream.value(null);
+    }
 
     return Rx.combineLatest4(
-      subjectRepo.watchAll(),
-      scheduleRepo.watchAll(),
-      attendanceRepo.watchAll(),
-      plannerRepo.watchAllTasks(),
+      subjectRepo.watchAll(semester.id),
+      scheduleRepo.watchAll(semester.id),
+      attendanceRepo.watchAll(semester.id),
+      plannerRepo.watchAllTasks(semester.id),
       (List<Subject> subjects, List<Schedule> schedules,
           List<Attendance> attendances, List<AcademicTask> tasks) {
         return _syncNotifications(
-            subjects, schedules, attendances, tasks, settings);
+            subjects, schedules, attendances, tasks, settings, semester);
       },
     ).asyncMap((_) async {}); // Convert to Stream<void>
   }
@@ -45,6 +52,7 @@ class NotificationOrchestrator extends _$NotificationOrchestrator {
     List<Attendance> attendances,
     List<AcademicTask> tasks,
     AppSettings settings,
+    Semester? semester,
   ) async {
     final now = DateTime.now();
 
@@ -53,6 +61,7 @@ class NotificationOrchestrator extends _$NotificationOrchestrator {
       schedules: schedules,
       attendances: attendances,
       settings: settings,
+      semester: semester,
       now: now,
     );
 
