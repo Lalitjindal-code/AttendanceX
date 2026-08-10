@@ -19,3 +19,4 @@
 -keepattributes *Annotation*
 -keep class sun.misc.Unsafe { *; }
 -dontwarn com.google.android.gms.**
+-dontwarn com.google.android.play.core.**

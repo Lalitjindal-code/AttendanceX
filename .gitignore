@@ -56,6 +56,8 @@ isar.dll
 analyze.txt
 test_google.dart
 fix_radius.dart
+check_db.dart
+test_output.log
 
 # Firebase/Environment files
 .env
