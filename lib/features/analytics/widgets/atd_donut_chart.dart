@@ -32,10 +32,10 @@ class _AtdDonutChartState extends State<AtdDonutChart> {
       height: 220,
       padding: const EdgeInsets.all(AppSpacing.md),
       decoration: BoxDecoration(
-        color: const Color(0xFF16162C),
+        color: Theme.of(context).colorScheme.surfaceContainerHigh,
         borderRadius: BorderRadius.circular(24),
         border: Border.all(
-          color: Colors.white.withValues(alpha: 0.05),
+          color: Theme.of(context).colorScheme.onSurface.withValues(alpha: 0.05),
         ),
         boxShadow: [
           BoxShadow(
@@ -73,7 +73,7 @@ class _AtdDonutChartState extends State<AtdDonutChart> {
                   value: presentCount.toDouble(),
                   title: touchedIndex == 0 ? '$presentCount\nPresent' : '',
                   titleStyle: theme.textTheme.labelSmall?.copyWith(
-                      fontWeight: FontWeight.bold, color: Colors.white),
+                      fontWeight: FontWeight.bold, color: theme.colorScheme.onSurface),
                   radius: touchedIndex == 0 ? 35.0 : 25.0,
                   badgeWidget: touchedIndex == 0 ? const _Badge(icon: Icons.check, color: Color(0xFF00E676)) : null,
                   badgePositionPercentageOffset: .98,
@@ -83,7 +83,7 @@ class _AtdDonutChartState extends State<AtdDonutChart> {
                   value: absentCount.toDouble(),
                   title: touchedIndex == 1 ? '$absentCount\nAbsent' : '',
                   titleStyle: theme.textTheme.labelSmall?.copyWith(
-                      fontWeight: FontWeight.bold, color: Colors.white),
+                      fontWeight: FontWeight.bold, color: theme.colorScheme.onSurface),
                   radius: touchedIndex == 1 ? 35.0 : 25.0,
                   badgeWidget: touchedIndex == 1 ? const _Badge(icon: Icons.close, color: Color(0xFFFF5252)) : null,
                   badgePositionPercentageOffset: .98,
@@ -94,7 +94,7 @@ class _AtdDonutChartState extends State<AtdDonutChart> {
                     value: otherCount.toDouble(),
                     title: touchedIndex == 2 ? '$otherCount\nOther' : '',
                     titleStyle: theme.textTheme.labelSmall?.copyWith(
-                        fontWeight: FontWeight.bold, color: Colors.white),
+                        fontWeight: FontWeight.bold, color: theme.colorScheme.onSurface),
                     radius: touchedIndex == 2 ? 35.0 : 25.0,
                   ),
               ],
@@ -107,13 +107,13 @@ class _AtdDonutChartState extends State<AtdDonutChart> {
                 '${widget.summary.attendancePercentage.toInt()}%',
                 style: theme.textTheme.headlineLarge?.copyWith(
                   fontWeight: FontWeight.bold,
-                  color: Colors.white,
+                  color: theme.colorScheme.onSurface,
                 ),
               ),
               Text(
                 'Overall',
                 style: theme.textTheme.bodyMedium?.copyWith(
-                  color: Colors.white.withValues(alpha: 0.6),
+                  color: theme.colorScheme.onSurfaceVariant,
                 ),
               ),
             ],

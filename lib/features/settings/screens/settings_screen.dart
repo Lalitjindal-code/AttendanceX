@@ -236,9 +236,9 @@ class SettingsScreen extends ConsumerWidget {
                   lastDate: DateTime(2030),
                   builder: (context, child) => Theme(
                     data: Theme.of(context).copyWith(
-                      colorScheme: const ColorScheme.dark(
-                        primary: Color(0xFF7E73FF),
-                        surface: Color(0xFF16162C),
+                      colorScheme: Theme.of(context).colorScheme.copyWith(
+                        primary: const Color(0xFF7E73FF),
+                        surface: Theme.of(context).colorScheme.surfaceContainerHigh,
                       ),
                     ),
                     child: child!,
@@ -272,9 +272,9 @@ class SettingsScreen extends ConsumerWidget {
                   lastDate: DateTime(2030),
                   builder: (context, child) => Theme(
                     data: Theme.of(context).copyWith(
-                      colorScheme: const ColorScheme.dark(
-                        primary: Color(0xFF7E73FF),
-                        surface: Color(0xFF16162C),
+                      colorScheme: Theme.of(context).colorScheme.copyWith(
+                        primary: const Color(0xFF7E73FF),
+                        surface: Theme.of(context).colorScheme.surfaceContainerHigh,
                       ),
                     ),
                     child: child!,

@@ -19,10 +19,10 @@ class SubjectAnalyticsCard extends StatelessWidget {
     return Container(
       margin: const EdgeInsets.only(bottom: AppSpacing.md),
       decoration: BoxDecoration(
-        color: const Color(0xFF16162C),
+        color: Theme.of(context).colorScheme.surfaceContainerHigh,
         borderRadius: BorderRadius.circular(16),
         border: Border.all(
-          color: Colors.white.withValues(alpha: 0.05),
+          color: Theme.of(context).colorScheme.onSurface.withValues(alpha: 0.05),
         ),
         boxShadow: [
           BoxShadow(
@@ -62,7 +62,7 @@ class SubjectAnalyticsCard extends StatelessWidget {
                         subject.name,
                         style: theme.textTheme.titleMedium?.copyWith(
                           fontWeight: FontWeight.bold,
-                          color: Colors.white,
+                          color: theme.colorScheme.onSurface,
                         ),
                         maxLines: 1,
                         overflow: TextOverflow.ellipsis,
@@ -70,7 +70,7 @@ class SubjectAnalyticsCard extends StatelessWidget {
                       Text(
                         'Goal: ${subject.goalPercentage.toInt()}%',
                         style: theme.textTheme.bodySmall?.copyWith(
-                          color: Colors.white.withValues(alpha: 0.6),
+                          color: theme.colorScheme.onSurfaceVariant,
                         ),
                       ),
                     ],
@@ -130,7 +130,7 @@ class SubjectAnalyticsCard extends StatelessWidget {
             title,
             style: theme.textTheme.bodyMedium?.copyWith(
               fontWeight: FontWeight.bold,
-              color: Colors.white.withValues(alpha: 0.6),
+              color: theme.colorScheme.onSurfaceVariant,
             ),
           ),
         ),
@@ -140,7 +140,7 @@ class SubjectAnalyticsCard extends StatelessWidget {
             borderRadius: BorderRadius.circular(4),
             child: LinearProgressIndicator(
               value: validTotal ? present / total : 0.0,
-              backgroundColor: Colors.white.withValues(alpha: 0.1),
+              backgroundColor: theme.colorScheme.onSurface.withValues(alpha: 0.1),
               minHeight: 8,
               color: Color(stats.subject.colorValue),
             ),
@@ -153,7 +153,7 @@ class SubjectAnalyticsCard extends StatelessWidget {
             validTotal ? '${pct.toStringAsFixed(0)}%' : 'N/A',
             style: theme.textTheme.bodyMedium?.copyWith(
               fontWeight: FontWeight.bold,
-              color: Colors.white,
+              color: theme.colorScheme.onSurface,
             ),
             textAlign: TextAlign.end,
           ),

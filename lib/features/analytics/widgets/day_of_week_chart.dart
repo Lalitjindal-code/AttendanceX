@@ -42,20 +42,20 @@ class DayOfWeekChart extends StatelessWidget {
           barTouchData: BarTouchData(
             enabled: true,
             touchTooltipData: BarTouchTooltipData(
-              getTooltipColor: (group) => const Color(0xFF16162C),
+              getTooltipColor: (group) => theme.colorScheme.surfaceContainerHigh,
               getTooltipItem: (group, groupIndex, rod, rodIndex) {
                 final trend = trends.firstWhere((t) => t.weekday == group.x);
                 final dayName = _getDayName(trend.weekday);
                 return BarTooltipItem(
                   '$dayName\n',
                   theme.textTheme.labelLarge!
-                      .copyWith(fontWeight: FontWeight.bold, color: Colors.white),
+                      .copyWith(fontWeight: FontWeight.bold, color: theme.colorScheme.onSurface),
                   children: [
                     if (trend.totalCount == 0)
                       TextSpan(
                         text: 'No Classes',
                         style: theme.textTheme.labelSmall?.copyWith(
-                          color: Colors.white.withValues(alpha: 0.6),
+                          color: theme.colorScheme.onSurfaceVariant,
                         ),
                       )
                     else
@@ -63,7 +63,7 @@ class DayOfWeekChart extends StatelessWidget {
                         text:
                             '${(trend.percentage * 100).toStringAsFixed(1)}%\n${trend.presentCount}/${trend.totalCount} Attended',
                         style: theme.textTheme.labelSmall?.copyWith(
-                          color: Colors.white.withValues(alpha: 0.6),
+                          color: theme.colorScheme.onSurfaceVariant,
                         ),
                       ),
                   ],
@@ -82,7 +82,7 @@ class DayOfWeekChart extends StatelessWidget {
                     child: Text(
                       _getDayShortName(value.toInt()),
                       style: theme.textTheme.labelSmall?.copyWith(
-                        color: Colors.white.withValues(alpha: 0.6),
+                        color: theme.colorScheme.onSurfaceVariant,
                       ),
                     ),
                   );
@@ -99,7 +99,7 @@ class DayOfWeekChart extends StatelessWidget {
                   return Text(
                     '${value.toInt()}%',
                     style: theme.textTheme.labelSmall?.copyWith(
-                      color: Colors.white.withValues(alpha: 0.6),
+                      color: theme.colorScheme.onSurfaceVariant,
                     ),
                   );
                 },
@@ -115,7 +115,7 @@ class DayOfWeekChart extends StatelessWidget {
             drawVerticalLine: false,
             horizontalInterval: 20,
             getDrawingHorizontalLine: (value) => FlLine(
-              color: Colors.white.withValues(alpha: 0.1),
+              color: theme.colorScheme.onSurface.withValues(alpha: 0.1),
               strokeWidth: 1,
               dashArray: [5, 5],
             ),

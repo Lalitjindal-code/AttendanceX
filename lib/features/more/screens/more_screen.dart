@@ -18,7 +18,7 @@ class MoreScreen extends ConsumerWidget {
       appBar: AppBar(
         backgroundColor: Colors.transparent,
         elevation: 0,
-        title: const Text('More', style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold)),
+        title: Text('More', style: TextStyle(color: Theme.of(context).colorScheme.onSurface, fontWeight: FontWeight.bold)),
       ),
       body: ListView(
         padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 16),
@@ -185,14 +185,14 @@ class MoreScreen extends ConsumerWidget {
                 Expanded(
                   child: Text(
                     title,
-                    style: const TextStyle(
+                    style: TextStyle(
                       fontSize: 16,
                       fontWeight: FontWeight.w600,
-                      color: Colors.white,
+                      color: Theme.of(context).colorScheme.onSurface,
                     ),
                   ),
                 ),
-                Icon(Icons.chevron_right_rounded, color: Colors.white.withValues(alpha: 0.3)),
+                Icon(Icons.chevron_right_rounded, color: Theme.of(context).colorScheme.onSurfaceVariant),
               ],
             ),
           ),

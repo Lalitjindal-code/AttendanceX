@@ -58,7 +58,7 @@ class AtdLineChart extends StatelessWidget {
               drawVerticalLine: false,
               horizontalInterval: 25,
               getDrawingHorizontalLine: (value) => FlLine(
-                color: Colors.white.withValues(alpha: 0.1),
+                color: Theme.of(context).colorScheme.onSurface.withValues(alpha: 0.1),
                 strokeWidth: 1,
                 dashArray: [5, 5],
               ),
@@ -86,7 +86,7 @@ class AtdLineChart extends StatelessWidget {
                       child: Text(
                         DateFormat('MMM').format(date),
                         style: theme.textTheme.labelSmall?.copyWith(
-                          color: Colors.white.withValues(alpha: 0.6),
+                          color: theme.colorScheme.onSurfaceVariant,
                         ),
                       ),
                     );
@@ -102,7 +102,7 @@ class AtdLineChart extends StatelessWidget {
                     return Text(
                       '${value.toInt()}%',
                       style: theme.textTheme.labelSmall?.copyWith(
-                        color: Colors.white.withValues(alpha: 0.6),
+                        color: theme.colorScheme.onSurfaceVariant,
                       ),
                     );
                   },
@@ -112,7 +112,7 @@ class AtdLineChart extends StatelessWidget {
             ),
             lineTouchData: LineTouchData(
               touchTooltipData: LineTouchTooltipData(
-                getTooltipColor: (touchedSpot) => const Color(0xFF16162C),
+                getTooltipColor: (touchedSpot) => theme.colorScheme.surfaceContainerHigh,
                 getTooltipItems: (touchedSpots) {
                   return touchedSpots.map((spot) {
                     final index = spot.x.toInt();
@@ -123,12 +123,12 @@ class AtdLineChart extends StatelessWidget {
                     return LineTooltipItem(
                       '${spot.y.toStringAsFixed(1)}%\n',
                       theme.textTheme.labelLarge!
-                          .copyWith(fontWeight: FontWeight.bold, color: Colors.white),
+                          .copyWith(fontWeight: FontWeight.bold, color: theme.colorScheme.onSurface),
                       children: [
                         TextSpan(
                           text: dateStr,
                           style: theme.textTheme.labelSmall?.copyWith(
-                            color: Colors.white.withValues(alpha: 0.6),
+                            color: theme.colorScheme.onSurfaceVariant,
                           ),
                         ),
                       ],

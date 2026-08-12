@@ -8,11 +8,13 @@ import 'header_illustration.dart';
 class DashboardHeader extends StatefulWidget {
   final String? subtitle;
   final String userName;
+  final String? photoUrl;
 
   const DashboardHeader({
     super.key,
     this.subtitle,
     required this.userName,
+    this.photoUrl,
   });
 
   @override
@@ -58,10 +60,18 @@ class _DashboardHeaderState extends State<DashboardHeader> {
           // Top Row: Avatar, Greeting, Notification
           Row(
             children: [
-              CircleAvatar(
-                radius: 22,
-                backgroundColor: Theme.of(context).colorScheme.primary,
-                child: Icon(Icons.person, color: Theme.of(context).colorScheme.onPrimary),
+              GestureDetector(
+                onTap: () => context.push(AppRoutes.profile),
+                child: CircleAvatar(
+                  radius: 22,
+                  backgroundColor: Theme.of(context).colorScheme.primary,
+                  backgroundImage: widget.photoUrl != null
+                      ? NetworkImage(widget.photoUrl!)
+                      : null,
+                  child: widget.photoUrl == null
+                      ? Icon(Icons.person, color: Theme.of(context).colorScheme.onPrimary)
+                      : null,
+                ),
               ),
               const SizedBox(width: 12),
               Expanded(

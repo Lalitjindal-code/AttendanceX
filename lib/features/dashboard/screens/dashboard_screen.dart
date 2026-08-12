@@ -81,6 +81,7 @@ class DashboardScreen extends ConsumerWidget {
                   child: DashboardHeader(
                     subtitle: subtitle,
                     userName: userName ?? 'User',
+                    photoUrl: user?.photoURL,
                   ).animate().fade(duration: 400.ms).slideY(begin: 0.1, duration: 400.ms, curve: Curves.easeOutQuad),
                 ),
 
@@ -109,12 +110,12 @@ class DashboardScreen extends ConsumerWidget {
                           ),
                           borderRadius: BorderRadius.circular(16),
                           border: Border.all(
-                            color: Colors.amber.withValues(alpha: 0.25),
+                            color: Theme.of(context).colorScheme.primary.withValues(alpha: 0.25),
                           ),
                         ),
                         child: Row(
                           children: [
-                            const Icon(Icons.lightbulb_outline_rounded, color: Colors.amberAccent, size: 24),
+                            Icon(Icons.lightbulb_outline_rounded, color: Theme.of(context).colorScheme.primary, size: 24),
                             const SizedBox(width: 12),
                             Expanded(
                               child: Text(
@@ -268,9 +269,9 @@ class DashboardScreen extends ConsumerWidget {
                           children: [
                             Icon(Icons.event_busy_rounded, size: 64, color: Theme.of(context).colorScheme.surfaceContainerHighest),
                             const SizedBox(height: 16),
-                            const Text(
+                            Text(
                               'No lectures scheduled for today.',
-                              style: TextStyle(fontSize: 16, color: Colors.grey),
+                              style: TextStyle(fontSize: 16, color: Theme.of(context).colorScheme.onSurfaceVariant),
                             ),
                             const SizedBox(height: 24),
                             Wrap(
@@ -685,11 +686,11 @@ class DashboardScreen extends ConsumerWidget {
                           actions: [
                             TextButton(
                               onPressed: () => Navigator.pop(context, false),
-                              child: const Text('Cancel', style: TextStyle(color: Colors.grey)),
+                              child: Text('Cancel', style: TextStyle(color: Theme.of(context).colorScheme.onSurfaceVariant)),
                             ),
                             TextButton(
                               onPressed: () => Navigator.pop(context, true),
-                              child: const Text('Clear', style: TextStyle(color: Colors.redAccent)),
+                              child: Text('Clear', style: TextStyle(color: Theme.of(context).colorScheme.error)),
                             ),
                           ],
                         ),
@@ -733,7 +734,7 @@ class DashboardScreen extends ConsumerWidget {
               height: 32,
               width: 150,
               decoration: BoxDecoration(
-                color: Colors.white,
+                color: Theme.of(context).colorScheme.surfaceContainerHighest,
                 borderRadius: BorderRadius.circular(8),
               ),
             ),
@@ -750,8 +751,8 @@ class DashboardScreen extends ConsumerWidget {
                   Container(
                     height: 160,
                     decoration: BoxDecoration(
-                      color: Colors.white,
-                      borderRadius: BorderRadius.circular(24),
+                      color: Theme.of(context).colorScheme.surfaceContainerHighest,
+                      borderRadius: BorderRadius.circular(20),
                     ),
                   ),
                   const SizedBox(height: 16),
@@ -761,7 +762,7 @@ class DashboardScreen extends ConsumerWidget {
                         child: Container(
                           height: 80,
                           decoration: BoxDecoration(
-                            color: Colors.white,
+                            color: Theme.of(context).colorScheme.surfaceContainerHighest,
                             borderRadius: BorderRadius.circular(16),
                           ),
                         ),
@@ -771,7 +772,7 @@ class DashboardScreen extends ConsumerWidget {
                         child: Container(
                           height: 80,
                           decoration: BoxDecoration(
-                            color: Colors.white,
+                            color: Theme.of(context).colorScheme.surfaceContainerHighest,
                             borderRadius: BorderRadius.circular(16),
                           ),
                         ),
@@ -781,7 +782,7 @@ class DashboardScreen extends ConsumerWidget {
                         child: Container(
                           height: 80,
                           decoration: BoxDecoration(
-                            color: Colors.white,
+                            color: Theme.of(context).colorScheme.surfaceContainerHighest,
                             borderRadius: BorderRadius.circular(16),
                           ),
                         ),
@@ -792,7 +793,7 @@ class DashboardScreen extends ConsumerWidget {
                   Container(
                     height: 120,
                     decoration: BoxDecoration(
-                      color: Colors.white,
+                      color: Theme.of(context).colorScheme.surfaceContainerHighest,
                       borderRadius: BorderRadius.circular(20),
                     ),
                   ),
@@ -800,7 +801,7 @@ class DashboardScreen extends ConsumerWidget {
                   Container(
                     height: 80,
                     decoration: BoxDecoration(
-                      color: Colors.white,
+                      color: Theme.of(context).colorScheme.surfaceContainerHighest,
                       borderRadius: BorderRadius.circular(16),
                     ),
                   ),

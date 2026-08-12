@@ -43,8 +43,8 @@ class _OnboardingSemesterFormState extends ConsumerState<OnboardingSemesterForm>
             colorScheme: Theme.of(context).colorScheme.copyWith(
                   primary: Theme.of(context).colorScheme.primary,
                   onPrimary: Theme.of(context).colorScheme.onPrimary,
-                  surface: const Color(0xFF16162C),
-                  onSurface: Colors.white,
+                  surface: Theme.of(context).colorScheme.surfaceContainerHigh,
+                  onSurface: Theme.of(context).colorScheme.onSurface,
                 ),
           ),
           child: child!,

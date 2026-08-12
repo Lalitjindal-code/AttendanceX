@@ -20,20 +20,20 @@ class CalendarScreen extends ConsumerWidget {
           return CustomScrollView(
             slivers: [
               SliverAppBar(
-                title: const Text('Calendar', style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold)),
+                title: Text('Calendar', style: TextStyle(color: Theme.of(context).colorScheme.onSurface, fontWeight: FontWeight.bold)),
                 floating: true,
                 pinned: true,
                 backgroundColor: Theme.of(context).colorScheme.surface,
                 surfaceTintColor: Colors.transparent,
-                iconTheme: const IconThemeData(color: Colors.white),
+                iconTheme: IconThemeData(color: Theme.of(context).colorScheme.onSurface),
               ),
               SliverToBoxAdapter(
                 child: CalendarWidget(state: state),
               ),
-              const SliverToBoxAdapter(
+              SliverToBoxAdapter(
                 child: Padding(
-                  padding: EdgeInsets.symmetric(horizontal: AppSpacing.md),
-                  child: Divider(color: Colors.white10),
+                  padding: const EdgeInsets.symmetric(horizontal: AppSpacing.md),
+                  child: Divider(color: Theme.of(context).colorScheme.onSurface.withValues(alpha: 0.1)),
                 ),
               ),
               DayDetailPanel(state: state),
@@ -50,7 +50,7 @@ class CalendarScreen extends ConsumerWidget {
           );
         },
         loading: () => const Center(child: CircularProgressIndicator(color: Color(0xFF7E73FF))),
-        error: (err, stack) => Center(child: Text('Error: $err', style: const TextStyle(color: Colors.white))),
+        error: (err, stack) => Center(child: Text('Error: $err', style: TextStyle(color: Theme.of(context).colorScheme.error))),
       ),
     );
   }

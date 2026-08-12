@@ -35,7 +35,7 @@ class BunkHeatmapChart extends StatelessWidget {
             'Bunk Heatmap (Last 4 Weeks)',
             style: theme.textTheme.titleLarge?.copyWith(
               fontWeight: FontWeight.bold,
-              color: Colors.white,
+              color: theme.colorScheme.onSurface,
             ),
           ),
           const SizedBox(height: AppSpacing.md),
@@ -102,7 +102,7 @@ class BunkHeatmapChart extends StatelessWidget {
       child: Text(
         text,
         style: theme.textTheme.labelSmall?.copyWith(
-          color: Colors.white.withValues(alpha: 0.6),
+          color: theme.colorScheme.onSurfaceVariant,
         ),
       ),
     );
@@ -112,7 +112,7 @@ class BunkHeatmapChart extends StatelessWidget {
     return Row(
       mainAxisAlignment: MainAxisAlignment.end,
       children: [
-        Text('Less', style: theme.textTheme.labelSmall?.copyWith(color: Colors.white.withValues(alpha: 0.6))),
+        Text('Less', style: theme.textTheme.labelSmall?.copyWith(color: theme.colorScheme.onSurfaceVariant)),
         const SizedBox(width: 4),
         _buildLegendBox(0, theme),
         const SizedBox(width: 4),
@@ -122,7 +122,7 @@ class BunkHeatmapChart extends StatelessWidget {
         const SizedBox(width: 4),
         _buildLegendBox(5, theme),
         const SizedBox(width: 4),
-        Text('More', style: theme.textTheme.labelSmall?.copyWith(color: Colors.white.withValues(alpha: 0.6))),
+        Text('More', style: theme.textTheme.labelSmall?.copyWith(color: theme.colorScheme.onSurfaceVariant)),
       ],
     );
   }
@@ -135,7 +135,7 @@ class BunkHeatmapChart extends StatelessWidget {
         color: _getColor(count, theme),
         borderRadius: BorderRadius.circular(2),
         border: Border.all(
-          color: Colors.white.withValues(alpha: 0.1),
+          color: theme.colorScheme.onSurface.withValues(alpha: 0.1),
         ),
       ),
     );
@@ -145,7 +145,7 @@ class BunkHeatmapChart extends StatelessWidget {
 
   Color _getColor(int missedClasses, ThemeData theme) {
     if (missedClasses == 0) {
-      return Colors.white.withValues(alpha: 0.05);
+      return theme.colorScheme.onSurface.withValues(alpha: 0.05);
     }
     if (missedClasses <= 1) return const Color(0xFFFFB74D); // orange 300
 

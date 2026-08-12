@@ -273,20 +273,20 @@ class DayDetailPanel extends ConsumerWidget {
                       final confirm = await showDialog<bool>(
                         context: context,
                         builder: (context) => AlertDialog(
-                          backgroundColor: const Color(0xFF16162C),
-                          title: const Text('Clear Today\'s Attendance?', style: TextStyle(color: Colors.white)),
-                          content: const Text(
+                          backgroundColor: Theme.of(context).colorScheme.surfaceContainerHigh,
+                          title: Text('Clear Today\'s Attendance?', style: TextStyle(color: Theme.of(context).colorScheme.onSurface)),
+                          content: Text(
                             'This will erase all attendance entries marked for this day.',
-                            style: TextStyle(color: Colors.white70),
+                            style: TextStyle(color: Theme.of(context).colorScheme.onSurfaceVariant),
                           ),
                           actions: [
                             TextButton(
                               onPressed: () => Navigator.pop(context, false),
-                              child: const Text('Cancel', style: TextStyle(color: Colors.grey)),
+                              child: Text('Cancel', style: TextStyle(color: Theme.of(context).colorScheme.onSurfaceVariant)),
                             ),
                             TextButton(
                               onPressed: () => Navigator.pop(context, true),
-                              child: const Text('Clear', style: TextStyle(color: Colors.redAccent)),
+                              child: Text('Clear', style: TextStyle(color: Theme.of(context).colorScheme.error)),
                             ),
                           ],
                         ),

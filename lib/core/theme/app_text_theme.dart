@@ -17,22 +17,26 @@ abstract final class AppTextTheme {
 
   /// Builds a Plus Jakarta Sans [TextTheme] from the given [base] theme.
   static TextTheme build(TextTheme base) {
-    return GoogleFonts.plusJakartaSansTextTheme(base).copyWith(
+    final t = GoogleFonts.plusJakartaSansTextTheme(base);
+    return t.copyWith(
       // ── Display ─────────────────────────────────────────────────────────────
       // Large hero stats, percentage numbers, dashboard big text
       displayLarge: GoogleFonts.plusJakartaSans(
+        textStyle: t.displayLarge,
         fontSize: 57,
         fontWeight: FontWeight.w300,
         letterSpacing: -1.0,
         height: 1.12,
       ),
       displayMedium: GoogleFonts.plusJakartaSans(
+        textStyle: t.displayMedium,
         fontSize: 45,
         fontWeight: FontWeight.w300,
         letterSpacing: -0.5,
         height: 1.16,
       ),
       displaySmall: GoogleFonts.plusJakartaSans(
+        textStyle: t.displaySmall,
         fontSize: 36,
         fontWeight: FontWeight.w400,
         letterSpacing: -0.25,
@@ -42,18 +46,21 @@ abstract final class AppTextTheme {
       // ── Headline ─────────────────────────────────────────────────────────────
       // Screen titles, modal titles, section heads
       headlineLarge: GoogleFonts.plusJakartaSans(
+        textStyle: t.headlineLarge,
         fontSize: 32,
         fontWeight: FontWeight.w700,
         letterSpacing: -0.5,
         height: 1.25,
       ),
       headlineMedium: GoogleFonts.plusJakartaSans(
+        textStyle: t.headlineMedium,
         fontSize: 28,
         fontWeight: FontWeight.w700,
         letterSpacing: -0.25,
         height: 1.29,
       ),
       headlineSmall: GoogleFonts.plusJakartaSans(
+        textStyle: t.headlineSmall,
         fontSize: 24,
         fontWeight: FontWeight.w600,
         letterSpacing: 0,
@@ -63,18 +70,21 @@ abstract final class AppTextTheme {
       // ── Title ────────────────────────────────────────────────────────────────
       // Card headings, dialog titles, section labels
       titleLarge: GoogleFonts.plusJakartaSans(
+        textStyle: t.titleLarge,
         fontSize: 22,
         fontWeight: FontWeight.w600,
         letterSpacing: -0.1,
         height: 1.27,
       ),
       titleMedium: GoogleFonts.plusJakartaSans(
+        textStyle: t.titleMedium,
         fontSize: 16,
         fontWeight: FontWeight.w600,
         letterSpacing: 0.1,
         height: 1.5,
       ),
       titleSmall: GoogleFonts.plusJakartaSans(
+        textStyle: t.titleSmall,
         fontSize: 14,
         fontWeight: FontWeight.w600,
         letterSpacing: 0.1,
@@ -84,18 +94,21 @@ abstract final class AppTextTheme {
       // ── Body ─────────────────────────────────────────────────────────────────
       // Primary reading content, descriptions, list items
       bodyLarge: GoogleFonts.plusJakartaSans(
+        textStyle: t.bodyLarge,
         fontSize: 16,
         fontWeight: FontWeight.w400,
         letterSpacing: 0.15,
         height: 1.5,
       ),
       bodyMedium: GoogleFonts.plusJakartaSans(
+        textStyle: t.bodyMedium,
         fontSize: 14,
         fontWeight: FontWeight.w400,
         letterSpacing: 0.1,
         height: 1.43,
       ),
       bodySmall: GoogleFonts.plusJakartaSans(
+        textStyle: t.bodySmall,
         fontSize: 12,
         fontWeight: FontWeight.w400,
         letterSpacing: 0.2,
@@ -105,18 +118,21 @@ abstract final class AppTextTheme {
       // ── Label ────────────────────────────────────────────────────────────────
       // Buttons, chips, navigation labels, badges
       labelLarge: GoogleFonts.plusJakartaSans(
+        textStyle: t.labelLarge,
         fontSize: 14,
         fontWeight: FontWeight.w600,
         letterSpacing: 0.1,
         height: 1.43,
       ),
       labelMedium: GoogleFonts.plusJakartaSans(
+        textStyle: t.labelMedium,
         fontSize: 12,
         fontWeight: FontWeight.w600,
         letterSpacing: 0.4,
         height: 1.33,
       ),
       labelSmall: GoogleFonts.plusJakartaSans(
+        textStyle: t.labelSmall,
         fontSize: 11,
         fontWeight: FontWeight.w600,
         letterSpacing: 0.5,

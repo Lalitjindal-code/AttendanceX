@@ -48,12 +48,12 @@ class DailyAttendanceCard extends ConsumerWidget {
     return Container(
       margin: const EdgeInsets.only(bottom: AppSpacing.sm),
       decoration: BoxDecoration(
-        color: const Color(0xFF16162C),
+        color: Theme.of(context).colorScheme.surfaceContainerHigh,
         borderRadius: BorderRadius.circular(16),
         border: Border.all(
           color: item.status != null
               ? statusColor.withValues(alpha: 0.3)
-              : Colors.white.withValues(alpha: 0.05),
+              : Theme.of(context).colorScheme.onSurface.withValues(alpha: 0.05),
         ),
         boxShadow: [
           BoxShadow(
@@ -99,7 +99,7 @@ class DailyAttendanceCard extends ConsumerWidget {
                                 item.subject.name,
                                 style: theme.textTheme.titleMedium?.copyWith(
                                   fontWeight: FontWeight.bold,
-                                  color: Colors.white,
+                                  color: theme.colorScheme.onSurface,
                                 ),
                               ),
                               const SizedBox(height: AppSpacing.xs),
@@ -108,12 +108,12 @@ class DailyAttendanceCard extends ConsumerWidget {
                                   children: [
                                     Icon(Icons.access_time,
                                         size: 14,
-                                        color: Colors.white.withValues(alpha: 0.5)),
+                                        color: theme.colorScheme.onSurfaceVariant),
                                     const SizedBox(width: 4),
                                     Text(
                                       '${item.schedule!.startTime} - ${item.schedule!.endTime}',
                                       style: theme.textTheme.bodySmall?.copyWith(
-                                        color: Colors.white.withValues(alpha: 0.6),
+                                        color: theme.colorScheme.onSurfaceVariant,
                                       ),
                                     ),
                                   ],
@@ -123,12 +123,12 @@ class DailyAttendanceCard extends ConsumerWidget {
                                   children: [
                                     Icon(Icons.info_outline,
                                         size: 14,
-                                        color: Colors.white.withValues(alpha: 0.5)),
+                                        color: theme.colorScheme.onSurfaceVariant),
                                     const SizedBox(width: 4),
                                     Text(
                                       'Manual Attendance',
                                       style: theme.textTheme.bodySmall?.copyWith(
-                                        color: Colors.white.withValues(alpha: 0.6),
+                                        color: theme.colorScheme.onSurfaceVariant,
                                         fontStyle: FontStyle.italic,
                                       ),
                                     ),
@@ -143,7 +143,7 @@ class DailyAttendanceCard extends ConsumerWidget {
                           decoration: BoxDecoration(
                             color: item.status != null
                                 ? statusColor.withValues(alpha: 0.15)
-                                : Colors.white.withValues(alpha: 0.05),
+                                : theme.colorScheme.onSurface.withValues(alpha: 0.05),
                             borderRadius: BorderRadius.circular(20),
                           ),
                           child: Text(
@@ -151,7 +151,7 @@ class DailyAttendanceCard extends ConsumerWidget {
                             style: theme.textTheme.labelMedium?.copyWith(
                               color: item.status != null
                                   ? statusColor
-                                  : Colors.white.withValues(alpha: 0.6),
+                                  : theme.colorScheme.onSurface.withValues(alpha: 0.6),
                               fontWeight: FontWeight.bold,
                             ),
                           ),

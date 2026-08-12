@@ -108,7 +108,7 @@ class AnalyticsScreen extends ConsumerWidget {
                           'Attendance Trend',
                           style: theme.textTheme.titleLarge?.copyWith(
                             fontWeight: FontWeight.bold,
-                            color: Colors.white,
+                            color: theme.colorScheme.onSurface,
                           ),
                         ),
                         const SizedBox(height: AppSpacing.sm),
@@ -148,7 +148,7 @@ class AnalyticsScreen extends ConsumerWidget {
                           'Day of Week Analysis',
                           style: theme.textTheme.titleLarge?.copyWith(
                             fontWeight: FontWeight.bold,
-                            color: Colors.white,
+                            color: theme.colorScheme.onSurface,
                           ),
                         ),
                         const SizedBox(height: AppSpacing.sm),
@@ -179,7 +179,7 @@ class AnalyticsScreen extends ConsumerWidget {
                       'Subject Breakdown',
                       style: theme.textTheme.titleLarge?.copyWith(
                         fontWeight: FontWeight.bold,
-                        color: Colors.white,
+                        color: theme.colorScheme.onSurface,
                       ),
                     ),
                   ),
