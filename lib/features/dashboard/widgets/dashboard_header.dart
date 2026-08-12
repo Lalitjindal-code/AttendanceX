@@ -46,6 +46,7 @@ class _DashboardHeaderState extends State<DashboardHeader> {
 
   @override
   Widget build(BuildContext context) {
+    debugPrint('DashboardHeader widget photoUrl: ${widget.photoUrl}');
     final timeStr = DateFormat('h:mm').format(_now); 
     final amPmStr = DateFormat('a').format(_now); 
     final dateStr = DateFormat('EEEE, MMMM d, yyyy').format(_now); 

@@ -40,6 +40,7 @@ class DashboardScreen extends ConsumerWidget {
     final stateStream = ref.watch(dashboardNotifierProvider);
     final user = ref.watch(authStateProvider).valueOrNull;
     final userName = user?.displayName;
+    debugPrint('DashboardScreen user photoURL: ${user?.photoURL}');
 
     return Scaffold(
       body: stateStream.when(
