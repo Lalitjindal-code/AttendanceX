@@ -4,6 +4,7 @@ import 'package:go_router/go_router.dart';
 import 'package:intl/intl.dart';
 import '../../../navigation/app_routes.dart';
 import 'header_illustration.dart';
+import 'package:attendify/services/notification_service.dart';
 
 class DashboardHeader extends StatefulWidget {
   final String? subtitle;
@@ -24,18 +25,34 @@ class DashboardHeader extends StatefulWidget {
 class _DashboardHeaderState extends State<DashboardHeader> {
   late Timer _timer;
   late DateTime _now;
+  int _pendingNotificationsCount = 0;
 
   @override
   void initState() {
     super.initState();
     _now = DateTime.now();
+    _loadPendingNotificationsCount();
     _timer = Timer.periodic(const Duration(seconds: 1), (timer) {
       if (mounted) {
         setState(() {
           _now = DateTime.now();
         });
+        if (timer.tick % 60 == 0) {
+          _loadPendingNotificationsCount();
+        }
       }
     });
+  }
+
+  Future<void> _loadPendingNotificationsCount() async {
+    try {
+      final notifications = await NotificationService.instance.getPendingNotifications();
+      if (mounted) {
+        setState(() {
+          _pendingNotificationsCount = notifications.length;
+        });
+      }
+    } catch (_) {}
   }
 
   @override
@@ -110,23 +127,31 @@ class _DashboardHeaderState extends State<DashboardHeader> {
               Stack(
                 children: [
                   IconButton(
-                    icon: Icon(Icons.notifications_none_rounded, color: Theme.of(context).colorScheme.onSurface, size: 28),
-                    onPressed: () {
-                      context.push(AppRoutes.notifications);
+                    icon: Icon(
+                      _pendingNotificationsCount > 0
+                          ? Icons.notifications_active_rounded
+                          : Icons.notifications_none_rounded,
+                      color: Theme.of(context).colorScheme.onSurface,
+                      size: 28,
+                    ),
+                    onPressed: () async {
+                      await context.push(AppRoutes.notifications);
+                      _loadPendingNotificationsCount();
                     },
                   ),
-                  Positioned(
-                    right: 12,
-                    top: 12,
-                    child: Container(
-                      width: 8,
-                      height: 8,
-                      decoration: BoxDecoration(
-                        color: Theme.of(context).colorScheme.primary,
-                        shape: BoxShape.circle,
+                  if (_pendingNotificationsCount > 0)
+                    Positioned(
+                      right: 12,
+                      top: 12,
+                      child: Container(
+                        width: 8,
+                        height: 8,
+                        decoration: BoxDecoration(
+                          color: Theme.of(context).colorScheme.primary,
+                          shape: BoxShape.circle,
+                        ),
                       ),
                     ),
-                  ),
                 ],
               ),
             ],
