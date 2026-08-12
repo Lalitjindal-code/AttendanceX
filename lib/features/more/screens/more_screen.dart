@@ -6,7 +6,11 @@ import '../../../navigation/app_routes.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import '../../auth/providers/auth_provider.dart';
 import '../../../core/widgets/banner_ad_widget.dart';
+import '../../../core/ads/interstitial_ad_manager.dart';
+import '../../../core/ads/rewarded_ad_manager.dart';
 import '../../../core/ads/app_open_ad_manager.dart';
+import '../../../core/ads/providers/ad_free_provider.dart';
+import '../../../core/ads/ad_eligibility_service.dart';
 
 class MoreScreen extends ConsumerStatefulWidget {
   const MoreScreen({super.key});
@@ -19,11 +23,54 @@ class _MoreScreenState extends ConsumerState<MoreScreen> {
   @override
   void initState() {
     super.initState();
+    // Preload ads if not already loaded
+    InterstitialAdManager.instance.loadAd();
+    RewardedAdManager.instance.loadAd();
+  }
+
+  void _navigateWithInterstitial(String route, String feature) {
+    InterstitialAdManager.instance.showAdIfAvailable(
+      feature: feature,
+      onNavigation: () {
+        if (mounted) context.push(route);
+      },
+    );
+  }
+
+  void _showRewardedAd() {
+    // Show a snackbar if ad is not ready
+    if (!RewardedAdManager.instance.isLoaded) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(
+            content: Text(
+                'Ad is still loading, please try again in a few seconds.')),
+      );
+      RewardedAdManager.instance.loadAd(); // Force preload attempt
+      return;
+    }
+
+    RewardedAdManager.instance.showAdIfAvailable(
+      onRewardEarned: () {
+        AdEligibilityService.grantReward();
+        ref.read(adFreeProvider.notifier).refresh();
+        if (mounted) {
+          ScaffoldMessenger.of(context).showSnackBar(
+            const SnackBar(
+                content:
+                    Text('Thank you! Ads have been removed for 24 hours.')),
+          );
+        }
+      },
+      onCompletion: () {
+        // Handle dismissal
+      },
+    );
   }
 
   @override
   Widget build(BuildContext context) {
     final user = ref.watch(authStateProvider).valueOrNull;
+    final isAdFree = ref.watch(adFreeProvider);
 
     return Scaffold(
       appBar: AppBar(
@@ -52,7 +99,7 @@ class _MoreScreenState extends ConsumerState<MoreScreen> {
             icon: AppIcons.analytics,
             iconColor: const Color(0xFFAB47BC),
             title: 'Analytics',
-            onTap: () => context.push(AppRoutes.analytics),
+            onTap: () => _navigateWithInterstitial(AppRoutes.analytics, 'analytics'),
           ),
           const SizedBox(height: 12),
           _buildMenuCard(
@@ -60,7 +107,7 @@ class _MoreScreenState extends ConsumerState<MoreScreen> {
             icon: Icons.psychology_outlined,
             iconColor: Colors.orangeAccent,
             title: 'Bunk Simulator & Predictor',
-            onTap: () => context.push(AppRoutes.bunkSimulator),
+            onTap: () => _navigateWithInterstitial(AppRoutes.bunkSimulator, 'bunk_simulator'),
           ),
           const SizedBox(height: 12),
           _buildMenuCard(
@@ -70,6 +117,10 @@ class _MoreScreenState extends ConsumerState<MoreScreen> {
             title: 'Settings',
             onTap: () => context.push(AppRoutes.settings),
           ),
+          if (!isAdFree) ...[
+            const SizedBox(height: 24),
+            _buildRemoveAdsCard(context),
+          ],
           const SizedBox(height: 48),
           if (user != null) _buildLogOutButton(context, ref),
           const SizedBox(height: 24),
@@ -144,6 +195,75 @@ class _MoreScreenState extends ConsumerState<MoreScreen> {
                 ),
                 Icon(Icons.chevron_right_rounded,
                     color: Colors.white.withValues(alpha: 0.5)),
+              ],
+            ),
+          ),
+        ),
+      ),
+    );
+  }
+
+  Widget _buildRemoveAdsCard(BuildContext context) {
+    return Container(
+      decoration: BoxDecoration(
+        gradient: const LinearGradient(
+          colors: [Color(0xFFFF9A9E), Color(0xFFFECFEF)],
+          begin: Alignment.topLeft,
+          end: Alignment.bottomRight,
+        ),
+        borderRadius: BorderRadius.circular(16),
+        boxShadow: [
+          BoxShadow(
+            color: const Color(0xFFFF9A9E).withValues(alpha: 0.3),
+            blurRadius: 10,
+            offset: const Offset(0, 4),
+          ),
+        ],
+      ),
+      child: Material(
+        color: Colors.transparent,
+        child: InkWell(
+          borderRadius: BorderRadius.circular(16),
+          onTap: _showRewardedAd,
+          child: Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 16),
+            child: Row(
+              children: [
+                Container(
+                  padding: const EdgeInsets.all(10),
+                  decoration: BoxDecoration(
+                    color: Colors.white.withValues(alpha: 0.3),
+                    borderRadius: BorderRadius.circular(12),
+                  ),
+                  child: const Icon(Icons.workspace_premium_rounded,
+                      color: Colors.white, size: 28),
+                ),
+                const SizedBox(width: 16),
+                const Expanded(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(
+                        'Remove Ads for 24h',
+                        style: TextStyle(
+                          fontSize: 16,
+                          fontWeight: FontWeight.bold,
+                          color: Colors.black87,
+                        ),
+                      ),
+                      SizedBox(height: 4),
+                      Text(
+                        'Watch a short video ad to remove all ads for 24 hours.',
+                        style: TextStyle(
+                          fontSize: 12,
+                          color: Colors.black54,
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+                const Icon(Icons.play_circle_fill_rounded,
+                    color: Colors.white, size: 32),
               ],
             ),
           ),

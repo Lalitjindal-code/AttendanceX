@@ -7,6 +7,8 @@ import 'subject_form_screen.dart'; // Which now contains the sheet
 import '../widgets/subject_card.dart';
 import '../widgets/subject_card_skeleton.dart';
 import '../../../core/widgets/banner_ad_widget.dart';
+import '../../../core/widgets/native_ad_widget.dart';
+import '../../../core/ads/providers/ad_free_provider.dart';
 import '../../../core/utils/haptics.dart';
 import 'package:flutter/rendering.dart';
 
@@ -57,6 +59,7 @@ class _SubjectsScreenState extends ConsumerState<SubjectsScreen> {
   @override
   Widget build(BuildContext context) {
     final subjectsAsync = ref.watch(subjectsProvider);
+    final isAdFree = ref.watch(adFreeProvider);
 
     return Scaffold(
       body: RefreshIndicator(
@@ -179,10 +182,31 @@ class _SubjectsScreenState extends ConsumerState<SubjectsScreen> {
                   sliver: SliverList(
                     delegate: SliverChildBuilderDelegate(
                       (context, index) {
+                        final showNativeAd = !isAdFree && subjects.length >= 2;
+
+                        if (showNativeAd && index == 2) {
+                          return Padding(
+                            padding:
+                                const EdgeInsets.only(bottom: AppSpacing.md),
+                            child: const NativeAdWidget(),
+                          )
+                              .animate(
+                                  delay: Duration(milliseconds: 60 * index))
+                              .fadeIn(
+                                  duration: 350.ms, curve: Curves.easeOutQuad)
+                              .slideY(
+                                  begin: 0.12,
+                                  duration: 350.ms,
+                                  curve: Curves.easeOutQuad);
+                        }
+
+                        final subjectIndex =
+                            showNativeAd && index > 2 ? index - 1 : index;
+
                         return Padding(
                           padding: const EdgeInsets.only(bottom: AppSpacing.md),
                           child: RepaintBoundary(
-                            child: SubjectCard(subject: subjects[index]),
+                            child: SubjectCard(subject: subjects[subjectIndex]),
                           ),
                         )
                             .animate(delay: Duration(milliseconds: 60 * index))
@@ -192,7 +216,8 @@ class _SubjectsScreenState extends ConsumerState<SubjectsScreen> {
                                 duration: 350.ms,
                                 curve: Curves.easeOutQuad);
                       },
-                      childCount: subjects.length,
+                      childCount: subjects.length +
+                          (!isAdFree && subjects.length >= 2 ? 1 : 0),
                     ),
                   ),
                 );

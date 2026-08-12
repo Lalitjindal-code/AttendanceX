@@ -1,6 +1,6 @@
 name: attendify
 description: A premium offline-first attendance tracker for college students.
-version: 1.0.1+2
+version: 1.0.0+1
 publish_to: none
 
 environment:
