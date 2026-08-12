@@ -26,10 +26,10 @@ class TaskFilterChips extends ConsumerWidget {
             Padding(
               padding: const EdgeInsets.only(right: AppSpacing.sm),
               child: ActionChip(
-                avatar: const Icon(Icons.close, size: 16, color: Colors.white),
-                label: const Text('Clear', style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold)),
-                backgroundColor: const Color(0xFF16162C),
-                side: BorderSide(color: Colors.white.withValues(alpha: 0.05)),
+                avatar: Icon(Icons.close, size: 16, color: Theme.of(context).colorScheme.onSurface),
+                label: Text('Clear', style: TextStyle(color: Theme.of(context).colorScheme.onSurface, fontWeight: FontWeight.bold)),
+                backgroundColor: Theme.of(context).colorScheme.surfaceContainer,
+                side: BorderSide(color: Theme.of(context).colorScheme.outlineVariant),
                 shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(24)),
                 onPressed: () {
                   ref.read(plannerFilterProvider.notifier).state =
@@ -43,7 +43,7 @@ class TaskFilterChips extends ConsumerWidget {
           Padding(
             padding: const EdgeInsets.only(right: AppSpacing.sm),
             child: FilterChip(
-              label: Text('Show Completed', style: TextStyle(color: !filter.hideCompleted ? Colors.white : Colors.white.withValues(alpha: 0.6), fontWeight: !filter.hideCompleted ? FontWeight.bold : FontWeight.w600)),
+              label: Text('Show Completed', style: TextStyle(color: !filter.hideCompleted ? Theme.of(context).colorScheme.onPrimary : Theme.of(context).colorScheme.onSurface.withValues(alpha: 0.6), fontWeight: !filter.hideCompleted ? FontWeight.bold : FontWeight.w600)),
               selected: !filter.hideCompleted,
               onSelected: (selected) {
                 ref.read(plannerFilterProvider.notifier).state =
@@ -51,9 +51,9 @@ class TaskFilterChips extends ConsumerWidget {
                 Haptics.selection();
               },
               showCheckmark: false,
-              selectedColor: const Color(0xFF7E73FF),
-              backgroundColor: const Color(0xFF16162C),
-              side: !filter.hideCompleted ? BorderSide.none : BorderSide(color: Colors.white.withValues(alpha: 0.05)),
+              selectedColor: Theme.of(context).colorScheme.primary,
+              backgroundColor: Theme.of(context).colorScheme.surfaceContainer,
+              side: !filter.hideCompleted ? BorderSide.none : BorderSide(color: Theme.of(context).colorScheme.outlineVariant),
               shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(24)),
             ),
           ),
@@ -63,7 +63,7 @@ class TaskFilterChips extends ConsumerWidget {
                 padding: const EdgeInsets.only(right: AppSpacing.sm),
                 child: FilterChip(
                   label: Text(priority.name.substring(0, 1).toUpperCase() +
-                      priority.name.substring(1), style: TextStyle(color: filter.priority == priority ? Colors.white : Colors.white.withValues(alpha: 0.6), fontWeight: filter.priority == priority ? FontWeight.bold : FontWeight.w600)),
+                      priority.name.substring(1), style: TextStyle(color: filter.priority == priority ? Theme.of(context).colorScheme.onPrimary : Theme.of(context).colorScheme.onSurface.withValues(alpha: 0.6), fontWeight: filter.priority == priority ? FontWeight.bold : FontWeight.w600)),
                   selected: filter.priority == priority,
                   onSelected: (selected) {
                     ref.read(plannerFilterProvider.notifier).state = filter
@@ -71,9 +71,9 @@ class TaskFilterChips extends ConsumerWidget {
                     Haptics.selection();
                   },
                   showCheckmark: false,
-                  selectedColor: const Color(0xFF7E73FF),
-                  backgroundColor: const Color(0xFF16162C),
-                  side: filter.priority == priority ? BorderSide.none : BorderSide(color: Colors.white.withValues(alpha: 0.05)),
+                  selectedColor: Theme.of(context).colorScheme.primary,
+                  backgroundColor: Theme.of(context).colorScheme.surfaceContainer,
+                  side: filter.priority == priority ? BorderSide.none : BorderSide(color: Theme.of(context).colorScheme.outlineVariant),
                   shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(24)),
                 ),
               )),
@@ -83,7 +83,7 @@ class TaskFilterChips extends ConsumerWidget {
             ...subjectsAsync.valueOrNull!.map((subject) => Padding(
                   padding: const EdgeInsets.only(right: AppSpacing.sm),
                   child: FilterChip(
-                    label: Text(subject.name, style: TextStyle(color: filter.subjectId == subject.id ? Colors.white : Colors.white.withValues(alpha: 0.6), fontWeight: filter.subjectId == subject.id ? FontWeight.bold : FontWeight.w600)),
+                    label: Text(subject.name, style: TextStyle(color: filter.subjectId == subject.id ? Colors.white : Theme.of(context).colorScheme.onSurface.withValues(alpha: 0.6), fontWeight: filter.subjectId == subject.id ? FontWeight.bold : FontWeight.w600)),
                     selected: filter.subjectId == subject.id,
                     onSelected: (selected) {
                       ref.read(plannerFilterProvider.notifier).state =
@@ -97,8 +97,8 @@ class TaskFilterChips extends ConsumerWidget {
                       radius: 8,
                     ),
                     selectedColor: Color(subject.colorValue).withValues(alpha: 0.8),
-                    backgroundColor: const Color(0xFF16162C),
-                    side: filter.subjectId == subject.id ? BorderSide.none : BorderSide(color: Colors.white.withValues(alpha: 0.05)),
+                    backgroundColor: Theme.of(context).colorScheme.surfaceContainer,
+                    side: filter.subjectId == subject.id ? BorderSide.none : BorderSide(color: Theme.of(context).colorScheme.outlineVariant),
                     shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(24)),
                   ),
                 )),

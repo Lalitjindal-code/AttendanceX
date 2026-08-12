@@ -22,17 +22,17 @@ class HeroHealthCard extends StatelessWidget {
     if (suggestion != null) {
       switch (suggestion.type) {
         case SmartSuggestionType.safeBunk:
-          statusColor = Colors.greenAccent;
+          statusColor = Colors.green;
           statusText = 'Safe Zone';
           statusIcon = Icons.check_circle_outline;
           break;
         case SmartSuggestionType.attendMore:
-          statusColor = const Color(0xFFFF5F5F);
+          statusColor = Colors.red;
           statusText = 'At Risk';
           statusIcon = Icons.warning_amber_rounded;
           break;
         case SmartSuggestionType.onTrack:
-          statusColor = const Color(0xFF42A5F5);
+          statusColor = Colors.blue;
           statusText = 'On Track';
           statusIcon = Icons.track_changes;
           break;
@@ -53,17 +53,20 @@ class HeroHealthCard extends StatelessWidget {
         padding: const EdgeInsets.all(24),
         decoration: BoxDecoration(
           borderRadius: BorderRadius.circular(20),
-          gradient: const LinearGradient(
+          gradient: LinearGradient(
             begin: Alignment.topLeft,
             end: Alignment.bottomRight,
             colors: [
-              Color(0xFF3F2B96),
-              Color(0xFF1B1B3A),
+              statusColor.withValues(alpha: 0.18),
+              Theme.of(context).colorScheme.surfaceContainer,
             ],
+          ),
+          border: Border.all(
+            color: statusColor.withValues(alpha: 0.25),
           ),
           boxShadow: [
             BoxShadow(
-              color: const Color(0xFF3F2B96).withValues(alpha: 0.3),
+              color: statusColor.withValues(alpha: 0.12),
               blurRadius: 20,
               offset: const Offset(0, 10),
             ),
@@ -90,8 +93,8 @@ class HeroHealthCard extends StatelessWidget {
                           CircularProgressIndicator(
                             value: value / 100.0,
                             strokeWidth: 10,
-                            backgroundColor: Colors.white.withValues(alpha: 0.1),
-                            color: const Color(0xFF7E73FF),
+                            backgroundColor: Theme.of(context).colorScheme.onSurface.withValues(alpha: 0.1),
+                            color: statusColor,
                             strokeCap: StrokeCap.round,
                           ),
                           Center(
@@ -101,18 +104,18 @@ class HeroHealthCard extends StatelessWidget {
                                 Text(
                                   '${value.toStringAsFixed(1)}%',
                                   style: GoogleFonts.inter(
-                                    textStyle: const TextStyle(
+                                    textStyle: TextStyle(
                                       fontSize: 22,
                                       fontWeight: FontWeight.bold,
-                                      color: Colors.white,
+                                      color: Theme.of(context).colorScheme.onSurface,
                                     ),
                                   ),
                                 ),
-                                const Text(
+                                Text(
                                   'Attendance',
                                   style: TextStyle(
                                     fontSize: 10,
-                                    color: Colors.white70,
+                                    color: Theme.of(context).colorScheme.onSurface.withValues(alpha: 0.6),
                                   ),
                                 ),
                               ],
@@ -134,7 +137,6 @@ class HeroHealthCard extends StatelessWidget {
                         'Overall Attendance',
                         style: TextStyle(
                           fontSize: 14,
-                          color: Colors.white,
                           fontWeight: FontWeight.w600,
                         ),
                       ),
@@ -146,10 +148,10 @@ class HeroHealthCard extends StatelessWidget {
                           builder: (context, value, child) {
                             return Text(
                               '${value.toStringAsFixed(1)}%',
-                              style: const TextStyle(
+                              style: TextStyle(
                                 fontSize: 44,
                                 fontWeight: FontWeight.bold,
-                                color: Colors.white,
+                                color: Theme.of(context).colorScheme.onSurface,
                                 letterSpacing: -1,
                               ),
                             );
@@ -158,7 +160,7 @@ class HeroHealthCard extends StatelessWidget {
                       Container(
                         padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
                         decoration: BoxDecoration(
-                          color: Colors.black.withValues(alpha: 0.3),
+                          color: Theme.of(context).colorScheme.surfaceContainer,
                           borderRadius: BorderRadius.circular(16),
                           border: Border.all(
                             color: statusColor.withValues(alpha: 0.3),
@@ -187,13 +189,13 @@ class HeroHealthCard extends StatelessWidget {
             ),
             if (suggestion != null && suggestion.type != SmartSuggestionType.noData) ...[
               const SizedBox(height: 24),
-              Divider(color: Colors.white.withValues(alpha: 0.1), height: 1),
+              Divider(color: Theme.of(context).colorScheme.onSurface.withValues(alpha: 0.1), height: 1),
               const SizedBox(height: 16),
               Row(
                 children: [
                   Icon(
                     Icons.lightbulb_outline_rounded,
-                    color: Colors.white.withValues(alpha: 0.5),
+                    color: Theme.of(context).colorScheme.onSurface.withValues(alpha: 0.5),
                     size: 20,
                   ),
                   const SizedBox(width: 12),
@@ -202,13 +204,13 @@ class HeroHealthCard extends StatelessWidget {
                       suggestion.message,
                       style: TextStyle(
                         fontSize: 13,
-                        color: Colors.white.withValues(alpha: 0.7),
+                        color: Theme.of(context).colorScheme.onSurface.withValues(alpha: 0.7),
                       ),
                     ),
                   ),
                   Icon(
                     Icons.chevron_right_rounded,
-                    color: Colors.white.withValues(alpha: 0.5),
+                    color: Theme.of(context).colorScheme.onSurface.withValues(alpha: 0.5),
                     size: 20,
                   ),
                 ],

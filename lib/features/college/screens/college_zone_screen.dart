@@ -17,22 +17,21 @@ class _CollegeZoneScreenState extends ConsumerState<CollegeZoneScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: const Color(0xFF0B0B13),
       appBar: AppBar(
-        backgroundColor: const Color(0xFF0B0B13),
+        backgroundColor: Theme.of(context).colorScheme.surface,
         surfaceTintColor: Colors.transparent,
-        iconTheme: const IconThemeData(color: Colors.white),
+        iconTheme: IconThemeData(color: Theme.of(context).colorScheme.onSurface),
         title: Text(
           _selectedSemester == null ? 'Select Semester' : 'Select Branch',
-          style: const TextStyle(color: Colors.white, fontWeight: FontWeight.bold),
+          style: TextStyle(color: Theme.of(context).colorScheme.onSurface, fontWeight: FontWeight.bold),
         ),
         leading: _selectedSemester != null
             ? IconButton(
-                icon: const Icon(Icons.arrow_back),
+                icon: Icon(Icons.arrow_back, color: Theme.of(context).colorScheme.onSurface),
                 onPressed: () => setState(() => _selectedSemester = null),
               )
             : IconButton(
-                icon: const Icon(Icons.close),
+                icon: Icon(Icons.close, color: Theme.of(context).colorScheme.onSurface),
                 onPressed: () => context.pop(),
               ),
       ),
@@ -47,13 +46,13 @@ class _CollegeZoneScreenState extends ConsumerState<CollegeZoneScreen> {
       itemBuilder: (context, index) {
         final sem = CollegeData.semesters[index];
         return Card(
-          color: const Color(0xFF1E1E2C),
+          color: Theme.of(context).colorScheme.surfaceContainerHigh,
           margin: const EdgeInsets.only(bottom: AppSpacing.sm),
           shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
           child: ListTile(
             contentPadding: const EdgeInsets.symmetric(horizontal: AppSpacing.lg, vertical: AppSpacing.xs),
-            title: Text('Semester $sem', style: const TextStyle(color: Colors.white, fontSize: 18, fontWeight: FontWeight.bold)),
-            trailing: const Icon(Icons.chevron_right, color: Colors.white54),
+            title: Text('Semester $sem', style: TextStyle(color: Theme.of(context).colorScheme.onSurface, fontSize: 18, fontWeight: FontWeight.bold)),
+            trailing: Icon(Icons.chevron_right, color: Theme.of(context).colorScheme.onSurface.withValues(alpha: 0.54)),
             onTap: () {
               setState(() {
                 _selectedSemester = sem;
@@ -72,13 +71,13 @@ class _CollegeZoneScreenState extends ConsumerState<CollegeZoneScreen> {
       itemBuilder: (context, index) {
         final branch = CollegeData.branches[index];
         return Card(
-          color: const Color(0xFF1E1E2C),
+          color: Theme.of(context).colorScheme.surfaceContainerHigh,
           margin: const EdgeInsets.only(bottom: AppSpacing.sm),
           shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
           child: ListTile(
             contentPadding: const EdgeInsets.symmetric(horizontal: AppSpacing.lg, vertical: AppSpacing.xs),
-            title: Text(branch, style: const TextStyle(color: Colors.white, fontSize: 16, fontWeight: FontWeight.w600)),
-            trailing: const Icon(Icons.download_rounded, color: Color(0xFF7E73FF)),
+            title: Text(branch, style: TextStyle(color: Theme.of(context).colorScheme.onSurface, fontSize: 16, fontWeight: FontWeight.w600)),
+            trailing: Icon(Icons.download_rounded, color: Theme.of(context).colorScheme.primary),
             onTap: () {
               _showComingSoonDialog(branch);
             },
@@ -92,17 +91,17 @@ class _CollegeZoneScreenState extends ConsumerState<CollegeZoneScreen> {
     showDialog(
       context: context,
       builder: (context) => AlertDialog(
-        backgroundColor: const Color(0xFF1E1E2C),
+        backgroundColor: Theme.of(context).colorScheme.surfaceContainerHigh,
         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(24)),
-        title: const Text('Coming Soon!', style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold)),
+        title: Text('Coming Soon!', style: TextStyle(color: Theme.of(context).colorScheme.onSurface, fontWeight: FontWeight.bold)),
         content: Text(
           'Timetable for Semester $_selectedSemester - $branch is not uploaded yet. Check back later!',
-          style: const TextStyle(color: Colors.white70, fontSize: 16),
+          style: TextStyle(color: Theme.of(context).colorScheme.onSurface.withValues(alpha: 0.7), fontSize: 16),
         ),
         actions: [
           TextButton(
             onPressed: () => Navigator.pop(context),
-            child: const Text('Okay', style: TextStyle(color: Color(0xFF7E73FF), fontWeight: FontWeight.bold, fontSize: 16)),
+            child: Text('Okay', style: TextStyle(color: Theme.of(context).colorScheme.primary, fontWeight: FontWeight.bold, fontSize: 16)),
           ),
         ],
       ),

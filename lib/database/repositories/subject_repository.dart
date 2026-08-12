@@ -164,4 +164,25 @@ class SubjectRepository {
     });
     WidgetService.instance.updateWidget();
   }
+
+  /// One-time migration: Isar defaults new bool fields to `false` for existing
+  /// records. This sets [classNotificationsEnabled] and
+  /// [plannerNotificationsEnabled] to `true` for any subject that still has
+  /// `false` because it was created before those fields were added.
+  Future<void> migrateNotificationDefaults() async {
+    final subjects = await _isar.subjects.where().findAll();
+    final toFix = subjects
+        .where((s) =>
+            !s.classNotificationsEnabled || !s.plannerNotificationsEnabled)
+        .toList();
+    if (toFix.isEmpty) return;
+
+    await _isar.writeTxn(() async {
+      for (final s in toFix) {
+        s.classNotificationsEnabled = true;
+        s.plannerNotificationsEnabled = true;
+        await _isar.subjects.put(s);
+      }
+    });
+  }
 }

@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import '../../../core/enums/attendance_status.dart';
 import '../../../core/extensions/attendance_status_extension.dart';
+import '../../../core/utils/haptics.dart';
 import '../models/dashboard_state.dart';
 import 'edit_attendance_bottom_sheet.dart';
 
@@ -41,6 +42,7 @@ class LectureCard extends StatelessWidget {
           } else {
             onMarkAttendance(AttendanceStatus.absent);
           }
+          Haptics.light();
           return false;
         },
         background: Container(
@@ -264,7 +266,7 @@ class LectureCard extends StatelessWidget {
       selectedColor: color,
       backgroundColor: color.withValues(alpha: 0.1),
       labelStyle: TextStyle(
-        color: isSelected ? Colors.white : color,
+        color: isSelected ? Theme.of(context).colorScheme.onPrimary : color,
         fontWeight: FontWeight.bold,
       ),
       side: BorderSide(
@@ -273,6 +275,7 @@ class LectureCard extends StatelessWidget {
       onSelected: (selected) {
         if (!isSelected) {
           onMarkAttendance(status);
+          Haptics.light();
         }
       },
     );

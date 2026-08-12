@@ -1,5 +1,4 @@
 import '../core/enums/attendance_status.dart';
-import '../core/enums/gt_mode.dart';
 import '../core/enums/lecture_type.dart';
 import '../database/collections/attendance_collection.dart';
 import '../database/collections/schedule_collection.dart';
@@ -68,26 +67,13 @@ class AttendanceEngine {
           break;
         case AttendanceStatus.medical:
           totalMedicalRecords++;
-          if (settings.medicalCountsAsPresent) {
-            effectivePresent++;
-            effectiveTotal++;
-          }
-          // If medicalCountsAsPresent is false, it is completely excluded
+          // Medical always counts as Present
+          effectivePresent++;
+          effectiveTotal++;
           break;
         case AttendanceStatus.gt:
           totalGTRecords++;
-          switch (settings.gtMode) {
-            case GtMode.exclude:
-              // Completely excluded
-              break;
-            case GtMode.countAsPresent:
-              effectivePresent++;
-              effectiveTotal++;
-              break;
-            case GtMode.countAsAbsent:
-              effectiveTotal++;
-              break;
-          }
+          // GT is always excluded from calculations (ignored like Holiday)
           break;
       }
     }
@@ -164,24 +150,13 @@ class AttendanceEngine {
           break;
         case AttendanceStatus.medical:
           totalMedicalRecords++;
-          if (settings.medicalCountsAsPresent) {
-            effectivePresent++;
-            effectiveTotal++;
-          }
+          // Medical always counts as Present
+          effectivePresent++;
+          effectiveTotal++;
           break;
         case AttendanceStatus.gt:
           totalGTRecords++;
-          switch (settings.gtMode) {
-            case GtMode.exclude:
-              break;
-            case GtMode.countAsPresent:
-              effectivePresent++;
-              effectiveTotal++;
-              break;
-            case GtMode.countAsAbsent:
-              effectiveTotal++;
-              break;
-          }
+          // GT is always excluded from calculations (ignored like Holiday)
           break;
       }
     }

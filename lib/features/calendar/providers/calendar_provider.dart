@@ -111,6 +111,8 @@ class CalendarNotifier extends _$CalendarNotifier {
           subjects,
           schedules,
           attendances,
+          semesterStartDate: semester.startDate,
+          semesterEndDate: semester.endDate,
         );
         final tasksForDay = CalendarEngine.getTasksForDate(selectedDate, tasks);
 

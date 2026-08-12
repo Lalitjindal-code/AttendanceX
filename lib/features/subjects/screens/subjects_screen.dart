@@ -6,6 +6,7 @@ import '../providers/subject_providers.dart';
 import 'subject_form_screen.dart'; // Which now contains the sheet
 import '../widgets/subject_card.dart';
 import '../widgets/subject_card_skeleton.dart';
+import '../../../core/widgets/banner_ad_widget.dart';
 import '../../../core/utils/haptics.dart';
 import 'package:flutter/rendering.dart';
 
@@ -58,21 +59,27 @@ class _SubjectsScreenState extends ConsumerState<SubjectsScreen> {
     final subjectsAsync = ref.watch(subjectsProvider);
 
     return Scaffold(
-      backgroundColor: const Color(0xFF0B0B13),
       body: RefreshIndicator(
         color: const Color(0xFF7E73FF),
-        backgroundColor: const Color(0xFF16162C),
+        backgroundColor: Theme.of(context).colorScheme.surfaceContainer,
         onRefresh: _onRefresh,
         child: CustomScrollView(
           controller: _scrollController,
           cacheExtent: 500, // Pre-render more items for smooth fast scrolling
           slivers: [
-            const SliverAppBar.large(
-              title: Text('Subjects', style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold)),
+            SliverAppBar(
+              title: Text('Subjects', style: TextStyle(color: Theme.of(context).colorScheme.onSurface, fontWeight: FontWeight.bold)),
               floating: true,
               pinned: true,
-              backgroundColor: Color(0xFF0B0B13),
+              backgroundColor: Theme.of(context).colorScheme.surface,
               surfaceTintColor: Colors.transparent,
+              actions: [
+                IconButton(
+                  icon: Icon(Icons.add, color: Theme.of(context).colorScheme.onSurface),
+                  tooltip: 'Add Subject',
+                  onPressed: () => showSubjectFormSheet(context),
+                ),
+              ],
             ),
             subjectsAsync.when(
               data: (subjects) {
@@ -85,10 +92,10 @@ class _SubjectsScreenState extends ConsumerState<SubjectsScreen> {
                         child: Container(
                           padding: const EdgeInsets.all(32),
                           decoration: BoxDecoration(
-                            color: const Color(0xFF16162C),
+                            color: Theme.of(context).colorScheme.surfaceContainer,
                             borderRadius: BorderRadius.circular(24),
                             border: Border.all(
-                              color: Colors.white.withValues(alpha: 0.05),
+                              color: Theme.of(context).colorScheme.outlineVariant,
                             ),
                           ),
                           child: Column(
@@ -110,7 +117,7 @@ class _SubjectsScreenState extends ConsumerState<SubjectsScreen> {
                               Text(
                                 'No Subjects Yet',
                                 style: Theme.of(context).textTheme.titleLarge?.copyWith(
-                                      color: Colors.white,
+                                      color: Theme.of(context).colorScheme.onSurface,
                                       fontWeight: FontWeight.bold,
                                     ),
                               ),
@@ -119,15 +126,15 @@ class _SubjectsScreenState extends ConsumerState<SubjectsScreen> {
                                 'Add your first subject to start tracking attendance.',
                                 textAlign: TextAlign.center,
                                 style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                                      color: Colors.white.withValues(alpha: 0.6),
+                                      color: Theme.of(context).colorScheme.onSurface.withValues(alpha: 0.6),
                                     ),
                               ),
                               const SizedBox(height: AppSpacing.xl),
                               FilledButton.icon(
                                 onPressed: () => showSubjectFormSheet(context),
                                 style: FilledButton.styleFrom(
-                                  backgroundColor: const Color(0xFF7E73FF),
-                                  foregroundColor: Colors.white,
+                                  backgroundColor: Theme.of(context).colorScheme.primary,
+                                  foregroundColor: Theme.of(context).colorScheme.onPrimary,
                                   padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 12),
                                   shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
                                 ),
@@ -181,38 +188,14 @@ class _SubjectsScreenState extends ConsumerState<SubjectsScreen> {
                 ),
               ),
               error: (error, stack) => SliverFillRemaining(
-                child: Center(child: Text('Error: $error', style: const TextStyle(color: Colors.red))),
+                child: Center(child: Text('Error: $error', style: TextStyle(color: Theme.of(context).colorScheme.error))),
               ),
             ),
-            const SliverPadding(padding: EdgeInsets.only(bottom: 80)),
-          ],
-        ),
-      ),
-      floatingActionButton: Container(
-        decoration: BoxDecoration(
-          gradient: const LinearGradient(
-            colors: [Color(0xFF8E2DE2), Color(0xFF4A00E0)],
-            begin: Alignment.topLeft,
-            end: Alignment.bottomRight,
-          ),
-          borderRadius: BorderRadius.circular(16),
-          boxShadow: [
-            BoxShadow(
-              color: const Color(0xFF8E2DE2).withValues(alpha: 0.4),
-              blurRadius: 12,
-              offset: const Offset(0, 4),
+            const SliverToBoxAdapter(
+              child: BannerAdWidget(),
             ),
+            const SliverPadding(padding: EdgeInsets.only(bottom: 24)),
           ],
-        ),
-        child: FloatingActionButton.extended(
-          heroTag: 'subjects_fab',
-          backgroundColor: Colors.transparent,
-          elevation: 0,
-          highlightElevation: 0,
-          onPressed: () => showSubjectFormSheet(context),
-          icon: const Icon(Icons.add, color: Colors.white),
-          label: const Text('Add Subject', style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold)),
-          isExtended: _isFabExtended,
         ),
       ),
     );

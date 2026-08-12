@@ -133,17 +133,18 @@ void main() {
 
       expect(find.text('APPEARANCE'), findsOneWidget);
 
-      // Switch to dark mode
-      final darkFinder = find.text('Dark');
+      // The app initialization sets default to dark if not set, but mock values already has keyThemeMode.
+      // We toggle to Dark explicitly (even if it matches default) or test toggling to Light to verify state updates.
+      final lightFinder = find.text('Light');
       await tester.dragUntilVisible(
-          darkFinder, find.byType(ListView), const Offset(0, -500));
+          lightFinder, find.byType(ListView), const Offset(0, -500));
       await tester.pumpAndSettle();
 
-      await tester.tap(darkFinder);
+      await tester.tap(lightFinder);
       await tester.pumpAndSettle();
 
       final prefs = await SharedPreferences.getInstance();
-      expect(prefs.getString(PreferencesService.keyThemeMode), 'dark');
+      expect(prefs.getString(PreferencesService.keyThemeMode), 'light');
     });
 
     testWidgets('Notification toggle updates state and preferences',
@@ -168,48 +169,24 @@ void main() {
       expect(prefs.getBool(PreferencesService.keyNotificationsEnabled), false);
     });
 
-    testWidgets('GT mode selection works', (WidgetTester tester) async {
+    testWidgets('GT and Medical setting tiles display static info', (WidgetTester tester) async {
       await tester.pumpWidget(createTestWidget());
       await tester.pumpAndSettle();
 
-      final excludeFinder = find.text(GtMode.exclude.label);
-      await tester.dragUntilVisible(
-          excludeFinder, find.byType(ListView), const Offset(0, -500));
-      await tester.pumpAndSettle();
-
-      expect(excludeFinder, findsOneWidget);
-
-      await tester.tap(excludeFinder);
-      await tester.pumpAndSettle();
-
-      final countAsPresentFinder = find.text(GtMode.countAsPresent.label).last;
-      await tester.tap(countAsPresentFinder);
-      await tester.pumpAndSettle();
-
-      final prefs = await SharedPreferences.getInstance();
-      expect(prefs.getString(PreferencesService.keyGtMode),
-          GtMode.countAsPresent.key);
-    });
-
-    testWidgets('Medical toggle works', (WidgetTester tester) async {
-      await tester.pumpWidget(createTestWidget());
-      await tester.pumpAndSettle();
-
-      final medicalFinder = find.ancestor(
-        of: find.text('Medical Leave (ML)'),
-        matching: find.byType(ListTile),
-      );
-
+      final medicalFinder = find.text('Medical Leave (ML)');
       await tester.dragUntilVisible(
           medicalFinder, find.byType(ListView), const Offset(0, -500));
       await tester.pumpAndSettle();
 
-      final switchFinder = find.descendant(of: medicalFinder, matching: find.byType(Switch));
-      await tester.tap(switchFinder);
-      await tester.pumpAndSettle();
+      expect(find.text('Counts as Present'), findsOneWidget);
+      expect(find.text('Excluded from calculation'), findsOneWidget);
 
-      final prefs = await SharedPreferences.getInstance();
-      expect(prefs.getBool(PreferencesService.keyMedicalCountsAsPresent), true);
+      final medicalListTile = find.ancestor(of: medicalFinder, matching: find.byType(ListTile));
+      expect(find.descendant(of: medicalListTile, matching: find.byType(Switch)), findsNothing);
+
+      final gtFinder = find.text('Duty Leave (GT)');
+      final gtListTile = find.ancestor(of: gtFinder, matching: find.byType(ListTile));
+      expect(find.descendant(of: gtListTile, matching: find.byType(DropdownButton<GtMode>)), findsNothing);
     });
 
     testWidgets('Goal percentage slider updates value',

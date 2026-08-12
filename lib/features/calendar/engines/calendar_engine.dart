@@ -49,13 +49,19 @@ class CalendarEngine {
     DateTime targetDate,
     List<Subject> subjects,
     List<Schedule> schedules,
-    List<Attendance> attendances,
-  ) {
+    List<Attendance> attendances, {
+    DateTime? semesterStartDate,
+    DateTime? semesterEndDate,
+  }) {
     final date = _normalizeDate(targetDate);
     final dayOfWeek = DayOfWeek.fromInt(date.weekday).value;
 
-    final todaysSchedules =
-        schedules.where((s) => s.dayOfWeek == dayOfWeek).toList();
+    final isWithinSemester = (semesterStartDate == null || !date.isBefore(_normalizeDate(semesterStartDate))) &&
+        (semesterEndDate == null || !date.isAfter(_normalizeDate(semesterEndDate)));
+
+    final todaysSchedules = isWithinSemester
+        ? schedules.where((s) => s.dayOfWeek == dayOfWeek).toList()
+        : <Schedule>[];
     final todaysAttendances =
         attendances.where((a) => _normalizeDate(a.date) == date).toList();
 

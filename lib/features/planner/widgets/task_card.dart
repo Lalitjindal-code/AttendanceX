@@ -84,14 +84,21 @@ class TaskCard extends ConsumerWidget {
           button: true,
           child: Container(
             decoration: BoxDecoration(
-              color: const Color(0xFF16162C),
+              gradient: LinearGradient(
+                begin: Alignment.topLeft,
+                end: Alignment.bottomRight,
+                colors: [
+                  Theme.of(context).colorScheme.surfaceContainerHigh,
+                  Theme.of(context).colorScheme.surfaceContainer,
+                ],
+              ),
               borderRadius: BorderRadius.circular(16),
               border: Border.all(
-                color: Colors.white.withValues(alpha: 0.05),
+                color: stripeColor.withValues(alpha: 0.15),
               ),
               boxShadow: [
                 BoxShadow(
-                  color: Colors.black.withValues(alpha: 0.2),
+                  color: Colors.black.withValues(alpha: 0.15),
                   blurRadius: 10,
                   offset: const Offset(0, 4),
                 ),
@@ -140,8 +147,8 @@ class TaskCard extends ConsumerWidget {
                                         ? TextDecoration.lineThrough
                                         : TextDecoration.none,
                                     color: isCompleted
-                                        ? Colors.white.withValues(alpha: 0.3)
-                                        : Colors.white,
+                                        ? Theme.of(context).colorScheme.onSurface.withValues(alpha: 0.3)
+                                        : Theme.of(context).colorScheme.onSurface,
                                     fontWeight: FontWeight.bold,
                                   ),
                               child: Text(task.title),
@@ -157,7 +164,7 @@ class TaskCard extends ConsumerWidget {
                                           .textTheme
                                           .bodySmall
                                           ?.copyWith(
-                                            color: Colors.white.withValues(alpha: 0.6),
+                                            color: Theme.of(context).colorScheme.onSurface.withValues(alpha: 0.6),
                                           ),
                                       overflow: TextOverflow.ellipsis,
                                     ),
@@ -169,7 +176,7 @@ class TaskCard extends ConsumerWidget {
                                         .textTheme
                                         .bodySmall
                                         ?.copyWith(
-                                          color: Colors.white.withValues(alpha: 0.3),
+                                          color: Theme.of(context).colorScheme.onSurface.withValues(alpha: 0.3),
                                         ),
                                   ),
                                   const SizedBox(width: AppSpacing.sm),
@@ -182,8 +189,8 @@ class TaskCard extends ConsumerWidget {
                                         .bodySmall
                                         ?.copyWith(
                                           color: isOverdue && !isCompleted
-                                              ? const Color(0xFFFF1744)
-                                              : Colors.white.withValues(alpha: 0.6),
+                                              ? Theme.of(context).colorScheme.error
+                                              : Theme.of(context).colorScheme.onSurface.withValues(alpha: 0.6),
                                           fontWeight:
                                               isOverdue && !isCompleted
                                                   ? FontWeight.bold
@@ -213,8 +220,8 @@ class TaskCard extends ConsumerWidget {
                                 : Icons.circle_outlined,
                             key: ValueKey<bool>(isCompleted),
                             color: isCompleted
-                                ? const Color(0xFF00E676)
-                                : Colors.white.withValues(alpha: 0.3),
+                                ? Theme.of(context).colorScheme.primary
+                                : Theme.of(context).colorScheme.onSurface.withValues(alpha: 0.3),
                           ),
                         ),
                         tooltip: isCompleted

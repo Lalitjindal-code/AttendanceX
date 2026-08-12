@@ -1,4 +1,5 @@
 import 'dart:io';
+import 'dart:typed_data';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:file_picker/file_picker.dart';
@@ -22,23 +23,24 @@ class _BackupRestoreScreenState extends ConsumerState<BackupRestoreScreen> {
       String? outputFile;
 
       if (Platform.isAndroid || Platform.isIOS) {
-        // Use file picker to save file securely without broad storage permissions
-        final result = await FilePicker.platform.getDirectoryPath();
-        if (result == null) return; // User canceled
-        final fileName =
-            'Attendify_Backup_${DateFormat('yyyy-MM-dd_HH-mm').format(DateTime.now())}.atfy';
-        outputFile = '$result/$fileName';
-      } else {
-        // Desktop platforms
+        // file_picker saveFile requires bytes parameter on mobile.
+        // We will pass empty bytes since we write contents later.
         outputFile = await FilePicker.platform.saveFile(
           dialogTitle: 'Save Backup File',
           fileName:
               'Attendify_Backup_${DateFormat('yyyy-MM-dd_HH-mm').format(DateTime.now())}.atfy',
-          type: FileType.custom,
-          allowedExtensions: ['atfy'],
+          bytes: Uint8List(0),
         );
-        if (outputFile == null) return;
+      } else {
+        outputFile = await FilePicker.platform.saveFile(
+          dialogTitle: 'Save Backup File',
+          fileName:
+              'Attendify_Backup_${DateFormat('yyyy-MM-dd_HH-mm').format(DateTime.now())}.atfy',
+          type: FileType.any,
+        );
       }
+
+      if (outputFile == null) return;
 
       await ref
           .read(backupControllerProvider.notifier)

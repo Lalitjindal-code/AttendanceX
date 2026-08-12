@@ -159,7 +159,7 @@ class AtdLineChart extends StatelessWidget {
                   getDotPainter: (spot, percent, barData, index) {
                     return FlDotCirclePainter(
                       radius: 4,
-                      color: const Color(0xFF0B0B13),
+                      color: Theme.of(context).colorScheme.surface,
                       strokeWidth: 2,
                       strokeColor: const Color(0xFF7E73FF),
                     );

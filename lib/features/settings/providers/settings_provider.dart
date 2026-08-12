@@ -7,6 +7,7 @@ import '../../../database/database_providers.dart';
 import '../../../database/collections/profile_collection.dart';
 import '../../../database/repositories/profile_repository.dart';
 import '../models/app_settings.dart';
+import '../../../services/widget_service.dart';
 
 part 'settings_provider.g.dart';
 
@@ -41,6 +42,26 @@ class Settings extends _$Settings {
     
     _activeProfile = _isar.profiles.getSync(activeProfileId) ?? Profile();
 
+    final enabledTaskTypes = _prefs.getStringList(
+      'enabled_task_types',
+      defaultValue: const [
+        'assignment',
+        'homework',
+        'quiz',
+        'labFile',
+        'practical',
+        'viva',
+        'assessment',
+        'midSem',
+        'endSem',
+        'project',
+        'presentation',
+        'seminar',
+        'internship',
+        'other',
+      ],
+    );
+
     return AppSettings(
       themeMode: themeMode,
       defaultGoalPercentage: _activeProfile.defaultGoalPercentage,
@@ -65,18 +86,21 @@ class Settings extends _$Settings {
         PreferencesService.keyIsAppLockEnabled,
         defaultValue: false,
       ),
+      enabledTaskTypes: enabledTaskTypes,
     );
   }
 
   Future<void> updateThemeMode(ThemeMode mode) async {
     state = state.copyWith(themeMode: mode);
     await _prefs.setString(PreferencesService.keyThemeMode, mode.name);
+    WidgetService.instance.updateWidget();
   }
 
   Future<void> updateDefaultGoal(double goal) async {
     state = state.copyWith(defaultGoalPercentage: goal);
     _activeProfile.defaultGoalPercentage = goal;
     await ref.read(profileRepositoryProvider).upsertProfile(_activeProfile);
+    WidgetService.instance.updateWidget();
   }
 
   Future<void> updateMedicalPolicy(bool countsAsPresent) async {
@@ -100,6 +124,7 @@ class Settings extends _$Settings {
     state = state.copyWith(notificationsEnabled: enabled);
     _activeProfile.notificationsEnabled = enabled;
     await ref.read(profileRepositoryProvider).upsertProfile(_activeProfile);
+    await _prefs.setBool(PreferencesService.keyNotificationsEnabled, enabled);
   }
 
   Future<void> updateDailyReminderEnabled(bool enabled) async {
@@ -135,6 +160,7 @@ class Settings extends _$Settings {
   Future<void> updateIsAmoled(bool isAmoled) async {
     state = state.copyWith(isAmoled: isAmoled);
     await _prefs.setBool(PreferencesService.keyIsAmoled, isAmoled);
+    WidgetService.instance.updateWidget();
   }
 
   Future<void> updateLastBackupDate(DateTime date) async {
@@ -156,5 +182,10 @@ class Settings extends _$Settings {
   Future<void> setOnboardingStatus(bool isComplete) async {
     state = state.copyWith(isOnboardingComplete: isComplete);
     await _prefs.setBool(PreferencesService.keyIsOnboardingComplete, isComplete);
+  }
+
+  Future<void> updateEnabledTaskTypes(List<String> types) async {
+    state = state.copyWith(enabledTaskTypes: types);
+    await _prefs.setStringList('enabled_task_types', types);
   }
 }

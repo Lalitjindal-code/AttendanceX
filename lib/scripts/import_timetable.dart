@@ -5,6 +5,7 @@ import 'package:attendify/database/isar_service.dart';
 import 'package:attendify/services/preferences_service.dart';
 import 'package:flutter/material.dart';
 import 'package:isar/isar.dart';
+import 'package:attendify/services/widget_service.dart';
 
 class ImportTimetable {
   static Future<void> run() async {
@@ -304,5 +305,6 @@ class ImportTimetable {
     });
 
     await prefs.setString(PreferencesService.keySemesterStart, '2026-07-13');
+    WidgetService.instance.updateWidget();
   }
 }

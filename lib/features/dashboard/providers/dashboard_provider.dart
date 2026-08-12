@@ -96,29 +96,35 @@ class DashboardNotifier extends _$DashboardNotifier {
           subjectSuggestionMap[subject.id] = suggestion;
         }
 
-        final todaysLectures = schedules
-            .map((schedule) {
-              final subject =
-                  subjects.firstWhereOrNull((s) => s.id == schedule.subjectId);
-              if (subject == null) return null;
+        final todayNormalized = DateTime(now.year, now.month, now.day);
+        final isWithinSemester = !todayNormalized.isBefore(DateTime(semester.startDate.year, semester.startDate.month, semester.startDate.day)) &&
+            (semester.endDate == null || !todayNormalized.isAfter(DateTime(semester.endDate!.year, semester.endDate!.month, semester.endDate!.day)));
 
-              final attendanceForThisSlot = todaysAttendances
-                  .firstWhereOrNull((a) => a.scheduleId == schedule.id);
+        final todaysLectures = isWithinSemester
+            ? schedules
+                .map((schedule) {
+                  final subject =
+                      subjects.firstWhereOrNull((s) => s.id == schedule.subjectId);
+                  if (subject == null) return null;
 
-              // Use pre-computed values — no more inner loops!
-              final subjectSummary = subjectSummaryMap[subject.id]!;
-              final suggestion = subjectSuggestionMap[subject.id]!;
+                  final attendanceForThisSlot = todaysAttendances
+                      .firstWhereOrNull((a) => a.scheduleId == schedule.id);
 
-              return LectureCardModel(
-                schedule: schedule,
-                subject: subject,
-                attendance: attendanceForThisSlot,
-                summary: subjectSummary,
-                suggestion: suggestion,
-              );
-            })
-            .nonNulls
-            .toList();
+                  // Use pre-computed values — no more inner loops!
+                  final subjectSummary = subjectSummaryMap[subject.id]!;
+                  final suggestion = subjectSuggestionMap[subject.id]!;
+
+                  return LectureCardModel(
+                    schedule: schedule,
+                    subject: subject,
+                    attendance: attendanceForThisSlot,
+                    summary: subjectSummary,
+                    suggestion: suggestion,
+                  );
+                })
+                .nonNulls
+                .toList()
+            : <LectureCardModel>[];
 
         final pendingLectures = todaysLectures
             .where((l) =>
@@ -217,6 +223,27 @@ class DashboardNotifier extends _$DashboardNotifier {
           totalThisMonth: totalThisMonth,
         );
 
+        // Calculate weekday with most absences (e.g. Friday)
+        String? patternInsight;
+        final absencesByWeekday = <int, int>{};
+        for (final attendance in includedAttendances) {
+          if (attendance.status == AttendanceStatus.absent) {
+            final wd = attendance.date.weekday;
+            absencesByWeekday[wd] = (absencesByWeekday[wd] ?? 0) + 1;
+          }
+        }
+        if (absencesByWeekday.isNotEmpty) {
+          final sortedAbsences = absencesByWeekday.entries.toList()
+            ..sort((a, b) => b.value.compareTo(a.value));
+          final entry = sortedAbsences.first;
+          if (entry.value >= 2) {
+            // Find name of day
+            final weekdays = ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday'];
+            final dayName = weekdays[entry.key - 1];
+            patternInsight = 'You tend to miss the most classes on ${dayName}s (${entry.value} absences). Try not to miss classes this $dayName!';
+          }
+        }
+
         return DashboardState(
           isLoading: false,
           pendingLectures: pendingLectures,
@@ -227,6 +254,7 @@ class DashboardNotifier extends _$DashboardNotifier {
           overallSuggestion: overallSuggestion,
           upcomingTasks: upcomingTasks,
           quickStats: quickStats,
+          patternInsight: patternInsight,
         );
       },
     ).handleError((error) {

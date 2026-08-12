@@ -44,6 +44,9 @@ class PreferencesService {
   static const String keyIsOnboardingComplete = 'is_onboarding_complete';
   static const String keyIsAppLockEnabled = 'is_app_lock_enabled';
 
+  // ── Contains ──────────────────────────────────────────────────────────────────
+  bool containsKey(String key) => prefs.containsKey(key);
+
   // ── Getters ───────────────────────────────────────────────────────────────────
   String getString(String key, {required String defaultValue}) {
     return prefs.getString(key) ?? defaultValue;

@@ -93,6 +93,9 @@ class NotificationEngine {
           subjects.where((s) => s.id == schedule.subjectId).firstOrNull;
       if (subject == null) continue;
 
+      // Skip if class notifications are disabled for this subject
+      if (!subject.classNotificationsEnabled) continue;
+
       // Ensure no attendance already marked for this schedule
       final attendance = todaysAttendances
           .where((a) => a.scheduleId == schedule.id)

@@ -1,4 +1,5 @@
 import 'package:attendify/core/enums/day_of_week.dart';
+import 'package:attendify/core/enums/attendance_status.dart';
 import 'package:attendify/database/collections/attendance_collection.dart';
 import 'package:attendify/database/collections/attendance_history_collection.dart';
 import 'package:attendify/database/collections/schedule_collection.dart';
@@ -42,6 +43,12 @@ class MockNotificationService implements NotificationService {
   Future<List<PendingNotificationRequest>> getPendingNotifications() async => [];
   @override
   Future<void> showTestNotification() async {}
+
+  @override
+  Future<void> cancelNotification(int id) async {}
+
+  @override
+  Future<void> cancelAllNotifications() async {}
 }
 
 class FakeSubjectRepository implements SubjectRepository {
@@ -70,6 +77,8 @@ class FakeSubjectRepository implements SubjectRepository {
       );
   @override
   Stream<List<Subject>> watchAllActive(int semesterId) => Stream.value([]);
+  @override
+  Future<void> migrateNotificationDefaults() async {}
 }
 
 class FakeScheduleRepository implements ScheduleRepository {
@@ -115,6 +124,8 @@ class FakeAttendanceRepository implements AttendanceRepository {
   Future<void> delete(int id) async {}
   @override
   Future<void> deleteAttendancesByDate(DateTime date, int semesterId) async {}
+  @override
+  Future<void> markFullDayStatus(DateTime date, int semesterId, AttendanceStatus status) async {}
   @override
   Stream<List<Attendance>> watchBySubject(int subjectId, int semesterId) => Stream.value([]);
   @override

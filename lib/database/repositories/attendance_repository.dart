@@ -2,6 +2,7 @@ import 'package:isar/isar.dart';
 import '../../core/enums/attendance_status.dart';
 import '../collections/attendance_collection.dart';
 import '../collections/attendance_history_collection.dart';
+import '../collections/schedule_collection.dart';
 import '../../services/widget_service.dart';
 
 /// Repository for [Attendance] and [AttendanceHistory] operations.
@@ -154,6 +155,89 @@ class AttendanceRepository {
         await _isar.attendances.deleteAll(ids);
       }
     });
+    WidgetService.instance.updateWidget();
+  }
+
+  /// Marks the entire day (all schedules) as the specified status (GT, Medical, or Holiday).
+  Future<void> markFullDayStatus(DateTime date, int semesterId, AttendanceStatus status) async {
+    final todayUtc = DateTime.utc(date.year, date.month, date.day);
+    final dayOfWeek = date.weekday;
+
+    await _isar.writeTxn(() async {
+      // 1. Fetch schedules for this day of the week
+      final schedules = await _isar.schedules
+          .filter()
+          .semesterIdEqualTo(semesterId)
+          .and()
+          .dayOfWeekEqualTo(dayOfWeek)
+          .findAll();
+
+      // 2. Fetch existing attendances for this day
+      final existingAttendances = await _isar.attendances
+          .filter()
+          .semesterIdEqualTo(semesterId)
+          .and()
+          .dateEqualTo(todayUtc)
+          .findAll();
+
+      for (final schedule in schedules) {
+        final existing = existingAttendances
+            .where((a) => a.scheduleId == schedule.id)
+            .firstOrNull;
+
+        final previousStatus = existing?.status ?? AttendanceStatus.pending;
+
+        if (existing != null && previousStatus == status) {
+          continue;
+        }
+
+        final attendance = existing ?? (Attendance()
+          ..semesterId = semesterId
+          ..scheduleId = schedule.id
+          ..subjectId = schedule.subjectId
+          ..date = todayUtc
+          ..createdAt = DateTime.now());
+
+        attendance.status = status;
+        attendance.updatedAt = DateTime.now();
+        await _isar.attendances.put(attendance);
+
+        final history = AttendanceHistory()
+          ..semesterId = semesterId
+          ..attendanceId = attendance.id
+          ..subjectId = schedule.subjectId
+          ..date = todayUtc
+          ..previousStatus = previousStatus
+          ..newStatus = status
+          ..changedAt = attendance.updatedAt;
+
+        await _isar.attendanceHistorys.put(history);
+      }
+
+      // Also update any manual (unscheduled) attendances for this date, if they exist
+      for (final attendance in existingAttendances) {
+        if (attendance.scheduleId == null) {
+          final previousStatus = attendance.status;
+          if (previousStatus == status) continue;
+
+          attendance.status = status;
+          attendance.updatedAt = DateTime.now();
+          await _isar.attendances.put(attendance);
+
+          final history = AttendanceHistory()
+            ..semesterId = semesterId
+            ..attendanceId = attendance.id
+            ..subjectId = attendance.subjectId
+            ..date = todayUtc
+            ..previousStatus = previousStatus
+            ..newStatus = status
+            ..changedAt = attendance.updatedAt;
+
+          await _isar.attendanceHistorys.put(history);
+        }
+      }
+    });
+
     WidgetService.instance.updateWidget();
   }
 }

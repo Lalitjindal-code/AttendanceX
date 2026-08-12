@@ -1,18 +1,20 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
-import 'package:firebase_auth/firebase_auth.dart';
 import '../../../core/constants/app_icons.dart';
 import '../../../navigation/app_routes.dart';
+import 'package:firebase_auth/firebase_auth.dart';
+import '../../auth/providers/auth_provider.dart';
+import '../../../core/widgets/banner_ad_widget.dart';
 
-class MoreScreen extends StatelessWidget {
+class MoreScreen extends ConsumerWidget {
   const MoreScreen({super.key});
 
   @override
-  Widget build(BuildContext context) {
-    final user = FirebaseAuth.instance.currentUser;
+  Widget build(BuildContext context, WidgetRef ref) {
+    final user = ref.watch(authStateProvider).valueOrNull;
 
     return Scaffold(
-      backgroundColor: const Color(0xFF0B0B13),
       appBar: AppBar(
         backgroundColor: Colors.transparent,
         elevation: 0,
@@ -43,6 +45,14 @@ class MoreScreen extends StatelessWidget {
           const SizedBox(height: 12),
           _buildMenuCard(
             context: context,
+            icon: Icons.psychology_outlined,
+            iconColor: Colors.orangeAccent,
+            title: 'Bunk Simulator & Predictor',
+            onTap: () => context.push(AppRoutes.bunkSimulator),
+          ),
+          const SizedBox(height: 12),
+          _buildMenuCard(
+            context: context,
             icon: AppIcons.settings,
             iconColor: const Color(0xFF7E73FF),
             title: 'Settings',
@@ -51,7 +61,9 @@ class MoreScreen extends StatelessWidget {
           
           const SizedBox(height: 48),
           if (user != null)
-            _buildLogOutButton(context),
+            _buildLogOutButton(context, ref),
+          const SizedBox(height: 24),
+          const BannerAdWidget(),
         ],
       ),
     );
@@ -134,9 +146,23 @@ class MoreScreen extends StatelessWidget {
   }) {
     return Container(
       decoration: BoxDecoration(
-        color: const Color(0xFF16162C),
+        gradient: LinearGradient(
+          begin: Alignment.topLeft,
+          end: Alignment.bottomRight,
+          colors: [
+            Theme.of(context).colorScheme.surfaceContainerHigh,
+            Theme.of(context).colorScheme.surfaceContainer,
+          ],
+        ),
         borderRadius: BorderRadius.circular(16),
-        border: Border.all(color: Colors.white.withValues(alpha: 0.05)),
+        border: Border.all(color: iconColor.withValues(alpha: 0.15)),
+        boxShadow: [
+          BoxShadow(
+            color: Colors.black.withValues(alpha: 0.15),
+            blurRadius: 10,
+            offset: const Offset(0, 4),
+          ),
+        ],
       ),
       child: Material(
         color: Colors.transparent,
@@ -150,7 +176,7 @@ class MoreScreen extends StatelessWidget {
                 Container(
                   padding: const EdgeInsets.all(10),
                   decoration: BoxDecoration(
-                    color: iconColor.withValues(alpha: 0.2),
+                    color: iconColor.withValues(alpha: 0.12),
                     borderRadius: BorderRadius.circular(12),
                   ),
                   child: Icon(icon, color: iconColor, size: 22),
@@ -175,12 +201,12 @@ class MoreScreen extends StatelessWidget {
     );
   }
 
-  Widget _buildLogOutButton(BuildContext context) {
+  Widget _buildLogOutButton(BuildContext context, WidgetRef ref) {
     return SizedBox(
       width: double.infinity,
       child: TextButton.icon(
         onPressed: () async {
-          await FirebaseAuth.instance.signOut();
+          await ref.read(authProvider).signOut();
           if (context.mounted) context.go(AppRoutes.login);
         },
         icon: const Icon(Icons.logout_rounded, color: Color(0xFFFF5F5F)),
@@ -194,8 +220,11 @@ class MoreScreen extends StatelessWidget {
         ),
         style: TextButton.styleFrom(
           padding: const EdgeInsets.symmetric(vertical: 16),
-          backgroundColor: const Color(0xFFFF5F5F).withValues(alpha: 0.1),
-          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
+          backgroundColor: const Color(0xFFFF5F5F).withValues(alpha: 0.08),
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(16),
+            side: BorderSide(color: const Color(0xFFFF5F5F).withValues(alpha: 0.15)),
+          ),
         ),
       ),
     );

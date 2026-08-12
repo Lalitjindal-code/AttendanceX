@@ -17,73 +17,83 @@ const SubjectSchema = CollectionSchema(
   name: r'Subject',
   id: 7648000959054204885,
   properties: {
-    r'colorValue': PropertySchema(
+    r'classNotificationsEnabled': PropertySchema(
       id: 0,
+      name: r'classNotificationsEnabled',
+      type: IsarType.bool,
+    ),
+    r'colorValue': PropertySchema(
+      id: 1,
       name: r'colorValue',
       type: IsarType.long,
     ),
     r'createdAt': PropertySchema(
-      id: 1,
+      id: 2,
       name: r'createdAt',
       type: IsarType.dateTime,
     ),
     r'credits': PropertySchema(
-      id: 2,
+      id: 3,
       name: r'credits',
       type: IsarType.long,
     ),
     r'facultyEmail': PropertySchema(
-      id: 3,
+      id: 4,
       name: r'facultyEmail',
       type: IsarType.string,
     ),
     r'facultyName': PropertySchema(
-      id: 4,
+      id: 5,
       name: r'facultyName',
       type: IsarType.string,
     ),
     r'facultyPhone': PropertySchema(
-      id: 5,
+      id: 6,
       name: r'facultyPhone',
       type: IsarType.string,
     ),
     r'goalPercentage': PropertySchema(
-      id: 6,
+      id: 7,
       name: r'goalPercentage',
       type: IsarType.double,
     ),
     r'isActive': PropertySchema(
-      id: 7,
+      id: 8,
       name: r'isActive',
       type: IsarType.bool,
     ),
     r'isIncludedInOverall': PropertySchema(
-      id: 8,
+      id: 9,
       name: r'isIncludedInOverall',
       type: IsarType.bool,
     ),
     r'minimumPercentage': PropertySchema(
-      id: 9,
+      id: 10,
       name: r'minimumPercentage',
       type: IsarType.double,
     ),
     r'name': PropertySchema(
-      id: 10,
+      id: 11,
       name: r'name',
       type: IsarType.string,
     ),
     r'notes': PropertySchema(
-      id: 11,
+      id: 12,
       name: r'notes',
       type: IsarType.string,
     ),
+    r'plannerNotificationsEnabled': PropertySchema(
+      id: 13,
+      name: r'plannerNotificationsEnabled',
+      type: IsarType.bool,
+    ),
     r'semesterId': PropertySchema(
-      id: 12,
+      id: 14,
       name: r'semesterId',
       type: IsarType.long,
     ),
     r'updatedAt': PropertySchema(
-      id: 13,
+      id: 15,
       name: r'updatedAt',
       type: IsarType.dateTime,
     )
@@ -169,20 +179,22 @@ void _subjectSerialize(
   List<int> offsets,
   Map<Type, List<int>> allOffsets,
 ) {
-  writer.writeLong(offsets[0], object.colorValue);
-  writer.writeDateTime(offsets[1], object.createdAt);
-  writer.writeLong(offsets[2], object.credits);
-  writer.writeString(offsets[3], object.facultyEmail);
-  writer.writeString(offsets[4], object.facultyName);
-  writer.writeString(offsets[5], object.facultyPhone);
-  writer.writeDouble(offsets[6], object.goalPercentage);
-  writer.writeBool(offsets[7], object.isActive);
-  writer.writeBool(offsets[8], object.isIncludedInOverall);
-  writer.writeDouble(offsets[9], object.minimumPercentage);
-  writer.writeString(offsets[10], object.name);
-  writer.writeString(offsets[11], object.notes);
-  writer.writeLong(offsets[12], object.semesterId);
-  writer.writeDateTime(offsets[13], object.updatedAt);
+  writer.writeBool(offsets[0], object.classNotificationsEnabled);
+  writer.writeLong(offsets[1], object.colorValue);
+  writer.writeDateTime(offsets[2], object.createdAt);
+  writer.writeLong(offsets[3], object.credits);
+  writer.writeString(offsets[4], object.facultyEmail);
+  writer.writeString(offsets[5], object.facultyName);
+  writer.writeString(offsets[6], object.facultyPhone);
+  writer.writeDouble(offsets[7], object.goalPercentage);
+  writer.writeBool(offsets[8], object.isActive);
+  writer.writeBool(offsets[9], object.isIncludedInOverall);
+  writer.writeDouble(offsets[10], object.minimumPercentage);
+  writer.writeString(offsets[11], object.name);
+  writer.writeString(offsets[12], object.notes);
+  writer.writeBool(offsets[13], object.plannerNotificationsEnabled);
+  writer.writeLong(offsets[14], object.semesterId);
+  writer.writeDateTime(offsets[15], object.updatedAt);
 }
 
 Subject _subjectDeserialize(
@@ -192,21 +204,23 @@ Subject _subjectDeserialize(
   Map<Type, List<int>> allOffsets,
 ) {
   final object = Subject();
-  object.colorValue = reader.readLong(offsets[0]);
-  object.createdAt = reader.readDateTime(offsets[1]);
-  object.credits = reader.readLong(offsets[2]);
-  object.facultyEmail = reader.readStringOrNull(offsets[3]);
-  object.facultyName = reader.readStringOrNull(offsets[4]);
-  object.facultyPhone = reader.readStringOrNull(offsets[5]);
-  object.goalPercentage = reader.readDouble(offsets[6]);
+  object.classNotificationsEnabled = reader.readBool(offsets[0]);
+  object.colorValue = reader.readLong(offsets[1]);
+  object.createdAt = reader.readDateTime(offsets[2]);
+  object.credits = reader.readLong(offsets[3]);
+  object.facultyEmail = reader.readStringOrNull(offsets[4]);
+  object.facultyName = reader.readStringOrNull(offsets[5]);
+  object.facultyPhone = reader.readStringOrNull(offsets[6]);
+  object.goalPercentage = reader.readDouble(offsets[7]);
   object.id = id;
-  object.isActive = reader.readBool(offsets[7]);
-  object.isIncludedInOverall = reader.readBool(offsets[8]);
-  object.minimumPercentage = reader.readDouble(offsets[9]);
-  object.name = reader.readString(offsets[10]);
-  object.notes = reader.readStringOrNull(offsets[11]);
-  object.semesterId = reader.readLong(offsets[12]);
-  object.updatedAt = reader.readDateTime(offsets[13]);
+  object.isActive = reader.readBool(offsets[8]);
+  object.isIncludedInOverall = reader.readBool(offsets[9]);
+  object.minimumPercentage = reader.readDouble(offsets[10]);
+  object.name = reader.readString(offsets[11]);
+  object.notes = reader.readStringOrNull(offsets[12]);
+  object.plannerNotificationsEnabled = reader.readBool(offsets[13]);
+  object.semesterId = reader.readLong(offsets[14]);
+  object.updatedAt = reader.readDateTime(offsets[15]);
   return object;
 }
 
@@ -218,32 +232,36 @@ P _subjectDeserializeProp<P>(
 ) {
   switch (propertyId) {
     case 0:
-      return (reader.readLong(offset)) as P;
+      return (reader.readBool(offset)) as P;
     case 1:
-      return (reader.readDateTime(offset)) as P;
-    case 2:
       return (reader.readLong(offset)) as P;
+    case 2:
+      return (reader.readDateTime(offset)) as P;
     case 3:
-      return (reader.readStringOrNull(offset)) as P;
+      return (reader.readLong(offset)) as P;
     case 4:
       return (reader.readStringOrNull(offset)) as P;
     case 5:
       return (reader.readStringOrNull(offset)) as P;
     case 6:
-      return (reader.readDouble(offset)) as P;
+      return (reader.readStringOrNull(offset)) as P;
     case 7:
-      return (reader.readBool(offset)) as P;
+      return (reader.readDouble(offset)) as P;
     case 8:
       return (reader.readBool(offset)) as P;
     case 9:
-      return (reader.readDouble(offset)) as P;
+      return (reader.readBool(offset)) as P;
     case 10:
-      return (reader.readString(offset)) as P;
+      return (reader.readDouble(offset)) as P;
     case 11:
-      return (reader.readStringOrNull(offset)) as P;
+      return (reader.readString(offset)) as P;
     case 12:
-      return (reader.readLong(offset)) as P;
+      return (reader.readStringOrNull(offset)) as P;
     case 13:
+      return (reader.readBool(offset)) as P;
+    case 14:
+      return (reader.readLong(offset)) as P;
+    case 15:
       return (reader.readDateTime(offset)) as P;
     default:
       throw IsarError('Unknown property with id $propertyId');
@@ -481,6 +499,16 @@ extension SubjectQueryWhere on QueryBuilder<Subject, Subject, QWhereClause> {
 
 extension SubjectQueryFilter
     on QueryBuilder<Subject, Subject, QFilterCondition> {
+  QueryBuilder<Subject, Subject, QAfterFilterCondition>
+      classNotificationsEnabledEqualTo(bool value) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.equalTo(
+        property: r'classNotificationsEnabled',
+        value: value,
+      ));
+    });
+  }
+
   QueryBuilder<Subject, Subject, QAfterFilterCondition> colorValueEqualTo(
       int value) {
     return QueryBuilder.apply(this, (query) {
@@ -1560,6 +1588,16 @@ extension SubjectQueryFilter
     });
   }
 
+  QueryBuilder<Subject, Subject, QAfterFilterCondition>
+      plannerNotificationsEnabledEqualTo(bool value) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.equalTo(
+        property: r'plannerNotificationsEnabled',
+        value: value,
+      ));
+    });
+  }
+
   QueryBuilder<Subject, Subject, QAfterFilterCondition> semesterIdEqualTo(
       int value) {
     return QueryBuilder.apply(this, (query) {
@@ -1674,6 +1712,20 @@ extension SubjectQueryLinks
     on QueryBuilder<Subject, Subject, QFilterCondition> {}
 
 extension SubjectQuerySortBy on QueryBuilder<Subject, Subject, QSortBy> {
+  QueryBuilder<Subject, Subject, QAfterSortBy>
+      sortByClassNotificationsEnabled() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'classNotificationsEnabled', Sort.asc);
+    });
+  }
+
+  QueryBuilder<Subject, Subject, QAfterSortBy>
+      sortByClassNotificationsEnabledDesc() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'classNotificationsEnabled', Sort.desc);
+    });
+  }
+
   QueryBuilder<Subject, Subject, QAfterSortBy> sortByColorValue() {
     return QueryBuilder.apply(this, (query) {
       return query.addSortBy(r'colorValue', Sort.asc);
@@ -1818,6 +1870,20 @@ extension SubjectQuerySortBy on QueryBuilder<Subject, Subject, QSortBy> {
     });
   }
 
+  QueryBuilder<Subject, Subject, QAfterSortBy>
+      sortByPlannerNotificationsEnabled() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'plannerNotificationsEnabled', Sort.asc);
+    });
+  }
+
+  QueryBuilder<Subject, Subject, QAfterSortBy>
+      sortByPlannerNotificationsEnabledDesc() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'plannerNotificationsEnabled', Sort.desc);
+    });
+  }
+
   QueryBuilder<Subject, Subject, QAfterSortBy> sortBySemesterId() {
     return QueryBuilder.apply(this, (query) {
       return query.addSortBy(r'semesterId', Sort.asc);
@@ -1845,6 +1911,20 @@ extension SubjectQuerySortBy on QueryBuilder<Subject, Subject, QSortBy> {
 
 extension SubjectQuerySortThenBy
     on QueryBuilder<Subject, Subject, QSortThenBy> {
+  QueryBuilder<Subject, Subject, QAfterSortBy>
+      thenByClassNotificationsEnabled() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'classNotificationsEnabled', Sort.asc);
+    });
+  }
+
+  QueryBuilder<Subject, Subject, QAfterSortBy>
+      thenByClassNotificationsEnabledDesc() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'classNotificationsEnabled', Sort.desc);
+    });
+  }
+
   QueryBuilder<Subject, Subject, QAfterSortBy> thenByColorValue() {
     return QueryBuilder.apply(this, (query) {
       return query.addSortBy(r'colorValue', Sort.asc);
@@ -2001,6 +2081,20 @@ extension SubjectQuerySortThenBy
     });
   }
 
+  QueryBuilder<Subject, Subject, QAfterSortBy>
+      thenByPlannerNotificationsEnabled() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'plannerNotificationsEnabled', Sort.asc);
+    });
+  }
+
+  QueryBuilder<Subject, Subject, QAfterSortBy>
+      thenByPlannerNotificationsEnabledDesc() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'plannerNotificationsEnabled', Sort.desc);
+    });
+  }
+
   QueryBuilder<Subject, Subject, QAfterSortBy> thenBySemesterId() {
     return QueryBuilder.apply(this, (query) {
       return query.addSortBy(r'semesterId', Sort.asc);
@@ -2028,6 +2122,13 @@ extension SubjectQuerySortThenBy
 
 extension SubjectQueryWhereDistinct
     on QueryBuilder<Subject, Subject, QDistinct> {
+  QueryBuilder<Subject, Subject, QDistinct>
+      distinctByClassNotificationsEnabled() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addDistinctBy(r'classNotificationsEnabled');
+    });
+  }
+
   QueryBuilder<Subject, Subject, QDistinct> distinctByColorValue() {
     return QueryBuilder.apply(this, (query) {
       return query.addDistinctBy(r'colorValue');
@@ -2105,6 +2206,13 @@ extension SubjectQueryWhereDistinct
     });
   }
 
+  QueryBuilder<Subject, Subject, QDistinct>
+      distinctByPlannerNotificationsEnabled() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addDistinctBy(r'plannerNotificationsEnabled');
+    });
+  }
+
   QueryBuilder<Subject, Subject, QDistinct> distinctBySemesterId() {
     return QueryBuilder.apply(this, (query) {
       return query.addDistinctBy(r'semesterId');
@@ -2123,6 +2231,13 @@ extension SubjectQueryProperty
   QueryBuilder<Subject, int, QQueryOperations> idProperty() {
     return QueryBuilder.apply(this, (query) {
       return query.addPropertyName(r'id');
+    });
+  }
+
+  QueryBuilder<Subject, bool, QQueryOperations>
+      classNotificationsEnabledProperty() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addPropertyName(r'classNotificationsEnabled');
     });
   }
 
@@ -2195,6 +2310,13 @@ extension SubjectQueryProperty
   QueryBuilder<Subject, String?, QQueryOperations> notesProperty() {
     return QueryBuilder.apply(this, (query) {
       return query.addPropertyName(r'notes');
+    });
+  }
+
+  QueryBuilder<Subject, bool, QQueryOperations>
+      plannerNotificationsEnabledProperty() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addPropertyName(r'plannerNotificationsEnabled');
     });
   }
 

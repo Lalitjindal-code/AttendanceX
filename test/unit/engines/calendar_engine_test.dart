@@ -139,5 +139,78 @@ void main() {
       expect(details.items.length, 1);
       expect(details.items.first.attendance?.status, AttendanceStatus.present);
     });
+
+    test('buildDailyDetails respects semester date boundaries', () {
+      final sub = Subject()
+        ..id = 1
+        ..name = 'Math';
+      
+      // Tuesday
+      final sch = Schedule()
+        ..id = 1
+        ..subjectId = 1
+        ..dayOfWeek = DayOfWeek.tuesday.value
+        ..startTime = '09:00';
+
+      final semesterStartDate = DateTime(2023, 10, 1);
+      final semesterEndDate = DateTime(2023, 10, 31);
+
+      // 1. Date is within the semester
+      final dateWithin = DateTime(2023, 10, 10); // A Tuesday
+      final detailsWithin = CalendarEngine.buildDailyDetails(
+        dateWithin,
+        [sub],
+        [sch],
+        [],
+        semesterStartDate: semesterStartDate,
+        semesterEndDate: semesterEndDate,
+      );
+      expect(detailsWithin.items.length, 1);
+      expect(detailsWithin.items.first.subject.name, 'Math');
+
+      // 2. Date is before the semester start date
+      final dateBefore = DateTime(2023, 9, 26); // A Tuesday
+      final detailsBefore = CalendarEngine.buildDailyDetails(
+        dateBefore,
+        [sub],
+        [sch],
+        [],
+        semesterStartDate: semesterStartDate,
+        semesterEndDate: semesterEndDate,
+      );
+      expect(detailsBefore.items, isEmpty);
+
+      // 3. Date is after the semester end date
+      final dateAfter = DateTime(2023, 11, 7); // A Tuesday
+      final detailsAfter = CalendarEngine.buildDailyDetails(
+        dateAfter,
+        [sub],
+        [sch],
+        [],
+        semesterStartDate: semesterStartDate,
+        semesterEndDate: semesterEndDate,
+      );
+      expect(detailsAfter.items, isEmpty);
+
+      // 4. Date after semester end date but has manual attendance record (should display manual attendance)
+      final attManual = Attendance()
+        ..id = 1
+        ..subjectId = 1
+        ..scheduleId = 1
+        ..date = dateAfter
+        ..status = AttendanceStatus.present;
+
+      final detailsAfterWithAttendance = CalendarEngine.buildDailyDetails(
+        dateAfter,
+        [sub],
+        [sch],
+        [attManual],
+        semesterStartDate: semesterStartDate,
+        semesterEndDate: semesterEndDate,
+      );
+      expect(detailsAfterWithAttendance.items.length, 1);
+      expect(detailsAfterWithAttendance.items.first.isManual, isTrue);
+      expect(detailsAfterWithAttendance.items.first.attendance?.status, AttendanceStatus.present);
+    });
   });
 }

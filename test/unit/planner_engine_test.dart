@@ -3,6 +3,7 @@ import 'package:attendify/core/enums/task_priority.dart';
 import 'package:attendify/core/enums/task_status.dart';
 import 'package:attendify/core/enums/task_type.dart';
 import 'package:attendify/database/collections/academic_task_collection.dart';
+import 'package:attendify/database/collections/subject_collection.dart';
 import 'package:attendify/engines/planner_engine.dart';
 
 void main() {
@@ -133,6 +134,86 @@ void main() {
       expect(dashboardTasks.length, 2);
       expect(dashboardTasks[0].title, 'T1');
       expect(dashboardTasks[1].title, 'T2');
+    });
+
+    test('generateTaskNotifications respects plannerNotificationsEnabled for subject', () {
+      final now = DateTime(2026, 1, 1, 12, 0);
+      final subEnabled = Subject()
+        ..id = 1
+        ..name = 'Math'
+        ..plannerNotificationsEnabled = true;
+      final subDisabled = Subject()
+        ..id = 2
+        ..name = 'Physics'
+        ..plannerNotificationsEnabled = false;
+
+      final task1 = AcademicTask()
+        ..id = 101
+        ..title = 'Math Assignment'
+        ..dueDate = now.add(const Duration(days: 1))
+        ..status = TaskStatus.pending
+        ..subjectId = 1
+        ..type = TaskType.assignment
+        ..notificationOffsets = [60]; // 1 hour
+
+      final task2 = AcademicTask()
+        ..id = 102
+        ..title = 'Physics Assignment'
+        ..dueDate = now.add(const Duration(days: 1))
+        ..status = TaskStatus.pending
+        ..subjectId = 2
+        ..type = TaskType.assignment
+        ..notificationOffsets = [60]; // 1 hour
+
+      final notifications = PlannerEngine.generateTaskNotifications(
+        [task1, task2],
+        [subEnabled, subDisabled],
+        now,
+      );
+
+      // Only task1 (Math) should generate notification, task2 (Physics) is disabled
+      expect(notifications.length, 1);
+      expect(subDisabled.plannerNotificationsEnabled, isFalse);
+      expect(notifications.first.title, contains('Math'));
+    });
+
+    test('generateTaskNotifications respects enabledTaskTypes filter', () {
+      final now = DateTime(2026, 1, 1, 12, 0);
+      final sub = Subject()
+        ..id = 1
+        ..name = 'Math';
+
+      final taskAssignment = AcademicTask()
+        ..id = 101
+        ..title = 'Math Assignment'
+        ..dueDate = now.add(const Duration(days: 1))
+        ..status = TaskStatus.pending
+        ..subjectId = 1
+        ..type = TaskType.assignment
+        ..notificationOffsets = [60];
+
+      final taskQuiz = AcademicTask()
+        ..id = 102
+        ..title = 'Math Quiz'
+        ..dueDate = now.add(const Duration(days: 1))
+        ..status = TaskStatus.pending
+        ..subjectId = 1
+        ..type = TaskType.quiz
+        ..notificationOffsets = [60];
+
+      // Enable assignment, disable quiz
+      final enabledTypes = ['assignment'];
+
+      final notifications = PlannerEngine.generateTaskNotifications(
+        [taskAssignment, taskQuiz],
+        [sub],
+        now,
+        enabledTaskTypes: enabledTypes,
+      );
+
+      // Only taskAssignment should have notifications generated
+      expect(notifications.length, 1);
+      expect(notifications.first.title, contains('ASSIGNMENT'));
     });
   });
 }

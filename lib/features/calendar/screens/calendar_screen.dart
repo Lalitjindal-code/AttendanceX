@@ -14,19 +14,18 @@ class CalendarScreen extends ConsumerWidget {
     final calendarStateAsync = ref.watch(calendarNotifierProvider);
 
     return Scaffold(
-      backgroundColor: const Color(0xFF0B0B13),
       body: calendarStateAsync.when(
         skipLoadingOnReload: true,
         data: (state) {
           return CustomScrollView(
             slivers: [
-              const SliverAppBar.large(
-                title: Text('Calendar', style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold)),
+              SliverAppBar(
+                title: const Text('Calendar', style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold)),
                 floating: true,
                 pinned: true,
-                backgroundColor: Color(0xFF0B0B13),
+                backgroundColor: Theme.of(context).colorScheme.surface,
                 surfaceTintColor: Colors.transparent,
-                iconTheme: IconThemeData(color: Colors.white),
+                iconTheme: const IconThemeData(color: Colors.white),
               ),
               SliverToBoxAdapter(
                 child: CalendarWidget(state: state),

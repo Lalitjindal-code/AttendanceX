@@ -64,21 +64,20 @@ class _AppLockScreenState extends State<AppLockScreen> {
     return PopScope(
       canPop: false,
       child: Scaffold(
-        backgroundColor: const Color(0xFF0B0B13),
         body: Center(
           child: Column(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
-              const Icon(
+              Icon(
                 Icons.lock_rounded,
                 size: 80,
-                color: Color(0xFF7E73FF),
+                color: Theme.of(context).colorScheme.primary,
               ),
               const SizedBox(height: 24),
-              const Text(
+              Text(
                 'App Locked',
                 style: TextStyle(
-                  color: Colors.white,
+                  color: Theme.of(context).colorScheme.onSurface,
                   fontSize: 24,
                   fontWeight: FontWeight.bold,
                 ),
@@ -87,7 +86,7 @@ class _AppLockScreenState extends State<AppLockScreen> {
               Text(
                 'Authenticate to access your data.',
                 style: TextStyle(
-                  color: Colors.white.withValues(alpha: 0.6),
+                  color: Theme.of(context).colorScheme.onSurface.withValues(alpha: 0.6),
                   fontSize: 16,
                 ),
               ),
@@ -95,16 +94,16 @@ class _AppLockScreenState extends State<AppLockScreen> {
               if (!_isAuthenticating)
                 ElevatedButton.icon(
                   onPressed: _authenticate,
-                  icon: const Icon(Icons.fingerprint_rounded, color: Colors.white),
-                  label: const Text('Unlock', style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold)),
+                  icon: Icon(Icons.fingerprint_rounded, color: Theme.of(context).colorScheme.onPrimary),
+                  label: Text('Unlock', style: TextStyle(color: Theme.of(context).colorScheme.onPrimary, fontWeight: FontWeight.bold)),
                   style: ElevatedButton.styleFrom(
-                    backgroundColor: const Color(0xFF7E73FF),
+                    backgroundColor: Theme.of(context).colorScheme.primary,
                     padding: const EdgeInsets.symmetric(horizontal: 32, vertical: 16),
                     shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
                   ),
                 )
               else
-                const CircularProgressIndicator(color: Color(0xFF7E73FF)),
+                CircularProgressIndicator(color: Theme.of(context).colorScheme.primary),
             ],
           ),
         ),

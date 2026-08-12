@@ -2,9 +2,13 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:collection/collection.dart';
+import 'package:intl/intl.dart';
 import '../../../navigation/app_routes.dart';
 import '../../../core/enums/attendance_status.dart';
+import '../../../core/extensions/attendance_status_extension.dart';
 import '../../subjects/providers/subject_providers.dart';
+import '../../settings/providers/semester_provider.dart';
+import '../../attendance/providers/attendance_providers.dart';
 import 'package:attendify/features/planner/widgets/task_card.dart';
 import 'package:attendify/features/planner/screens/task_form_screen.dart';
 import '../providers/dashboard_provider.dart';
@@ -38,7 +42,6 @@ class DashboardScreen extends ConsumerWidget {
     final userName = user?.displayName;
 
     return Scaffold(
-      backgroundColor: const Color(0xFF0B0B13),
       body: stateStream.when(
         skipLoadingOnReload: true,
         data: (state) {
@@ -69,8 +72,8 @@ class DashboardScreen extends ConsumerWidget {
           return SafeArea(
             child: RefreshIndicator(
               onRefresh: () => _onRefresh(ref),
-              color: const Color(0xFF7E73FF),
-              backgroundColor: const Color(0xFF1D1743),
+              color: Theme.of(context).colorScheme.primary,
+              backgroundColor: Theme.of(context).colorScheme.surfaceContainer,
               child: CustomScrollView(
               physics: const AlwaysScrollableScrollPhysics(),
               slivers: [
@@ -88,6 +91,46 @@ class DashboardScreen extends ConsumerWidget {
                       .fade(delay: 100.ms, duration: 400.ms)
                       .slideY(begin: 0.1, delay: 100.ms, duration: 400.ms, curve: Curves.easeOutQuad),
                 ),
+
+                if (state.patternInsight != null)
+                  SliverToBoxAdapter(
+                    child: Padding(
+                      padding: const EdgeInsets.symmetric(horizontal: 24.0, vertical: 8.0),
+                      child: Container(
+                        padding: const EdgeInsets.all(16),
+                        decoration: BoxDecoration(
+                          gradient: LinearGradient(
+                            begin: Alignment.topLeft,
+                            end: Alignment.bottomRight,
+                            colors: [
+                              Theme.of(context).colorScheme.surfaceContainerHigh,
+                              Theme.of(context).colorScheme.surfaceContainer,
+                            ],
+                          ),
+                          borderRadius: BorderRadius.circular(16),
+                          border: Border.all(
+                            color: Colors.amber.withValues(alpha: 0.25),
+                          ),
+                        ),
+                        child: Row(
+                          children: [
+                            const Icon(Icons.lightbulb_outline_rounded, color: Colors.amberAccent, size: 24),
+                            const SizedBox(width: 12),
+                            Expanded(
+                              child: Text(
+                                state.patternInsight!,
+                                style: TextStyle(
+                                  fontSize: 13,
+                                  color: Theme.of(context).colorScheme.onSurface,
+                                  fontWeight: FontWeight.w500,
+                                ),
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
+                    ).animate().fade(delay: 150.ms).slideY(begin: 0.1),
+                  ),
 
                 // Quick Stats Row
                 SliverToBoxAdapter(
@@ -158,11 +201,22 @@ class DashboardScreen extends ConsumerWidget {
                 SliverToBoxAdapter(
                   child: Padding(
                     padding: const EdgeInsets.fromLTRB(16, 24, 16, 8),
-                    child: Text(
-                      "Today's Schedule",
-                      style: Theme.of(context).textTheme.titleLarge?.copyWith(
-                            fontWeight: FontWeight.bold,
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        Text(
+                          "Today's Schedule",
+                          style: Theme.of(context).textTheme.titleLarge?.copyWith(
+                                fontWeight: FontWeight.bold,
+                              ),
+                        ),
+                        if (pendingLectures.isNotEmpty || markedLectures.isNotEmpty)
+                          IconButton(
+                            icon: Icon(Icons.edit_calendar_rounded, color: Theme.of(context).colorScheme.onSurface.withValues(alpha: 0.7)),
+                            tooltip: 'Mark Full Day',
+                            onPressed: () => _showMarkFullDayBottomSheet(context, ref, DateTime.now()),
                           ),
+                      ],
                     ),
                   ),
                 ),
@@ -218,6 +272,36 @@ class DashboardScreen extends ConsumerWidget {
                               'No lectures scheduled for today.',
                               style: TextStyle(fontSize: 16, color: Colors.grey),
                             ),
+                            const SizedBox(height: 24),
+                            Wrap(
+                              spacing: 12,
+                              runSpacing: 12,
+                              alignment: WrapAlignment.center,
+                              children: [
+                                OutlinedButton.icon(
+                                  onPressed: () => context.go(AppRoutes.schedule),
+                                  icon: const Icon(Icons.edit_calendar_rounded, size: 18),
+                                  label: const Text('Edit Timetable'),
+                                  style: OutlinedButton.styleFrom(
+                                    foregroundColor: Theme.of(context).colorScheme.primary,
+                                    side: BorderSide(color: Theme.of(context).colorScheme.primary.withValues(alpha: 0.5)),
+                                    padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+                                    shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+                                  ),
+                                ),
+                                OutlinedButton.icon(
+                                  onPressed: () => context.go(AppRoutes.planner),
+                                  icon: const Icon(Icons.add_task_rounded, size: 18),
+                                  label: const Text('Go to Planner'),
+                                  style: OutlinedButton.styleFrom(
+                                    foregroundColor: Theme.of(context).colorScheme.secondary,
+                                    side: BorderSide(color: Theme.of(context).colorScheme.secondary.withValues(alpha: 0.5)),
+                                    padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+                                    shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+                                  ),
+                                ),
+                              ],
+                            ),
                           ],
                         ),
                       ),
@@ -230,10 +314,17 @@ class DashboardScreen extends ConsumerWidget {
                       child: Container(
                         padding: const EdgeInsets.all(24),
                         decoration: BoxDecoration(
-                          color: const Color(0xFF16162C),
+                          gradient: LinearGradient(
+                            begin: Alignment.topLeft,
+                            end: Alignment.bottomRight,
+                            colors: [
+                              Theme.of(context).colorScheme.surfaceContainerHigh,
+                              Theme.of(context).colorScheme.surfaceContainer,
+                            ],
+                          ),
                           borderRadius: BorderRadius.circular(20),
                           border: Border.all(
-                            color: Colors.white.withValues(alpha: 0.05),
+                            color: Theme.of(context).colorScheme.primary.withValues(alpha: 0.2),
                             width: 1,
                           ),
                         ),
@@ -246,7 +337,7 @@ class DashboardScreen extends ConsumerWidget {
                                 shape: BoxShape.circle,
                                 gradient: RadialGradient(
                                   colors: [
-                                    Colors.greenAccent.withValues(alpha: 0.2),
+                                    Theme.of(context).colorScheme.primary.withValues(alpha: 0.2),
                                     Colors.transparent,
                                   ],
                                 ),
@@ -255,11 +346,11 @@ class DashboardScreen extends ConsumerWidget {
                                 child: Container(
                                   width: 48,
                                   height: 48,
-                                  decoration: const BoxDecoration(
-                                    color: Colors.greenAccent,
+                                  decoration: BoxDecoration(
+                                    color: Theme.of(context).colorScheme.primary,
                                     shape: BoxShape.circle,
                                   ),
-                                  child: const Icon(Icons.check_rounded, color: Colors.white, size: 32),
+                                  child: Icon(Icons.check_rounded, color: Theme.of(context).colorScheme.onPrimary, size: 32),
                                 ),
                               ),
                             ),
@@ -268,12 +359,12 @@ class DashboardScreen extends ConsumerWidget {
                               child: Column(
                                 crossAxisAlignment: CrossAxisAlignment.start,
                                 children: [
-                                  const Text(
+                                  Text(
                                     'All caught up for today!',
                                     style: TextStyle(
                                       fontSize: 16,
                                       fontWeight: FontWeight.bold,
-                                      color: Colors.greenAccent,
+                                      color: Theme.of(context).colorScheme.primary,
                                     ),
                                   ),
                                   const SizedBox(height: 4),
@@ -281,7 +372,7 @@ class DashboardScreen extends ConsumerWidget {
                                     'Great job! You have no pending classes.',
                                     style: TextStyle(
                                       fontSize: 12,
-                                      color: Colors.white.withValues(alpha: 0.6),
+                                      color: Theme.of(context).colorScheme.onSurface.withValues(alpha: 0.6),
                                     ),
                                   ),
                                 ],
@@ -296,15 +387,15 @@ class DashboardScreen extends ConsumerWidget {
 
                 // Marked Classes
                 if (markedLectures.isNotEmpty) ...[
-                  const SliverToBoxAdapter(
+                  SliverToBoxAdapter(
                     child: Padding(
-                      padding: EdgeInsets.fromLTRB(16, 24, 16, 8),
+                      padding: const EdgeInsets.fromLTRB(16, 24, 16, 8),
                       child: Text(
                         'Marked Classes',
                         style: TextStyle(
                           fontSize: 18,
                           fontWeight: FontWeight.bold,
-                          color: Colors.grey,
+                          color: Theme.of(context).colorScheme.onSurface.withValues(alpha: 0.5),
                         ),
                       ),
                     ),
@@ -393,42 +484,30 @@ class DashboardScreen extends ConsumerWidget {
                     ),
               ),
               const SizedBox(height: 32),
-              Row(
-                mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                children: [
-                  _buildQuickMarkButton(
+              Wrap(
+                spacing: 16,
+                runSpacing: 16,
+                alignment: WrapAlignment.center,
+                children: AttendanceStatus.values
+                    .where((s) => s != AttendanceStatus.pending)
+                    .map((status) {
+                  return _buildQuickMarkButton(
                     context,
-                    'Present',
-                    Icons.check_circle_rounded,
-                    Colors.green,
+                    status.displayName,
+                    status.icon,
+                    status.color,
                     () {
                       ref
                           .read(dashboardNotifierProvider.notifier)
                           .markAttendance(
                             lecture.schedule.id,
                             lecture.subject.id,
-                            AttendanceStatus.present,
+                            status,
                           );
                       Navigator.pop(context);
                     },
-                  ),
-                  _buildQuickMarkButton(
-                    context,
-                    'Absent',
-                    Icons.cancel_rounded,
-                    Theme.of(context).colorScheme.error,
-                    () {
-                      ref
-                          .read(dashboardNotifierProvider.notifier)
-                          .markAttendance(
-                            lecture.schedule.id,
-                            lecture.subject.id,
-                            AttendanceStatus.absent,
-                          );
-                      Navigator.pop(context);
-                    },
-                  ),
-                ],
+                  );
+                }).toList(),
               ),
             ],
           ),
@@ -465,6 +544,181 @@ class DashboardScreen extends ConsumerWidget {
           ],
         ),
       ),
+    );
+  }
+
+  void _showMarkFullDayBottomSheet(BuildContext context, WidgetRef ref, DateTime date) {
+    showModalBottomSheet(
+      context: context,
+      isScrollControlled: true,
+      useRootNavigator: true,
+      backgroundColor: Colors.transparent,
+      builder: (context) {
+        return Container(
+          decoration: BoxDecoration(
+            color: Theme.of(context).colorScheme.surface,
+            borderRadius: const BorderRadius.vertical(top: Radius.circular(28)),
+          ),
+          padding: const EdgeInsets.fromLTRB(24, 12, 24, 32),
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              Container(
+                width: 32,
+                height: 4,
+                decoration: BoxDecoration(
+                  color: Theme.of(context)
+                      .colorScheme
+                      .onSurfaceVariant
+                      .withValues(alpha: 0.4),
+                  borderRadius: BorderRadius.circular(2),
+                ),
+              ),
+              const SizedBox(height: 24),
+              Text(
+                'Mark Entire Day',
+                style: Theme.of(context).textTheme.titleLarge?.copyWith(
+                      fontWeight: FontWeight.bold,
+                    ),
+              ),
+              const SizedBox(height: 8),
+              Text(
+                DateFormat('EEEE, MMMM d, yyyy').format(date),
+                style: Theme.of(context).textTheme.bodyMedium?.copyWith(
+                      color: Theme.of(context).colorScheme.onSurfaceVariant,
+                    ),
+              ),
+              const SizedBox(height: 32),
+              Wrap(
+                spacing: 16,
+                runSpacing: 16,
+                alignment: WrapAlignment.center,
+                children: [
+                  _buildQuickMarkButton(
+                    context,
+                    'GT',
+                    Icons.stars_rounded,
+                    Colors.purple,
+                    () async {
+                      final semester = ref.read(semesterStateProvider);
+                      if (semester != null) {
+                        await ref
+                            .read(attendanceRepositoryProvider)
+                            .markFullDayStatus(date, semester.id, AttendanceStatus.gt);
+                        if (context.mounted) {
+                          ScaffoldMessenger.of(context).hideCurrentSnackBar();
+                          ScaffoldMessenger.of(context).showSnackBar(
+                            const SnackBar(
+                              content: Text('Marked entire day as GT'),
+                              behavior: SnackBarBehavior.floating,
+                            ),
+                          );
+                        }
+                      }
+                      if (context.mounted) Navigator.pop(context);
+                    },
+                  ),
+                  _buildQuickMarkButton(
+                    context,
+                    'MEDICAL',
+                    Icons.local_hospital_rounded,
+                    Colors.orange,
+                    () async {
+                      final semester = ref.read(semesterStateProvider);
+                      if (semester != null) {
+                        await ref
+                            .read(attendanceRepositoryProvider)
+                            .markFullDayStatus(date, semester.id, AttendanceStatus.medical);
+                        if (context.mounted) {
+                          ScaffoldMessenger.of(context).hideCurrentSnackBar();
+                          ScaffoldMessenger.of(context).showSnackBar(
+                            const SnackBar(
+                              content: Text('Marked entire day as Medical'),
+                              behavior: SnackBarBehavior.floating,
+                            ),
+                          );
+                        }
+                      }
+                      if (context.mounted) Navigator.pop(context);
+                    },
+                  ),
+                  _buildQuickMarkButton(
+                    context,
+                    'HOLIDAY',
+                    Icons.beach_access_rounded,
+                    Theme.of(context).colorScheme.primary,
+                    () async {
+                      final semester = ref.read(semesterStateProvider);
+                      if (semester != null) {
+                        await ref
+                            .read(attendanceRepositoryProvider)
+                            .markFullDayStatus(date, semester.id, AttendanceStatus.holiday);
+                        if (context.mounted) {
+                          ScaffoldMessenger.of(context).hideCurrentSnackBar();
+                          ScaffoldMessenger.of(context).showSnackBar(
+                            const SnackBar(
+                              content: Text('Marked entire day as Holiday'),
+                              behavior: SnackBarBehavior.floating,
+                            ),
+                          );
+                        }
+                      }
+                      if (context.mounted) Navigator.pop(context);
+                    },
+                  ),
+                  _buildQuickMarkButton(
+                    context,
+                    'CLEAR ALL',
+                    Icons.clear_all_rounded,
+                    Colors.redAccent,
+                    () async {
+                      if (context.mounted) Navigator.pop(context);
+                      final confirm = await showDialog<bool>(
+                        context: context,
+                        builder: (context) => AlertDialog(
+                          backgroundColor: Theme.of(context).colorScheme.surfaceContainerHigh,
+                          title: Text('Clear Today\'s Attendance?', style: TextStyle(color: Theme.of(context).colorScheme.onSurface)),
+                          content: Text(
+                            'This will erase all attendance entries marked for this day.',
+                            style: TextStyle(color: Theme.of(context).colorScheme.onSurface.withValues(alpha: 0.7)),
+                          ),
+                          actions: [
+                            TextButton(
+                              onPressed: () => Navigator.pop(context, false),
+                              child: const Text('Cancel', style: TextStyle(color: Colors.grey)),
+                            ),
+                            TextButton(
+                              onPressed: () => Navigator.pop(context, true),
+                              child: const Text('Clear', style: TextStyle(color: Colors.redAccent)),
+                            ),
+                          ],
+                        ),
+                      );
+                      if (confirm == true) {
+                        final semester = ref.read(semesterStateProvider);
+                        if (semester != null) {
+                          await ref
+                              .read(attendanceRepositoryProvider)
+                              .deleteAttendancesByDate(date, semester.id);
+                          if (context.mounted) {
+                            ScaffoldMessenger.of(context).hideCurrentSnackBar();
+                            ScaffoldMessenger.of(context).showSnackBar(
+                              const SnackBar(
+                                content: Text('Cleared today\'s attendance'),
+                                behavior: SnackBarBehavior.floating,
+                              ),
+                            );
+                          }
+                        }
+                      }
+                    },
+                  ),
+                ],
+              ),
+            ],
+          ),
+        );
+      },
     );
   }
 

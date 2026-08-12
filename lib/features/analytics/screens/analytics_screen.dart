@@ -9,6 +9,7 @@ import '../widgets/subject_analytics_card.dart';
 import '../widgets/day_of_week_chart.dart';
 import '../widgets/top_bottom_subjects_cards.dart';
 import '../widgets/bunk_heatmap_chart.dart';
+import '../../../core/widgets/banner_ad_widget.dart';
 
 class AnalyticsScreen extends ConsumerWidget {
   const AnalyticsScreen({super.key});
@@ -19,11 +20,10 @@ class AnalyticsScreen extends ConsumerWidget {
     final theme = Theme.of(context);
 
     return Scaffold(
-      backgroundColor: const Color(0xFF0B0B13),
       body: stateAsync.when(
         data: (state) {
           if (state.isLoading) {
-            return const Center(child: CircularProgressIndicator(color: Color(0xFF7E73FF)));
+            return const Center(child: CircularProgressIndicator());
           }
 
           if (state.subjectStats.isEmpty) {
@@ -36,13 +36,13 @@ class AnalyticsScreen extends ConsumerWidget {
 
           return CustomScrollView(
             slivers: [
-              const SliverAppBar.large(
-                title: Text('Analytics', style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold)),
+              SliverAppBar.large(
+                title: Text('Analytics', style: TextStyle(color: Theme.of(context).colorScheme.onSurface, fontWeight: FontWeight.bold)),
                 floating: true,
                 pinned: true,
-                backgroundColor: Color(0xFF0B0B13),
+                backgroundColor: Theme.of(context).colorScheme.surface,
                 surfaceTintColor: Colors.transparent,
-                iconTheme: IconThemeData(color: Colors.white),
+                iconTheme: IconThemeData(color: Theme.of(context).colorScheme.onSurface),
               ),
 
               // 1. Overview Donut Chart & Cards
@@ -56,7 +56,6 @@ class AnalyticsScreen extends ConsumerWidget {
                         'Overview',
                         style: theme.textTheme.titleLarge?.copyWith(
                           fontWeight: FontWeight.bold,
-                          color: Colors.white,
                         ),
                       ),
                       const SizedBox(height: AppSpacing.md),
@@ -90,10 +89,10 @@ class AnalyticsScreen extends ConsumerWidget {
                 ),
               ),
 
-              const SliverToBoxAdapter(
+              SliverToBoxAdapter(
                 child: Padding(
-                  padding: EdgeInsets.symmetric(horizontal: AppSpacing.md),
-                  child: Divider(color: Colors.white10),
+                  padding: const EdgeInsets.symmetric(horizontal: AppSpacing.md),
+                  child: Divider(color: Theme.of(context).colorScheme.outlineVariant),
                 ),
               ),
 
@@ -119,10 +118,10 @@ class AnalyticsScreen extends ConsumerWidget {
                   ),
                 ),
 
-              const SliverToBoxAdapter(
+              SliverToBoxAdapter(
                 child: Padding(
-                  padding: EdgeInsets.symmetric(horizontal: AppSpacing.md),
-                  child: Divider(color: Colors.white10),
+                  padding: const EdgeInsets.symmetric(horizontal: AppSpacing.md),
+                  child: Divider(color: Theme.of(context).colorScheme.outlineVariant),
                 ),
               ),
 
@@ -159,10 +158,10 @@ class AnalyticsScreen extends ConsumerWidget {
                   ),
                 ),
 
-              const SliverToBoxAdapter(
+              SliverToBoxAdapter(
                 child: Padding(
-                  padding: EdgeInsets.symmetric(horizontal: AppSpacing.md),
-                  child: Divider(color: Colors.white10),
+                  padding: const EdgeInsets.symmetric(horizontal: AppSpacing.md),
+                  child: Divider(color: Theme.of(context).colorScheme.outlineVariant),
                 ),
               ),
 
@@ -202,13 +201,16 @@ class AnalyticsScreen extends ConsumerWidget {
               ],
 
               const SliverToBoxAdapter(
+                child: BannerAdWidget(),
+              ),
+              const SliverToBoxAdapter(
                 child: SizedBox(height: 80),
               ),
             ],
           );
         },
-        loading: () => const Center(child: CircularProgressIndicator(color: Color(0xFF7E73FF))),
-        error: (err, stack) => Center(child: Text('Error: $err', style: const TextStyle(color: Colors.white))),
+        loading: () => const Center(child: CircularProgressIndicator()),
+        error: (err, stack) => Center(child: Text('Error: $err')),
       ),
     );
   }
@@ -221,13 +223,13 @@ class AnalyticsScreen extends ConsumerWidget {
           Icon(
             Icons.analytics_outlined,
             size: 64,
-            color: Colors.white.withValues(alpha: 0.2),
+            color: Theme.of(context).colorScheme.onSurface.withValues(alpha: 0.2),
           ),
           const SizedBox(height: AppSpacing.md),
           Text(
             'Nothing to analyse yet.',
             style: Theme.of(context).textTheme.titleLarge?.copyWith(
-                  color: Colors.white.withValues(alpha: 0.6),
+                  color: Theme.of(context).colorScheme.onSurface.withValues(alpha: 0.6),
                   fontWeight: FontWeight.bold,
                 ),
           ),
@@ -235,7 +237,7 @@ class AnalyticsScreen extends ConsumerWidget {
           Text(
             'Start marking attendance to see insights.',
             style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                  color: Colors.white.withValues(alpha: 0.4),
+                  color: Theme.of(context).colorScheme.onSurface.withValues(alpha: 0.4),
                 ),
           ),
         ],

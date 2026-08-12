@@ -228,23 +228,10 @@ class _SignupScreenState extends ConsumerState<SignupScreen> {
                 const SizedBox(height: AppSpacing.md),
                 OutlinedButton.icon(
                   onPressed: _isLoading ? null : _signInWithGoogle,
-                  icon: Container(
+                  icon: Image.asset(
+                    'assets/icons/google_logo.png',
                     width: 20,
                     height: 20,
-                    decoration: const BoxDecoration(
-                      shape: BoxShape.circle,
-                      color: Colors.white,
-                    ),
-                    child: const Center(
-                      child: Text(
-                        'G',
-                        style: TextStyle(
-                          fontSize: 13,
-                          fontWeight: FontWeight.bold,
-                          color: Color(0xFF4285F4),
-                        ),
-                      ),
-                    ),
                   ),
                   label: const Text('Sign up with Google'),
                   style: OutlinedButton.styleFrom(

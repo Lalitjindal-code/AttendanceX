@@ -21,6 +21,7 @@ class _BannerAdWidgetState extends State<BannerAdWidget> {
   final String _testAdUnitIdIOS = 'ca-app-pub-3940256099942544/2934735716';
 
   String get _adUnitId {
+    if (kIsWeb || Platform.isWindows) return '';
     if (kDebugMode) {
       return Platform.isAndroid ? _testAdUnitIdAndroid : _testAdUnitIdIOS;
     }
@@ -31,6 +32,7 @@ class _BannerAdWidgetState extends State<BannerAdWidget> {
   @override
   void initState() {
     super.initState();
+    if (!kIsWeb && Platform.isWindows) return;
     _loadAd();
   }
 

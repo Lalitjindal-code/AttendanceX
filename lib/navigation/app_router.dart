@@ -12,6 +12,7 @@ import '../features/subjects/screens/subjects_screen.dart';
 import '../features/planner/screens/planner_screen.dart';
 import '../features/more/screens/more_screen.dart';
 import '../features/notifications/screens/notifications_screen.dart';
+import '../features/notifications/screens/notification_manager_screen.dart';
 import '../features/settings/screens/feedback_screen.dart';
 import '../features/onboarding/screens/onboarding_screen.dart';
 import '../features/settings/providers/settings_provider.dart';
@@ -20,6 +21,7 @@ import '../features/auth/screens/signup_screen.dart';
 import '../features/auth/providers/auth_provider.dart';
 import '../features/profile/screens/profile_screen.dart';
 import '../features/college/screens/college_zone_screen.dart';
+import '../features/simulator/screens/bunk_simulator_screen.dart';
 import 'app_routes.dart';
 import 'shell_scaffold.dart';
 
@@ -172,8 +174,17 @@ GoRouter appRouter(AppRouterRef ref) {
                 builder: (context, state) => const NotificationsScreen(),
               ),
               GoRoute(
+                // Manager screen
+                path: AppRoutes.notificationManager,
+                builder: (context, state) => const NotificationManagerScreen(),
+              ),
+              GoRoute(
                 path: AppRoutes.feedback,
                 builder: (context, state) => const FeedbackScreen(),
+              ),
+              GoRoute(
+                path: AppRoutes.bunkSimulator,
+                builder: (context, state) => const BunkSimulatorScreen(),
               ),
             ],
           ),

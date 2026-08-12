@@ -6,8 +6,8 @@ import '../../../core/enums/gt_mode.dart';
 @immutable
 class AppSettings {
   const AppSettings({
-    this.themeMode = ThemeMode.system,
-    this.isAmoled = false,
+    this.themeMode = ThemeMode.dark,
+    this.isAmoled = true,
     this.defaultGoalPercentage = AppConfig.defaultGoalPercentage,
     this.medicalCountsAsPresent = false,
     this.isOnboardingComplete = false,
@@ -21,6 +21,22 @@ class AppSettings {
     this.defaultTaskReminderOffsets = const [60, 1440], // 1 hour, 1 day
     this.lastBackupDate,
     this.isAppLockEnabled = false,
+    this.enabledTaskTypes = const [
+      'assignment',
+      'homework',
+      'quiz',
+      'labFile',
+      'practical',
+      'viva',
+      'assessment',
+      'midSem',
+      'endSem',
+      'project',
+      'presentation',
+      'seminar',
+      'internship',
+      'other',
+    ],
   });
 
   final ThemeMode themeMode;
@@ -42,6 +58,7 @@ class AppSettings {
   final List<int> defaultTaskReminderOffsets;
   final DateTime? lastBackupDate;
   final bool isAppLockEnabled;
+  final List<String> enabledTaskTypes;
 
   AppSettings copyWith({
     ThemeMode? themeMode,
@@ -59,6 +76,7 @@ class AppSettings {
     List<int>? defaultTaskReminderOffsets,
     DateTime? lastBackupDate,
     bool? isAppLockEnabled,
+    List<String>? enabledTaskTypes,
   }) {
     return AppSettings(
       themeMode: themeMode ?? this.themeMode,
@@ -80,6 +98,7 @@ class AppSettings {
           defaultTaskReminderOffsets ?? this.defaultTaskReminderOffsets,
       lastBackupDate: lastBackupDate ?? this.lastBackupDate,
       isAppLockEnabled: isAppLockEnabled ?? this.isAppLockEnabled,
+      enabledTaskTypes: enabledTaskTypes ?? this.enabledTaskTypes,
     );
   }
 
@@ -100,6 +119,7 @@ class AppSettings {
       'defaultTaskReminderOffsets': defaultTaskReminderOffsets,
       'lastBackupDate': lastBackupDate?.millisecondsSinceEpoch,
       'isAppLockEnabled': isAppLockEnabled,
+      'enabledTaskTypes': enabledTaskTypes,
     };
   }
 
@@ -131,6 +151,22 @@ class AppSettings {
           ? DateTime.fromMillisecondsSinceEpoch(map['lastBackupDate'])
           : null,
       isAppLockEnabled: map['isAppLockEnabled'] ?? false,
+      enabledTaskTypes: List<String>.from(map['enabledTaskTypes'] ?? const [
+        'assignment',
+        'homework',
+        'quiz',
+        'labFile',
+        'practical',
+        'viva',
+        'assessment',
+        'midSem',
+        'endSem',
+        'project',
+        'presentation',
+        'seminar',
+        'internship',
+        'other',
+      ]),
     );
   }
 }

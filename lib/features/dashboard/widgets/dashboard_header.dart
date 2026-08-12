@@ -58,10 +58,10 @@ class _DashboardHeaderState extends State<DashboardHeader> {
           // Top Row: Avatar, Greeting, Notification
           Row(
             children: [
-              const CircleAvatar(
+              CircleAvatar(
                 radius: 22,
-                backgroundColor: Color(0xFF4334A1),
-                child: Icon(Icons.person, color: Colors.white),
+                backgroundColor: Theme.of(context).colorScheme.primary,
+                child: Icon(Icons.person, color: Theme.of(context).colorScheme.onPrimary),
               ),
               const SizedBox(width: 12),
               Expanded(
@@ -72,7 +72,7 @@ class _DashboardHeaderState extends State<DashboardHeader> {
                       'Hey there,',
                       style: TextStyle(
                         fontSize: 14,
-                        color: Colors.white.withValues(alpha: 0.7),
+                        color: Theme.of(context).colorScheme.onSurface.withValues(alpha: 0.6),
                         fontWeight: FontWeight.w400,
                       ),
                     ),
@@ -82,10 +82,10 @@ class _DashboardHeaderState extends State<DashboardHeader> {
                           child: Text(
                             firstName,
                             overflow: TextOverflow.ellipsis,
-                            style: const TextStyle(
+                            style: TextStyle(
                               fontSize: 20,
                               fontWeight: FontWeight.bold,
-                              color: Colors.white,
+                              color: Theme.of(context).colorScheme.onSurface,
                             ),
                           ),
                         ),
@@ -99,7 +99,7 @@ class _DashboardHeaderState extends State<DashboardHeader> {
               Stack(
                 children: [
                   IconButton(
-                    icon: const Icon(Icons.notifications_none_rounded, color: Colors.white, size: 28),
+                    icon: Icon(Icons.notifications_none_rounded, color: Theme.of(context).colorScheme.onSurface, size: 28),
                     onPressed: () {
                       context.push(AppRoutes.notifications);
                     },
@@ -110,8 +110,8 @@ class _DashboardHeaderState extends State<DashboardHeader> {
                     child: Container(
                       width: 8,
                       height: 8,
-                      decoration: const BoxDecoration(
-                        color: Color(0xFF7E73FF),
+                      decoration: BoxDecoration(
+                        color: Theme.of(context).colorScheme.primary,
                         shape: BoxShape.circle,
                       ),
                     ),
@@ -139,20 +139,20 @@ class _DashboardHeaderState extends State<DashboardHeader> {
                         children: [
                           Text(
                             timeStr,
-                            style: const TextStyle(
+                            style: TextStyle(
                               fontSize: 48,
                               fontWeight: FontWeight.bold,
-                              color: Colors.white,
+                              color: Theme.of(context).colorScheme.onSurface,
                               letterSpacing: -1,
                             ),
                           ),
                           const SizedBox(width: 8),
                           Text(
                             amPmStr,
-                            style: const TextStyle(
+                            style: TextStyle(
                               fontSize: 20,
                               fontWeight: FontWeight.w600,
-                              color: Color(0xFF7E73FF),
+                              color: Theme.of(context).colorScheme.primary,
                             ),
                           ),
                         ],
@@ -165,7 +165,7 @@ class _DashboardHeaderState extends State<DashboardHeader> {
                       overflow: TextOverflow.ellipsis,
                       style: TextStyle(
                         fontSize: 14,
-                        color: Colors.white.withValues(alpha: 0.6),
+                        color: Theme.of(context).colorScheme.onSurface.withValues(alpha: 0.6),
                         fontWeight: FontWeight.w500,
                       ),
                     ),

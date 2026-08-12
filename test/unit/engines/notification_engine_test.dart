@@ -178,5 +178,29 @@ void main() {
       expect(result1.map((n) => n.id).toList(),
           equals(result2.map((n) => n.id).toList()));
     });
+
+    test('Does not generate lecture reminder if subject classNotificationsEnabled is false', () {
+      const settings = AppSettings(
+        notificationsEnabled: true,
+        lectureReminderMinutes: 10,
+        dailyReminderEnabled: false,
+      );
+
+      final subjectDisabled = Subject()
+        ..id = 1
+        ..name = 'Math'
+        ..classNotificationsEnabled = false;
+
+      final result = NotificationEngine.generateNotifications(
+        subjects: [subjectDisabled],
+        schedules: [upcomingSchedule],
+        attendances: [],
+        settings: settings,
+        now: now,
+        semester: dummySemester,
+      );
+
+      expect(result, isEmpty);
+    });
   });
 }

@@ -50,6 +50,7 @@ class DashboardState {
   final SmartSuggestion? overallSuggestion;
   final List<AcademicTask> upcomingTasks;
   final QuickStats quickStats;
+  final String? patternInsight;
 
   const DashboardState({
     this.isLoading = true,
@@ -62,5 +63,6 @@ class DashboardState {
     this.overallSuggestion,
     this.upcomingTasks = const [],
     this.quickStats = const QuickStats(),
+    this.patternInsight,
   });
 }

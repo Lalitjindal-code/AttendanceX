@@ -102,66 +102,42 @@ void main() {
     });
 
     group('Medical Rules', () {
-      test('medicalCountsAsPresent = true -> counts as Present', () {
-        final settings = baseSettings.copyWith(medicalCountsAsPresent: true);
+      test('Medical Leave always counts as Present regardless of settings', () {
+        final settingsWithMedicalAsPresent = baseSettings.copyWith(medicalCountsAsPresent: true);
+        final settingsWithMedicalExcluded = baseSettings.copyWith(medicalCountsAsPresent: false);
         final records = [createAttendance(AttendanceStatus.medical)];
 
-        final summary =
-            AttendanceEngine.calculateSubjectSummary(1, records, settings, dummySemester);
-        expect(summary.effectiveTotal, 1);
-        expect(summary.effectivePresent, 1);
-        expect(summary.attendancePercentage, 100.0);
-        expect(summary.totalMedicalRecords, 1);
-      });
+        // Test with medicalCountsAsPresent = true
+        final summary1 =
+            AttendanceEngine.calculateSubjectSummary(1, records, settingsWithMedicalAsPresent, dummySemester);
+        expect(summary1.effectiveTotal, 1);
+        expect(summary1.effectivePresent, 1);
+        expect(summary1.attendancePercentage, 100.0);
+        expect(summary1.totalMedicalRecords, 1);
 
-      test('medicalCountsAsPresent = false -> completely excluded', () {
-        final settings = baseSettings.copyWith(medicalCountsAsPresent: false);
-        final records = [createAttendance(AttendanceStatus.medical)];
-
-        final summary =
-            AttendanceEngine.calculateSubjectSummary(1, records, settings, dummySemester);
-        expect(summary.effectiveTotal, 0);
-        expect(summary.effectivePresent, 0);
-        expect(summary.attendancePercentage, 0.0);
-        expect(summary.totalMedicalRecords, 1);
+        // Test with medicalCountsAsPresent = false
+        final summary2 =
+            AttendanceEngine.calculateSubjectSummary(1, records, settingsWithMedicalExcluded, dummySemester);
+        expect(summary2.effectiveTotal, 1);
+        expect(summary2.effectivePresent, 1);
+        expect(summary2.attendancePercentage, 100.0);
+        expect(summary2.totalMedicalRecords, 1);
       });
     });
 
     group('GT Rules', () {
-      test('GtMode.exclude -> completely excluded', () {
-        final settings = baseSettings.copyWith(gtMode: GtMode.exclude);
+      test('GT Leave is always excluded from calculations regardless of settings', () {
         final records = [createAttendance(AttendanceStatus.gt)];
 
-        final summary =
-            AttendanceEngine.calculateSubjectSummary(1, records, settings, dummySemester);
-        expect(summary.effectiveTotal, 0);
-        expect(summary.effectivePresent, 0);
-        expect(summary.attendancePercentage, 0.0);
-        expect(summary.totalGTRecords, 1);
-      });
-
-      test('GtMode.countAsPresent -> counts as Present', () {
-        final settings = baseSettings.copyWith(gtMode: GtMode.countAsPresent);
-        final records = [createAttendance(AttendanceStatus.gt)];
-
-        final summary =
-            AttendanceEngine.calculateSubjectSummary(1, records, settings, dummySemester);
-        expect(summary.effectiveTotal, 1);
-        expect(summary.effectivePresent, 1);
-        expect(summary.attendancePercentage, 100.0);
-        expect(summary.totalGTRecords, 1);
-      });
-
-      test('GtMode.countAsAbsent -> counts as Absent', () {
-        final settings = baseSettings.copyWith(gtMode: GtMode.countAsAbsent);
-        final records = [createAttendance(AttendanceStatus.gt)];
-
-        final summary =
-            AttendanceEngine.calculateSubjectSummary(1, records, settings, dummySemester);
-        expect(summary.effectiveTotal, 1);
-        expect(summary.effectivePresent, 0);
-        expect(summary.attendancePercentage, 0.0);
-        expect(summary.totalGTRecords, 1);
+        for (final mode in GtMode.values) {
+          final settings = baseSettings.copyWith(gtMode: mode);
+          final summary =
+              AttendanceEngine.calculateSubjectSummary(1, records, settings, dummySemester);
+          expect(summary.effectiveTotal, 0, reason: 'Failed for mode: $mode');
+          expect(summary.effectivePresent, 0, reason: 'Failed for mode: $mode');
+          expect(summary.attendancePercentage, 0.0, reason: 'Failed for mode: $mode');
+          expect(summary.totalGTRecords, 1, reason: 'Failed for mode: $mode');
+        }
       });
     });
 

@@ -79,12 +79,11 @@ class _FeedbackScreenState extends ConsumerState<FeedbackScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: const Color(0xFF0B0B13),
       appBar: AppBar(
         backgroundColor: Colors.transparent,
         elevation: 0,
-        title: const Text('Send Feedback', style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold)),
-        iconTheme: const IconThemeData(color: Colors.white),
+        title: Text('Send Feedback', style: TextStyle(color: Theme.of(context).colorScheme.onSurface, fontWeight: FontWeight.bold)),
+        iconTheme: IconThemeData(color: Theme.of(context).colorScheme.onSurface),
       ),
       body: SafeArea(
         child: SingleChildScrollView(
@@ -94,10 +93,10 @@ class _FeedbackScreenState extends ConsumerState<FeedbackScreen> {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.stretch,
               children: [
-                const Text(
+                Text(
                   'We would love to hear from you!',
                   style: TextStyle(
-                    color: Colors.white,
+                    color: Theme.of(context).colorScheme.onSurface,
                     fontSize: 24,
                     fontWeight: FontWeight.bold,
                   ),
@@ -106,7 +105,7 @@ class _FeedbackScreenState extends ConsumerState<FeedbackScreen> {
                 Text(
                   'Let us know if you found a bug or have a feature request.',
                   style: TextStyle(
-                    color: Colors.white.withValues(alpha: 0.6),
+                    color: Theme.of(context).colorScheme.onSurface.withValues(alpha: 0.6),
                     fontSize: 16,
                   ),
                 ),
@@ -115,12 +114,12 @@ class _FeedbackScreenState extends ConsumerState<FeedbackScreen> {
                 // Name Field
                 TextFormField(
                   controller: _nameController,
-                  style: const TextStyle(color: Colors.white),
+                  style: TextStyle(color: Theme.of(context).colorScheme.onSurface),
                   decoration: InputDecoration(
                     labelText: 'Your Name (Optional)',
-                    labelStyle: TextStyle(color: Colors.white.withValues(alpha: 0.6)),
+                    labelStyle: TextStyle(color: Theme.of(context).colorScheme.onSurface.withValues(alpha: 0.6)),
                     filled: true,
-                    fillColor: const Color(0xFF16162C),
+                    fillColor: Theme.of(context).colorScheme.surfaceContainer,
                     border: OutlineInputBorder(
                       borderRadius: BorderRadius.circular(16),
                       borderSide: BorderSide.none,
@@ -132,13 +131,13 @@ class _FeedbackScreenState extends ConsumerState<FeedbackScreen> {
                 // Email Field
                 TextFormField(
                   controller: _emailController,
-                  style: const TextStyle(color: Colors.white),
+                  style: TextStyle(color: Theme.of(context).colorScheme.onSurface),
                   keyboardType: TextInputType.emailAddress,
                   decoration: InputDecoration(
                     labelText: 'Your Email (Optional)',
-                    labelStyle: TextStyle(color: Colors.white.withValues(alpha: 0.6)),
+                    labelStyle: TextStyle(color: Theme.of(context).colorScheme.onSurface.withValues(alpha: 0.6)),
                     filled: true,
-                    fillColor: const Color(0xFF16162C),
+                    fillColor: Theme.of(context).colorScheme.surfaceContainer,
                     border: OutlineInputBorder(
                       borderRadius: BorderRadius.circular(16),
                       borderSide: BorderSide.none,
@@ -150,7 +149,7 @@ class _FeedbackScreenState extends ConsumerState<FeedbackScreen> {
                 // Message Field
                 TextFormField(
                   controller: _messageController,
-                  style: const TextStyle(color: Colors.white),
+                  style: TextStyle(color: Theme.of(context).colorScheme.onSurface),
                   maxLines: 6,
                   validator: (value) {
                     if (value == null || value.trim().isEmpty) {
@@ -160,10 +159,10 @@ class _FeedbackScreenState extends ConsumerState<FeedbackScreen> {
                   },
                   decoration: InputDecoration(
                     labelText: 'Your Message *',
-                    labelStyle: TextStyle(color: Colors.white.withValues(alpha: 0.6)),
+                    labelStyle: TextStyle(color: Theme.of(context).colorScheme.onSurface.withValues(alpha: 0.6)),
                     alignLabelWithHint: true,
                     filled: true,
-                    fillColor: const Color(0xFF16162C),
+                    fillColor: Theme.of(context).colorScheme.surfaceContainer,
                     border: OutlineInputBorder(
                       borderRadius: BorderRadius.circular(16),
                       borderSide: BorderSide.none,
@@ -176,17 +175,18 @@ class _FeedbackScreenState extends ConsumerState<FeedbackScreen> {
                 FilledButton(
                   onPressed: _isSubmitting ? null : _submitFeedback,
                   style: FilledButton.styleFrom(
-                    backgroundColor: const Color(0xFF7E73FF),
+                    backgroundColor: Theme.of(context).colorScheme.primary,
+                    foregroundColor: Theme.of(context).colorScheme.onPrimary,
                     padding: const EdgeInsets.symmetric(vertical: 16),
                     shape: RoundedRectangleBorder(
                       borderRadius: BorderRadius.circular(16),
                     ),
                   ),
                   child: _isSubmitting 
-                      ? const SizedBox(
+                      ? SizedBox(
                           height: 20, 
                           width: 20, 
-                          child: CircularProgressIndicator(strokeWidth: 2, color: Colors.white)
+                          child: CircularProgressIndicator(strokeWidth: 2, color: Theme.of(context).colorScheme.onPrimary)
                         )
                       : const Text('Send Feedback', style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold)),
                 ),

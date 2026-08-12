@@ -72,25 +72,24 @@ class _ScheduleScreenState extends ConsumerState<ScheduleScreen> {
     final subjectsAsync = ref.watch(subjectsProvider);
 
     return Scaffold(
-      backgroundColor: const Color(0xFF0B0B13),
       body: RefreshIndicator(
-        color: const Color(0xFF7E73FF),
-        backgroundColor: const Color(0xFF16162C),
+        color: Theme.of(context).colorScheme.primary,
+        backgroundColor: Theme.of(context).colorScheme.surfaceContainer,
         onRefresh: _onRefresh,
         child: CustomScrollView(
           controller: _scrollController,
           slivers: [
-            SliverAppBar.large(
-              title: const Text(AppStrings.scheduleTitle, style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold)),
+            SliverAppBar(
+              title: Text(AppStrings.scheduleTitle, style: TextStyle(color: Theme.of(context).colorScheme.onSurface, fontWeight: FontWeight.bold)),
               floating: true,
               pinned: true,
-              backgroundColor: const Color(0xFF0B0B13),
+              backgroundColor: Theme.of(context).colorScheme.surface,
               surfaceTintColor: Colors.transparent,
-              iconTheme: const IconThemeData(color: Colors.white),
+              iconTheme: IconThemeData(color: Theme.of(context).colorScheme.onSurface),
               actions: [
                 if (subjectsAsync.valueOrNull?.isNotEmpty == true)
                   IconButton(
-                    icon: const Icon(Icons.add, color: Colors.white),
+                    icon: Icon(Icons.add, color: Theme.of(context).colorScheme.onSurface),
                     tooltip: 'Add Class',
                     onPressed: () => showScheduleFormSheet(context,
                         dayOfWeek: DayOfWeek.weekdays[_currentDayIndex].value),
@@ -108,10 +107,10 @@ class _ScheduleScreenState extends ConsumerState<ScheduleScreen> {
                         child: Container(
                           padding: const EdgeInsets.all(32),
                           decoration: BoxDecoration(
-                            color: const Color(0xFF16162C),
+                            color: Theme.of(context).colorScheme.surfaceContainer,
                             borderRadius: BorderRadius.circular(24),
                             border: Border.all(
-                              color: Colors.white.withValues(alpha: 0.05),
+                              color: Theme.of(context).colorScheme.outlineVariant,
                             ),
                           ),
                           child: Column(
@@ -134,7 +133,7 @@ class _ScheduleScreenState extends ConsumerState<ScheduleScreen> {
                                 'No subjects available',
                                 textAlign: TextAlign.center,
                                 style: Theme.of(context).textTheme.titleLarge?.copyWith(
-                                      color: Colors.white,
+                                      color: Theme.of(context).colorScheme.onSurface,
                                       fontWeight: FontWeight.bold,
                                     ),
                               ),
@@ -143,15 +142,15 @@ class _ScheduleScreenState extends ConsumerState<ScheduleScreen> {
                                 'Please create a subject first to build your schedule.',
                                 textAlign: TextAlign.center,
                                 style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                                      color: Colors.white.withValues(alpha: 0.6),
+                                      color: Theme.of(context).colorScheme.onSurface.withValues(alpha: 0.6),
                                     ),
                               ),
                               const SizedBox(height: AppSpacing.xl),
                               FilledButton.icon(
                                 onPressed: () => context.go(AppRoutes.subjects),
                                 style: FilledButton.styleFrom(
-                                  backgroundColor: const Color(0xFF7E73FF),
-                                  foregroundColor: Colors.white,
+                                  backgroundColor: Theme.of(context).colorScheme.primary,
+                                  foregroundColor: Theme.of(context).colorScheme.onPrimary,
                                   padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 12),
                                   shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
                                 ),
@@ -182,7 +181,7 @@ class _ScheduleScreenState extends ConsumerState<ScheduleScreen> {
                         dayOfWeek: DayOfWeek.weekdays[_currentDayIndex].value),
                     const SizedBox(height: 16),
                     const BannerAdWidget(),
-                    const SizedBox(height: 80),
+                    const SizedBox(height: 24),
                   ]),
                 );
               },
@@ -196,36 +195,6 @@ class _ScheduleScreenState extends ConsumerState<ScheduleScreen> {
           ],
         ),
       ),
-      floatingActionButton: subjectsAsync.valueOrNull?.isNotEmpty == true
-          ? Container(
-              decoration: BoxDecoration(
-                gradient: const LinearGradient(
-                  colors: [Color(0xFF8E2DE2), Color(0xFF4A00E0)],
-                  begin: Alignment.topLeft,
-                  end: Alignment.bottomRight,
-                ),
-                borderRadius: BorderRadius.circular(16),
-                boxShadow: [
-                  BoxShadow(
-                    color: const Color(0xFF8E2DE2).withValues(alpha: 0.4),
-                    blurRadius: 12,
-                    offset: const Offset(0, 4),
-                  ),
-                ],
-              ),
-              child: FloatingActionButton.extended(
-                heroTag: 'schedule_fab',
-                backgroundColor: Colors.transparent,
-                elevation: 0,
-                highlightElevation: 0,
-                onPressed: () => showScheduleFormSheet(context,
-                    dayOfWeek: DayOfWeek.weekdays[_currentDayIndex].value),
-                icon: const Icon(Icons.add, color: Colors.white),
-                label: const Text('Add Class', style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold)),
-                isExtended: _isFabExtended,
-              ),
-            )
-          : null,
     );
   }
 }

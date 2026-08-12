@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:firebase_auth/firebase_auth.dart';
 import '../../auth/providers/auth_provider.dart';
 
 class ProfileScreen extends ConsumerWidget {
@@ -8,7 +7,7 @@ class ProfileScreen extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final user = FirebaseAuth.instance.currentUser;
+    final user = ref.watch(authStateProvider).valueOrNull;
     final theme = Theme.of(context);
 
     if (user == null) {
@@ -81,7 +80,7 @@ class ProfileScreen extends ConsumerWidget {
                     title: const Text('Status'),
                     subtitle: const Text('Active & Verified'),
                     trailing:
-                        Icon(Icons.check_circle, color: Colors.green[400]),
+                        Icon(Icons.check_circle, color: Theme.of(context).colorScheme.primary),
                   ),
                 ],
               ),
@@ -93,12 +92,12 @@ class ProfileScreen extends ConsumerWidget {
                 onPressed: () async {
                   await ref.read(authProvider).signOut();
                 },
-                icon: const Icon(Icons.logout, color: Colors.red),
+                icon: Icon(Icons.logout, color: Theme.of(context).colorScheme.error),
                 label:
-                    const Text('Sign Out', style: TextStyle(color: Colors.red)),
+                    Text('Sign Out', style: TextStyle(color: Theme.of(context).colorScheme.error)),
                 style: OutlinedButton.styleFrom(
                   padding: const EdgeInsets.symmetric(vertical: 16),
-                  side: const BorderSide(color: Colors.red),
+                  side: BorderSide(color: Theme.of(context).colorScheme.error),
                   shape: RoundedRectangleBorder(
                       borderRadius: BorderRadius.circular(12)),
                 ),

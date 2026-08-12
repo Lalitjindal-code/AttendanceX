@@ -135,13 +135,13 @@ void main() {
       // Open Subject Dropdown
       await tester.tap(find.byKey(const Key('subject_dropdown')));
       await tester.pumpAndSettle();
-      await tester.tap(find.byType(DropdownMenuItem<Subject>).last);
+      await tester.tap(find.byType(DropdownMenuItem<Subject>).last, warnIfMissed: false);
       await tester.pumpAndSettle();
 
       // Open Status Dropdown
       await tester.tap(find.byKey(const Key('status_dropdown')));
       await tester.pumpAndSettle();
-      await tester.tap(find.byType(DropdownMenuItem<AttendanceStatus>).last);
+      await tester.tap(find.byType(DropdownMenuItem<AttendanceStatus>).last, warnIfMissed: false);
       await tester.pumpAndSettle();
 
       // Tap Save

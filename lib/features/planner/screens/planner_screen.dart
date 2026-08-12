@@ -13,6 +13,7 @@ import '../widgets/task_filter_chips.dart';
 import 'task_form_screen.dart';
 
 import '../../../core/utils/haptics.dart';
+import '../../../core/widgets/banner_ad_widget.dart';
 
 class PlannerScreen extends ConsumerStatefulWidget {
   const PlannerScreen({super.key});
@@ -66,25 +67,24 @@ class _PlannerScreenState extends ConsumerState<PlannerScreen> {
     final subjectsAsync = ref.watch(subjectsProvider);
 
     return Scaffold(
-      backgroundColor: const Color(0xFF0B0B13),
       body: RefreshIndicator(
-        color: const Color(0xFF7E73FF),
-        backgroundColor: const Color(0xFF16162C),
+        color: Theme.of(context).colorScheme.primary,
+        backgroundColor: Theme.of(context).colorScheme.surfaceContainer,
         onRefresh: _onRefresh,
         child: CustomScrollView(
           controller: _scrollController,
           cacheExtent: 500,
           slivers: [
-            SliverAppBar.large(
-              title: const Text('Planner', style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold)),
+            SliverAppBar(
+              title: Text('Planner', style: TextStyle(color: Theme.of(context).colorScheme.onSurface, fontWeight: FontWeight.bold)),
               floating: true,
               pinned: true,
-              backgroundColor: const Color(0xFF0B0B13),
+              backgroundColor: Theme.of(context).colorScheme.surface,
               surfaceTintColor: Colors.transparent,
-              iconTheme: const IconThemeData(color: Colors.white),
+              iconTheme: IconThemeData(color: Theme.of(context).colorScheme.onSurface),
               actions: [
                 IconButton(
-                  icon: const Icon(Icons.add, color: Colors.white),
+                  icon: Icon(Icons.add, color: Theme.of(context).colorScheme.onSurface),
                   tooltip: 'Add Task',
                   onPressed: () => showTaskFormSheet(context),
                 ),
@@ -102,18 +102,17 @@ class _PlannerScreenState extends ConsumerState<PlannerScreen> {
                 final subjects = subjectsAsync.valueOrNull ?? [];
 
                 if (tasks.isEmpty) {
-                  return SliverFillRemaining(
-                    hasScrollBody: false,
-                    child: Center(
-                      child: Padding(
+                  return SliverList(
+                    delegate: SliverChildListDelegate([
+                      Padding(
                         padding: const EdgeInsets.all(AppSpacing.xl),
                         child: Container(
                           padding: const EdgeInsets.all(32),
                           decoration: BoxDecoration(
-                            color: const Color(0xFF16162C),
+                            color: Theme.of(context).colorScheme.surfaceContainer,
                             borderRadius: BorderRadius.circular(24),
                             border: Border.all(
-                              color: Colors.white.withValues(alpha: 0.05),
+                              color: Theme.of(context).colorScheme.outlineVariant,
                             ),
                           ),
                           child: Column(
@@ -138,7 +137,7 @@ class _PlannerScreenState extends ConsumerState<PlannerScreen> {
                                     : 'No tasks found.',
                                 textAlign: TextAlign.center,
                                 style: Theme.of(context).textTheme.titleLarge?.copyWith(
-                                      color: Colors.white,
+                                      color: Theme.of(context).colorScheme.onSurface,
                                       fontWeight: FontWeight.bold,
                                     ),
                               ),
@@ -149,7 +148,7 @@ class _PlannerScreenState extends ConsumerState<PlannerScreen> {
                                     : 'No tasks match your filters.',
                                 textAlign: TextAlign.center,
                                 style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                                      color: Colors.white.withValues(alpha: 0.6),
+                                      color: Theme.of(context).colorScheme.onSurface.withValues(alpha: 0.6),
                                     ),
                               ),
                               const SizedBox(height: AppSpacing.xl),
@@ -157,8 +156,8 @@ class _PlannerScreenState extends ConsumerState<PlannerScreen> {
                                 FilledButton.icon(
                                   onPressed: () => showTaskFormSheet(context),
                                   style: FilledButton.styleFrom(
-                                    backgroundColor: const Color(0xFF7E73FF),
-                                    foregroundColor: Colors.white,
+                                    backgroundColor: Theme.of(context).colorScheme.primary,
+                                    foregroundColor: Theme.of(context).colorScheme.onPrimary,
                                     padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 12),
                                     shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
                                   ),
@@ -169,7 +168,10 @@ class _PlannerScreenState extends ConsumerState<PlannerScreen> {
                           ),
                         ),
                       ),
-                    ),
+                      const SizedBox(height: 16),
+                      const BannerAdWidget(),
+                      const SizedBox(height: 24),
+                    ]),
                   );
                 }
 
@@ -228,8 +230,9 @@ class _PlannerScreenState extends ConsumerState<PlannerScreen> {
                         ),
                       ),
 
+                    const BannerAdWidget(),
                     // Bottom padding
-                    const SizedBox(height: 80),
+                    const SizedBox(height: 24),
                   ]),
                 );
               },
@@ -241,33 +244,6 @@ class _PlannerScreenState extends ConsumerState<PlannerScreen> {
               ),
             ),
           ],
-        ),
-      ),
-      floatingActionButton: Container(
-        decoration: BoxDecoration(
-          gradient: const LinearGradient(
-            colors: [Color(0xFF8E2DE2), Color(0xFF4A00E0)],
-            begin: Alignment.topLeft,
-            end: Alignment.bottomRight,
-          ),
-          borderRadius: BorderRadius.circular(16),
-          boxShadow: [
-            BoxShadow(
-              color: const Color(0xFF8E2DE2).withValues(alpha: 0.4),
-              blurRadius: 12,
-              offset: const Offset(0, 4),
-            ),
-          ],
-        ),
-        child: FloatingActionButton.extended(
-          heroTag: 'planner_fab',
-          backgroundColor: Colors.transparent,
-          elevation: 0,
-          highlightElevation: 0,
-          onPressed: () => showTaskFormSheet(context),
-          icon: const Icon(Icons.add, color: Colors.white),
-          label: const Text('Add Task', style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold)),
-          isExtended: _isFabExtended,
         ),
       ),
     );

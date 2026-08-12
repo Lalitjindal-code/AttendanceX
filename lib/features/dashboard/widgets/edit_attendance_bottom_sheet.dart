@@ -79,10 +79,10 @@ class EditAttendanceBottomSheet extends StatelessWidget {
     return ActionChip(
       label: Text(status.displayName),
       avatar:
-          Icon(status.icon, size: 18, color: isSelected ? Colors.white : color),
+          Icon(status.icon, size: 18, color: isSelected ? Theme.of(context).colorScheme.onPrimary : color),
       backgroundColor: isSelected ? color : color.withValues(alpha: 0.1),
       labelStyle: TextStyle(
-        color: isSelected ? Colors.white : color,
+        color: isSelected ? Theme.of(context).colorScheme.onPrimary : color,
         fontWeight: FontWeight.bold,
       ),
       side: BorderSide(

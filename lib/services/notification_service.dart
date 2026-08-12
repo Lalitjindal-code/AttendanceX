@@ -225,4 +225,16 @@ class NotificationService {
       payload: 'test_payload',
     );
   }
+
+  /// Cancels a specific pending notification by ID.
+  Future<void> cancelNotification(int id) async {
+    if (!_isInitialized) await init();
+    await _flutterLocalNotificationsPlugin.cancel(id);
+  }
+
+  /// Cancels all pending and active notifications.
+  Future<void> cancelAllNotifications() async {
+    if (!_isInitialized) await init();
+    await _flutterLocalNotificationsPlugin.cancelAll();
+  }
 }

@@ -48,17 +48,32 @@ class QuickStatsRow extends StatelessWidget {
       required IconData icon}) {
     
     final progress = total > 0 ? (attended / total) : 0.0;
+    final primaryColor = Theme.of(context).colorScheme.primary;
 
     return Expanded(
       child: Container(
         height: 140,
         decoration: BoxDecoration(
-          color: const Color(0xFF16162C),
+          gradient: LinearGradient(
+            begin: Alignment.topLeft,
+            end: Alignment.bottomRight,
+            colors: [
+              Theme.of(context).colorScheme.surfaceContainerHigh,
+              Theme.of(context).colorScheme.surfaceContainer,
+            ],
+          ),
           borderRadius: BorderRadius.circular(20),
           border: Border.all(
-            color: Colors.white.withValues(alpha: 0.05),
+            color: primaryColor.withValues(alpha: 0.15),
             width: 1,
           ),
+          boxShadow: [
+            BoxShadow(
+              color: Colors.black.withValues(alpha: 0.15),
+              blurRadius: 8,
+              offset: const Offset(0, 3),
+            ),
+          ],
         ),
         child: Padding(
           padding: const EdgeInsets.all(16.0),
@@ -68,13 +83,13 @@ class QuickStatsRow extends StatelessWidget {
               Container(
                 padding: const EdgeInsets.all(8),
                 decoration: BoxDecoration(
-                  color: const Color(0xFF28284A),
+                  color: primaryColor.withValues(alpha: 0.1),
                   borderRadius: BorderRadius.circular(10),
                 ),
                 child: Icon(
                   icon,
                   size: 20,
-                  color: const Color(0xFF7E73FF),
+                  color: primaryColor,
                 ),
               ),
               const Spacer(),
@@ -83,10 +98,10 @@ class QuickStatsRow extends StatelessWidget {
                 alignment: Alignment.centerLeft,
                 child: Text(
                   '$attended / $total',
-                  style: const TextStyle(
+                  style: TextStyle(
                     fontSize: 20,
                     fontWeight: FontWeight.bold,
-                    color: Colors.white,
+                    color: Theme.of(context).colorScheme.onSurface,
                     letterSpacing: 1,
                   ),
                 ),
@@ -96,7 +111,7 @@ class QuickStatsRow extends StatelessWidget {
                 title,
                 style: TextStyle(
                   fontSize: 12,
-                  color: Colors.white.withValues(alpha: 0.5),
+                  color: Theme.of(context).colorScheme.onSurface.withValues(alpha: 0.5),
                 ),
               ),
               const SizedBox(height: 12),
@@ -105,8 +120,8 @@ class QuickStatsRow extends StatelessWidget {
                 child: LinearProgressIndicator(
                   value: progress,
                   minHeight: 4,
-                  backgroundColor: Colors.white.withValues(alpha: 0.1),
-                  valueColor: const AlwaysStoppedAnimation<Color>(Color(0xFF7E73FF)),
+                  backgroundColor: Theme.of(context).colorScheme.onSurface.withValues(alpha: 0.08),
+                  valueColor: AlwaysStoppedAnimation<Color>(primaryColor),
                 ),
               ),
             ],

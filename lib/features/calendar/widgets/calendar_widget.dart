@@ -61,18 +61,11 @@ class _CalendarWidgetState extends ConsumerState<CalendarWidget> {
     return Container(
       margin: const EdgeInsets.all(AppSpacing.md),
       decoration: BoxDecoration(
-        color: const Color(0xFF16162C),
+        color: Theme.of(context).colorScheme.surfaceContainerHigh,
         borderRadius: BorderRadius.circular(24),
         border: Border.all(
-          color: Colors.white.withValues(alpha: 0.05),
+          color: Theme.of(context).colorScheme.outlineVariant,
         ),
-        boxShadow: [
-          BoxShadow(
-            color: Colors.black.withValues(alpha: 0.2),
-            blurRadius: 10,
-            offset: const Offset(0, 4),
-          ),
-        ],
       ),
       clipBehavior: Clip.antiAlias,
       child: TableCalendar<Object>(
@@ -132,21 +125,21 @@ class _CalendarWidgetState extends ConsumerState<CalendarWidget> {
         calendarStyle: CalendarStyle(
           outsideDaysVisible: true,
           outsideTextStyle: TextStyle(
-              color: Colors.white.withValues(alpha: 0.3)),
+              color: Theme.of(context).colorScheme.onSurface.withValues(alpha: 0.3)),
           defaultTextStyle:
-              const TextStyle(color: Colors.white),
+              TextStyle(color: Theme.of(context).colorScheme.onSurface),
           weekendTextStyle:
-              TextStyle(color: Colors.white.withValues(alpha: 0.6)),
-          selectedDecoration: const BoxDecoration(
-            color: Color(0xFF7E73FF),
+              TextStyle(color: Theme.of(context).colorScheme.onSurface.withValues(alpha: 0.6)),
+          selectedDecoration: BoxDecoration(
+            color: Theme.of(context).colorScheme.primary,
             shape: BoxShape.circle,
           ),
           todayDecoration: BoxDecoration(
-            color: const Color(0xFF7E73FF).withValues(alpha: 0.3),
+            color: Theme.of(context).colorScheme.primary.withValues(alpha: 0.3),
             shape: BoxShape.circle,
           ),
-          todayTextStyle: const TextStyle(
-            color: Colors.white,
+          todayTextStyle: TextStyle(
+            color: Theme.of(context).colorScheme.onSurface,
             fontWeight: FontWeight.bold,
           ),
           markersMaxCount: 4,
@@ -157,18 +150,20 @@ class _CalendarWidgetState extends ConsumerState<CalendarWidget> {
           titleCentered: false,
           formatButtonShowsNext: false,
           formatButtonDecoration: BoxDecoration(
-            color: const Color(0xFF7E73FF).withValues(alpha: 0.2),
+            color: Theme.of(context).colorScheme.primary.withValues(alpha: 0.2),
             borderRadius: BorderRadius.circular(16),
           ),
-          formatButtonTextStyle: const TextStyle(
-            color: Color(0xFF7E73FF),
+          formatButtonTextStyle: TextStyle(
+            color: Theme.of(context).colorScheme.primary,
             fontWeight: FontWeight.bold,
             fontSize: 13,
           ),
           titleTextStyle: Theme.of(context).textTheme.titleMedium!.copyWith(
-                color: Colors.white,
+                color: Theme.of(context).colorScheme.onSurface,
                 fontWeight: FontWeight.bold,
               ),
+          leftChevronIcon: Icon(Icons.chevron_left, color: Theme.of(context).colorScheme.onSurface),
+          rightChevronIcon: Icon(Icons.chevron_right, color: Theme.of(context).colorScheme.onSurface),
         ),
         calendarBuilders: CalendarBuilders(
           markerBuilder: (context, date, events) {
@@ -229,18 +224,20 @@ void _showAddManualAttendanceDialog(
       return StatefulBuilder(
         builder: (context, setState) {
           return AlertDialog(
-            title: const Text('Add Manual Attendance'),
+            backgroundColor: Theme.of(context).colorScheme.surfaceContainerHigh,
+            title: Text('Add Manual Attendance', style: TextStyle(color: Theme.of(context).colorScheme.onSurface, fontWeight: FontWeight.bold)),
             content: Column(
               mainAxisSize: MainAxisSize.min,
               children: [
                 DropdownButtonFormField<Subject>(
                   key: const Key('subject_dropdown'),
                   decoration: const InputDecoration(labelText: 'Subject'),
+                  dropdownColor: Theme.of(context).colorScheme.surfaceContainerHigh,
                   initialValue: selectedSubject,
                   items: state.allSubjects.map((s) {
                     return DropdownMenuItem(
                       value: s,
-                      child: Text(s.name),
+                      child: Text(s.name, style: TextStyle(color: Theme.of(context).colorScheme.onSurface)),
                     );
                   }).toList(),
                   onChanged: (val) => setState(() => selectedSubject = val),
@@ -249,11 +246,12 @@ void _showAddManualAttendanceDialog(
                 DropdownButtonFormField<AttendanceStatus>(
                   key: const Key('status_dropdown'),
                   decoration: const InputDecoration(labelText: 'Status'),
+                  dropdownColor: Theme.of(context).colorScheme.surfaceContainerHigh,
                   initialValue: selectedStatus,
                   items: AttendanceStatus.values.map((status) {
                     return DropdownMenuItem(
                       value: status,
-                      child: Text(status.name.toUpperCase()),
+                      child: Text(status.name.toUpperCase(), style: TextStyle(color: Theme.of(context).colorScheme.onSurface)),
                     );
                   }).toList(),
                   onChanged: (val) => setState(() => selectedStatus = val),
@@ -263,9 +261,13 @@ void _showAddManualAttendanceDialog(
             actions: [
               TextButton(
                 onPressed: () => Navigator.pop(context),
-                child: const Text('Cancel'),
+                child: Text('Cancel', style: TextStyle(color: Theme.of(context).colorScheme.onSurface.withValues(alpha: 0.7))),
               ),
               FilledButton(
+                style: FilledButton.styleFrom(
+                  backgroundColor: Theme.of(context).colorScheme.primary,
+                  foregroundColor: Theme.of(context).colorScheme.onPrimary,
+                ),
                 onPressed: selectedSubject != null && selectedStatus != null
                     ? () {
                         final semester = ref.read(semesterStateProvider);

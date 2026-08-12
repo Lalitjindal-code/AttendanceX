@@ -54,6 +54,12 @@ class Subject {
   /// Set to [false] to archive without deleting — supports future archive feature.
   bool isActive = true;
 
+  /// Whether class notifications are enabled for this subject.
+  bool classNotificationsEnabled = true;
+
+  /// Whether planner notifications are enabled for this subject.
+  bool plannerNotificationsEnabled = true;
+
   /// Timestamp when this subject was created.
   DateTime createdAt = DateTime.now();
 
@@ -75,6 +81,8 @@ class Subject {
       'notes': notes,
       'isIncludedInOverall': isIncludedInOverall,
       'isActive': isActive,
+      'classNotificationsEnabled': classNotificationsEnabled,
+      'plannerNotificationsEnabled': plannerNotificationsEnabled,
       'createdAt': createdAt.millisecondsSinceEpoch,
       'updatedAt': updatedAt.millisecondsSinceEpoch,
     };
@@ -95,6 +103,8 @@ class Subject {
       ..notes = map['notes']
       ..isIncludedInOverall = map['isIncludedInOverall'] ?? true
       ..isActive = map['isActive'] ?? true
+      ..classNotificationsEnabled = map['classNotificationsEnabled'] ?? true
+      ..plannerNotificationsEnabled = map['plannerNotificationsEnabled'] ?? true
       ..createdAt = map['createdAt'] != null
           ? DateTime.fromMillisecondsSinceEpoch(map['createdAt'])
           : DateTime.now()

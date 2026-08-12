@@ -1,12 +1,26 @@
 import 'dart:convert';
+import 'dart:io' show Platform;
+import 'dart:ui' show PlatformDispatcher, Brightness;
+import 'package:flutter/foundation.dart' show kIsWeb;
 
 import 'package:home_widget/home_widget.dart';
 import 'package:isar/isar.dart';
+import 'preferences_service.dart';
 
 import '../database/collections/attendance_collection.dart';
 import '../database/collections/schedule_collection.dart';
 import '../database/collections/subject_collection.dart';
 import '../database/isar_service.dart';
+
+@pragma('vm:entry-point')
+Future<void> widgetInteractiveCallback(Uri? uri) async {
+  if (uri?.host == 'refresh') {
+    await PreferencesService.instance.initialize();
+    await IsarService.instance.initialize();
+    await WidgetService.instance.initialize();
+    await WidgetService.instance.updateWidget();
+  }
+}
 
 /// Key used by both Flutter and Kotlin to identify the widget data entry.
 const String _kWidgetDataKey = 'attendify_widget_data';
@@ -16,7 +30,7 @@ const String _kWidgetDataKey = 'attendify_widget_data';
 const String _kAppGroupId = 'group.com.lalitjindal.attendify';
 
 /// Android widget provider class name (used by [HomeWidget.updateWidget]).
-const String _kAndroidWidgetName = 'AttendifyWidgetReceiver';
+const String _kAndroidWidgetName = 'com.lalitjindal.attendify.widget.AttendifyWidgetReceiver';
 
 /// Singleton service that pushes schedule data to the home screen widget.
 ///
@@ -29,6 +43,7 @@ class WidgetService {
 
   /// Must be called once (e.g., in [main]) before [updateWidget].
   Future<void> initialize() async {
+    if (!kIsWeb && Platform.isWindows) return;
     if (_initialized) return;
     await HomeWidget.setAppGroupId(_kAppGroupId);
     _initialized = true;
@@ -37,6 +52,7 @@ class WidgetService {
   /// Reads today's schedule + subjects + attendance from Isar and pushes
   /// the serialized JSON to SharedPreferences so the Glance widget can render.
   Future<void> updateWidget() async {
+    if (!kIsWeb && Platform.isWindows) return;
     try {
       final isar = IsarService.instance.isar;
       final now = DateTime.now();
@@ -118,10 +134,25 @@ class WidgetService {
         });
       }
 
+      final prefs = PreferencesService.instance;
+      final isAmoled = prefs.getBool(PreferencesService.keyIsAmoled, defaultValue: false);
+      final themeStr = prefs.getString(PreferencesService.keyThemeMode, defaultValue: 'system');
+
+      bool isDarkMode = true;
+      if (themeStr == 'light') {
+        isDarkMode = false;
+      } else if (themeStr == 'dark') {
+        isDarkMode = true;
+      } else {
+        isDarkMode = PlatformDispatcher.instance.platformBrightness == Brightness.dark;
+      }
+
       final payload = json.encode({
         'cards': cards,
         'overallAttendance': overallAttendance.toStringAsFixed(1),
         'updatedAt': now.millisecondsSinceEpoch,
+        'isAmoled': isAmoled,
+        'isDarkMode': isDarkMode,
       });
 
       await HomeWidget.saveWidgetData<String>(_kWidgetDataKey, payload);

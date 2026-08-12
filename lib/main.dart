@@ -1,3 +1,5 @@
+import 'dart:io' show Platform;
+import 'package:flutter/foundation.dart' show kIsWeb;
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:firebase_core/firebase_core.dart';
@@ -8,6 +10,7 @@ import 'core/ads/app_lifecycle_reactor.dart';
 import 'core/config/app_config.dart';
 import 'core/theme/app_theme.dart';
 import 'database/isar_service.dart';
+import 'database/repositories/subject_repository.dart';
 import 'features/settings/providers/settings_provider.dart';
 import 'features/notifications/providers/notification_provider.dart';
 import 'navigation/app_router.dart';
@@ -17,40 +20,68 @@ import 'firebase_options.dart';
 import 'features/sync/services/firebase_sync_service.dart';
 import 'features/security/widgets/app_lock_wrapper.dart';
 import 'services/widget_service.dart';
+import 'package:home_widget/home_widget.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
+  if (!kIsWeb && !Platform.isWindows) {
+    await HomeWidget.registerInteractivityCallback(widgetInteractiveCallback);
+  }
 
-  // Run critical initializations in parallel
-  // Isar needs path_provider which is ready after ensureInitialized()
   await Future.wait([
-    Firebase.initializeApp(options: DefaultFirebaseOptions.currentPlatform),
+    (kIsWeb || !Platform.isWindows)
+        ? Firebase.initializeApp(options: DefaultFirebaseOptions.currentPlatform)
+        : Future.value(null),
     PreferencesService.instance.initialize(),
     IsarService.instance.initialize(),
   ]);
 
-  // Non-blocking background initializations
-  MobileAds.instance.initialize().then((_) {
-    final appOpenAdManager = AppOpenAdManager()..loadAd();
-    final appLifecycleReactor = AppLifecycleReactor(appOpenAdManager: appOpenAdManager);
-    appLifecycleReactor.listenToAppStateChanges();
-  });
+  // Set Dark and AMOLED theme configuration as default on first startup launch
+  final prefs = PreferencesService.instance;
+  if (!prefs.containsKey(PreferencesService.keyThemeMode)) {
+    await prefs.setString(PreferencesService.keyThemeMode, 'dark');
+  }
+  if (!prefs.containsKey(PreferencesService.keyIsAmoled)) {
+    await prefs.setBool(PreferencesService.keyIsAmoled, true);
+  }
 
-  NotificationService.instance.init().then((_) {
-    if (PreferencesService.instance.getBool('notificationsEnabled', defaultValue: true)) {
-      NotificationService.instance.requestPermissions();
-    }
-  });
-
-  WidgetService.instance.initialize().then((_) {
-    WidgetService.instance.updateWidget();
-  });
+  // One-time migration: fix notification defaults for subjects created before
+  // classNotificationsEnabled / plannerNotificationsEnabled were added.
+  // Isar sets new bool fields to false on old records; we force them to true.
+  await SubjectRepository(IsarService.instance.isar)
+      .migrateNotificationDefaults();
 
   runApp(
     const ProviderScope(
       child: AttendifyApp(),
     ),
   );
+
+  // Defer non-critical background services to run after the first frame has painted
+  WidgetsBinding.instance.addPostFrameCallback((_) {
+    if (kIsWeb || !Platform.isWindows) {
+      MobileAds.instance.initialize().then((_) {
+        final appOpenAdManager = AppOpenAdManager()..loadAd();
+        final appLifecycleReactor = AppLifecycleReactor(appOpenAdManager: appOpenAdManager);
+        appLifecycleReactor.listenToAppStateChanges();
+      });
+    }
+
+    final bool notificationsEnabled = PreferencesService.instance.getBool(
+      PreferencesService.keyNotificationsEnabled,
+      defaultValue: true,
+    );
+
+    if (notificationsEnabled) {
+      NotificationService.instance.init().then((_) {
+        NotificationService.instance.requestPermissions();
+      });
+    }
+
+    WidgetService.instance.initialize().then((_) {
+      WidgetService.instance.updateWidget();
+    });
+  });
 }
 
 class AttendifyApp extends ConsumerWidget {

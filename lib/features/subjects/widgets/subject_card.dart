@@ -22,14 +22,21 @@ class SubjectCard extends ConsumerWidget {
       button: true,
       child: Container(
         decoration: BoxDecoration(
-          color: const Color(0xFF16162C),
+          gradient: LinearGradient(
+            begin: Alignment.topLeft,
+            end: Alignment.bottomRight,
+            colors: [
+              Theme.of(context).colorScheme.surfaceContainerHigh,
+              Theme.of(context).colorScheme.surfaceContainer,
+            ],
+          ),
           borderRadius: BorderRadius.circular(20),
           border: Border.all(
-            color: Colors.white.withValues(alpha: 0.05),
+            color: Color(subject.colorValue).withValues(alpha: 0.15),
           ),
           boxShadow: [
             BoxShadow(
-              color: Colors.black.withValues(alpha: 0.2),
+              color: Colors.black.withValues(alpha: 0.15),
               blurRadius: 10,
               offset: const Offset(0, 4),
             ),
@@ -73,7 +80,7 @@ class SubjectCard extends ConsumerWidget {
                             Text(
                               subject.name,
                               style: Theme.of(context).textTheme.titleLarge?.copyWith(
-                                    color: Colors.white,
+                                    color: Theme.of(context).colorScheme.onSurface,
                                     fontWeight: FontWeight.bold,
                                   ),
                               maxLines: 1,
@@ -83,13 +90,13 @@ class SubjectCard extends ConsumerWidget {
                             Text(
                               '${subject.credits} Credits • Goal: ${subject.goalPercentage.toInt()}%',
                               style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                                    color: Colors.white.withValues(alpha: 0.6),
+                                    color: Theme.of(context).colorScheme.onSurface.withValues(alpha: 0.6),
                                   ),
                             ),
                           ],
                         ),
                       ),
-                      Icon(Icons.chevron_right_rounded, color: Colors.white.withValues(alpha: 0.3)),
+                      Icon(Icons.chevron_right_rounded, color: Theme.of(context).colorScheme.onSurface.withValues(alpha: 0.3)),
                     ],
                   ),
                   const SizedBox(height: AppSpacing.lg),
@@ -141,13 +148,13 @@ class SubjectCard extends ConsumerWidget {
                 Container(
                   padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
                   decoration: BoxDecoration(
-                    color: Colors.white.withValues(alpha: 0.05),
+                    color: Theme.of(context).colorScheme.onSurface.withValues(alpha: 0.06),
                     borderRadius: BorderRadius.circular(12),
                   ),
                   child: Text(
                     '${summary.effectivePresent}/${summary.effectiveTotal}',
                     style: Theme.of(context).textTheme.labelMedium?.copyWith(
-                          color: Colors.white,
+                          color: Theme.of(context).colorScheme.onSurface,
                           fontWeight: FontWeight.bold,
                         ),
                   ),
@@ -159,7 +166,7 @@ class SubjectCard extends ConsumerWidget {
               height: 8,
               decoration: BoxDecoration(
                 borderRadius: BorderRadius.circular(4),
-                color: Colors.white.withValues(alpha: 0.05),
+                color: Theme.of(context).colorScheme.onSurface.withValues(alpha: 0.08),
               ),
               child: FractionallySizedBox(
                 alignment: Alignment.centerLeft,

@@ -69,6 +69,7 @@ class NotificationOrchestrator extends _$NotificationOrchestrator {
       tasks,
       subjects,
       now,
+      enabledTaskTypes: settings.enabledTaskTypes,
     );
 
     final allNotifications = [...desiredNotifications, ...taskNotifications];

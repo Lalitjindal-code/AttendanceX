@@ -1,3 +1,4 @@
+import 'dart:io' show Platform;
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/foundation.dart';
@@ -14,6 +15,9 @@ import 'package:attendify/database/collections/semester_collection.dart';
 import 'package:attendify/services/preferences_service.dart';
 
 final firebaseSyncServiceProvider = Provider<FirebaseSyncService>((ref) {
+  if (!kIsWeb && Platform.isWindows) {
+    return FirebaseSyncService(null, null, IsarService.instance.isar);
+  }
   return FirebaseSyncService(
     FirebaseAuth.instance,
     FirebaseFirestore.instance,
@@ -27,45 +31,51 @@ final firebaseSyncOrchestratorProvider = Provider<void>((ref) {
 });
 
 class FirebaseSyncService {
-  final FirebaseAuth _auth;
-  final FirebaseFirestore _firestore;
-  final Isar _isar;
+  final FirebaseAuth? _auth;
+  final FirebaseFirestore? _firestore;
+  final Isar? _isar;
 
   FirebaseSyncService(this._auth, this._firestore, this._isar);
 
   bool _isListening = false;
 
   void startListeningToLocalChanges() {
+    final isar = _isar;
+    if (_auth == null || _firestore == null || isar == null) return;
     if (_isListening) return; // Guard against duplicate listeners
     _isListening = true;
     // Debounce or listen to collection changes
-    _isar.subjects.watchLazy().listen((_) => backupData());
-    _isar.attendances.watchLazy().listen((_) => backupData());
-    _isar.schedules.watchLazy().listen((_) => backupData());
-    _isar.academicTasks.watchLazy().listen((_) => backupData());
+    isar.subjects.watchLazy().listen((_) => backupData());
+    isar.attendances.watchLazy().listen((_) => backupData());
+    isar.schedules.watchLazy().listen((_) => backupData());
+    isar.academicTasks.watchLazy().listen((_) => backupData());
   }
 
   /// Performs a full backup of the local Isar database to Firestore.
   ///
   /// This should be called automatically whenever local data changes.
   Future<void> backupData() async {
-    final user = _auth.currentUser;
+    final auth = _auth;
+    final firestore = _firestore;
+    final isar = _isar;
+    if (auth == null || firestore == null || isar == null) return;
+    final user = auth.currentUser;
     if (user == null) return;
 
     try {
       final uid = user.uid;
-      final backupRef = _firestore
+      final backupRef = firestore
           .collection('users')
           .doc(uid)
           .collection('backups')
           .doc('latest');
 
-      final profiles = await _isar.profiles.where().findAll();
-      final semesters = await _isar.semesters.where().findAll();
-      final subjects = await _isar.subjects.where().findAll();
-      final attendances = await _isar.attendances.where().findAll();
-      final schedules = await _isar.schedules.where().findAll();
-      final tasks = await _isar.academicTasks.where().findAll();
+      final profiles = await isar.profiles.where().findAll();
+      final semesters = await isar.semesters.where().findAll();
+      final subjects = await isar.subjects.where().findAll();
+      final attendances = await isar.attendances.where().findAll();
+      final schedules = await isar.schedules.where().findAll();
+      final tasks = await isar.academicTasks.where().findAll();
 
       final backupData = {
         'lastSynced': FieldValue.serverTimestamp(),
@@ -88,12 +98,16 @@ class FirebaseSyncService {
   ///
   /// This should be called when a user logs in.
   Future<void> restoreData() async {
-    final user = _auth.currentUser;
+    final auth = _auth;
+    final firestore = _firestore;
+    final isar = _isar;
+    if (auth == null || firestore == null || isar == null) return;
+    final user = auth.currentUser;
     if (user == null) return;
 
     try {
       final uid = user.uid;
-      final backupRef = _firestore
+      final backupRef = firestore
           .collection('users')
           .doc(uid)
           .collection('backups')
@@ -119,14 +133,14 @@ class FirebaseSyncService {
       final schedules = schedulesData.map((e) => Schedule.fromMap(e)).toList();
       final tasks = tasksData.map((e) => AcademicTask.fromMap(e)).toList();
 
-      await _isar.writeTxn(() async {
-        await _isar.clear(); // Clear existing data before restoring
+      await isar.writeTxn(() async {
+        await isar.clear(); // Clear existing data before restoring
         
         // Handle legacy backups that might not have profiles/semesters
         if (profiles.isEmpty) {
           profiles.add(Profile()..name = 'Restored Profile'..isDefault = true);
         }
-        await _isar.profiles.putAll(profiles);
+        await isar.profiles.putAll(profiles);
         
         final defaultProfileId = profiles.first.id;
 
@@ -138,7 +152,7 @@ class FirebaseSyncService {
               ..startDate = DateTime(2000, 1, 1) // Safe old date to ensure all past attendance counts
           );
         }
-        await _isar.semesters.putAll(semesters);
+        await isar.semesters.putAll(semesters);
         
         final activeSemesterId = semesters.first.id;
         
@@ -152,10 +166,10 @@ class FirebaseSyncService {
           for (var t in tasks) { t.semesterId = activeSemesterId; }
         }
 
-        await _isar.subjects.putAll(subjects);
-        await _isar.attendances.putAll(attendances);
-        await _isar.schedules.putAll(schedules);
-        await _isar.academicTasks.putAll(tasks);
+        await isar.subjects.putAll(subjects);
+        await isar.attendances.putAll(attendances);
+        await isar.schedules.putAll(schedules);
+        await isar.academicTasks.putAll(tasks);
       });
       
       // Update preferences after transaction

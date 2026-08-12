@@ -43,7 +43,7 @@ class _AppLockWrapperState extends ConsumerState<AppLockWrapper> with WidgetsBin
     final isLockEnabled = ref.read(settingsProvider).isAppLockEnabled;
     if (!isLockEnabled) return;
 
-    if (state == AppLifecycleState.paused || state == AppLifecycleState.inactive) {
+    if (state == AppLifecycleState.paused) {
       // App went to background
       setState(() {
         _isLocked = true;

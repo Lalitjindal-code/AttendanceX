@@ -14,12 +14,15 @@ abstract final class AppRoutes {
   static const String analytics = '/analytics';
   static const String settings = '/settings';
   static const String notifications = '/notifications';
+  // Manager route
+  static const String notificationManager = '/notification-manager';
   static const String profile = '/profile';
   static const String onboarding = '/onboarding';
   static const String login = '/login';
   static const String signup = '/signup';
   static const String collegeZone = '/college-zone';
   static const String feedback = '/feedback';
+  static const String bunkSimulator = '/bunk-simulator';
 
   // Sub-routes
   static const String subjectDetail = 'detail/:id';

@@ -39,12 +39,16 @@ class DaySelectorPills extends StatelessWidget {
               },
               showCheckmark: false,
               labelStyle: TextStyle(
-                color: isSelected ? Colors.white : Colors.white.withValues(alpha: 0.6),
+                color: isSelected 
+                    ? Theme.of(context).colorScheme.onPrimary
+                    : Theme.of(context).colorScheme.onSurface.withValues(alpha: 0.6),
                 fontWeight: isSelected ? FontWeight.bold : FontWeight.w600,
               ),
-              selectedColor: const Color(0xFF7E73FF),
-              backgroundColor: const Color(0xFF16162C),
-              side: isSelected ? BorderSide.none : BorderSide(color: Colors.white.withValues(alpha: 0.05)),
+              selectedColor: Theme.of(context).colorScheme.primary,
+              backgroundColor: Theme.of(context).colorScheme.surfaceContainer,
+              side: isSelected 
+                  ? BorderSide.none 
+                  : BorderSide(color: Theme.of(context).colorScheme.outlineVariant),
               shape: RoundedRectangleBorder(
                 borderRadius: BorderRadius.circular(24),
               ),

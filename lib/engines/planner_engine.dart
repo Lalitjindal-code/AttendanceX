@@ -129,8 +129,9 @@ class PlannerEngine {
   static List<ScheduledNotification> generateTaskNotifications(
     List<AcademicTask> tasks,
     List<Subject> subjects,
-    DateTime now,
-  ) {
+    DateTime now, {
+    List<String>? enabledTaskTypes,
+  }) {
     final List<ScheduledNotification> notifications = [];
 
     final activeTasks = tasks.where((t) =>
@@ -141,6 +142,12 @@ class PlannerEngine {
 
       final subject = subjects.firstWhere((s) => s.id == task.subjectId,
           orElse: () => Subject()..name = 'Unknown Subject');
+
+      // Skip if planner notifications are disabled for this subject
+      if (subject.id != 0 && !subject.plannerNotificationsEnabled) continue;
+
+      // Skip if this task type notification is disabled
+      if (enabledTaskTypes != null && !enabledTaskTypes.contains(task.type.name)) continue;
 
       DateTime dueDateTime = task.dueDate;
       if (task.dueTime != null) {

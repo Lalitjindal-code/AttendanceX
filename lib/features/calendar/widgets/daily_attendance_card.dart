@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../../core/constants/app_spacing.dart';
 import '../../../core/enums/attendance_status.dart';
+import '../../../core/utils/haptics.dart';
 import '../../../database/collections/attendance_collection.dart';
 import '../../attendance/providers/attendance_providers.dart';
 import '../../settings/providers/semester_provider.dart';
@@ -240,6 +241,7 @@ class DailyAttendanceCard extends ConsumerWidget {
                         trailing: isSelected ? const Icon(Icons.check) : null,
                         onTap: () {
                           _updateAttendance(ref, status);
+                          Haptics.light();
                           Navigator.pop(context);
                         },
                       ),
@@ -260,6 +262,7 @@ class DailyAttendanceCard extends ConsumerWidget {
                               onTap: () {
                                 final repo = ref.read(attendanceRepositoryProvider);
                                 repo.delete(item.attendance!.id);
+                                Haptics.heavy();
                                 Navigator.pop(context);
                               },
                             ),
