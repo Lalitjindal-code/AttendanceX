@@ -30,7 +30,8 @@ const String _kWidgetDataKey = 'attendify_widget_data';
 const String _kAppGroupId = 'group.com.lalitjindal.attendify';
 
 /// Android widget provider class name (used by [HomeWidget.updateWidget]).
-const String _kAndroidWidgetName = 'com.lalitjindal.attendify.widget.AttendifyWidgetReceiver';
+const String _kAndroidWidgetName =
+    'com.lalitjindal.attendify.widget.AttendifyWidgetReceiver';
 
 /// Singleton service that pushes schedule data to the home screen widget.
 ///
@@ -59,16 +60,12 @@ class WidgetService {
       final todayWeekday = now.weekday; // 1=Mon … 7=Sun
 
       // Fetch ALL schedule slots for the entire week
-      final schedules = await isar.schedules
-          .where()
-          .sortByStartTime()
-          .findAll();
+      final schedules =
+          await isar.schedules.where().sortByStartTime().findAll();
 
       // Fetch all active subjects (for name + color lookup)
-      final subjects = await isar.subjects
-          .filter()
-          .isActiveEqualTo(true)
-          .findAll();
+      final subjects =
+          await isar.subjects.filter().isActiveEqualTo(true).findAll();
 
       // Fetch today's attendance records
       final todayUtc = DateTime.utc(now.year, now.month, now.day);
@@ -84,28 +81,28 @@ class WidgetService {
       final Map<int, double> subjectPercentages = {};
       int totalPresentAll = 0;
       int totalLecturesAll = 0;
-      
+
       for (final subject in subjects) {
         final subjectRecords =
             allAttendances.where((a) => a.subjectId == subject.id).toList();
         final total = subjectRecords
-            .where((a) =>
-                a.status.name == 'present' || a.status.name == 'absent')
+            .where(
+                (a) => a.status.name == 'present' || a.status.name == 'absent')
             .length;
         final present =
             subjectRecords.where((a) => a.status.name == 'present').length;
-            
+
         if (subject.isIncludedInOverall) {
           totalLecturesAll += total;
           totalPresentAll += present;
         }
-            
+
         subjectPercentages[subject.id] =
             total == 0 ? 0.0 : (present / total) * 100.0;
       }
-      
-      final overallAttendance = totalLecturesAll == 0 
-          ? 0.0 
+
+      final overallAttendance = totalLecturesAll == 0
+          ? 0.0
           : (totalPresentAll / totalLecturesAll) * 100.0;
 
       // Build the card list
@@ -127,7 +124,9 @@ class WidgetService {
           'endTime': schedule.endTime,
           'room': schedule.room,
           'type': schedule.type.name,
-          'attendanceStatus': (schedule.dayOfWeek == todayWeekday) ? (attendanceForSlot?.status.name ?? 'pending') : 'pending',
+          'attendanceStatus': (schedule.dayOfWeek == todayWeekday)
+              ? (attendanceForSlot?.status.name ?? 'pending')
+              : 'pending',
           'attendancePercent':
               (subjectPercentages[subject.id] ?? 0.0).toStringAsFixed(1),
           'goalPercent': subject.goalPercentage.toStringAsFixed(1),
@@ -135,8 +134,10 @@ class WidgetService {
       }
 
       final prefs = PreferencesService.instance;
-      final isAmoled = prefs.getBool(PreferencesService.keyIsAmoled, defaultValue: false);
-      final themeStr = prefs.getString(PreferencesService.keyThemeMode, defaultValue: 'system');
+      final isAmoled =
+          prefs.getBool(PreferencesService.keyIsAmoled, defaultValue: false);
+      final themeStr = prefs.getString(PreferencesService.keyThemeMode,
+          defaultValue: 'system');
 
       bool isDarkMode = true;
       if (themeStr == 'light') {
@@ -144,7 +145,8 @@ class WidgetService {
       } else if (themeStr == 'dark') {
         isDarkMode = true;
       } else {
-        isDarkMode = PlatformDispatcher.instance.platformBrightness == Brightness.dark;
+        isDarkMode =
+            PlatformDispatcher.instance.platformBrightness == Brightness.dark;
       }
 
       final payload = json.encode({

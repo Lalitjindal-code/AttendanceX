@@ -38,8 +38,12 @@ class SettingsScreen extends ConsumerWidget {
       appBar: AppBar(
         backgroundColor: Colors.transparent,
         elevation: 0,
-        title: Text(AppStrings.settingsTitle, style: TextStyle(color: Theme.of(context).colorScheme.onSurface, fontWeight: FontWeight.bold)),
-        iconTheme: IconThemeData(color: Theme.of(context).colorScheme.onSurface),
+        title: Text(AppStrings.settingsTitle,
+            style: TextStyle(
+                color: Theme.of(context).colorScheme.onSurface,
+                fontWeight: FontWeight.bold)),
+        iconTheme:
+            IconThemeData(color: Theme.of(context).colorScheme.onSurface),
       ),
       body: ListView(
         padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 16),
@@ -50,7 +54,8 @@ class SettingsScreen extends ConsumerWidget {
             _buildCollegeSection(context),
             const SizedBox(height: 24),
           ],
-          _buildAcademicProfileSection(context, ref, semester, semesterNotifier),
+          _buildAcademicProfileSection(
+              context, ref, semester, semesterNotifier),
           const SizedBox(height: 24),
           _buildAttendanceRulesSection(context, ref, settings, notifier),
           const SizedBox(height: 24),
@@ -97,7 +102,8 @@ class SettingsScreen extends ConsumerWidget {
             ],
           ),
           borderRadius: BorderRadius.circular(20),
-          border: Border.all(color: Theme.of(context).colorScheme.outlineVariant),
+          border:
+              Border.all(color: Theme.of(context).colorScheme.outlineVariant),
         ),
         child: Column(
           children: children,
@@ -117,7 +123,8 @@ class SettingsScreen extends ConsumerWidget {
     );
   }
 
-  Widget _buildAppearanceSection(BuildContext context, AppSettings settings, Settings notifier) {
+  Widget _buildAppearanceSection(
+      BuildContext context, AppSettings settings, Settings notifier) {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
@@ -125,45 +132,71 @@ class SettingsScreen extends ConsumerWidget {
         _buildSettingCard(
           children: [
             ListTile(
-              leading: _buildIcon(Icons.palette_rounded, const Color(0xFFAB47BC)),
+              leading:
+                  _buildIcon(Icons.palette_rounded, const Color(0xFFAB47BC)),
               title: const Text('Theme'),
               subtitle: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  Text('Select application theme', style: TextStyle(color: Theme.of(context).colorScheme.onSurface.withValues(alpha: 0.6))),
+                  Text('Select application theme',
+                      style: TextStyle(
+                          color: Theme.of(context)
+                              .colorScheme
+                              .onSurface
+                              .withValues(alpha: 0.6))),
                   const SizedBox(height: 8),
                   SizedBox(
                     width: double.infinity,
                     child: SegmentedButton<ThemeMode>(
                       showSelectedIcon: false,
                       segments: const [
-                        ButtonSegment(value: ThemeMode.light, label: Text('Light')),
-                        ButtonSegment(value: ThemeMode.system, label: Text('Sys')),
-                        ButtonSegment(value: ThemeMode.dark, label: Text('Dark')),
+                        ButtonSegment(
+                            value: ThemeMode.light, label: Text('Light')),
+                        ButtonSegment(
+                            value: ThemeMode.system, label: Text('Sys')),
+                        ButtonSegment(
+                            value: ThemeMode.dark, label: Text('Dark')),
                       ],
                       selected: {settings.themeMode},
-                      onSelectionChanged: (set) => notifier.updateThemeMode(set.first),
+                      onSelectionChanged: (set) =>
+                          notifier.updateThemeMode(set.first),
                       style: SegmentedButton.styleFrom(
                         backgroundColor: Colors.transparent,
-                        selectedBackgroundColor: Theme.of(context).colorScheme.primary.withValues(alpha: 0.3),
-                        selectedForegroundColor: Theme.of(context).colorScheme.primary,
+                        selectedBackgroundColor: Theme.of(context)
+                            .colorScheme
+                            .primary
+                            .withValues(alpha: 0.3),
+                        selectedForegroundColor:
+                            Theme.of(context).colorScheme.primary,
                       ),
                     ),
                   ),
                 ],
               ),
             ),
-            Divider(color: Theme.of(context).colorScheme.outlineVariant, height: 1),
+            Divider(
+                color: Theme.of(context).colorScheme.outlineVariant, height: 1),
             ListTile(
-              leading: _buildIcon(Icons.dark_mode_rounded, const Color(0xFF42A5F5)),
-              title: const Text('AMOLED Dark Mode', ),
-              subtitle: Text('Use true black backgrounds', ),
+              leading:
+                  _buildIcon(Icons.dark_mode_rounded, const Color(0xFF42A5F5)),
+              title: const Text(
+                'AMOLED Dark Mode',
+              ),
+              subtitle: Text(
+                'Use true black backgrounds',
+              ),
               trailing: Switch(
                 value: settings.isAmoled,
                 activeTrackColor: Theme.of(context).colorScheme.primary,
                 activeThumbColor: Theme.of(context).colorScheme.onPrimary,
-                inactiveTrackColor: Theme.of(context).colorScheme.onSurface.withValues(alpha: 0.1),
-                inactiveThumbColor: Theme.of(context).colorScheme.onSurface.withValues(alpha: 0.4),
+                inactiveTrackColor: Theme.of(context)
+                    .colorScheme
+                    .onSurface
+                    .withValues(alpha: 0.1),
+                inactiveThumbColor: Theme.of(context)
+                    .colorScheme
+                    .onSurface
+                    .withValues(alpha: 0.4),
                 trackOutlineColor: WidgetStateProperty.all(Colors.transparent),
                 onChanged: settings.themeMode != ThemeMode.light
                     ? (val) => notifier.updateIsAmoled(val)
@@ -184,10 +217,19 @@ class SettingsScreen extends ConsumerWidget {
         _buildSettingCard(
           children: [
             ListTile(
-              leading: _buildIcon(Icons.school_rounded, const Color(0xFF7E73FF)),
-              title: const Text('Change Semester & Branch', ),
-              subtitle: Text('Update your SATI Engineering details', ),
-              trailing: Icon(Icons.chevron_right_rounded, color: Theme.of(context).colorScheme.onSurface.withValues(alpha: 0.3)),
+              leading:
+                  _buildIcon(Icons.school_rounded, const Color(0xFF7E73FF)),
+              title: const Text(
+                'Change Semester & Branch',
+              ),
+              subtitle: Text(
+                'Update your SATI Engineering details',
+              ),
+              trailing: Icon(Icons.chevron_right_rounded,
+                  color: Theme.of(context)
+                      .colorScheme
+                      .onSurface
+                      .withValues(alpha: 0.3)),
               onTap: () {
                 context.push(AppRoutes.collegeZone);
               },
@@ -198,7 +240,8 @@ class SettingsScreen extends ConsumerWidget {
     );
   }
 
-  Widget _buildAcademicProfileSection(BuildContext context, WidgetRef ref, var semester, var semesterNotifier) {
+  Widget _buildAcademicProfileSection(
+      BuildContext context, WidgetRef ref, var semester, var semesterNotifier) {
     final dateFormat = DateFormat('MMM d, yyyy');
 
     return Column(
@@ -208,26 +251,43 @@ class SettingsScreen extends ConsumerWidget {
         _buildSettingCard(
           children: [
             ListTile(
-              leading: _buildIcon(Icons.edit_note_rounded, const Color(0xFF7E73FF)),
-              title: const Text('Semester Name', ),
+              leading:
+                  _buildIcon(Icons.edit_note_rounded, const Color(0xFF7E73FF)),
+              title: const Text(
+                'Semester Name',
+              ),
               subtitle: Text(
                 semester?.name ?? 'Not set',
-                
               ),
-              trailing: Icon(Icons.edit_rounded, color: Theme.of(context).colorScheme.onSurface.withValues(alpha: 0.3), size: 20),
+              trailing: Icon(Icons.edit_rounded,
+                  color: Theme.of(context)
+                      .colorScheme
+                      .onSurface
+                      .withValues(alpha: 0.3),
+                  size: 20),
               onTap: () {
-                _showEditSemesterNameDialog(context, semester?.name ?? '', semesterNotifier);
+                _showEditSemesterNameDialog(
+                    context, semester?.name ?? '', semesterNotifier);
               },
             ),
-            Divider(color: Theme.of(context).colorScheme.outlineVariant, height: 1),
+            Divider(
+                color: Theme.of(context).colorScheme.outlineVariant, height: 1),
             ListTile(
-              leading: _buildIcon(Icons.date_range_rounded, const Color(0xFF26A69A)),
-              title: const Text('Semester Start Date', ),
-              subtitle: Text(
-                (semester != null && semester.startDate != null) ? dateFormat.format(semester.startDate!) : 'Not set',
-                
+              leading:
+                  _buildIcon(Icons.date_range_rounded, const Color(0xFF26A69A)),
+              title: const Text(
+                'Semester Start Date',
               ),
-              trailing: Icon(Icons.chevron_right_rounded, color: Theme.of(context).colorScheme.onSurface.withValues(alpha: 0.3)),
+              subtitle: Text(
+                (semester != null && semester.startDate != null)
+                    ? dateFormat.format(semester.startDate!)
+                    : 'Not set',
+              ),
+              trailing: Icon(Icons.chevron_right_rounded,
+                  color: Theme.of(context)
+                      .colorScheme
+                      .onSurface
+                      .withValues(alpha: 0.3)),
               onTap: () async {
                 final date = await showDatePicker(
                   context: context,
@@ -237,17 +297,22 @@ class SettingsScreen extends ConsumerWidget {
                   builder: (context, child) => Theme(
                     data: Theme.of(context).copyWith(
                       colorScheme: Theme.of(context).colorScheme.copyWith(
-                        primary: const Color(0xFF7E73FF),
-                        surface: Theme.of(context).colorScheme.surfaceContainerHigh,
-                      ),
+                            primary: const Color(0xFF7E73FF),
+                            surface: Theme.of(context)
+                                .colorScheme
+                                .surfaceContainerHigh,
+                          ),
                     ),
                     child: child!,
                   ),
                 );
                 if (date != null) {
-                  if (semester?.endDate != null && date.isAfter(semester!.endDate!)) {
+                  if (semester?.endDate != null &&
+                      date.isAfter(semester!.endDate!)) {
                     if (context.mounted) {
-                      ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text('Start date must be before end date.')));
+                      ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
+                          content:
+                              Text('Start date must be before end date.')));
                     }
                     return;
                   }
@@ -255,48 +320,76 @@ class SettingsScreen extends ConsumerWidget {
                 }
               },
             ),
-            Divider(color: Theme.of(context).colorScheme.outlineVariant, height: 1),
+            Divider(
+                color: Theme.of(context).colorScheme.outlineVariant, height: 1),
             ListTile(
-              leading: _buildIcon(Icons.event_available_rounded, const Color(0xFFEF5350)),
-              title: const Text('Semester End Date', ),
-              subtitle: Text(
-                (semester != null && semester.endDate != null) ? dateFormat.format(semester.endDate!) : 'Not set',
-                
+              leading: _buildIcon(
+                  Icons.event_available_rounded, const Color(0xFFEF5350)),
+              title: const Text(
+                'Semester End Date',
               ),
-              trailing: Icon(Icons.chevron_right_rounded, color: Theme.of(context).colorScheme.onSurface.withValues(alpha: 0.3)),
+              subtitle: Text(
+                (semester != null && semester.endDate != null)
+                    ? dateFormat.format(semester.endDate!)
+                    : 'Not set',
+              ),
+              trailing: Icon(Icons.chevron_right_rounded,
+                  color: Theme.of(context)
+                      .colorScheme
+                      .onSurface
+                      .withValues(alpha: 0.3)),
               onTap: () async {
                 final date = await showDatePicker(
                   context: context,
-                  initialDate: semester?.endDate ?? semester?.startDate ?? DateTime.now(),
+                  initialDate: semester?.endDate ??
+                      semester?.startDate ??
+                      DateTime.now(),
                   firstDate: DateTime(2000),
                   lastDate: DateTime(2030),
                   builder: (context, child) => Theme(
                     data: Theme.of(context).copyWith(
                       colorScheme: Theme.of(context).colorScheme.copyWith(
-                        primary: const Color(0xFF7E73FF),
-                        surface: Theme.of(context).colorScheme.surfaceContainerHigh,
-                      ),
+                            primary: const Color(0xFF7E73FF),
+                            surface: Theme.of(context)
+                                .colorScheme
+                                .surfaceContainerHigh,
+                          ),
                     ),
                     child: child!,
                   ),
                 );
                 if (date != null) {
-                  if (semester?.startDate != null && date.isBefore(semester!.startDate!)) {
+                  if (semester?.startDate != null &&
+                      date.isBefore(semester!.startDate!)) {
                     if (context.mounted) {
-                      ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text('End date must be after start date.')));
+                      ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
+                          content: Text('End date must be after start date.')));
                     }
                     return;
                   }
-                  semesterNotifier.updateSemesterDates(semester?.startDate ?? DateTime.now(), date);
+                  semesterNotifier.updateSemesterDates(
+                      semester?.startDate ?? DateTime.now(), date);
                 }
               },
             ),
-            Divider(color: Theme.of(context).colorScheme.outlineVariant, height: 1),
+            Divider(
+                color: Theme.of(context).colorScheme.outlineVariant, height: 1),
             ListTile(
-              leading: _buildIcon(Icons.layers_rounded, const Color(0xFFAB47BC)),
-              title: const Text('Manage Semesters', ),
-              subtitle: Text(semester != null ? 'Current: ${semester.name}' : 'No active semester', ),
-              trailing: Icon(Icons.chevron_right_rounded, color: Theme.of(context).colorScheme.onSurface.withValues(alpha: 0.3)),
+              leading:
+                  _buildIcon(Icons.layers_rounded, const Color(0xFFAB47BC)),
+              title: const Text(
+                'Manage Semesters',
+              ),
+              subtitle: Text(
+                semester != null
+                    ? 'Current: ${semester.name}'
+                    : 'No active semester',
+              ),
+              trailing: Icon(Icons.chevron_right_rounded,
+                  color: Theme.of(context)
+                      .colorScheme
+                      .onSurface
+                      .withValues(alpha: 0.3)),
               onTap: () {
                 _showSemesterManagementDialog(context, ref);
               },
@@ -309,23 +402,22 @@ class SettingsScreen extends ConsumerWidget {
 
   void _showSemesterManagementDialog(BuildContext context, WidgetRef ref) {
     showDialog(
-      context: context,
-      builder: (context) {
-        return _SemesterManagementDialog(ref: ref);
-      }
-    );
+        context: context,
+        builder: (context) {
+          return _SemesterManagementDialog(ref: ref);
+        });
   }
 
   void _showIncludedSubjectsDialog(BuildContext context, WidgetRef ref) {
     showDialog(
-      context: context,
-      builder: (context) {
-        return _IncludedSubjectsDialog(ref: ref);
-      }
-    );
+        context: context,
+        builder: (context) {
+          return _IncludedSubjectsDialog(ref: ref);
+        });
   }
 
-  Widget _buildAttendanceRulesSection(BuildContext context, WidgetRef ref, AppSettings settings, Settings notifier) {
+  Widget _buildAttendanceRulesSection(BuildContext context, WidgetRef ref,
+      AppSettings settings, Settings notifier) {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
@@ -333,12 +425,17 @@ class SettingsScreen extends ConsumerWidget {
         _buildSettingCard(
           children: [
             ListTile(
-              leading: _buildIcon(Icons.track_changes_rounded, const Color(0xFFFFA726)),
-              title: const Text('Goal Percentage', ),
+              leading: _buildIcon(
+                  Icons.track_changes_rounded, const Color(0xFFFFA726)),
+              title: const Text(
+                'Goal Percentage',
+              ),
               subtitle: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  Text('${settings.defaultGoalPercentage.toInt()}%', ),
+                  Text(
+                    '${settings.defaultGoalPercentage.toInt()}%',
+                  ),
                   Slider(
                     value: settings.defaultGoalPercentage,
                     min: 10.0,
@@ -346,30 +443,55 @@ class SettingsScreen extends ConsumerWidget {
                     divisions: 18,
                     thumbColor: Theme.of(context).colorScheme.onPrimary,
                     activeColor: Theme.of(context).colorScheme.primary,
-                    inactiveColor: Theme.of(context).colorScheme.onSurface.withValues(alpha: 0.1),
+                    inactiveColor: Theme.of(context)
+                        .colorScheme
+                        .onSurface
+                        .withValues(alpha: 0.1),
                     onChanged: (val) => notifier.updateDefaultGoal(val),
                   ),
                 ],
               ),
             ),
-            Divider(color: Theme.of(context).colorScheme.outlineVariant, height: 1),
+            Divider(
+                color: Theme.of(context).colorScheme.outlineVariant, height: 1),
             ListTile(
-              leading: _buildIcon(Icons.local_hospital_rounded, const Color(0xFFEC407A)),
-              title: const Text('Medical Leave (ML)', ),
-              subtitle: Text('Counts as Present', ),
+              leading: _buildIcon(
+                  Icons.local_hospital_rounded, const Color(0xFFEC407A)),
+              title: const Text(
+                'Medical Leave (ML)',
+              ),
+              subtitle: Text(
+                'Counts as Present',
+              ),
             ),
-            Divider(color: Theme.of(context).colorScheme.outlineVariant, height: 1),
+            Divider(
+                color: Theme.of(context).colorScheme.outlineVariant, height: 1),
             ListTile(
-              leading: _buildIcon(Icons.work_history_rounded, const Color(0xFF5C6BC0)),
-              title: const Text('Duty Leave (GT)', ),
-              subtitle: Text('Excluded from calculation', ),
+              leading: _buildIcon(
+                  Icons.work_history_rounded, const Color(0xFF5C6BC0)),
+              title: const Text(
+                'Duty Leave (GT)',
+              ),
+              subtitle: Text(
+                'Excluded from calculation',
+              ),
             ),
-            Divider(color: Theme.of(context).colorScheme.outlineVariant, height: 1),
+            Divider(
+                color: Theme.of(context).colorScheme.outlineVariant, height: 1),
             ListTile(
-              leading: _buildIcon(Icons.checklist_rtl_rounded, const Color(0xFF4DB6AC)),
-              title: const Text('Included in Overall %', ),
-              subtitle: Text('Select which subjects affect overall attendance', ),
-              trailing: Icon(Icons.chevron_right_rounded, color: Theme.of(context).colorScheme.onSurface.withValues(alpha: 0.3)),
+              leading: _buildIcon(
+                  Icons.checklist_rtl_rounded, const Color(0xFF4DB6AC)),
+              title: const Text(
+                'Included in Overall %',
+              ),
+              subtitle: Text(
+                'Select which subjects affect overall attendance',
+              ),
+              trailing: Icon(Icons.chevron_right_rounded,
+                  color: Theme.of(context)
+                      .colorScheme
+                      .onSurface
+                      .withValues(alpha: 0.3)),
               onTap: () {
                 _showIncludedSubjectsDialog(context, ref);
               },
@@ -380,7 +502,8 @@ class SettingsScreen extends ConsumerWidget {
     );
   }
 
-  Widget _buildNotificationsSection(BuildContext context, AppSettings settings, Settings notifier) {
+  Widget _buildNotificationsSection(
+      BuildContext context, AppSettings settings, Settings notifier) {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
@@ -388,22 +511,36 @@ class SettingsScreen extends ConsumerWidget {
         _buildSettingCard(
           children: [
             ListTile(
-              leading: _buildIcon(Icons.notifications_active_rounded, const Color(0xFF42A5F5)),
-              title: const Text('Enable Notifications', ),
-              subtitle: Text('Master switch for all alerts', ),
+              leading: _buildIcon(
+                  Icons.notifications_active_rounded, const Color(0xFF42A5F5)),
+              title: const Text(
+                'Enable Notifications',
+              ),
+              subtitle: Text(
+                'Master switch for all alerts',
+              ),
               trailing: Switch(
                 value: settings.notificationsEnabled,
                 activeTrackColor: Theme.of(context).colorScheme.primary,
                 activeThumbColor: Theme.of(context).colorScheme.onPrimary,
-                inactiveTrackColor: Theme.of(context).colorScheme.onSurface.withValues(alpha: 0.1),
-                inactiveThumbColor: Theme.of(context).colorScheme.onSurface.withValues(alpha: 0.4),
+                inactiveTrackColor: Theme.of(context)
+                    .colorScheme
+                    .onSurface
+                    .withValues(alpha: 0.1),
+                inactiveThumbColor: Theme.of(context)
+                    .colorScheme
+                    .onSurface
+                    .withValues(alpha: 0.4),
                 trackOutlineColor: WidgetStateProperty.all(Colors.transparent),
                 onChanged: (val) async {
                   if (val) {
-                    final granted = await NotificationService.instance.requestPermissions();
+                    final granted =
+                        await NotificationService.instance.requestPermissions();
                     if (granted != true && context.mounted) {
                       ScaffoldMessenger.of(context).showSnackBar(
-                        const SnackBar(content: Text('Notification permissions denied. Please enable them in OS settings.')),
+                        const SnackBar(
+                            content: Text(
+                                'Notification permissions denied. Please enable them in OS settings.')),
                       );
                     }
                   }
@@ -411,45 +548,88 @@ class SettingsScreen extends ConsumerWidget {
                 },
               ),
             ),
-            Divider(color: Theme.of(context).colorScheme.outlineVariant, height: 1),
+            Divider(
+                color: Theme.of(context).colorScheme.outlineVariant, height: 1),
             ListTile(
-              leading: _buildIcon(Icons.school_rounded, const Color(0xFFFFA726)),
-              title: const Text('Lecture Reminder', ),
-              subtitle: Text('Alert before class starts', ),
+              leading:
+                  _buildIcon(Icons.school_rounded, const Color(0xFFFFA726)),
+              title: const Text(
+                'Lecture Reminder',
+              ),
+              subtitle: Text(
+                'Alert before class starts',
+              ),
               enabled: settings.notificationsEnabled,
               trailing: DropdownButton<int>(
-                value: [5, 10, 15, 30].contains(settings.lectureReminderMinutes) ? settings.lectureReminderMinutes : 10,
-                dropdownColor: Theme.of(context).colorScheme.surfaceContainerHigh,
-                style: TextStyle(color: Theme.of(context).colorScheme.onSurface),
+                value: [5, 10, 15, 30].contains(settings.lectureReminderMinutes)
+                    ? settings.lectureReminderMinutes
+                    : 10,
+                dropdownColor:
+                    Theme.of(context).colorScheme.surfaceContainerHigh,
+                style:
+                    TextStyle(color: Theme.of(context).colorScheme.onSurface),
                 underline: const SizedBox(),
-                icon: Icon(Icons.expand_more_rounded, color: Theme.of(context).colorScheme.onSurface.withValues(alpha: 0.5)),
+                icon: Icon(Icons.expand_more_rounded,
+                    color: Theme.of(context)
+                        .colorScheme
+                        .onSurface
+                        .withValues(alpha: 0.5)),
                 items: [5, 10, 15, 30].map((mins) {
-                  return DropdownMenuItem(value: mins, child: Text('$mins mins'));
+                  return DropdownMenuItem(
+                      value: mins, child: Text('$mins mins'));
                 }).toList(),
-                onChanged: settings.notificationsEnabled ? (val) { if (val != null) notifier.updateLectureReminderMinutes(val); } : null,
+                onChanged: settings.notificationsEnabled
+                    ? (val) {
+                        if (val != null)
+                          notifier.updateLectureReminderMinutes(val);
+                      }
+                    : null,
               ),
             ),
-            Divider(color: Theme.of(context).colorScheme.outlineVariant, height: 1),
+            Divider(
+                color: Theme.of(context).colorScheme.outlineVariant, height: 1),
             ListTile(
               leading: _buildIcon(Icons.alarm_rounded, const Color(0xFFAB47BC)),
-              title: const Text('Daily Missed Reminders', ),
-              subtitle: Text('Alert if attendance is pending', ),
+              title: const Text(
+                'Daily Missed Reminders',
+              ),
+              subtitle: Text(
+                'Alert if attendance is pending',
+              ),
               trailing: Switch(
                 value: settings.dailyReminderEnabled,
                 activeTrackColor: Theme.of(context).colorScheme.primary,
                 activeThumbColor: Theme.of(context).colorScheme.onPrimary,
-                inactiveTrackColor: Theme.of(context).colorScheme.onSurface.withValues(alpha: 0.1),
-                inactiveThumbColor: Theme.of(context).colorScheme.onSurface.withValues(alpha: 0.4),
+                inactiveTrackColor: Theme.of(context)
+                    .colorScheme
+                    .onSurface
+                    .withValues(alpha: 0.1),
+                inactiveThumbColor: Theme.of(context)
+                    .colorScheme
+                    .onSurface
+                    .withValues(alpha: 0.4),
                 trackOutlineColor: WidgetStateProperty.all(Colors.transparent),
-                onChanged: settings.notificationsEnabled ? (val) => notifier.updateDailyReminderEnabled(val) : null,
+                onChanged: settings.notificationsEnabled
+                    ? (val) => notifier.updateDailyReminderEnabled(val)
+                    : null,
               ),
             ),
-            Divider(color: Theme.of(context).colorScheme.outlineVariant, height: 1),
-             ListTile(
-              leading: _buildIcon(Icons.monitor_heart_rounded, const Color(0xFF26A69A)),
-              title: const Text('Notification Manager', ),
-              subtitle: Text('Manage notification preferences and filters', ),
-              trailing: Icon(Icons.chevron_right_rounded, color: Theme.of(context).colorScheme.onSurface.withValues(alpha: 0.3)),
+            Divider(
+                color: Theme.of(context).colorScheme.outlineVariant, height: 1),
+            ListTile(
+              leading: _buildIcon(
+                  Icons.monitor_heart_rounded, const Color(0xFF26A69A)),
+              title: const Text(
+                'Notification Manager',
+              ),
+              subtitle: Text(
+                'Manage notification preferences and filters',
+              ),
+              trailing: Icon(Icons.chevron_right_rounded,
+                  color: Theme.of(context)
+                      .colorScheme
+                      .onSurface
+                      .withValues(alpha: 0.3)),
               onTap: () {
                 // Manager screen nav
                 context.push(AppRoutes.notificationManager);
@@ -461,7 +641,8 @@ class SettingsScreen extends ConsumerWidget {
     );
   }
 
-  Widget _buildSecuritySection(BuildContext context, AppSettings settings, Settings notifier) {
+  Widget _buildSecuritySection(
+      BuildContext context, AppSettings settings, Settings notifier) {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
@@ -469,41 +650,57 @@ class SettingsScreen extends ConsumerWidget {
         _buildSettingCard(
           children: [
             ListTile(
-              leading: _buildIcon(Icons.fingerprint_rounded, const Color(0xFFAB47BC)),
-              title: const Text('Biometric App Lock', ),
-              subtitle: Text('Require authentication to open app', ),
+              leading: _buildIcon(
+                  Icons.fingerprint_rounded, const Color(0xFFAB47BC)),
+              title: const Text(
+                'Biometric App Lock',
+              ),
+              subtitle: Text(
+                'Require authentication to open app',
+              ),
               trailing: Switch(
                 value: settings.isAppLockEnabled,
                 activeTrackColor: Theme.of(context).colorScheme.primary,
                 activeThumbColor: Theme.of(context).colorScheme.onPrimary,
-                inactiveTrackColor: Theme.of(context).colorScheme.onSurface.withValues(alpha: 0.1),
-                inactiveThumbColor: Theme.of(context).colorScheme.onSurface.withValues(alpha: 0.4),
+                inactiveTrackColor: Theme.of(context)
+                    .colorScheme
+                    .onSurface
+                    .withValues(alpha: 0.1),
+                inactiveThumbColor: Theme.of(context)
+                    .colorScheme
+                    .onSurface
+                    .withValues(alpha: 0.4),
                 trackOutlineColor: WidgetStateProperty.all(Colors.transparent),
                 onChanged: (val) async {
                   if (val) {
                     // Try to authenticate before enabling
                     final localAuth = LocalAuthentication();
                     try {
-                      final bool canCheck = await localAuth.canCheckBiometrics || await localAuth.isDeviceSupported();
+                      final bool canCheck =
+                          await localAuth.canCheckBiometrics ||
+                              await localAuth.isDeviceSupported();
                       if (!canCheck) {
                         if (context.mounted) {
-                          ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text('Your device does not support biometric/PIN authentication.')));
+                          ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
+                              content: Text(
+                                  'Your device does not support biometric/PIN authentication.')));
                         }
                         return;
                       }
-                      
+
                       final didAuth = await localAuth.authenticate(
                         localizedReason: 'Authenticate to enable App Lock',
                         persistAcrossBackgrounding: true,
                         biometricOnly: false,
                       );
-                      
+
                       if (didAuth) {
                         notifier.updateIsAppLockEnabled(true);
                       }
                     } catch (e) {
                       if (context.mounted) {
-                        ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text('Authentication error: $e')));
+                        ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+                            content: Text('Authentication error: $e')));
                       }
                     }
                   } else {
@@ -518,7 +715,8 @@ class SettingsScreen extends ConsumerWidget {
     );
   }
 
-  Widget _buildStorageBackupSection(BuildContext context, WidgetRef ref, AppSettings settings, Settings notifier) {
+  Widget _buildStorageBackupSection(BuildContext context, WidgetRef ref,
+      AppSettings settings, Settings notifier) {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
@@ -526,31 +724,83 @@ class SettingsScreen extends ConsumerWidget {
         _buildSettingCard(
           children: [
             ListTile(
-              leading: _buildIcon(Icons.cloud_done_rounded, const Color(0xFF26A69A)),
-              title: const Text('Auto-Sync Status', ),
-              subtitle: Text('Data securely synced to Google account', ),
+              leading:
+                  _buildIcon(Icons.cloud_done_rounded, const Color(0xFF26A69A)),
+              title: const Text(
+                'Auto-Sync Status',
+              ),
+              subtitle: Text(
+                'Data securely synced to Google account',
+              ),
               trailing: TextButton(
                 onPressed: () async {
-                  ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text('Syncing data to cloud...')));
+                  ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
+                      content: Text('Syncing data to cloud...')));
                   await ref.read(firebaseSyncServiceProvider).backupData();
                   if (context.mounted) {
-                    ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text('Cloud sync complete!')));
+                    ScaffoldMessenger.of(context).showSnackBar(
+                        const SnackBar(content: Text('Cloud sync complete!')));
                   }
                 },
                 style: TextButton.styleFrom(
-                  backgroundColor: const Color(0xFF7E73FF).withValues(alpha: 0.2),
+                  backgroundColor:
+                      const Color(0xFF7E73FF).withValues(alpha: 0.2),
                   foregroundColor: const Color(0xFF7E73FF),
-                  shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
+                  shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(10)),
                 ),
-                child: const Text('Sync Now', style: TextStyle(fontWeight: FontWeight.bold)),
+                child: const Text('Sync Now',
+                    style: TextStyle(fontWeight: FontWeight.bold)),
               ),
             ),
-            Divider(color: Theme.of(context).colorScheme.outlineVariant, height: 1),
+            Divider(
+                color: Theme.of(context).colorScheme.outlineVariant, height: 1),
             ListTile(
-              leading: _buildIcon(Icons.backup_rounded, const Color(0xFFFFA726)),
-              title: const Text('Local Backup & Restore', ),
-              subtitle: Text('Export or import data locally (.atfy)', ),
-              trailing: Icon(Icons.chevron_right_rounded, color: Theme.of(context).colorScheme.onSurface.withValues(alpha: 0.3)),
+              leading:
+                  _buildIcon(Icons.cloud_download_rounded, const Color(0xFF42A5F5)),
+              title: const Text(
+                'Restore from Cloud',
+              ),
+              subtitle: Text(
+                'Fetch old data from Firebase',
+              ),
+              trailing: TextButton(
+                onPressed: () async {
+                  ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
+                      content: Text('Restoring data from cloud...')));
+                  await ref.read(firebaseSyncServiceProvider).restoreData();
+                  if (context.mounted) {
+                    ScaffoldMessenger.of(context).showSnackBar(
+                        const SnackBar(content: Text('Restore complete!')));
+                  }
+                },
+                style: TextButton.styleFrom(
+                  backgroundColor:
+                      const Color(0xFF42A5F5).withValues(alpha: 0.2),
+                  foregroundColor: const Color(0xFF42A5F5),
+                  shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(10)),
+                ),
+                child: const Text('Restore',
+                    style: TextStyle(fontWeight: FontWeight.bold)),
+              ),
+            ),
+            Divider(
+                color: Theme.of(context).colorScheme.outlineVariant, height: 1),
+            ListTile(
+              leading:
+                  _buildIcon(Icons.backup_rounded, const Color(0xFFFFA726)),
+              title: const Text(
+                'Local Backup & Restore',
+              ),
+              subtitle: Text(
+                'Export or import data locally (.atfy)',
+              ),
+              trailing: Icon(Icons.chevron_right_rounded,
+                  color: Theme.of(context)
+                      .colorScheme
+                      .onSurface
+                      .withValues(alpha: 0.3)),
               onTap: () {
                 Navigator.push(
                   context,
@@ -574,22 +824,41 @@ class SettingsScreen extends ConsumerWidget {
         _buildSettingCard(
           children: [
             ListTile(
-              leading: _buildIcon(Icons.info_outline_rounded, const Color(0xFF42A5F5)),
-              title: const Text('App Version', ),
-              subtitle: Text('1.0.0 (Beta)', ),
+              leading: _buildIcon(
+                  Icons.info_outline_rounded, const Color(0xFF42A5F5)),
+              title: const Text(
+                'App Version',
+              ),
+              subtitle: Text(
+                '1.0.0 (Beta)',
+              ),
             ),
-            Divider(color: Theme.of(context).colorScheme.outlineVariant, height: 1),
+            Divider(
+                color: Theme.of(context).colorScheme.outlineVariant, height: 1),
             ListTile(
-              leading: _buildIcon(Icons.feedback_outlined, const Color(0xFFFFA726)),
-              title: const Text('Feedback', ),
-              subtitle: Text('Send us your thoughts', ),
-              trailing: Icon(Icons.chevron_right_rounded, color: Theme.of(context).colorScheme.onSurface.withValues(alpha: 0.3)),
+              leading:
+                  _buildIcon(Icons.feedback_outlined, const Color(0xFFFFA726)),
+              title: const Text(
+                'Feedback',
+              ),
+              subtitle: Text(
+                'Send us your thoughts',
+              ),
+              trailing: Icon(Icons.chevron_right_rounded,
+                  color: Theme.of(context)
+                      .colorScheme
+                      .onSurface
+                      .withValues(alpha: 0.3)),
               onTap: () => context.push(AppRoutes.feedback),
             ),
-            Divider(color: Theme.of(context).colorScheme.outlineVariant, height: 1),
+            Divider(
+                color: Theme.of(context).colorScheme.outlineVariant, height: 1),
             ListTile(
-              leading: _buildIcon(Icons.favorite_rounded, const Color(0xFFFF6B8A)),
-              title: const Text('Developed by', ),
+              leading:
+                  _buildIcon(Icons.favorite_rounded, const Color(0xFFFF6B8A)),
+              title: const Text(
+                'Developed by',
+              ),
               subtitle: ShaderMask(
                 shaderCallback: (bounds) => const LinearGradient(
                   colors: [Color(0xFF7E73FF), Color(0xFFFF6B8A)],
@@ -630,36 +899,55 @@ class SettingsScreen extends ConsumerWidget {
           decoration: BoxDecoration(
             color: const Color(0xFFFF5F5F).withValues(alpha: 0.05),
             borderRadius: BorderRadius.circular(20),
-            border: Border.all(color: const Color(0xFFFF5F5F).withValues(alpha: 0.3)),
+            border: Border.all(
+                color: const Color(0xFFFF5F5F).withValues(alpha: 0.3)),
           ),
           child: Column(
             children: [
               ListTile(
-                leading: _buildIcon(Icons.delete_outline_rounded, const Color(0xFFFF5F5F)),
-                title: const Text('Clear Today\'s Attendance', style: TextStyle(color: Color(0xFFFF5F5F), fontWeight: FontWeight.bold)),
-                subtitle: Text('Deletes all attendance marked today', style: TextStyle(color: const Color(0xFFFF5F5F).withValues(alpha: 0.6))),
+                leading: _buildIcon(
+                    Icons.delete_outline_rounded, const Color(0xFFFF5F5F)),
+                title: const Text('Clear Today\'s Attendance',
+                    style: TextStyle(
+                        color: Color(0xFFFF5F5F), fontWeight: FontWeight.bold)),
+                subtitle: Text('Deletes all attendance marked today',
+                    style: TextStyle(
+                        color: const Color(0xFFFF5F5F).withValues(alpha: 0.6))),
                 onTap: () async {
                   final isar = ref.read(isarProvider);
                   final now = DateTime.now();
                   final todayUtc = DateTime.utc(now.year, now.month, now.day);
                   await isar.writeTxn(() async {
-                    await isar.attendances.filter().dateEqualTo(todayUtc).deleteAll();
+                    await isar.attendances
+                        .filter()
+                        .dateEqualTo(todayUtc)
+                        .deleteAll();
                   });
                   WidgetService.instance.updateWidget();
                   if (context.mounted) {
-                    ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text('Cleared today\'s attendance!')));
+                    ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
+                        content: Text('Cleared today\'s attendance!')));
                   }
                 },
               ),
-              Divider(color: const Color(0xFFFF5F5F).withValues(alpha: 0.2), height: 1),
+              Divider(
+                  color: const Color(0xFFFF5F5F).withValues(alpha: 0.2),
+                  height: 1),
               ListTile(
-                leading: _buildIcon(Icons.download_rounded, const Color(0xFFEF5350)),
-                title: const Text('Import Timetable', ),
-                subtitle: Text('Warning: Overwrites existing schedule', ),
+                leading:
+                    _buildIcon(Icons.download_rounded, const Color(0xFFEF5350)),
+                title: const Text(
+                  'Import Timetable',
+                ),
+                subtitle: Text(
+                  'Warning: Overwrites existing schedule',
+                ),
                 onTap: () async {
                   await ImportTimetable.run();
                   if (context.mounted) {
-                    ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text('Timetable Imported! Restart app if needed.')));
+                    ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
+                        content: Text(
+                            'Timetable Imported! Restart app if needed.')));
                   }
                 },
               ),
@@ -670,30 +958,45 @@ class SettingsScreen extends ConsumerWidget {
     );
   }
 
-  void _showEditSemesterNameDialog(BuildContext context, String currentName, var semesterNotifier) {
+  void _showEditSemesterNameDialog(
+      BuildContext context, String currentName, var semesterNotifier) {
     final controller = TextEditingController(text: currentName);
-    
+
     showDialog(
       context: context,
       builder: (context) {
         return AlertDialog(
           backgroundColor: Theme.of(context).colorScheme.surfaceContainerHigh,
-          title: Text('Edit Semester Name', style: TextStyle(color: Theme.of(context).colorScheme.onSurface)),
+          title: Text('Edit Semester Name',
+              style: TextStyle(color: Theme.of(context).colorScheme.onSurface)),
           content: TextField(
             controller: controller,
             style: TextStyle(color: Theme.of(context).colorScheme.onSurface),
             decoration: InputDecoration(
               labelText: 'Semester Name',
-              labelStyle: TextStyle(color: Theme.of(context).colorScheme.onSurface.withValues(alpha: 0.6)),
-              enabledBorder: UnderlineInputBorder(borderSide: BorderSide(color: Theme.of(context).colorScheme.outlineVariant)),
-              focusedBorder: UnderlineInputBorder(borderSide: BorderSide(color: Theme.of(context).colorScheme.primary)),
+              labelStyle: TextStyle(
+                  color: Theme.of(context)
+                      .colorScheme
+                      .onSurface
+                      .withValues(alpha: 0.6)),
+              enabledBorder: UnderlineInputBorder(
+                  borderSide: BorderSide(
+                      color: Theme.of(context).colorScheme.outlineVariant)),
+              focusedBorder: UnderlineInputBorder(
+                  borderSide:
+                      BorderSide(color: Theme.of(context).colorScheme.primary)),
             ),
             autofocus: true,
           ),
           actions: [
             TextButton(
               onPressed: () => Navigator.pop(context),
-              child: Text('Cancel', style: TextStyle(color: Theme.of(context).colorScheme.onSurface.withValues(alpha: 0.7))),
+              child: Text('Cancel',
+                  style: TextStyle(
+                      color: Theme.of(context)
+                          .colorScheme
+                          .onSurface
+                          .withValues(alpha: 0.7))),
             ),
             FilledButton(
               onPressed: () {
@@ -703,7 +1006,8 @@ class SettingsScreen extends ConsumerWidget {
                   Navigator.pop(context);
                 }
               },
-              style: FilledButton.styleFrom(backgroundColor: Theme.of(context).colorScheme.primary),
+              style: FilledButton.styleFrom(
+                  backgroundColor: Theme.of(context).colorScheme.primary),
               child: const Text('Save'),
             ),
           ],
@@ -716,9 +1020,10 @@ class SettingsScreen extends ConsumerWidget {
 class _SemesterManagementDialog extends StatefulWidget {
   final WidgetRef ref;
   const _SemesterManagementDialog({required this.ref});
-  
+
   @override
-  State<_SemesterManagementDialog> createState() => _SemesterManagementDialogState();
+  State<_SemesterManagementDialog> createState() =>
+      _SemesterManagementDialogState();
 }
 
 class _SemesterManagementDialogState extends State<_SemesterManagementDialog> {
@@ -730,13 +1035,15 @@ class _SemesterManagementDialogState extends State<_SemesterManagementDialog> {
   @override
   void initState() {
     super.initState();
-    _activeSemesterId = PreferencesService.instance.getInt('active_semester_id', defaultValue: 1);
+    _activeSemesterId = PreferencesService.instance
+        .getInt('active_semester_id', defaultValue: 1);
     _loadSemesters();
   }
 
   Future<void> _loadSemesters() async {
     final repo = widget.ref.read(semesterRepositoryProvider);
-    final activeProfileId = PreferencesService.instance.getInt('active_profile_id', defaultValue: 1);
+    final activeProfileId = PreferencesService.instance
+        .getInt('active_profile_id', defaultValue: 1);
     final sems = await repo.getSemestersByProfile(activeProfileId);
     setState(() {
       _semesters = sems;
@@ -747,9 +1054,11 @@ class _SemesterManagementDialogState extends State<_SemesterManagementDialog> {
   @override
   Widget build(BuildContext context) {
     if (_isLoading) {
-      return const AlertDialog(content: SizedBox(height: 100, child: Center(child: CircularProgressIndicator())));
+      return const AlertDialog(
+          content: SizedBox(
+              height: 100, child: Center(child: CircularProgressIndicator())));
     }
-    
+
     return AlertDialog(
       title: const Text('Manage Semesters'),
       content: SizedBox(
@@ -764,16 +1073,18 @@ class _SemesterManagementDialogState extends State<_SemesterManagementDialog> {
                 title: const Text('Add New Semester'),
                 onTap: () async {
                   final repo = widget.ref.read(semesterRepositoryProvider);
-                  
-                  final activeProfileId = PreferencesService.instance.getInt('active_profile_id', defaultValue: 1);
+
+                  final activeProfileId = PreferencesService.instance
+                      .getInt('active_profile_id', defaultValue: 1);
                   final newSemId = await repo.upsertSemester(Semester()
                     ..profileId = activeProfileId
                     ..name = 'Semester ${_semesters.length + 1}'
-                    ..startDate = DateTime.now()
-                  );
-                  
+                    ..startDate = DateTime.now());
+
                   // Set active via notifier to update global app state
-                  await widget.ref.read(semesterStateProvider.notifier).setActiveSemester(newSemId);
+                  await widget.ref
+                      .read(semesterStateProvider.notifier)
+                      .setActiveSemester(newSemId);
                   if (!context.mounted) return;
                   Navigator.pop(context);
                 },
@@ -781,58 +1092,81 @@ class _SemesterManagementDialogState extends State<_SemesterManagementDialog> {
             }
             final sem = _semesters[index];
             final isCurrent = sem.id == _activeSemesterId;
-            return ListTile(
+            return RadioListTile<int>(
               title: Text(sem.name),
-              trailing: isCurrent ? Icon(Icons.check_circle, color: Theme.of(context).colorScheme.primary) : null,
-              onTap: () async {
-                if (!isCurrent) {
-                  await widget.ref.read(semesterStateProvider.notifier).setActiveSemester(sem.id);
+              value: sem.id,
+              groupValue: _activeSemesterId,
+              activeColor: Theme.of(context).colorScheme.primary,
+              onChanged: (int? value) async {
+                if (value != null && value != _activeSemesterId) {
+                  setState(() {
+                    _activeSemesterId = value;
+                  });
+                  await widget.ref
+                      .read(semesterStateProvider.notifier)
+                      .setActiveSemester(value);
                   if (!context.mounted) return;
                   Navigator.pop(context);
                 }
               },
-              onLongPress: () async {
-                if (_semesters.length <= 1) return;
-                
-                final confirm = await showDialog<bool>(
-                  context: context,
-                  builder: (c) => AlertDialog(
-                    title: const Text('Delete Semester?'),
-                    content: const Text('This will delete all subjects, schedules, and attendance records associated with this semester. This cannot be undone.'),
-                    actions: [
-                      TextButton(onPressed: () => Navigator.pop(c, false), child: const Text('Cancel')),
-                      FilledButton(
-                        style: FilledButton.styleFrom(backgroundColor: Colors.red),
-                        onPressed: () => Navigator.pop(c, true), 
-                        child: const Text('Delete')
-                      ),
-                    ],
-                  )
-                );
-                
-                if (confirm == true) {
-                  final repo = widget.ref.read(semesterRepositoryProvider);
-                  await repo.deleteSemester(sem.id);
-                  if (isCurrent) {
-                    final activeProfileId = PreferencesService.instance.getInt('active_profile_id', defaultValue: 1);
-                    final rem = await repo.getSemestersByProfile(activeProfileId);
-                    if (rem.isNotEmpty) {
-                      await widget.ref.read(semesterStateProvider.notifier).setActiveSemester(rem.first.id);
-                    }
-                  } else {
-                    final currentId = PreferencesService.instance.getInt('active_semester_id', defaultValue: 1);
-                    await widget.ref.read(semesterStateProvider.notifier).setActiveSemester(currentId);
-                  }
-                  if (!context.mounted) return;
-                  Navigator.pop(context);
-                }
-              },
+              secondary: _semesters.length <= 1
+                  ? null
+                  : IconButton(
+                      icon: const Icon(Icons.delete_outline_rounded,
+                          color: Colors.red),
+                      onPressed: () async {
+                        final confirm = await showDialog<bool>(
+                            context: context,
+                            builder: (c) => AlertDialog(
+                                  title: const Text('Delete Semester?'),
+                                  content: const Text(
+                                      'This will delete all subjects, schedules, and attendance records associated with this semester. This cannot be undone.'),
+                                  actions: [
+                                    TextButton(
+                                        onPressed: () =>
+                                            Navigator.pop(c, false),
+                                        child: const Text('Cancel')),
+                                    FilledButton(
+                                        style: FilledButton.styleFrom(
+                                            backgroundColor: Colors.red),
+                                        onPressed: () => Navigator.pop(c, true),
+                                        child: const Text('Delete')),
+                                  ],
+                                ));
+
+                        if (confirm == true) {
+                          final repo =
+                              widget.ref.read(semesterRepositoryProvider);
+                          await repo.deleteSemester(sem.id);
+                          if (isCurrent) {
+                            final activeProfileId = PreferencesService.instance
+                                .getInt('active_profile_id', defaultValue: 1);
+                            final rem = await repo
+                                .getSemestersByProfile(activeProfileId);
+                            if (rem.isNotEmpty) {
+                              await widget.ref
+                                  .read(semesterStateProvider.notifier)
+                                  .setActiveSemester(rem.first.id);
+                            }
+                          } else {
+                            final currentId = PreferencesService.instance
+                                .getInt('active_semester_id', defaultValue: 1);
+                            await widget.ref
+                                .read(semesterStateProvider.notifier)
+                                .setActiveSemester(currentId);
+                          }
+                          if (!context.mounted) return;
+                          Navigator.pop(context);
+                        }
+                      },
+                    ),
             );
           },
         ),
       ),
       actions: [
-        TextButton(onPressed: () => Navigator.pop(context), child: const Text('Close'))
+        TextButton(
+            onPressed: () => Navigator.pop(context), child: const Text('Close'))
       ],
     );
   }
@@ -843,10 +1177,12 @@ class _IncludedSubjectsDialog extends ConsumerStatefulWidget {
   const _IncludedSubjectsDialog({required this.ref});
 
   @override
-  ConsumerState<_IncludedSubjectsDialog> createState() => _IncludedSubjectsDialogState();
+  ConsumerState<_IncludedSubjectsDialog> createState() =>
+      _IncludedSubjectsDialogState();
 }
 
-class _IncludedSubjectsDialogState extends ConsumerState<_IncludedSubjectsDialog> {
+class _IncludedSubjectsDialogState
+    extends ConsumerState<_IncludedSubjectsDialog> {
   List<Subject> _subjects = [];
   bool _isLoading = true;
 
@@ -859,10 +1195,10 @@ class _IncludedSubjectsDialogState extends ConsumerState<_IncludedSubjectsDialog
   Future<void> _loadSubjects() async {
     final semester = widget.ref.read(semesterStateProvider);
     if (semester == null) return;
-    
+
     final repo = widget.ref.read(subjectRepositoryProvider);
     final subjects = await repo.watchAll(semester.id).first;
-    
+
     if (mounted) {
       setState(() {
         _subjects = subjects;
@@ -877,7 +1213,7 @@ class _IncludedSubjectsDialogState extends ConsumerState<_IncludedSubjectsDialog
       title: const Text('Overall % Inclusion'),
       content: SizedBox(
         width: double.maxFinite,
-        child: _isLoading 
+        child: _isLoading
             ? const Center(child: CircularProgressIndicator())
             : _subjects.isEmpty
                 ? const Text('No subjects found.')
@@ -893,11 +1229,15 @@ class _IncludedSubjectsDialogState extends ConsumerState<_IncludedSubjectsDialog
                         onChanged: (val) async {
                           subject.isIncludedInOverall = val;
                           setState(() {});
-                          final repo = widget.ref.read(subjectRepositoryProvider);
+                          final repo =
+                              widget.ref.read(subjectRepositoryProvider);
                           await repo.update(subject);
                           // Trigger dashboard rebuild by updating a dummy pref or reloading
-                          widget.ref.read(settingsProvider.notifier).updateDefaultGoal(
-                              widget.ref.read(settingsProvider).defaultGoalPercentage);
+                          widget.ref
+                              .read(settingsProvider.notifier)
+                              .updateDefaultGoal(widget.ref
+                                  .read(settingsProvider)
+                                  .defaultGoalPercentage);
                           WidgetService.instance.updateWidget();
                         },
                       );
@@ -905,9 +1245,9 @@ class _IncludedSubjectsDialogState extends ConsumerState<_IncludedSubjectsDialog
                   ),
       ),
       actions: [
-        TextButton(onPressed: () => Navigator.pop(context), child: const Text('Done'))
+        TextButton(
+            onPressed: () => Navigator.pop(context), child: const Text('Done'))
       ],
     );
   }
 }
-

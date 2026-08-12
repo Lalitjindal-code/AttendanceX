@@ -43,9 +43,12 @@ class DashboardNotifier extends _$DashboardNotifier {
     final scheduleStream = ref
         .watch(scheduleRepositoryProvider)
         .watchByDaySortedByTime(semester.id, dayOfWeek.value);
-    final subjectStream = ref.watch(subjectRepositoryProvider).watchAllActive(semester.id);
-    final attendanceStream = ref.watch(attendanceRepositoryProvider).watchAll(semester.id);
-    final plannerStream = ref.watch(plannerRepositoryProvider).watchAllTasks(semester.id);
+    final subjectStream =
+        ref.watch(subjectRepositoryProvider).watchAllActive(semester.id);
+    final attendanceStream =
+        ref.watch(attendanceRepositoryProvider).watchAll(semester.id);
+    final plannerStream =
+        ref.watch(plannerRepositoryProvider).watchAllTasks(semester.id);
 
     return Rx.combineLatest4(
       scheduleStream,
@@ -62,8 +65,8 @@ class DashboardNotifier extends _$DashboardNotifier {
             .where((a) => includedSubjectIds.contains(a.subjectId))
             .toList();
 
-        final overallSummary =
-            AttendanceEngine.calculateOverallSummary(includedAttendances, settings, semester);
+        final overallSummary = AttendanceEngine.calculateOverallSummary(
+            includedAttendances, settings, semester);
 
         final overallSuggestion = AttendanceEngine.calculateSmartSuggestion(
           effectivePresent: overallSummary.effectivePresent,
@@ -85,7 +88,7 @@ class DashboardNotifier extends _$DashboardNotifier {
         final subjectSuggestionMap = <int, SmartSuggestion>{};
         for (final subject in subjects) {
           final summary = AttendanceEngine.calculateSubjectSummary(
-            subject.id, allAttendances, settings, semester);
+              subject.id, allAttendances, settings, semester);
           final suggestion = AttendanceEngine.calculateSmartSuggestion(
             subjectId: subject.id,
             effectivePresent: summary.effectivePresent,
@@ -97,14 +100,19 @@ class DashboardNotifier extends _$DashboardNotifier {
         }
 
         final todayNormalized = DateTime(now.year, now.month, now.day);
-        final isWithinSemester = !todayNormalized.isBefore(DateTime(semester.startDate.year, semester.startDate.month, semester.startDate.day)) &&
-            (semester.endDate == null || !todayNormalized.isAfter(DateTime(semester.endDate!.year, semester.endDate!.month, semester.endDate!.day)));
+        final isWithinSemester = !todayNormalized.isBefore(DateTime(
+                semester.startDate.year,
+                semester.startDate.month,
+                semester.startDate.day)) &&
+            (semester.endDate == null ||
+                !todayNormalized.isAfter(DateTime(semester.endDate!.year,
+                    semester.endDate!.month, semester.endDate!.day)));
 
         final todaysLectures = isWithinSemester
             ? schedules
                 .map((schedule) {
-                  final subject =
-                      subjects.firstWhereOrNull((s) => s.id == schedule.subjectId);
+                  final subject = subjects
+                      .firstWhereOrNull((s) => s.id == schedule.subjectId);
                   if (subject == null) return null;
 
                   final attendanceForThisSlot = todaysAttendances
@@ -238,9 +246,18 @@ class DashboardNotifier extends _$DashboardNotifier {
           final entry = sortedAbsences.first;
           if (entry.value >= 2) {
             // Find name of day
-            final weekdays = ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday'];
+            final weekdays = [
+              'Monday',
+              'Tuesday',
+              'Wednesday',
+              'Thursday',
+              'Friday',
+              'Saturday',
+              'Sunday'
+            ];
             final dayName = weekdays[entry.key - 1];
-            patternInsight = 'You tend to miss the most classes on ${dayName}s (${entry.value} absences). Try not to miss classes this $dayName!';
+            patternInsight =
+                'You tend to miss the most classes on ${dayName}s (${entry.value} absences). Try not to miss classes this $dayName!';
           }
         }
 

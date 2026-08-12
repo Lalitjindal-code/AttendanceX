@@ -12,7 +12,8 @@ class ScheduleRepository {
 
   /// Returns a stream of all schedules for a specific day, sorted by order.
   /// This is specifically for the Schedule editing screen (drag-and-drop).
-  Stream<List<Schedule>> watchByDaySortedByOrder(int semesterId, int dayOfWeek) {
+  Stream<List<Schedule>> watchByDaySortedByOrder(
+      int semesterId, int dayOfWeek) {
     return _isar.schedules
         .filter()
         .semesterIdEqualTo(semesterId)
@@ -36,7 +37,10 @@ class ScheduleRepository {
 
   /// Returns a stream of all schedules.
   Stream<List<Schedule>> watchAll(int semesterId) {
-    return _isar.schedules.filter().semesterIdEqualTo(semesterId).watch(fireImmediately: true);
+    return _isar.schedules
+        .filter()
+        .semesterIdEqualTo(semesterId)
+        .watch(fireImmediately: true);
   }
 
   /// Fetches a specific schedule by ID.
@@ -89,6 +93,11 @@ class ScheduleRepository {
 
   /// Fetches all schedules for a specific day (used by Engine for conflict validation).
   Future<List<Schedule>> getByDay(int semesterId, int dayOfWeek) async {
-    return await _isar.schedules.filter().semesterIdEqualTo(semesterId).and().dayOfWeekEqualTo(dayOfWeek).findAll();
+    return await _isar.schedules
+        .filter()
+        .semesterIdEqualTo(semesterId)
+        .and()
+        .dayOfWeekEqualTo(dayOfWeek)
+        .findAll();
   }
 }

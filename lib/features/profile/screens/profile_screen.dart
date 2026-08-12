@@ -79,8 +79,8 @@ class ProfileScreen extends ConsumerWidget {
                     leading: const Icon(Icons.verified_user_outlined),
                     title: const Text('Status'),
                     subtitle: const Text('Active & Verified'),
-                    trailing:
-                        Icon(Icons.check_circle, color: Theme.of(context).colorScheme.primary),
+                    trailing: Icon(Icons.check_circle,
+                        color: Theme.of(context).colorScheme.primary),
                   ),
                 ],
               ),
@@ -92,9 +92,11 @@ class ProfileScreen extends ConsumerWidget {
                 onPressed: () async {
                   await ref.read(authProvider).signOut();
                 },
-                icon: Icon(Icons.logout, color: Theme.of(context).colorScheme.error),
-                label:
-                    Text('Sign Out', style: TextStyle(color: Theme.of(context).colorScheme.error)),
+                icon: Icon(Icons.logout,
+                    color: Theme.of(context).colorScheme.error),
+                label: Text('Sign Out',
+                    style:
+                        TextStyle(color: Theme.of(context).colorScheme.error)),
                 style: OutlinedButton.styleFrom(
                   padding: const EdgeInsets.symmetric(vertical: 16),
                   side: BorderSide(color: Theme.of(context).colorScheme.error),

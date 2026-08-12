@@ -40,7 +40,8 @@ class MockNotificationService implements NotificationService {
   @override
   Future<bool?> requestPermissions() async => true;
   @override
-  Future<List<PendingNotificationRequest>> getPendingNotifications() async => [];
+  Future<List<PendingNotificationRequest>> getPendingNotifications() async =>
+      [];
   @override
   Future<void> showTestNotification() async {}
 
@@ -107,10 +108,12 @@ class FakeScheduleRepository implements ScheduleRepository {
   @override
   Future<void> updateOrder(List<int> scheduleIds) async {}
   @override
-  Stream<List<Schedule>> watchByDaySortedByOrder(int dayOfWeek, int semesterId) =>
+  Stream<List<Schedule>> watchByDaySortedByOrder(
+          int dayOfWeek, int semesterId) =>
       Stream.value([]);
   @override
-  Stream<List<Schedule>> watchByDaySortedByTime(int dayOfWeek, int semesterId) =>
+  Stream<List<Schedule>> watchByDaySortedByTime(
+          int dayOfWeek, int semesterId) =>
       Stream.value([]);
 }
 
@@ -125,16 +128,22 @@ class FakeAttendanceRepository implements AttendanceRepository {
   @override
   Future<void> deleteAttendancesByDate(DateTime date, int semesterId) async {}
   @override
-  Future<void> markFullDayStatus(DateTime date, int semesterId, AttendanceStatus status) async {}
+  Future<void> markFullDayStatus(
+      DateTime date, int semesterId, AttendanceStatus status) async {}
   @override
-  Stream<List<Attendance>> watchBySubject(int subjectId, int semesterId) => Stream.value([]);
-  @override
-  Future<List<Attendance>> getBySubjectId(int subjectId, int semesterId) async => [];
-  @override
-  Stream<List<AttendanceHistory>> watchHistoryBySubject(int subjectId, int semesterId) =>
+  Stream<List<Attendance>> watchBySubject(int subjectId, int semesterId) =>
       Stream.value([]);
   @override
-  Stream<List<Attendance>> watchByDateRange(int semesterId, DateTime start, DateTime end) =>
+  Future<List<Attendance>> getBySubjectId(
+          int subjectId, int semesterId) async =>
+      [];
+  @override
+  Stream<List<AttendanceHistory>> watchHistoryBySubject(
+          int subjectId, int semesterId) =>
+      Stream.value([]);
+  @override
+  Stream<List<Attendance>> watchByDateRange(
+          int semesterId, DateTime start, DateTime end) =>
       Stream.value([]);
   @override
   Future<Attendance?> getById(int id) async => null;
@@ -199,7 +208,8 @@ void main() {
         attendanceRepositoryProvider
             .overrideWithValue(FakeAttendanceRepository()),
         settingsProvider.overrideWith(() => FakeSettings()),
-        semesterStateProvider.overrideWith(() => FakeSemesterState()), // provide null or a mock semester
+        semesterStateProvider.overrideWith(
+            () => FakeSemesterState()), // provide null or a mock semester
       ],
     );
 

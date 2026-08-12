@@ -103,7 +103,9 @@ void main() {
     final scheduleRepo = container.read(scheduleRepositoryProvider);
     final attendanceRepo = container.read(attendanceRepositoryProvider);
 
-    final subSubject = Subject()..semesterId = 1..name = 'Math';
+    final subSubject = Subject()
+      ..semesterId = 1
+      ..name = 'Math';
     await subjectRepo.create(subSubject);
 
     final now = DateTime.now();

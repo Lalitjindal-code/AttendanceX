@@ -42,14 +42,16 @@ class DayOfWeekChart extends StatelessWidget {
           barTouchData: BarTouchData(
             enabled: true,
             touchTooltipData: BarTouchTooltipData(
-              getTooltipColor: (group) => theme.colorScheme.surfaceContainerHigh,
+              getTooltipColor: (group) =>
+                  theme.colorScheme.surfaceContainerHigh,
               getTooltipItem: (group, groupIndex, rod, rodIndex) {
                 final trend = trends.firstWhere((t) => t.weekday == group.x);
                 final dayName = _getDayName(trend.weekday);
                 return BarTooltipItem(
                   '$dayName\n',
-                  theme.textTheme.labelLarge!
-                      .copyWith(fontWeight: FontWeight.bold, color: theme.colorScheme.onSurface),
+                  theme.textTheme.labelLarge!.copyWith(
+                      fontWeight: FontWeight.bold,
+                      color: theme.colorScheme.onSurface),
                   children: [
                     if (trend.totalCount == 0)
                       TextSpan(

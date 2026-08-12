@@ -112,7 +112,9 @@ class BunkHeatmapChart extends StatelessWidget {
     return Row(
       mainAxisAlignment: MainAxisAlignment.end,
       children: [
-        Text('Less', style: theme.textTheme.labelSmall?.copyWith(color: theme.colorScheme.onSurfaceVariant)),
+        Text('Less',
+            style: theme.textTheme.labelSmall
+                ?.copyWith(color: theme.colorScheme.onSurfaceVariant)),
         const SizedBox(width: 4),
         _buildLegendBox(0, theme),
         const SizedBox(width: 4),
@@ -122,7 +124,9 @@ class BunkHeatmapChart extends StatelessWidget {
         const SizedBox(width: 4),
         _buildLegendBox(5, theme),
         const SizedBox(width: 4),
-        Text('More', style: theme.textTheme.labelSmall?.copyWith(color: theme.colorScheme.onSurfaceVariant)),
+        Text('More',
+            style: theme.textTheme.labelSmall
+                ?.copyWith(color: theme.colorScheme.onSurfaceVariant)),
       ],
     );
   }
@@ -140,8 +144,6 @@ class BunkHeatmapChart extends StatelessWidget {
       ),
     );
   }
-
-
 
   Color _getColor(int missedClasses, ThemeData theme) {
     if (missedClasses == 0) {

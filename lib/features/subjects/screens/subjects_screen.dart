@@ -68,14 +68,18 @@ class _SubjectsScreenState extends ConsumerState<SubjectsScreen> {
           cacheExtent: 500, // Pre-render more items for smooth fast scrolling
           slivers: [
             SliverAppBar(
-              title: Text('Subjects', style: TextStyle(color: Theme.of(context).colorScheme.onSurface, fontWeight: FontWeight.bold)),
+              title: Text('Subjects',
+                  style: TextStyle(
+                      color: Theme.of(context).colorScheme.onSurface,
+                      fontWeight: FontWeight.bold)),
               floating: true,
               pinned: true,
               backgroundColor: Theme.of(context).colorScheme.surface,
               surfaceTintColor: Colors.transparent,
               actions: [
                 IconButton(
-                  icon: Icon(Icons.add, color: Theme.of(context).colorScheme.onSurface),
+                  icon: Icon(Icons.add,
+                      color: Theme.of(context).colorScheme.onSurface),
                   tooltip: 'Add Subject',
                   onPressed: () => showSubjectFormSheet(context),
                 ),
@@ -92,10 +96,12 @@ class _SubjectsScreenState extends ConsumerState<SubjectsScreen> {
                         child: Container(
                           padding: const EdgeInsets.all(32),
                           decoration: BoxDecoration(
-                            color: Theme.of(context).colorScheme.surfaceContainer,
+                            color:
+                                Theme.of(context).colorScheme.surfaceContainer,
                             borderRadius: BorderRadius.circular(24),
                             border: Border.all(
-                              color: Theme.of(context).colorScheme.outlineVariant,
+                              color:
+                                  Theme.of(context).colorScheme.outlineVariant,
                             ),
                           ),
                           child: Column(
@@ -104,7 +110,8 @@ class _SubjectsScreenState extends ConsumerState<SubjectsScreen> {
                               Container(
                                 padding: const EdgeInsets.all(20),
                                 decoration: BoxDecoration(
-                                  color: const Color(0xFF7E73FF).withValues(alpha: 0.2),
+                                  color: const Color(0xFF7E73FF)
+                                      .withValues(alpha: 0.2),
                                   shape: BoxShape.circle,
                                 ),
                                 child: const Icon(
@@ -116,8 +123,13 @@ class _SubjectsScreenState extends ConsumerState<SubjectsScreen> {
                               const SizedBox(height: AppSpacing.lg),
                               Text(
                                 'No Subjects Yet',
-                                style: Theme.of(context).textTheme.titleLarge?.copyWith(
-                                      color: Theme.of(context).colorScheme.onSurface,
+                                style: Theme.of(context)
+                                    .textTheme
+                                    .titleLarge
+                                    ?.copyWith(
+                                      color: Theme.of(context)
+                                          .colorScheme
+                                          .onSurface,
                                       fontWeight: FontWeight.bold,
                                     ),
                               ),
@@ -125,18 +137,28 @@ class _SubjectsScreenState extends ConsumerState<SubjectsScreen> {
                               Text(
                                 'Add your first subject to start tracking attendance.',
                                 textAlign: TextAlign.center,
-                                style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                                      color: Theme.of(context).colorScheme.onSurface.withValues(alpha: 0.6),
+                                style: Theme.of(context)
+                                    .textTheme
+                                    .bodyMedium
+                                    ?.copyWith(
+                                      color: Theme.of(context)
+                                          .colorScheme
+                                          .onSurface
+                                          .withValues(alpha: 0.6),
                                     ),
                               ),
                               const SizedBox(height: AppSpacing.xl),
                               FilledButton.icon(
                                 onPressed: () => showSubjectFormSheet(context),
                                 style: FilledButton.styleFrom(
-                                  backgroundColor: Theme.of(context).colorScheme.primary,
-                                  foregroundColor: Theme.of(context).colorScheme.onPrimary,
-                                  padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 12),
-                                  shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+                                  backgroundColor:
+                                      Theme.of(context).colorScheme.primary,
+                                  foregroundColor:
+                                      Theme.of(context).colorScheme.onPrimary,
+                                  padding: const EdgeInsets.symmetric(
+                                      horizontal: 24, vertical: 12),
+                                  shape: RoundedRectangleBorder(
+                                      borderRadius: BorderRadius.circular(12)),
                                 ),
                                 icon: const Icon(Icons.add_rounded),
                                 label: const Text('Add Subject'),
@@ -163,9 +185,12 @@ class _SubjectsScreenState extends ConsumerState<SubjectsScreen> {
                             child: SubjectCard(subject: subjects[index]),
                           ),
                         )
-                        .animate(delay: Duration(milliseconds: 60 * index))
-                        .fadeIn(duration: 350.ms, curve: Curves.easeOutQuad)
-                        .slideY(begin: 0.12, duration: 350.ms, curve: Curves.easeOutQuad);
+                            .animate(delay: Duration(milliseconds: 60 * index))
+                            .fadeIn(duration: 350.ms, curve: Curves.easeOutQuad)
+                            .slideY(
+                                begin: 0.12,
+                                duration: 350.ms,
+                                curve: Curves.easeOutQuad);
                       },
                       childCount: subjects.length,
                     ),
@@ -188,7 +213,10 @@ class _SubjectsScreenState extends ConsumerState<SubjectsScreen> {
                 ),
               ),
               error: (error, stack) => SliverFillRemaining(
-                child: Center(child: Text('Error: $error', style: TextStyle(color: Theme.of(context).colorScheme.error))),
+                child: Center(
+                    child: Text('Error: $error',
+                        style: TextStyle(
+                            color: Theme.of(context).colorScheme.error))),
               ),
             ),
             const SliverToBoxAdapter(

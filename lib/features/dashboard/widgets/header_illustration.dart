@@ -8,7 +8,8 @@ class HeaderIllustration extends StatefulWidget {
   State<HeaderIllustration> createState() => _HeaderIllustrationState();
 }
 
-class _HeaderIllustrationState extends State<HeaderIllustration> with SingleTickerProviderStateMixin {
+class _HeaderIllustrationState extends State<HeaderIllustration>
+    with SingleTickerProviderStateMixin {
   late AnimationController _controller;
 
   @override
@@ -31,7 +32,7 @@ class _HeaderIllustrationState extends State<HeaderIllustration> with SingleTick
     final theme = Theme.of(context);
     final brightness = theme.brightness;
     final isAmoled = theme.colorScheme.surface.value == 0xFF000000;
-    
+
     // Connect dynamic Sun/Moon directly to Light/Dark mode state as well as system time
     // If theme brightness is Light, force isDayTime = true to show the Sun (and vice versa)
     final isDayTime = brightness == Brightness.light;
@@ -90,7 +91,7 @@ class _DynamicSkyPainter extends CustomPainter {
     // 2. Draw Sun or Moon with pulsing animation
     final pulseScale = 1.0 + 0.05 * math.sin(animationValue * 2 * math.pi * 3);
     final celestialCenter = Offset(size.width - 30, 24);
-    
+
     if (isDayTime) {
       // Draw Sun with layered glowing gradients (vibrant orange/amber)
       final sunOuterGlow = Paint()
@@ -99,7 +100,8 @@ class _DynamicSkyPainter extends CustomPainter {
             const Color(0xFFFFB300).withValues(alpha: 0.35),
             const Color(0xFFFFB300).withValues(alpha: 0.0),
           ],
-        ).createShader(Rect.fromCircle(center: celestialCenter, radius: 36 * pulseScale));
+        ).createShader(
+            Rect.fromCircle(center: celestialCenter, radius: 36 * pulseScale));
       canvas.drawCircle(celestialCenter, 36 * pulseScale, sunOuterGlow);
 
       final sunPaint = Paint()
@@ -112,7 +114,7 @@ class _DynamicSkyPainter extends CustomPainter {
         ..color = const Color(0xFFFFB300).withValues(alpha: 0.7)
         ..style = PaintingStyle.stroke
         ..strokeWidth = 1.8;
-      
+
       final rotAngle = animationValue * 2 * math.pi;
       for (int i = 0; i < 8; i++) {
         final angle = (i * math.pi / 4) + rotAngle * 0.05;
@@ -134,17 +136,20 @@ class _DynamicSkyPainter extends CustomPainter {
             primaryColor.withValues(alpha: 0.35),
             primaryColor.withValues(alpha: 0.0),
           ],
-        ).createShader(Rect.fromCircle(center: celestialCenter, radius: 30 * pulseScale));
+        ).createShader(
+            Rect.fromCircle(center: celestialCenter, radius: 30 * pulseScale));
       canvas.drawCircle(celestialCenter, 30 * pulseScale, moonOuterGlow);
 
       // Draw crescent moon shape using Path subtract/clip logic (fully clipped crescent)
       final moonPath = Path()
         ..addOval(Rect.fromCircle(center: celestialCenter, radius: 8.5));
-      
+
       final clipPath = Path()
-        ..addOval(Rect.fromCircle(center: celestialCenter + const Offset(-4, -2.5), radius: 8.0));
-      
-      final crescentPath = Path.combine(PathOperation.difference, moonPath, clipPath);
+        ..addOval(Rect.fromCircle(
+            center: celestialCenter + const Offset(-4, -2.5), radius: 8.0));
+
+      final crescentPath =
+          Path.combine(PathOperation.difference, moonPath, clipPath);
 
       final moonPaint = Paint()
         ..color = isAmoled ? const Color(0xFFC5C0FF) : const Color(0xFF8C7CFF)
@@ -157,7 +162,7 @@ class _DynamicSkyPainter extends CustomPainter {
         ..color = Colors.white.withValues(alpha: 0.4)
         ..style = PaintingStyle.stroke
         ..strokeWidth = 1.0;
-      
+
       // Draw a partial arc along the right edge of the moon sphere to prevent a full closed circle outline loop
       canvas.drawArc(
         Rect.fromCircle(center: celestialCenter, radius: 8.5),
@@ -169,10 +174,12 @@ class _DynamicSkyPainter extends CustomPainter {
     }
 
     // 3. Draw Floating Clouds
-    final cloud1X = (size.width * 0.3) + (size.width * 0.4) * math.sin(animationValue * 2 * math.pi);
+    final cloud1X = (size.width * 0.3) +
+        (size.width * 0.4) * math.sin(animationValue * 2 * math.pi);
     _drawCloud(canvas, Offset(cloud1X, 20), 16);
 
-    final cloud2X = (size.width * 0.72) + 14 * math.cos(animationValue * 2 * math.pi * 2);
+    final cloud2X =
+        (size.width * 0.72) + 14 * math.cos(animationValue * 2 * math.pi * 2);
     _drawCloud(canvas, Offset(cloud2X, 14), 11);
 
     // 4. Draw hills (Path) - Make them solid colored instead of gradient shaders ending in surfaceColor.
@@ -216,14 +223,19 @@ class _DynamicSkyPainter extends CustomPainter {
 
     // 5. Draw trees (Swaying dynamically with a virtual wind)
     final swayOffset = 3.5 * math.sin(animationValue * 2 * math.pi * 2);
-    _drawTree(canvas, Offset(size.width * 0.15, size.height - 10), 22, swayOffset);
-    _drawTree(canvas, Offset(size.width * 0.85, size.height - 15), 18, -swayOffset * 0.7);
+    _drawTree(
+        canvas, Offset(size.width * 0.15, size.height - 10), 22, swayOffset);
+    _drawTree(canvas, Offset(size.width * 0.85, size.height - 15), 18,
+        -swayOffset * 0.7);
   }
 
   void _drawStars(Canvas canvas, Size size) {
-    if (brightness == Brightness.light) return; // Stars are invisible on light backgrounds
-    final starPaint = Paint()..color = Colors.white.withValues(alpha: 0.45 + 0.4 * math.sin(animationValue * 2 * math.pi * 5));
-    
+    if (brightness == Brightness.light)
+      return; // Stars are invisible on light backgrounds
+    final starPaint = Paint()
+      ..color = Colors.white.withValues(
+          alpha: 0.45 + 0.4 * math.sin(animationValue * 2 * math.pi * 5));
+
     canvas.drawCircle(Offset(size.width * 0.08, 14), 1.0, starPaint);
     canvas.drawCircle(Offset(size.width * 0.22, 28), 1.2, starPaint);
     canvas.drawCircle(Offset(size.width * 0.45, 10), 0.9, starPaint);
@@ -237,10 +249,13 @@ class _DynamicSkyPainter extends CustomPainter {
       ..color = Colors.white.withValues(alpha: 0.08)
       ..strokeWidth = 0.8
       ..style = PaintingStyle.stroke;
-    
-    canvas.drawLine(Offset(size.width * 0.08, 14), Offset(size.width * 0.22, 28), linePaint);
-    canvas.drawLine(Offset(size.width * 0.22, 28), Offset(size.width * 0.35, 35), linePaint);
-    canvas.drawLine(Offset(size.width * 0.35, 35), Offset(size.width * 0.45, 10), linePaint);
+
+    canvas.drawLine(Offset(size.width * 0.08, 14),
+        Offset(size.width * 0.22, 28), linePaint);
+    canvas.drawLine(Offset(size.width * 0.22, 28),
+        Offset(size.width * 0.35, 35), linePaint);
+    canvas.drawLine(Offset(size.width * 0.35, 35),
+        Offset(size.width * 0.45, 10), linePaint);
   }
 
   void _drawShootingStar(Canvas canvas, Size size) {
@@ -250,14 +265,17 @@ class _DynamicSkyPainter extends CustomPainter {
       final startX = size.width * 0.55;
       final startY = -12.0;
       final delta = starProgress * 65;
-      
+
       final trailPaint = Paint()
         ..shader = LinearGradient(
-          colors: [Colors.white.withValues(alpha: 0.85), Colors.white.withValues(alpha: 0.0)],
+          colors: [
+            Colors.white.withValues(alpha: 0.85),
+            Colors.white.withValues(alpha: 0.0)
+          ],
         ).createShader(Rect.fromLTWH(startX - delta, startY + delta, 20, 20))
         ..strokeWidth = 1.8
         ..style = PaintingStyle.stroke;
-      
+
       canvas.drawLine(
         Offset(startX - delta + 12, startY + delta - 12),
         Offset(startX - delta, startY + delta),
@@ -295,9 +313,10 @@ class _DynamicSkyPainter extends CustomPainter {
 
   void _drawLightShafts(Canvas canvas, Size size) {
     final shaftPaint = Paint()
-      ..color = Colors.amber.withValues(alpha: 0.05 + 0.03 * math.sin(animationValue * 2 * math.pi * 2))
+      ..color = Colors.amber.withValues(
+          alpha: 0.05 + 0.03 * math.sin(animationValue * 2 * math.pi * 2))
       ..style = PaintingStyle.fill;
-    
+
     final path = Path();
     path.moveTo(size.width - 25, 20);
     path.lineTo(size.width * 0.4, size.height);
@@ -312,7 +331,7 @@ class _DynamicSkyPainter extends CustomPainter {
         : (brightness == Brightness.light
             ? Colors.grey.withValues(alpha: 0.15)
             : primaryColor.withValues(alpha: 0.06));
-    
+
     final shadowColor = isDayTime
         ? Colors.white.withValues(alpha: 0.45)
         : (brightness == Brightness.light
@@ -321,15 +340,20 @@ class _DynamicSkyPainter extends CustomPainter {
 
     // Shadow Layer
     final shadowPaint = Paint()..color = shadowColor;
-    canvas.drawCircle(center + const Offset(1.5, 1.5), width * 0.5, shadowPaint);
-    canvas.drawCircle(center + Offset(-width * 0.35 + 1.5, width * 0.1 + 1.5), width * 0.35, shadowPaint);
-    canvas.drawCircle(center + Offset(width * 0.35 + 1.5, width * 0.1 + 1.5), width * 0.35, shadowPaint);
+    canvas.drawCircle(
+        center + const Offset(1.5, 1.5), width * 0.5, shadowPaint);
+    canvas.drawCircle(center + Offset(-width * 0.35 + 1.5, width * 0.1 + 1.5),
+        width * 0.35, shadowPaint);
+    canvas.drawCircle(center + Offset(width * 0.35 + 1.5, width * 0.1 + 1.5),
+        width * 0.35, shadowPaint);
 
     // Base Layer
     final cloudPaint = Paint()..color = baseColor;
     canvas.drawCircle(center, width * 0.5, cloudPaint);
-    canvas.drawCircle(center + Offset(-width * 0.35, width * 0.1), width * 0.35, cloudPaint);
-    canvas.drawCircle(center + Offset(width * 0.35, width * 0.1), width * 0.35, cloudPaint);
+    canvas.drawCircle(
+        center + Offset(-width * 0.35, width * 0.1), width * 0.35, cloudPaint);
+    canvas.drawCircle(
+        center + Offset(width * 0.35, width * 0.1), width * 0.35, cloudPaint);
     canvas.drawRect(
       Rect.fromLTRB(
         center.dx - width * 0.5,
@@ -342,13 +366,13 @@ class _DynamicSkyPainter extends CustomPainter {
   }
 
   void _drawTree(Canvas canvas, Offset base, double height, double sway) {
-    final trunkColor = isDayTime 
-        ? const Color(0xFF5D4037) 
-        : (brightness == Brightness.light 
+    final trunkColor = isDayTime
+        ? const Color(0xFF5D4037)
+        : (brightness == Brightness.light
             ? const Color(0xFF8D6E63)
             : (isAmoled ? const Color(0xFF16123F) : const Color(0xFF1D1743)));
     final trunkPaint = Paint()..color = trunkColor;
-    
+
     final trunkPath = Path();
     trunkPath.moveTo(base.dx - 1.2, base.dy);
     trunkPath.lineTo(base.dx + 1.2, base.dy);
@@ -357,30 +381,33 @@ class _DynamicSkyPainter extends CustomPainter {
     trunkPath.close();
     canvas.drawPath(trunkPath, trunkPaint);
 
-    final leafColor = isDayTime 
-        ? const Color(0xFF4CAF50) 
-        : (brightness == Brightness.light 
+    final leafColor = isDayTime
+        ? const Color(0xFF4CAF50)
+        : (brightness == Brightness.light
             ? primaryColor.withValues(alpha: 0.6)
             : (isAmoled ? const Color(0xFF3F32B0) : const Color(0xFF5B4BD8)));
-    final highlightColor = isDayTime 
-        ? const Color(0xFF81C784) 
-        : (brightness == Brightness.light 
+    final highlightColor = isDayTime
+        ? const Color(0xFF81C784)
+        : (brightness == Brightness.light
             ? primaryColor.withValues(alpha: 0.8)
             : (isAmoled ? const Color(0xFF594AD3) : const Color(0xFF7E73FF)));
 
     final leafPaint = Paint()..color = leafColor;
     final leafPath = Path();
     leafPath.moveTo(base.dx + sway, base.dy - height);
-    leafPath.lineTo(base.dx - height * 0.32 + (sway * 0.3), base.dy - height * 0.3);
-    leafPath.lineTo(base.dx + height * 0.32 + (sway * 0.3), base.dy - height * 0.3);
+    leafPath.lineTo(
+        base.dx - height * 0.32 + (sway * 0.3), base.dy - height * 0.3);
+    leafPath.lineTo(
+        base.dx + height * 0.32 + (sway * 0.3), base.dy - height * 0.3);
     leafPath.close();
     canvas.drawPath(leafPath, leafPaint);
-    
+
     final highlightPaint = Paint()..color = highlightColor;
     final highlightPath = Path();
     highlightPath.moveTo(base.dx + sway, base.dy - height);
     highlightPath.lineTo(base.dx + (sway * 0.3), base.dy - height * 0.3);
-    highlightPath.lineTo(base.dx + height * 0.32 + (sway * 0.3), base.dy - height * 0.3);
+    highlightPath.lineTo(
+        base.dx + height * 0.32 + (sway * 0.3), base.dy - height * 0.3);
     highlightPath.close();
     canvas.drawPath(highlightPath, highlightPaint);
   }

@@ -165,10 +165,11 @@ class _ScheduleFormSheetState extends ConsumerState<ScheduleFormSheet> {
       // Check conflicts
       final activeSemester = ref.read(semesterStateProvider);
       if (activeSemester == null) return;
-      final existingSchedules = await repo.getByDay(activeSemester.id, _dayOfWeek);
+      final existingSchedules =
+          await repo.getByDay(activeSemester.id, _dayOfWeek);
       ScheduleEngine.checkForConflicts(schedule, existingSchedules);
 
-       if (_existingSchedule == null) {
+      if (_existingSchedule == null) {
         schedule.semesterId = activeSemester.id;
         // Find max order
         int maxOrder = 0;

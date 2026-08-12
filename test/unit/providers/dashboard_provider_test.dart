@@ -72,8 +72,12 @@ void main() {
     final subjectRepo = container.read(subjectRepositoryProvider);
     final scheduleRepo = container.read(scheduleRepositoryProvider);
 
-    final sub1 = Subject()..semesterId = 1..name = 'Math';
-    final sub2 = Subject()..semesterId = 1..name = 'Physics';
+    final sub1 = Subject()
+      ..semesterId = 1
+      ..name = 'Math';
+    final sub2 = Subject()
+      ..semesterId = 1
+      ..name = 'Physics';
     await subjectRepo.create(sub1);
     await subjectRepo.create(sub2);
 

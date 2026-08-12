@@ -38,7 +38,8 @@ class _OnboardingSubjectFormState extends ConsumerState<OnboardingSubjectForm> {
     try {
       final activeSemester = ref.read(semesterStateProvider);
       if (activeSemester == null) {
-        throw Exception('Active semester not initialized. Please go back and configure it.');
+        throw Exception(
+            'Active semester not initialized. Please go back and configure it.');
       }
 
       final subject = Subject()

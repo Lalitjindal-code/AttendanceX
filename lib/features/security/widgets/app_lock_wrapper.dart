@@ -12,7 +12,8 @@ class AppLockWrapper extends ConsumerStatefulWidget {
   ConsumerState<AppLockWrapper> createState() => _AppLockWrapperState();
 }
 
-class _AppLockWrapperState extends ConsumerState<AppLockWrapper> with WidgetsBindingObserver {
+class _AppLockWrapperState extends ConsumerState<AppLockWrapper>
+    with WidgetsBindingObserver {
   bool _isLocked = false;
 
   @override
@@ -39,7 +40,7 @@ class _AppLockWrapperState extends ConsumerState<AppLockWrapper> with WidgetsBin
   @override
   void didChangeAppLifecycleState(AppLifecycleState state) {
     super.didChangeAppLifecycleState(state);
-    
+
     final isLockEnabled = ref.read(settingsProvider).isAppLockEnabled;
     if (!isLockEnabled) return;
 

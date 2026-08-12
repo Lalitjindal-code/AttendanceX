@@ -136,7 +136,9 @@ void main() {
       expect(dashboardTasks[1].title, 'T2');
     });
 
-    test('generateTaskNotifications respects plannerNotificationsEnabled for subject', () {
+    test(
+        'generateTaskNotifications respects plannerNotificationsEnabled for subject',
+        () {
       final now = DateTime(2026, 1, 1, 12, 0);
       final subEnabled = Subject()
         ..id = 1

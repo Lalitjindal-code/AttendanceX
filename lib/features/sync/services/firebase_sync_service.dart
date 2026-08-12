@@ -119,51 +119,67 @@ class FirebaseSyncService {
       final data = snapshot.data();
       if (data == null) return;
 
-      final profilesData = List<Map<String, dynamic>>.from(data['profiles'] ?? []);
-      final semestersData = List<Map<String, dynamic>>.from(data['semesters'] ?? []);
-      final subjectsData = List<Map<String, dynamic>>.from(data['subjects'] ?? []);
-      final attendancesData = List<Map<String, dynamic>>.from(data['attendances'] ?? []);
-      final schedulesData = List<Map<String, dynamic>>.from(data['schedules'] ?? []);
+      final profilesData =
+          List<Map<String, dynamic>>.from(data['profiles'] ?? []);
+      final semestersData =
+          List<Map<String, dynamic>>.from(data['semesters'] ?? []);
+      final subjectsData =
+          List<Map<String, dynamic>>.from(data['subjects'] ?? []);
+      final attendancesData =
+          List<Map<String, dynamic>>.from(data['attendances'] ?? []);
+      final schedulesData =
+          List<Map<String, dynamic>>.from(data['schedules'] ?? []);
       final tasksData = List<Map<String, dynamic>>.from(data['tasks'] ?? []);
 
       final profiles = profilesData.map((e) => Profile.fromMap(e)).toList();
       final semesters = semestersData.map((e) => Semester.fromMap(e)).toList();
       final subjects = subjectsData.map((e) => Subject.fromMap(e)).toList();
-      final attendances = attendancesData.map((e) => Attendance.fromMap(e)).toList();
+      final attendances =
+          attendancesData.map((e) => Attendance.fromMap(e)).toList();
       final schedules = schedulesData.map((e) => Schedule.fromMap(e)).toList();
       final tasks = tasksData.map((e) => AcademicTask.fromMap(e)).toList();
 
       await isar.writeTxn(() async {
         await isar.clear(); // Clear existing data before restoring
-        
+
         // Handle legacy backups that might not have profiles/semesters
         if (profiles.isEmpty) {
-          profiles.add(Profile()..name = 'Restored Profile'..isDefault = true);
+          profiles.add(Profile()
+            ..name = 'Restored Profile'
+            ..isDefault = true);
         }
         await isar.profiles.putAll(profiles);
-        
+
         final defaultProfileId = profiles.first.id;
 
         if (semesters.isEmpty) {
-          semesters.add(
-            Semester()
-              ..profileId = defaultProfileId
-              ..name = 'Restored Semester'
-              ..startDate = DateTime(2000, 1, 1) // Safe old date to ensure all past attendance counts
-          );
+          semesters.add(Semester()
+                ..profileId = defaultProfileId
+                ..name = 'Restored Semester'
+                ..startDate = DateTime(2000, 1,
+                    1) // Safe old date to ensure all past attendance counts
+              );
         }
         await isar.semesters.putAll(semesters);
-        
+
         final activeSemesterId = semesters.first.id;
-        
+
         // Just use PreferencesService.instance.setInt
         // If they were legacy, their subject's semesterId might point to a non-existent semester.
         // So we force them all to the active semester if it was a legacy restore (semesters was initially empty, so we only have 1).
         if (semesters.length == 1) {
-          for (var s in subjects) { s.semesterId = activeSemesterId; }
-          for (var a in attendances) { a.semesterId = activeSemesterId; }
-          for (var s in schedules) { s.semesterId = activeSemesterId; }
-          for (var t in tasks) { t.semesterId = activeSemesterId; }
+          for (var s in subjects) {
+            s.semesterId = activeSemesterId;
+          }
+          for (var a in attendances) {
+            a.semesterId = activeSemesterId;
+          }
+          for (var s in schedules) {
+            s.semesterId = activeSemesterId;
+          }
+          for (var t in tasks) {
+            t.semesterId = activeSemesterId;
+          }
         }
 
         await isar.subjects.putAll(subjects);
@@ -171,7 +187,7 @@ class FirebaseSyncService {
         await isar.schedules.putAll(schedules);
         await isar.academicTasks.putAll(tasks);
       });
-      
+
       // Update preferences after transaction
       final prefs = PreferencesService.instance;
       if (profiles.isNotEmpty) {
@@ -180,7 +196,6 @@ class FirebaseSyncService {
       if (semesters.isNotEmpty) {
         await prefs.setInt('active_semester_id', semesters.first.id);
       }
-      
     } catch (e) {
       debugPrint('Restore failed: $e');
     }

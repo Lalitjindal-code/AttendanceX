@@ -53,7 +53,10 @@ class TimelineConnector extends StatelessWidget {
                       border: Border.all(
                         color: isPast
                             ? Theme.of(context).colorScheme.primary
-                            : Theme.of(context).colorScheme.onSurfaceVariant.withValues(alpha: 0.5),
+                            : Theme.of(context)
+                                .colorScheme
+                                .onSurfaceVariant
+                                .withValues(alpha: 0.5),
                         width: 2,
                       ),
                     ),
@@ -62,7 +65,8 @@ class TimelineConnector extends StatelessWidget {
               ],
             ),
           ),
-          Expanded(child: Padding(
+          Expanded(
+              child: Padding(
             padding: const EdgeInsets.only(bottom: 16.0, right: 16.0),
             child: child,
           )),

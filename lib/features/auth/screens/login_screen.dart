@@ -7,6 +7,7 @@ import 'package:attendify/features/auth/providers/auth_provider.dart';
 import 'package:attendify/features/sync/services/firebase_sync_service.dart';
 import 'package:attendify/features/settings/providers/settings_provider.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:attendify/core/ads/app_open_ad_manager.dart';
 
 class LoginScreen extends ConsumerStatefulWidget {
   const LoginScreen({super.key});
@@ -34,6 +35,7 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
       _errorMessage = null;
     });
 
+    AppOpenAdManager.instance.isPaused = true;
     try {
       await ref.read(authProvider).signInWithEmailPassword(
             _emailController.text.trim(),
@@ -61,6 +63,7 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
           _isLoading = false;
         });
       }
+      AppOpenAdManager.instance.isPaused = false;
     }
   }
 
@@ -70,6 +73,7 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
       _errorMessage = null;
     });
 
+    AppOpenAdManager.instance.isPaused = true;
     try {
       final credential = await ref.read(authProvider).signInWithGoogle();
       if (credential != null) {
@@ -99,6 +103,7 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
           _isLoading = false;
         });
       }
+      AppOpenAdManager.instance.isPaused = false;
     }
   }
 

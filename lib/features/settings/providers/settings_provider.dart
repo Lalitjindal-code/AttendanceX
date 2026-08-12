@@ -30,16 +30,18 @@ class Settings extends _$Settings {
   AppSettings get currentSettings => state;
 
   AppSettings _loadSettings() {
-    final themeStr = _prefs.getString(PreferencesService.keyThemeMode, defaultValue: 'system');
+    final themeStr = _prefs.getString(PreferencesService.keyThemeMode,
+        defaultValue: 'system');
     final ThemeMode themeMode = switch (themeStr) {
       'light' => ThemeMode.light,
       'dark' => ThemeMode.dark,
       _ => ThemeMode.system,
     };
 
-    final lastBackupStr = _prefs.getStringNullable(PreferencesService.keyLastBackupDate);
+    final lastBackupStr =
+        _prefs.getStringNullable(PreferencesService.keyLastBackupDate);
     final activeProfileId = _prefs.getInt('active_profile_id', defaultValue: 1);
-    
+
     _activeProfile = _isar.profiles.getSync(activeProfileId) ?? Profile();
 
     final enabledTaskTypes = _prefs.getStringList(
@@ -66,10 +68,12 @@ class Settings extends _$Settings {
       themeMode: themeMode,
       defaultGoalPercentage: _activeProfile.defaultGoalPercentage,
       medicalCountsAsPresent: _activeProfile.medicalCountsAsPresent,
-      isOnboardingComplete: _prefs.getBool(PreferencesService.keyIsOnboardingComplete, defaultValue: false),
+      isOnboardingComplete: _prefs.getBool(
+          PreferencesService.keyIsOnboardingComplete,
+          defaultValue: false),
       gtMode: _activeProfile.gtMode,
       semesterStartDate: null, // Removed from AppSettings (now in Semester)
-      semesterEndDate: null,   // Removed from AppSettings (now in Semester)
+      semesterEndDate: null, // Removed from AppSettings (now in Semester)
 
       notificationsEnabled: _activeProfile.notificationsEnabled,
       dailyReminderEnabled: _activeProfile.dailyReminderEnabled,
@@ -181,7 +185,8 @@ class Settings extends _$Settings {
 
   Future<void> setOnboardingStatus(bool isComplete) async {
     state = state.copyWith(isOnboardingComplete: isComplete);
-    await _prefs.setBool(PreferencesService.keyIsOnboardingComplete, isComplete);
+    await _prefs.setBool(
+        PreferencesService.keyIsOnboardingComplete, isComplete);
   }
 
   Future<void> updateEnabledTaskTypes(List<String> types) async {

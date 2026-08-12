@@ -108,12 +108,15 @@ class DailyAttendanceCard extends ConsumerWidget {
                                   children: [
                                     Icon(Icons.access_time,
                                         size: 14,
-                                        color: theme.colorScheme.onSurfaceVariant),
+                                        color:
+                                            theme.colorScheme.onSurfaceVariant),
                                     const SizedBox(width: 4),
                                     Text(
                                       '${item.schedule!.startTime} - ${item.schedule!.endTime}',
-                                      style: theme.textTheme.bodySmall?.copyWith(
-                                        color: theme.colorScheme.onSurfaceVariant,
+                                      style:
+                                          theme.textTheme.bodySmall?.copyWith(
+                                        color:
+                                            theme.colorScheme.onSurfaceVariant,
                                       ),
                                     ),
                                   ],
@@ -123,12 +126,15 @@ class DailyAttendanceCard extends ConsumerWidget {
                                   children: [
                                     Icon(Icons.info_outline,
                                         size: 14,
-                                        color: theme.colorScheme.onSurfaceVariant),
+                                        color:
+                                            theme.colorScheme.onSurfaceVariant),
                                     const SizedBox(width: 4),
                                     Text(
                                       'Manual Attendance',
-                                      style: theme.textTheme.bodySmall?.copyWith(
-                                        color: theme.colorScheme.onSurfaceVariant,
+                                      style:
+                                          theme.textTheme.bodySmall?.copyWith(
+                                        color:
+                                            theme.colorScheme.onSurfaceVariant,
                                         fontStyle: FontStyle.italic,
                                       ),
                                     ),
@@ -143,7 +149,8 @@ class DailyAttendanceCard extends ConsumerWidget {
                           decoration: BoxDecoration(
                             color: item.status != null
                                 ? statusColor.withValues(alpha: 0.15)
-                                : theme.colorScheme.onSurface.withValues(alpha: 0.05),
+                                : theme.colorScheme.onSurface
+                                    .withValues(alpha: 0.05),
                             borderRadius: BorderRadius.circular(20),
                           ),
                           child: Text(
@@ -151,7 +158,8 @@ class DailyAttendanceCard extends ConsumerWidget {
                             style: theme.textTheme.labelMedium?.copyWith(
                               color: item.status != null
                                   ? statusColor
-                                  : theme.colorScheme.onSurface.withValues(alpha: 0.6),
+                                  : theme.colorScheme.onSurface
+                                      .withValues(alpha: 0.6),
                               fontWeight: FontWeight.bold,
                             ),
                           ),
@@ -220,55 +228,63 @@ class DailyAttendanceCard extends ConsumerWidget {
                 child: ListView(
                   padding: const EdgeInsets.symmetric(
                       horizontal: AppSpacing.md, vertical: AppSpacing.sm),
-                  children: AttendanceStatus.values.map((status) {
-                    final isSelected = item.status == status;
-                    return Padding(
-                      padding: const EdgeInsets.only(bottom: AppSpacing.xs),
-                      child: ListTile(
-                        shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(12)),
-                        selected: isSelected,
-                        selectedTileColor:
-                            Theme.of(context).colorScheme.primaryContainer,
-                        title: Text(
-                          status.name.toUpperCase(),
-                          style: TextStyle(
-                            fontWeight: isSelected
-                                ? FontWeight.bold
-                                : FontWeight.normal,
-                          ),
-                        ),
-                        trailing: isSelected ? const Icon(Icons.check) : null,
-                        onTap: () {
-                          _updateAttendance(ref, status);
-                          Haptics.light();
-                          Navigator.pop(context);
-                        },
-                      ),
-                    );
-                  }).cast<Widget>().toList()..add(
-                    // Add a delete/clear option if an attendance record exists
-                    item.attendance != null
-                        ? Padding(
-                            padding: const EdgeInsets.only(top: AppSpacing.sm, bottom: AppSpacing.xs),
-                            child: ListTile(
-                              shape: RoundedRectangleBorder(
-                                  borderRadius: BorderRadius.circular(12)),
-                              leading: const Icon(Icons.delete_outline, color: Colors.redAccent),
-                              title: const Text(
-                                'Remove Attendance',
-                                style: TextStyle(color: Colors.redAccent),
+                  children: AttendanceStatus.values
+                      .map((status) {
+                        final isSelected = item.status == status;
+                        return Padding(
+                          padding: const EdgeInsets.only(bottom: AppSpacing.xs),
+                          child: ListTile(
+                            shape: RoundedRectangleBorder(
+                                borderRadius: BorderRadius.circular(12)),
+                            selected: isSelected,
+                            selectedTileColor:
+                                Theme.of(context).colorScheme.primaryContainer,
+                            title: Text(
+                              status.name.toUpperCase(),
+                              style: TextStyle(
+                                fontWeight: isSelected
+                                    ? FontWeight.bold
+                                    : FontWeight.normal,
                               ),
-                              onTap: () {
-                                final repo = ref.read(attendanceRepositoryProvider);
-                                repo.delete(item.attendance!.id);
-                                Haptics.heavy();
-                                Navigator.pop(context);
-                              },
                             ),
-                          )
-                        : const SizedBox.shrink(),
-                  ),
+                            trailing:
+                                isSelected ? const Icon(Icons.check) : null,
+                            onTap: () {
+                              _updateAttendance(ref, status);
+                              Haptics.light();
+                              Navigator.pop(context);
+                            },
+                          ),
+                        );
+                      })
+                      .cast<Widget>()
+                      .toList()
+                    ..add(
+                      // Add a delete/clear option if an attendance record exists
+                      item.attendance != null
+                          ? Padding(
+                              padding: const EdgeInsets.only(
+                                  top: AppSpacing.sm, bottom: AppSpacing.xs),
+                              child: ListTile(
+                                shape: RoundedRectangleBorder(
+                                    borderRadius: BorderRadius.circular(12)),
+                                leading: const Icon(Icons.delete_outline,
+                                    color: Colors.redAccent),
+                                title: const Text(
+                                  'Remove Attendance',
+                                  style: TextStyle(color: Colors.redAccent),
+                                ),
+                                onTap: () {
+                                  final repo =
+                                      ref.read(attendanceRepositoryProvider);
+                                  repo.delete(item.attendance!.id);
+                                  Haptics.heavy();
+                                  Navigator.pop(context);
+                                },
+                              ),
+                            )
+                          : const SizedBox.shrink(),
+                    ),
                 ),
               ),
             ],
@@ -282,7 +298,7 @@ class DailyAttendanceCard extends ConsumerWidget {
     final repo = ref.read(attendanceRepositoryProvider);
     final semester = ref.read(semesterStateProvider);
     if (semester == null) return;
-    
+
     final att = item.attendance ?? Attendance()
       ..semesterId = semester.id
       ..subjectId = item.subject.id

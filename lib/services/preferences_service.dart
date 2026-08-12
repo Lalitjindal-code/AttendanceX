@@ -44,6 +44,10 @@ class PreferencesService {
   static const String keyIsOnboardingComplete = 'is_onboarding_complete';
   static const String keyIsAppLockEnabled = 'is_app_lock_enabled';
 
+  // Ad-related keys
+  static const String keyAdFreeUntil = 'ad_free_until';
+  static const String keyLastInterstitialTime = 'last_interstitial_time';
+
   // ── Contains ──────────────────────────────────────────────────────────────────
   bool containsKey(String key) => prefs.containsKey(key);
 

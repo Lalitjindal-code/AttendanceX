@@ -106,15 +106,17 @@ class BackupModel {
   factory BackupModel.fromMap(Map<String, dynamic> map) {
     final metadata = BackupMetadata.fromMap(map['metadata'] ?? {});
     final data = map['data'] ?? {};
-    
+
     // Handle V1 legacy backups
     List<Profile> profiles = [];
     List<Semester> semesters = [];
     final settings = AppSettings.fromMap(data['settings'] ?? {});
-    
+
     if (data.containsKey('profiles') && data.containsKey('semesters')) {
-      profiles = List<Profile>.from((data['profiles'] ?? []).map((x) => Profile.fromMap(x)));
-      semesters = List<Semester>.from((data['semesters'] ?? []).map((x) => Semester.fromMap(x)));
+      profiles = List<Profile>.from(
+          (data['profiles'] ?? []).map((x) => Profile.fromMap(x)));
+      semesters = List<Semester>.from(
+          (data['semesters'] ?? []).map((x) => Semester.fromMap(x)));
     } else {
       // Legacy V1 import: Create default profile and semester
       final p = Profile()
@@ -129,31 +131,47 @@ class BackupModel {
         ..dailyReminderTime = settings.dailyReminderTime
         ..lectureReminderMinutes = settings.lectureReminderMinutes
         ..defaultTaskReminderOffsets = settings.defaultTaskReminderOffsets;
-        
+
       final s = Semester()
         ..id = 1
         ..profileId = 1
         ..name = 'Imported Semester'
         ..startDate = settings.semesterStartDate ?? DateTime(2020, 1, 1)
         ..endDate = settings.semesterEndDate;
-        
+
       profiles.add(p);
       semesters.add(s);
     }
 
-    final subjects = List<Subject>.from((data['subjects'] ?? []).map((x) => Subject.fromMap(x)));
-    final schedules = List<Schedule>.from((data['schedules'] ?? []).map((x) => Schedule.fromMap(x)));
-    final attendanceRecords = List<Attendance>.from((data['attendanceRecords'] ?? []).map((x) => Attendance.fromMap(x)));
-    final attendanceHistory = List<AttendanceHistory>.from((data['attendanceHistory'] ?? []).map((x) => AttendanceHistory.fromMap(x)));
-    final tasks = List<AcademicTask>.from((data['tasks'] ?? []).map((x) => AcademicTask.fromMap(x)));
+    final subjects = List<Subject>.from(
+        (data['subjects'] ?? []).map((x) => Subject.fromMap(x)));
+    final schedules = List<Schedule>.from(
+        (data['schedules'] ?? []).map((x) => Schedule.fromMap(x)));
+    final attendanceRecords = List<Attendance>.from(
+        (data['attendanceRecords'] ?? []).map((x) => Attendance.fromMap(x)));
+    final attendanceHistory = List<AttendanceHistory>.from(
+        (data['attendanceHistory'] ?? [])
+            .map((x) => AttendanceHistory.fromMap(x)));
+    final tasks = List<AcademicTask>.from(
+        (data['tasks'] ?? []).map((x) => AcademicTask.fromMap(x)));
 
     // Ensure all imported records belong to the default semester if not set
     if (!data.containsKey('semesters')) {
-      for (var sub in subjects) { sub.semesterId = 1; }
-      for (var sch in schedules) { sch.semesterId = 1; }
-      for (var att in attendanceRecords) { att.semesterId = 1; }
-      for (var hist in attendanceHistory) { hist.semesterId = 1; }
-      for (var t in tasks) { t.semesterId = 1; }
+      for (var sub in subjects) {
+        sub.semesterId = 1;
+      }
+      for (var sch in schedules) {
+        sch.semesterId = 1;
+      }
+      for (var att in attendanceRecords) {
+        att.semesterId = 1;
+      }
+      for (var hist in attendanceHistory) {
+        hist.semesterId = 1;
+      }
+      for (var t in tasks) {
+        t.semesterId = 1;
+      }
     }
 
     return BackupModel(

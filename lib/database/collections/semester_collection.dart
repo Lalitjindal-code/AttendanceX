@@ -42,18 +42,18 @@ class Semester {
       ..id = map['id'] ?? Isar.autoIncrement
       ..profileId = map['profileId'] ?? 0
       ..name = map['name'] ?? 'Unknown'
-      ..startDate = map['startDate'] != null 
-          ? DateTime.fromMillisecondsSinceEpoch(map['startDate']) 
+      ..startDate = map['startDate'] != null
+          ? DateTime.fromMillisecondsSinceEpoch(map['startDate'])
           : DateTime.now()
-      ..endDate = map['endDate'] != null 
-          ? DateTime.fromMillisecondsSinceEpoch(map['endDate']) 
+      ..endDate = map['endDate'] != null
+          ? DateTime.fromMillisecondsSinceEpoch(map['endDate'])
           : null
       ..description = map['description']
-      ..createdAt = map['createdAt'] != null 
-          ? DateTime.fromMillisecondsSinceEpoch(map['createdAt']) 
+      ..createdAt = map['createdAt'] != null
+          ? DateTime.fromMillisecondsSinceEpoch(map['createdAt'])
           : DateTime.now()
-      ..updatedAt = map['updatedAt'] != null 
-          ? DateTime.fromMillisecondsSinceEpoch(map['updatedAt']) 
+      ..updatedAt = map['updatedAt'] != null
+          ? DateTime.fromMillisecondsSinceEpoch(map['updatedAt'])
           : DateTime.now();
   }
 }

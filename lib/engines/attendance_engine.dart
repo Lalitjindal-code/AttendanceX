@@ -14,12 +14,14 @@ class AttendanceEngine {
   /// Filters attendances based on semester boundaries (local calendar dates).
   static bool isWithinSemester(DateTime date, Semester semester) {
     final recordDate = DateTime(date.year, date.month, date.day);
-    final start = DateTime(semester.startDate.year, semester.startDate.month, semester.startDate.day);
-    
+    final start = DateTime(semester.startDate.year, semester.startDate.month,
+        semester.startDate.day);
+
     if (recordDate.isBefore(start)) return false;
-    
+
     if (semester.endDate != null) {
-      final end = DateTime(semester.endDate!.year, semester.endDate!.month, semester.endDate!.day);
+      final end = DateTime(semester.endDate!.year, semester.endDate!.month,
+          semester.endDate!.day);
       if (recordDate.isAfter(end)) return false;
     }
     return true;
@@ -110,7 +112,8 @@ class AttendanceEngine {
       return aType == type;
     }).toList();
 
-    return calculateSubjectSummary(subjectId, filteredAttendances, settings, semester);
+    return calculateSubjectSummary(
+        subjectId, filteredAttendances, settings, semester);
   }
 
   /// Calculates the overall attendance summary aggregated across all subjects.

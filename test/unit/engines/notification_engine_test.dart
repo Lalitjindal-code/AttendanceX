@@ -179,7 +179,9 @@ void main() {
           equals(result2.map((n) => n.id).toList()));
     });
 
-    test('Does not generate lecture reminder if subject classNotificationsEnabled is false', () {
+    test(
+        'Does not generate lecture reminder if subject classNotificationsEnabled is false',
+        () {
       const settings = AppSettings(
         notificationsEnabled: true,
         lectureReminderMinutes: 10,

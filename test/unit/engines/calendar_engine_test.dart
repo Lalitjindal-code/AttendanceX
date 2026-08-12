@@ -144,7 +144,7 @@ void main() {
       final sub = Subject()
         ..id = 1
         ..name = 'Math';
-      
+
       // Tuesday
       final sch = Schedule()
         ..id = 1
@@ -210,7 +210,8 @@ void main() {
       );
       expect(detailsAfterWithAttendance.items.length, 1);
       expect(detailsAfterWithAttendance.items.first.isManual, isTrue);
-      expect(detailsAfterWithAttendance.items.first.attendance?.status, AttendanceStatus.present);
+      expect(detailsAfterWithAttendance.items.first.attendance?.status,
+          AttendanceStatus.present);
     });
   });
 }

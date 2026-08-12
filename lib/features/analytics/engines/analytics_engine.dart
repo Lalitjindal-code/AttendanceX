@@ -28,7 +28,8 @@ class AnalyticsEngine {
     final trends = <DayOfWeekTrend>[];
     for (var i = 1; i <= 7; i++) {
       final list = grouped[i]!;
-      final summary = AttendanceEngine.calculateOverallSummary(list, settings, semester);
+      final summary =
+          AttendanceEngine.calculateOverallSummary(list, settings, semester);
 
       trends.add(DayOfWeekTrend(
         weekday: i,
@@ -81,8 +82,8 @@ class AnalyticsEngine {
       final year = int.parse(parts[0]);
       final month = int.parse(parts[1]);
 
-      final summary =
-          AttendanceEngine.calculateOverallSummary(entry.value, settings, semester);
+      final summary = AttendanceEngine.calculateOverallSummary(
+          entry.value, settings, semester);
 
       trends.add(MonthlyTrend(
         year: year,

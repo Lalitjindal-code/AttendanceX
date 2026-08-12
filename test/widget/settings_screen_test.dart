@@ -16,8 +16,12 @@ import 'package:attendify/features/settings/providers/semester_provider.dart';
 class FakeSemesterRepository implements SemesterRepository {
   @override
   Future<List<Semester>> getSemestersByProfile(int profileId) async => [
-    Semester()..id = 1..name = 'Semester 1'..profileId = 1..startDate = DateTime.now()
-  ];
+        Semester()
+          ..id = 1
+          ..name = 'Semester 1'
+          ..profileId = 1
+          ..startDate = DateTime.now()
+      ];
   @override
   Future<int> upsertSemester(Semester semester) async => 1;
   @override
@@ -25,12 +29,17 @@ class FakeSemesterRepository implements SemesterRepository {
   @override
   Future<Semester?> getSemester(int id) async => null;
   @override
-  Stream<List<Semester>> watchSemestersByProfile(int profileId) => Stream.value([]);
+  Stream<List<Semester>> watchSemestersByProfile(int profileId) =>
+      Stream.value([]);
 }
 
 class FakeSemesterState extends SemesterState {
   @override
-  Semester? build() => Semester()..id = 1..name = 'Semester 1'..profileId = 1..startDate = DateTime.now();
+  Semester? build() => Semester()
+    ..id = 1
+    ..name = 'Semester 1'
+    ..profileId = 1
+    ..startDate = DateTime.now();
 }
 
 class FakeEnabledSettings extends Settings {
@@ -53,42 +62,49 @@ class FakeEnabledSettings extends Settings {
     final prefs = await SharedPreferences.getInstance();
     await prefs.setString(PreferencesService.keyThemeMode, mode.name);
   }
+
   @override
   Future<void> updateIsAmoled(bool val) async {
     state = state.copyWith(isAmoled: val);
     final prefs = await SharedPreferences.getInstance();
     await prefs.setBool(PreferencesService.keyIsAmoled, val);
   }
+
   @override
   Future<void> updateNotificationsEnabled(bool val) async {
     state = state.copyWith(notificationsEnabled: val);
     final prefs = await SharedPreferences.getInstance();
     await prefs.setBool(PreferencesService.keyNotificationsEnabled, val);
   }
+
   @override
   Future<void> updateGtMode(GtMode val) async {
     state = state.copyWith(gtMode: val);
     final prefs = await SharedPreferences.getInstance();
     await prefs.setString(PreferencesService.keyGtMode, val.key);
   }
+
   @override
   Future<void> updateMedicalPolicy(bool val) async {
     state = state.copyWith(medicalCountsAsPresent: val);
     final prefs = await SharedPreferences.getInstance();
     await prefs.setBool(PreferencesService.keyMedicalCountsAsPresent, val);
   }
+
   @override
   Future<void> updateDefaultGoal(double val) async {
     state = state.copyWith(defaultGoalPercentage: val);
     final prefs = await SharedPreferences.getInstance();
     await prefs.setDouble(PreferencesService.keyDefaultGoal, val);
   }
+
   @override
   Future<void> updateDailyReminderTime(String time) async {
     state = state.copyWith(dailyReminderTime: time);
     final prefs = await SharedPreferences.getInstance();
     await prefs.setString(PreferencesService.keyDailyReminderTime, time);
   }
+
   @override
   Future<void> updateDailyReminderEnabled(bool val) async {
     state = state.copyWith(dailyReminderEnabled: val);
@@ -98,6 +114,11 @@ class FakeEnabledSettings extends Settings {
 }
 
 void main() {
+  setUpAll(() async {
+    SharedPreferences.setMockInitialValues({});
+    await PreferencesService.instance.initialize();
+  });
+
   setUp(() async {
     SharedPreferences.setMockInitialValues({
       PreferencesService.keyThemeMode: 'system',
@@ -161,7 +182,8 @@ void main() {
           masterSwitchFinder, find.byType(ListView), const Offset(0, -500));
       await tester.pumpAndSettle();
 
-      final switchFinder = find.descendant(of: masterSwitchFinder, matching: find.byType(Switch));
+      final switchFinder = find.descendant(
+          of: masterSwitchFinder, matching: find.byType(Switch));
       await tester.tap(switchFinder);
       await tester.pumpAndSettle();
 
@@ -169,7 +191,8 @@ void main() {
       expect(prefs.getBool(PreferencesService.keyNotificationsEnabled), false);
     });
 
-    testWidgets('GT and Medical setting tiles display static info', (WidgetTester tester) async {
+    testWidgets('GT and Medical setting tiles display static info',
+        (WidgetTester tester) async {
       await tester.pumpWidget(createTestWidget());
       await tester.pumpAndSettle();
 
@@ -181,12 +204,19 @@ void main() {
       expect(find.text('Counts as Present'), findsOneWidget);
       expect(find.text('Excluded from calculation'), findsOneWidget);
 
-      final medicalListTile = find.ancestor(of: medicalFinder, matching: find.byType(ListTile));
-      expect(find.descendant(of: medicalListTile, matching: find.byType(Switch)), findsNothing);
+      final medicalListTile =
+          find.ancestor(of: medicalFinder, matching: find.byType(ListTile));
+      expect(
+          find.descendant(of: medicalListTile, matching: find.byType(Switch)),
+          findsNothing);
 
       final gtFinder = find.text('Duty Leave (GT)');
-      final gtListTile = find.ancestor(of: gtFinder, matching: find.byType(ListTile));
-      expect(find.descendant(of: gtListTile, matching: find.byType(DropdownButton<GtMode>)), findsNothing);
+      final gtListTile =
+          find.ancestor(of: gtFinder, matching: find.byType(ListTile));
+      expect(
+          find.descendant(
+              of: gtListTile, matching: find.byType(DropdownButton<GtMode>)),
+          findsNothing);
     });
 
     testWidgets('Goal percentage slider updates value',
@@ -225,13 +255,13 @@ void main() {
           dailyReminderFinder, find.byType(ListView), const Offset(0, -500));
       await tester.pumpAndSettle();
 
-      final switchFinder = find.descendant(of: dailyReminderFinder, matching: find.byType(Switch));
+      final switchFinder = find.descendant(
+          of: dailyReminderFinder, matching: find.byType(Switch));
       await tester.tap(switchFinder);
       await tester.pumpAndSettle();
 
       final prefs = await SharedPreferences.getInstance();
-      expect(
-          prefs.getBool(PreferencesService.keyDailyReminderEnabled), false);
+      expect(prefs.getBool(PreferencesService.keyDailyReminderEnabled), false);
     });
 
     testWidgets('Settings text scale regression loop',
@@ -240,7 +270,8 @@ void main() {
       for (final scale in textScaleFactors) {
         await tester.pumpWidget(ProviderScope(
           overrides: [
-            semesterRepositoryProvider.overrideWithValue(FakeSemesterRepository()),
+            semesterRepositoryProvider
+                .overrideWithValue(FakeSemesterRepository()),
             semesterStateProvider.overrideWith(() => FakeSemesterState()),
             settingsProvider.overrideWith(() => FakeEnabledSettings()),
           ],
@@ -279,7 +310,8 @@ void main() {
         ..addScenario(
           widget: ProviderScope(
             overrides: [
-              semesterRepositoryProvider.overrideWithValue(FakeSemesterRepository()),
+              semesterRepositoryProvider
+                  .overrideWithValue(FakeSemesterRepository()),
               semesterStateProvider.overrideWith(() => FakeSemesterState()),
               settingsProvider.overrideWith(() => FakeEnabledSettings()),
             ],

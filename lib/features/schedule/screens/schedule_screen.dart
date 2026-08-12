@@ -80,16 +80,21 @@ class _ScheduleScreenState extends ConsumerState<ScheduleScreen> {
           controller: _scrollController,
           slivers: [
             SliverAppBar(
-              title: Text(AppStrings.scheduleTitle, style: TextStyle(color: Theme.of(context).colorScheme.onSurface, fontWeight: FontWeight.bold)),
+              title: Text(AppStrings.scheduleTitle,
+                  style: TextStyle(
+                      color: Theme.of(context).colorScheme.onSurface,
+                      fontWeight: FontWeight.bold)),
               floating: true,
               pinned: true,
               backgroundColor: Theme.of(context).colorScheme.surface,
               surfaceTintColor: Colors.transparent,
-              iconTheme: IconThemeData(color: Theme.of(context).colorScheme.onSurface),
+              iconTheme:
+                  IconThemeData(color: Theme.of(context).colorScheme.onSurface),
               actions: [
                 if (subjectsAsync.valueOrNull?.isNotEmpty == true)
                   IconButton(
-                    icon: Icon(Icons.add, color: Theme.of(context).colorScheme.onSurface),
+                    icon: Icon(Icons.add,
+                        color: Theme.of(context).colorScheme.onSurface),
                     tooltip: 'Add Class',
                     onPressed: () => showScheduleFormSheet(context,
                         dayOfWeek: DayOfWeek.weekdays[_currentDayIndex].value),
@@ -107,10 +112,12 @@ class _ScheduleScreenState extends ConsumerState<ScheduleScreen> {
                         child: Container(
                           padding: const EdgeInsets.all(32),
                           decoration: BoxDecoration(
-                            color: Theme.of(context).colorScheme.surfaceContainer,
+                            color:
+                                Theme.of(context).colorScheme.surfaceContainer,
                             borderRadius: BorderRadius.circular(24),
                             border: Border.all(
-                              color: Theme.of(context).colorScheme.outlineVariant,
+                              color:
+                                  Theme.of(context).colorScheme.outlineVariant,
                             ),
                           ),
                           child: Column(
@@ -119,7 +126,8 @@ class _ScheduleScreenState extends ConsumerState<ScheduleScreen> {
                               Container(
                                 padding: const EdgeInsets.all(20),
                                 decoration: BoxDecoration(
-                                  color: const Color(0xFF7E73FF).withValues(alpha: 0.2),
+                                  color: const Color(0xFF7E73FF)
+                                      .withValues(alpha: 0.2),
                                   shape: BoxShape.circle,
                                 ),
                                 child: const Icon(
@@ -132,8 +140,13 @@ class _ScheduleScreenState extends ConsumerState<ScheduleScreen> {
                               Text(
                                 'No subjects available',
                                 textAlign: TextAlign.center,
-                                style: Theme.of(context).textTheme.titleLarge?.copyWith(
-                                      color: Theme.of(context).colorScheme.onSurface,
+                                style: Theme.of(context)
+                                    .textTheme
+                                    .titleLarge
+                                    ?.copyWith(
+                                      color: Theme.of(context)
+                                          .colorScheme
+                                          .onSurface,
                                       fontWeight: FontWeight.bold,
                                     ),
                               ),
@@ -141,18 +154,28 @@ class _ScheduleScreenState extends ConsumerState<ScheduleScreen> {
                               Text(
                                 'Please create a subject first to build your schedule.',
                                 textAlign: TextAlign.center,
-                                style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                                      color: Theme.of(context).colorScheme.onSurface.withValues(alpha: 0.6),
+                                style: Theme.of(context)
+                                    .textTheme
+                                    .bodyMedium
+                                    ?.copyWith(
+                                      color: Theme.of(context)
+                                          .colorScheme
+                                          .onSurface
+                                          .withValues(alpha: 0.6),
                                     ),
                               ),
                               const SizedBox(height: AppSpacing.xl),
                               FilledButton.icon(
                                 onPressed: () => context.go(AppRoutes.subjects),
                                 style: FilledButton.styleFrom(
-                                  backgroundColor: Theme.of(context).colorScheme.primary,
-                                  foregroundColor: Theme.of(context).colorScheme.onPrimary,
-                                  padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 12),
-                                  shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+                                  backgroundColor:
+                                      Theme.of(context).colorScheme.primary,
+                                  foregroundColor:
+                                      Theme.of(context).colorScheme.onPrimary,
+                                  padding: const EdgeInsets.symmetric(
+                                      horizontal: 24, vertical: 12),
+                                  shape: RoundedRectangleBorder(
+                                      borderRadius: BorderRadius.circular(12)),
                                 ),
                                 icon: const Icon(Icons.add_rounded),
                                 label: const Text('Go to Subjects'),

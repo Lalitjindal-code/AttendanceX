@@ -60,7 +60,7 @@ void main() {
       final parsedModel = await engine.parseAndValidateBackup(testPath);
       expect(parsedModel.subjects.length, equals(1));
       expect(parsedModel.subjects.first.name, equals('Test Subject'));
-      expect(parsedModel.settings.themeMode.name, equals('system'));
+      expect(parsedModel.settings.themeMode.name, equals('dark'));
     });
 
     test('Corrupted backup should throw checksum error', () async {

@@ -63,7 +63,8 @@ class SubjectCard extends ConsumerWidget {
                           width: 48,
                           height: 48,
                           decoration: BoxDecoration(
-                            color: Color(subject.colorValue).withValues(alpha: 0.2),
+                            color: Color(subject.colorValue)
+                                .withValues(alpha: 0.2),
                             shape: BoxShape.circle,
                           ),
                           child: Icon(
@@ -79,8 +80,12 @@ class SubjectCard extends ConsumerWidget {
                           children: [
                             Text(
                               subject.name,
-                              style: Theme.of(context).textTheme.titleLarge?.copyWith(
-                                    color: Theme.of(context).colorScheme.onSurface,
+                              style: Theme.of(context)
+                                  .textTheme
+                                  .titleLarge
+                                  ?.copyWith(
+                                    color:
+                                        Theme.of(context).colorScheme.onSurface,
                                     fontWeight: FontWeight.bold,
                                   ),
                               maxLines: 1,
@@ -89,20 +94,31 @@ class SubjectCard extends ConsumerWidget {
                             const SizedBox(height: 4),
                             Text(
                               '${subject.credits} Credits • Goal: ${subject.goalPercentage.toInt()}%',
-                              style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                                    color: Theme.of(context).colorScheme.onSurface.withValues(alpha: 0.6),
+                              style: Theme.of(context)
+                                  .textTheme
+                                  .bodyMedium
+                                  ?.copyWith(
+                                    color: Theme.of(context)
+                                        .colorScheme
+                                        .onSurface
+                                        .withValues(alpha: 0.6),
                                   ),
                             ),
                           ],
                         ),
                       ),
-                      Icon(Icons.chevron_right_rounded, color: Theme.of(context).colorScheme.onSurface.withValues(alpha: 0.3)),
+                      Icon(Icons.chevron_right_rounded,
+                          color: Theme.of(context)
+                              .colorScheme
+                              .onSurface
+                              .withValues(alpha: 0.3)),
                     ],
                   ),
                   const SizedBox(height: AppSpacing.lg),
                   summaryAsync.when(
                     data: (summary) => _buildProgress(context, summary),
-                    loading: () => const LinearProgressIndicator(color: Color(0xFF7E73FF)),
+                    loading: () =>
+                        const LinearProgressIndicator(color: Color(0xFF7E73FF)),
                     error: (_, __) => const SizedBox(),
                   ),
                 ],
@@ -119,9 +135,8 @@ class SubjectCard extends ConsumerWidget {
     final percent = summary.attendancePercentage;
     final isSafe = percent >= subject.goalPercentage;
 
-    final progressColor = isSafe
-        ? const Color(0xFF00E676)
-        : const Color(0xFFFF1744);
+    final progressColor =
+        isSafe ? const Color(0xFF00E676) : const Color(0xFFFF1744);
 
     return TweenAnimationBuilder<double>(
       tween: Tween<double>(
@@ -146,9 +161,13 @@ class SubjectCard extends ConsumerWidget {
                       ),
                 ),
                 Container(
-                  padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
+                  padding:
+                      const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
                   decoration: BoxDecoration(
-                    color: Theme.of(context).colorScheme.onSurface.withValues(alpha: 0.06),
+                    color: Theme.of(context)
+                        .colorScheme
+                        .onSurface
+                        .withValues(alpha: 0.06),
                     borderRadius: BorderRadius.circular(12),
                   ),
                   child: Text(
@@ -166,7 +185,10 @@ class SubjectCard extends ConsumerWidget {
               height: 8,
               decoration: BoxDecoration(
                 borderRadius: BorderRadius.circular(4),
-                color: Theme.of(context).colorScheme.onSurface.withValues(alpha: 0.08),
+                color: Theme.of(context)
+                    .colorScheme
+                    .onSurface
+                    .withValues(alpha: 0.08),
               ),
               child: FractionallySizedBox(
                 alignment: Alignment.centerLeft,

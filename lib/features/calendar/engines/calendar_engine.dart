@@ -56,8 +56,10 @@ class CalendarEngine {
     final date = _normalizeDate(targetDate);
     final dayOfWeek = DayOfWeek.fromInt(date.weekday).value;
 
-    final isWithinSemester = (semesterStartDate == null || !date.isBefore(_normalizeDate(semesterStartDate))) &&
-        (semesterEndDate == null || !date.isAfter(_normalizeDate(semesterEndDate)));
+    final isWithinSemester = (semesterStartDate == null ||
+            !date.isBefore(_normalizeDate(semesterStartDate))) &&
+        (semesterEndDate == null ||
+            !date.isAfter(_normalizeDate(semesterEndDate)));
 
     final todaysSchedules = isWithinSemester
         ? schedules.where((s) => s.dayOfWeek == dayOfWeek).toList()

@@ -6,27 +6,39 @@ import '../../../navigation/app_routes.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import '../../auth/providers/auth_provider.dart';
 import '../../../core/widgets/banner_ad_widget.dart';
+import '../../../core/ads/app_open_ad_manager.dart';
 
-class MoreScreen extends ConsumerWidget {
+class MoreScreen extends ConsumerStatefulWidget {
   const MoreScreen({super.key});
 
   @override
-  Widget build(BuildContext context, WidgetRef ref) {
+  ConsumerState<MoreScreen> createState() => _MoreScreenState();
+}
+
+class _MoreScreenState extends ConsumerState<MoreScreen> {
+  @override
+  void initState() {
+    super.initState();
+  }
+
+  @override
+  Widget build(BuildContext context) {
     final user = ref.watch(authStateProvider).valueOrNull;
 
     return Scaffold(
       appBar: AppBar(
         backgroundColor: Colors.transparent,
         elevation: 0,
-        title: Text('More', style: TextStyle(color: Theme.of(context).colorScheme.onSurface, fontWeight: FontWeight.bold)),
+        title: Text('More',
+            style: TextStyle(
+                color: Theme.of(context).colorScheme.onSurface,
+                fontWeight: FontWeight.bold)),
       ),
       body: ListView(
         padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 16),
         children: [
-          if (user != null)
-            _buildProfileCard(context, user),
+          if (user != null) _buildProfileCard(context, user),
           const SizedBox(height: 32),
-          
           _buildMenuCard(
             context: context,
             icon: AppIcons.calendar,
@@ -58,10 +70,8 @@ class MoreScreen extends ConsumerWidget {
             title: 'Settings',
             onTap: () => context.push(AppRoutes.settings),
           ),
-          
           const SizedBox(height: 48),
-          if (user != null)
-            _buildLogOutButton(context, ref),
+          if (user != null) _buildLogOutButton(context, ref),
           const SizedBox(height: 24),
           const BannerAdWidget(),
         ],
@@ -101,8 +111,12 @@ class MoreScreen extends ConsumerWidget {
                 CircleAvatar(
                   radius: 32,
                   backgroundColor: const Color(0xFF1D1743),
-                  backgroundImage: user.photoURL != null ? NetworkImage(user.photoURL!) : null,
-                  child: user.photoURL == null ? const Icon(Icons.person, color: Colors.white, size: 32) : null,
+                  backgroundImage: user.photoURL != null
+                      ? NetworkImage(user.photoURL!)
+                      : null,
+                  child: user.photoURL == null
+                      ? const Icon(Icons.person, color: Colors.white, size: 32)
+                      : null,
                 ),
                 const SizedBox(width: 16),
                 Expanded(
@@ -128,7 +142,8 @@ class MoreScreen extends ConsumerWidget {
                     ],
                   ),
                 ),
-                Icon(Icons.chevron_right_rounded, color: Colors.white.withValues(alpha: 0.5)),
+                Icon(Icons.chevron_right_rounded,
+                    color: Colors.white.withValues(alpha: 0.5)),
               ],
             ),
           ),
@@ -192,7 +207,8 @@ class MoreScreen extends ConsumerWidget {
                     ),
                   ),
                 ),
-                Icon(Icons.chevron_right_rounded, color: Theme.of(context).colorScheme.onSurfaceVariant),
+                Icon(Icons.chevron_right_rounded,
+                    color: Theme.of(context).colorScheme.onSurfaceVariant),
               ],
             ),
           ),
@@ -206,7 +222,12 @@ class MoreScreen extends ConsumerWidget {
       width: double.infinity,
       child: TextButton.icon(
         onPressed: () async {
-          await ref.read(authProvider).signOut();
+          AppOpenAdManager.instance.isPaused = true;
+          try {
+            await ref.read(authProvider).signOut();
+          } finally {
+            AppOpenAdManager.instance.isPaused = false;
+          }
           if (context.mounted) context.go(AppRoutes.login);
         },
         icon: const Icon(Icons.logout_rounded, color: Color(0xFFFF5F5F)),
@@ -223,7 +244,8 @@ class MoreScreen extends ConsumerWidget {
           backgroundColor: const Color(0xFFFF5F5F).withValues(alpha: 0.08),
           shape: RoundedRectangleBorder(
             borderRadius: BorderRadius.circular(16),
-            side: BorderSide(color: const Color(0xFFFF5F5F).withValues(alpha: 0.15)),
+            side: BorderSide(
+                color: const Color(0xFFFF5F5F).withValues(alpha: 0.15)),
           ),
         ),
       ),

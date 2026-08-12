@@ -61,7 +61,8 @@ class DashboardScreen extends ConsumerWidget {
           final taskCount = state.upcomingTasks.length;
           String subtitle = '';
           if (pendingCount > 0 && taskCount > 0) {
-            subtitle = 'You have $pendingCount classes & $taskCount deadlines today';
+            subtitle =
+                'You have $pendingCount classes & $taskCount deadlines today';
           } else if (pendingCount > 0) {
             subtitle = 'You have $pendingCount classes remaining today';
           } else if (taskCount > 0) {
@@ -76,74 +77,150 @@ class DashboardScreen extends ConsumerWidget {
               color: Theme.of(context).colorScheme.primary,
               backgroundColor: Theme.of(context).colorScheme.surfaceContainer,
               child: CustomScrollView(
-              physics: const AlwaysScrollableScrollPhysics(),
-              slivers: [
-                SliverToBoxAdapter(
-                  child: DashboardHeader(
-                    subtitle: subtitle,
-                    userName: userName ?? 'User',
-                    photoUrl: user?.photoURL,
-                  ).animate().fade(duration: 400.ms).slideY(begin: 0.1, duration: 400.ms, curve: Curves.easeOutQuad),
-                ),
-
-                // Hero Attendance Health Card
-                SliverToBoxAdapter(
-                  child: HeroHealthCard(state: state)
-                      .animate()
-                      .fade(delay: 100.ms, duration: 400.ms)
-                      .slideY(begin: 0.1, delay: 100.ms, duration: 400.ms, curve: Curves.easeOutQuad),
-                ),
-
-                if (state.patternInsight != null)
+                physics: const AlwaysScrollableScrollPhysics(),
+                slivers: [
                   SliverToBoxAdapter(
-                    child: Padding(
-                      padding: const EdgeInsets.symmetric(horizontal: 24.0, vertical: 8.0),
-                      child: Container(
-                        padding: const EdgeInsets.all(16),
-                        decoration: BoxDecoration(
-                          gradient: LinearGradient(
-                            begin: Alignment.topLeft,
-                            end: Alignment.bottomRight,
-                            colors: [
-                              Theme.of(context).colorScheme.surfaceContainerHigh,
-                              Theme.of(context).colorScheme.surfaceContainer,
-                            ],
+                    child: DashboardHeader(
+                      subtitle: subtitle,
+                      userName: userName ?? 'User',
+                      photoUrl: user?.photoURL,
+                    ).animate().fade(duration: 400.ms).slideY(
+                        begin: 0.1,
+                        duration: 400.ms,
+                        curve: Curves.easeOutQuad),
+                  ),
+
+                  // Hero Attendance Health Card
+                  SliverToBoxAdapter(
+                    child: HeroHealthCard(state: state)
+                        .animate()
+                        .fade(delay: 100.ms, duration: 400.ms)
+                        .slideY(
+                            begin: 0.1,
+                            delay: 100.ms,
+                            duration: 400.ms,
+                            curve: Curves.easeOutQuad),
+                  ),
+
+                  if (state.patternInsight != null)
+                    SliverToBoxAdapter(
+                      child: Padding(
+                        padding: const EdgeInsets.symmetric(
+                            horizontal: 24.0, vertical: 8.0),
+                        child: Container(
+                          padding: const EdgeInsets.all(16),
+                          decoration: BoxDecoration(
+                            gradient: LinearGradient(
+                              begin: Alignment.topLeft,
+                              end: Alignment.bottomRight,
+                              colors: [
+                                Theme.of(context)
+                                    .colorScheme
+                                    .surfaceContainerHigh,
+                                Theme.of(context).colorScheme.surfaceContainer,
+                              ],
+                            ),
+                            borderRadius: BorderRadius.circular(16),
+                            border: Border.all(
+                              color: Theme.of(context)
+                                  .colorScheme
+                                  .primary
+                                  .withValues(alpha: 0.25),
+                            ),
                           ),
-                          borderRadius: BorderRadius.circular(16),
-                          border: Border.all(
-                            color: Theme.of(context).colorScheme.primary.withValues(alpha: 0.25),
-                          ),
-                        ),
-                        child: Row(
-                          children: [
-                            Icon(Icons.lightbulb_outline_rounded, color: Theme.of(context).colorScheme.primary, size: 24),
-                            const SizedBox(width: 12),
-                            Expanded(
-                              child: Text(
-                                state.patternInsight!,
-                                style: TextStyle(
-                                  fontSize: 13,
-                                  color: Theme.of(context).colorScheme.onSurface,
-                                  fontWeight: FontWeight.w500,
+                          child: Row(
+                            children: [
+                              Icon(Icons.lightbulb_outline_rounded,
+                                  color: Theme.of(context).colorScheme.primary,
+                                  size: 24),
+                              const SizedBox(width: 12),
+                              Expanded(
+                                child: Text(
+                                  state.patternInsight!,
+                                  style: TextStyle(
+                                    fontSize: 13,
+                                    color:
+                                        Theme.of(context).colorScheme.onSurface,
+                                    fontWeight: FontWeight.w500,
+                                  ),
                                 ),
                               ),
+                            ],
+                          ),
+                        ),
+                      ).animate().fade(delay: 150.ms).slideY(begin: 0.1),
+                    ),
+
+                  // Quick Stats Row
+                  SliverToBoxAdapter(
+                    child: QuickStatsRow(quickStats: state.quickStats)
+                        .animate()
+                        .fade(delay: 200.ms, duration: 400.ms)
+                        .slideY(
+                            begin: 0.1,
+                            delay: 200.ms,
+                            duration: 400.ms,
+                            curve: Curves.easeOutQuad),
+                  ),
+
+                  // Upcoming Deadlines Section
+                  if (state.upcomingTasks.isNotEmpty) ...[
+                    SliverToBoxAdapter(
+                      child: Padding(
+                        padding: const EdgeInsets.fromLTRB(16, 24, 16, 8),
+                        child: Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                          children: [
+                            Text(
+                              'Upcoming Deadlines',
+                              style: Theme.of(context)
+                                  .textTheme
+                                  .titleLarge
+                                  ?.copyWith(
+                                    fontWeight: FontWeight.bold,
+                                  ),
                             ),
+                            if (state.upcomingTasks.length > 5)
+                              TextButton(
+                                onPressed: () => context.go(AppRoutes.planner),
+                                child: const Text('View All â†’'),
+                              ),
                           ],
                         ),
                       ),
-                    ).animate().fade(delay: 150.ms).slideY(begin: 0.1),
-                  ),
+                    ),
+                    SliverToBoxAdapter(
+                      child: Consumer(
+                        builder: (context, ref, child) {
+                          final subjectsAsync = ref.watch(subjectsProvider);
+                          final subjects = subjectsAsync.valueOrNull ?? [];
 
-                // Quick Stats Row
-                SliverToBoxAdapter(
-                  child: QuickStatsRow(quickStats: state.quickStats)
-                      .animate()
-                      .fade(delay: 200.ms, duration: 400.ms)
-                      .slideY(begin: 0.1, delay: 200.ms, duration: 400.ms, curve: Curves.easeOutQuad),
-                ),
+                          final displayTasks =
+                              state.upcomingTasks.take(5).toList();
 
-                // Upcoming Deadlines Section
-                if (state.upcomingTasks.isNotEmpty) ...[
+                          return Column(
+                            children: displayTasks.map((task) {
+                              final subject = subjects.firstWhereOrNull(
+                                  (s) => s.id == task.subjectId);
+                              return Padding(
+                                padding: const EdgeInsets.symmetric(
+                                    horizontal: 16.0, vertical: 4.0),
+                                child: TaskCard(
+                                  task: task,
+                                  subject: subject,
+                                  onEdit: () {
+                                    showTaskFormSheet(context, taskId: task.id);
+                                  },
+                                ),
+                              );
+                            }).toList(),
+                          );
+                        },
+                      ),
+                    ),
+                  ],
+
+                  // Today's Schedule Section
                   SliverToBoxAdapter(
                     child: Padding(
                       padding: const EdgeInsets.fromLTRB(16, 24, 16, 8),
@@ -151,7 +228,7 @@ class DashboardScreen extends ConsumerWidget {
                         mainAxisAlignment: MainAxisAlignment.spaceBetween,
                         children: [
                           Text(
-                            'Upcoming Deadlines',
+                            "Today's Schedule",
                             style: Theme.of(context)
                                 .textTheme
                                 .titleLarge
@@ -159,281 +236,295 @@ class DashboardScreen extends ConsumerWidget {
                                   fontWeight: FontWeight.bold,
                                 ),
                           ),
-                          if (state.upcomingTasks.length > 5)
-                            TextButton(
-                              onPressed: () => context.go(AppRoutes.planner),
-                              child: const Text('View All â†’'),
+                          if (pendingLectures.isNotEmpty ||
+                              markedLectures.isNotEmpty)
+                            IconButton(
+                              icon: Icon(Icons.edit_calendar_rounded,
+                                  color: Theme.of(context)
+                                      .colorScheme
+                                      .onSurface
+                                      .withValues(alpha: 0.7)),
+                              tooltip: 'Mark Full Day',
+                              onPressed: () => _showMarkFullDayBottomSheet(
+                                  context, ref, DateTime.now()),
                             ),
                         ],
                       ),
                     ),
                   ),
-                  SliverToBoxAdapter(
-                    child: Consumer(
-                      builder: (context, ref, child) {
-                        final subjectsAsync = ref.watch(subjectsProvider);
-                        final subjects = subjectsAsync.valueOrNull ?? [];
 
-                        final displayTasks =
-                            state.upcomingTasks.take(5).toList();
-
-                        return Column(
-                          children: displayTasks.map((task) {
-                            final subject = subjects.firstWhereOrNull(
-                                (s) => s.id == task.subjectId);
-                            return Padding(
-                              padding: const EdgeInsets.symmetric(
-                                  horizontal: 16.0, vertical: 4.0),
-                              child: TaskCard(
-                                task: task,
-                                subject: subject,
-                                onEdit: () {
-                                  showTaskFormSheet(context, taskId: task.id);
-                                },
-                              ),
-                            );
-                          }).toList(),
-                        );
-                      },
-                    ),
-                  ),
-                ],
-
-                // Today's Schedule Section
-                SliverToBoxAdapter(
-                  child: Padding(
-                    padding: const EdgeInsets.fromLTRB(16, 24, 16, 8),
-                    child: Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                      children: [
-                        Text(
-                          "Today's Schedule",
-                          style: Theme.of(context).textTheme.titleLarge?.copyWith(
-                                fontWeight: FontWeight.bold,
-                              ),
-                        ),
-                        if (pendingLectures.isNotEmpty || markedLectures.isNotEmpty)
-                          IconButton(
-                            icon: Icon(Icons.edit_calendar_rounded, color: Theme.of(context).colorScheme.onSurface.withValues(alpha: 0.7)),
-                            tooltip: 'Mark Full Day',
-                            onPressed: () => _showMarkFullDayBottomSheet(context, ref, DateTime.now()),
-                          ),
-                      ],
-                    ),
-                  ),
-                ),
-
-                // Next Class Card (if there's a pending class)
-                if (pendingLectures.isNotEmpty)
-                  SliverToBoxAdapter(
-                    child: NextClassCard(
-                      lecture: pendingLectures.first,
-                      onMarkAttendance: () {
-                        _showAttendanceBottomSheet(
-                            context, ref, pendingLectures.first);
-                      },
-                    ),
-                  ),
-
-                // Remaining Pending Classes
-                if (pendingLectures.length > 1)
-                  SliverToBoxAdapter(
-                    child: Column(
-                      children: pendingLectures.skip(1).mapIndexed((index, lecture) {
-                        return TimelineConnector(
-                          isLast: index == pendingLectures.length - 2 && markedLectures.isEmpty,
-                          child: LectureCard(
-                            key: ValueKey('pending_${lecture.schedule.id}'),
-                            model: lecture,
-                            onMarkAttendance: (status) {
-                              ref
-                                  .read(dashboardNotifierProvider.notifier)
-                                  .markAttendance(
-                                    lecture.schedule.id,
-                                    lecture.subject.id,
-                                    status,
-                                  );
-                            },
-                          ),
-                        );
-                      }).toList(),
-                    ).animate().fade(delay: 400.ms).slideY(begin: 0.1),
-                  ),
-
-                if (pendingLectures.isEmpty && markedLectures.isEmpty)
-                  SliverToBoxAdapter(
-                    child: Padding(
-                      padding: const EdgeInsets.all(48.0),
-                      child: Center(
-                        child: Column(
-                          mainAxisSize: MainAxisSize.min,
-                          children: [
-                            Icon(Icons.event_busy_rounded, size: 64, color: Theme.of(context).colorScheme.surfaceContainerHighest),
-                            const SizedBox(height: 16),
-                            Text(
-                              'No lectures scheduled for today.',
-                              style: TextStyle(fontSize: 16, color: Theme.of(context).colorScheme.onSurfaceVariant),
-                            ),
-                            const SizedBox(height: 24),
-                            Wrap(
-                              spacing: 12,
-                              runSpacing: 12,
-                              alignment: WrapAlignment.center,
-                              children: [
-                                OutlinedButton.icon(
-                                  onPressed: () => context.go(AppRoutes.schedule),
-                                  icon: const Icon(Icons.edit_calendar_rounded, size: 18),
-                                  label: const Text('Edit Timetable'),
-                                  style: OutlinedButton.styleFrom(
-                                    foregroundColor: Theme.of(context).colorScheme.primary,
-                                    side: BorderSide(color: Theme.of(context).colorScheme.primary.withValues(alpha: 0.5)),
-                                    padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
-                                    shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
-                                  ),
-                                ),
-                                OutlinedButton.icon(
-                                  onPressed: () => context.go(AppRoutes.planner),
-                                  icon: const Icon(Icons.add_task_rounded, size: 18),
-                                  label: const Text('Go to Planner'),
-                                  style: OutlinedButton.styleFrom(
-                                    foregroundColor: Theme.of(context).colorScheme.secondary,
-                                    side: BorderSide(color: Theme.of(context).colorScheme.secondary.withValues(alpha: 0.5)),
-                                    padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
-                                    shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
-                                  ),
-                                ),
-                              ],
-                            ),
-                          ],
-                        ),
+                  // Next Class Card (if there's a pending class)
+                  if (pendingLectures.isNotEmpty)
+                    SliverToBoxAdapter(
+                      child: NextClassCard(
+                        lecture: pendingLectures.first,
+                        onMarkAttendance: () {
+                          _showAttendanceBottomSheet(
+                              context, ref, pendingLectures.first);
+                        },
                       ),
-                    ).animate().fade(delay: 300.ms).scale(begin: const Offset(0.9, 0.9)),
-                  )
-                else if (pendingLectures.isEmpty)
-                  SliverToBoxAdapter(
-                    child: Padding(
-                      padding: const EdgeInsets.symmetric(horizontal: 24.0, vertical: 8.0),
-                      child: Container(
-                        padding: const EdgeInsets.all(24),
-                        decoration: BoxDecoration(
-                          gradient: LinearGradient(
-                            begin: Alignment.topLeft,
-                            end: Alignment.bottomRight,
-                            colors: [
-                              Theme.of(context).colorScheme.surfaceContainerHigh,
-                              Theme.of(context).colorScheme.surfaceContainer,
-                            ],
-                          ),
-                          borderRadius: BorderRadius.circular(20),
-                          border: Border.all(
-                            color: Theme.of(context).colorScheme.primary.withValues(alpha: 0.2),
-                            width: 1,
-                          ),
-                        ),
-                        child: Row(
-                          children: [
-                            Container(
-                              width: 80,
-                              height: 80,
-                              decoration: BoxDecoration(
-                                shape: BoxShape.circle,
-                                gradient: RadialGradient(
-                                  colors: [
-                                    Theme.of(context).colorScheme.primary.withValues(alpha: 0.2),
-                                    Colors.transparent,
-                                  ],
-                                ),
-                              ),
-                              child: Center(
-                                child: Container(
-                                  width: 48,
-                                  height: 48,
-                                  decoration: BoxDecoration(
-                                    color: Theme.of(context).colorScheme.primary,
-                                    shape: BoxShape.circle,
-                                  ),
-                                  child: Icon(Icons.check_rounded, color: Theme.of(context).colorScheme.onPrimary, size: 32),
-                                ),
-                              ),
+                    ),
+
+                  // Remaining Pending Classes
+                  if (pendingLectures.length > 1)
+                    SliverToBoxAdapter(
+                      child: Column(
+                        children: pendingLectures
+                            .skip(1)
+                            .mapIndexed((index, lecture) {
+                          return TimelineConnector(
+                            isLast: index == pendingLectures.length - 2 &&
+                                markedLectures.isEmpty,
+                            child: LectureCard(
+                              key: ValueKey('pending_${lecture.schedule.id}'),
+                              model: lecture,
+                              onMarkAttendance: (status) {
+                                ref
+                                    .read(dashboardNotifierProvider.notifier)
+                                    .markAttendance(
+                                      lecture.schedule.id,
+                                      lecture.subject.id,
+                                      status,
+                                    );
+                              },
                             ),
-                            const SizedBox(width: 16),
-                            Expanded(
-                              child: Column(
-                                crossAxisAlignment: CrossAxisAlignment.start,
+                          );
+                        }).toList(),
+                      ).animate().fade(delay: 400.ms).slideY(begin: 0.1),
+                    ),
+
+                  if (pendingLectures.isEmpty && markedLectures.isEmpty)
+                    SliverToBoxAdapter(
+                      child: Padding(
+                        padding: const EdgeInsets.all(48.0),
+                        child: Center(
+                          child: Column(
+                            mainAxisSize: MainAxisSize.min,
+                            children: [
+                              Icon(Icons.event_busy_rounded,
+                                  size: 64,
+                                  color: Theme.of(context)
+                                      .colorScheme
+                                      .surfaceContainerHighest),
+                              const SizedBox(height: 16),
+                              Text(
+                                'No lectures scheduled for today.',
+                                style: TextStyle(
+                                    fontSize: 16,
+                                    color: Theme.of(context)
+                                        .colorScheme
+                                        .onSurfaceVariant),
+                              ),
+                              const SizedBox(height: 24),
+                              Wrap(
+                                spacing: 12,
+                                runSpacing: 12,
+                                alignment: WrapAlignment.center,
                                 children: [
-                                  Text(
-                                    'All caught up for today!',
-                                    style: TextStyle(
-                                      fontSize: 16,
-                                      fontWeight: FontWeight.bold,
-                                      color: Theme.of(context).colorScheme.primary,
+                                  OutlinedButton.icon(
+                                    onPressed: () =>
+                                        context.go(AppRoutes.schedule),
+                                    icon: const Icon(
+                                        Icons.edit_calendar_rounded,
+                                        size: 18),
+                                    label: const Text('Edit Timetable'),
+                                    style: OutlinedButton.styleFrom(
+                                      foregroundColor:
+                                          Theme.of(context).colorScheme.primary,
+                                      side: BorderSide(
+                                          color: Theme.of(context)
+                                              .colorScheme
+                                              .primary
+                                              .withValues(alpha: 0.5)),
+                                      padding: const EdgeInsets.symmetric(
+                                          horizontal: 16, vertical: 12),
+                                      shape: RoundedRectangleBorder(
+                                          borderRadius:
+                                              BorderRadius.circular(12)),
                                     ),
                                   ),
-                                  const SizedBox(height: 4),
-                                  Text(
-                                    'Great job! You have no pending classes.',
-                                    style: TextStyle(
-                                      fontSize: 12,
-                                      color: Theme.of(context).colorScheme.onSurface.withValues(alpha: 0.6),
+                                  OutlinedButton.icon(
+                                    onPressed: () =>
+                                        context.go(AppRoutes.planner),
+                                    icon: const Icon(Icons.add_task_rounded,
+                                        size: 18),
+                                    label: const Text('Go to Planner'),
+                                    style: OutlinedButton.styleFrom(
+                                      foregroundColor: Theme.of(context)
+                                          .colorScheme
+                                          .secondary,
+                                      side: BorderSide(
+                                          color: Theme.of(context)
+                                              .colorScheme
+                                              .secondary
+                                              .withValues(alpha: 0.5)),
+                                      padding: const EdgeInsets.symmetric(
+                                          horizontal: 16, vertical: 12),
+                                      shape: RoundedRectangleBorder(
+                                          borderRadius:
+                                              BorderRadius.circular(12)),
                                     ),
                                   ),
                                 ],
                               ),
-                            ),
-                            const Text('🎉', style: TextStyle(fontSize: 32)),
-                          ],
+                            ],
+                          ),
                         ),
-                      ),
-                    ).animate().fade(delay: 300.ms).scale(begin: const Offset(0.9, 0.9)),
-                  ),
+                      )
+                          .animate()
+                          .fade(delay: 300.ms)
+                          .scale(begin: const Offset(0.9, 0.9)),
+                    )
+                  else if (pendingLectures.isEmpty)
+                    SliverToBoxAdapter(
+                      child: Padding(
+                        padding: const EdgeInsets.symmetric(
+                            horizontal: 24.0, vertical: 8.0),
+                        child: Container(
+                          padding: const EdgeInsets.all(24),
+                          decoration: BoxDecoration(
+                            gradient: LinearGradient(
+                              begin: Alignment.topLeft,
+                              end: Alignment.bottomRight,
+                              colors: [
+                                Theme.of(context)
+                                    .colorScheme
+                                    .surfaceContainerHigh,
+                                Theme.of(context).colorScheme.surfaceContainer,
+                              ],
+                            ),
+                            borderRadius: BorderRadius.circular(20),
+                            border: Border.all(
+                              color: Theme.of(context)
+                                  .colorScheme
+                                  .primary
+                                  .withValues(alpha: 0.2),
+                              width: 1,
+                            ),
+                          ),
+                          child: Row(
+                            children: [
+                              Container(
+                                width: 80,
+                                height: 80,
+                                decoration: BoxDecoration(
+                                  shape: BoxShape.circle,
+                                  gradient: RadialGradient(
+                                    colors: [
+                                      Theme.of(context)
+                                          .colorScheme
+                                          .primary
+                                          .withValues(alpha: 0.2),
+                                      Colors.transparent,
+                                    ],
+                                  ),
+                                ),
+                                child: Center(
+                                  child: Container(
+                                    width: 48,
+                                    height: 48,
+                                    decoration: BoxDecoration(
+                                      color:
+                                          Theme.of(context).colorScheme.primary,
+                                      shape: BoxShape.circle,
+                                    ),
+                                    child: Icon(Icons.check_rounded,
+                                        color: Theme.of(context)
+                                            .colorScheme
+                                            .onPrimary,
+                                        size: 32),
+                                  ),
+                                ),
+                              ),
+                              const SizedBox(width: 16),
+                              Expanded(
+                                child: Column(
+                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                  children: [
+                                    Text(
+                                      'All caught up for today!',
+                                      style: TextStyle(
+                                        fontSize: 16,
+                                        fontWeight: FontWeight.bold,
+                                        color: Theme.of(context)
+                                            .colorScheme
+                                            .primary,
+                                      ),
+                                    ),
+                                    const SizedBox(height: 4),
+                                    Text(
+                                      'Great job! You have no pending classes.',
+                                      style: TextStyle(
+                                        fontSize: 12,
+                                        color: Theme.of(context)
+                                            .colorScheme
+                                            .onSurface
+                                            .withValues(alpha: 0.6),
+                                      ),
+                                    ),
+                                  ],
+                                ),
+                              ),
+                              const Text('🎉', style: TextStyle(fontSize: 32)),
+                            ],
+                          ),
+                        ),
+                      )
+                          .animate()
+                          .fade(delay: 300.ms)
+                          .scale(begin: const Offset(0.9, 0.9)),
+                    ),
 
-                // Marked Classes
-                if (markedLectures.isNotEmpty) ...[
-                  SliverToBoxAdapter(
-                    child: Padding(
-                      padding: const EdgeInsets.fromLTRB(16, 24, 16, 8),
-                      child: Text(
-                        'Marked Classes',
-                        style: TextStyle(
-                          fontSize: 18,
-                          fontWeight: FontWeight.bold,
-                          color: Theme.of(context).colorScheme.onSurface.withValues(alpha: 0.5),
+                  // Marked Classes
+                  if (markedLectures.isNotEmpty) ...[
+                    SliverToBoxAdapter(
+                      child: Padding(
+                        padding: const EdgeInsets.fromLTRB(16, 24, 16, 8),
+                        child: Text(
+                          'Marked Classes',
+                          style: TextStyle(
+                            fontSize: 18,
+                            fontWeight: FontWeight.bold,
+                            color: Theme.of(context)
+                                .colorScheme
+                                .onSurface
+                                .withValues(alpha: 0.5),
+                          ),
                         ),
                       ),
                     ),
+                    SliverToBoxAdapter(
+                      child: Column(
+                        children: markedLectures.mapIndexed((index, lecture) {
+                          return TimelineConnector(
+                            isLast: index == markedLectures.length - 1,
+                            isPast: true,
+                            child: LectureCard(
+                              key: ValueKey('marked_${lecture.schedule.id}'),
+                              model: lecture,
+                              onMarkAttendance: (status) {
+                                ref
+                                    .read(dashboardNotifierProvider.notifier)
+                                    .markAttendance(
+                                      lecture.schedule.id,
+                                      lecture.subject.id,
+                                      status,
+                                    );
+                              },
+                            ),
+                          );
+                        }).toList(),
+                      ).animate().fade(delay: 500.ms).slideY(begin: 0.1),
+                    ),
+                  ],
+                  const SliverToBoxAdapter(child: SizedBox(height: 16)),
+                  const SliverToBoxAdapter(
+                    child: BannerAdWidget(),
                   ),
-                  SliverToBoxAdapter(
-                    child: Column(
-                      children: markedLectures.mapIndexed((index, lecture) {
-                        return TimelineConnector(
-                          isLast: index == markedLectures.length - 1,
-                          isPast: true,
-                          child: LectureCard(
-                            key: ValueKey('marked_${lecture.schedule.id}'),
-                            model: lecture,
-                            onMarkAttendance: (status) {
-                              ref
-                                  .read(dashboardNotifierProvider.notifier)
-                                  .markAttendance(
-                                    lecture.schedule.id,
-                                    lecture.subject.id,
-                                    status,
-                                  );
-                            },
-                          ),
-                        );
-                      }).toList(),
-                    ).animate().fade(delay: 500.ms).slideY(begin: 0.1),
-                  ),
+                  const SliverToBoxAdapter(child: SizedBox(height: 32)),
                 ],
-                const SliverToBoxAdapter(child: SizedBox(height: 16)),
-                const SliverToBoxAdapter(
-                  child: BannerAdWidget(),
-                ),
-                const SliverToBoxAdapter(child: SizedBox(height: 32)),
-              ],
+              ),
             ),
-          ),
           );
         },
         loading: () => _buildSkeleton(context),
@@ -549,7 +640,8 @@ class DashboardScreen extends ConsumerWidget {
     );
   }
 
-  void _showMarkFullDayBottomSheet(BuildContext context, WidgetRef ref, DateTime date) {
+  void _showMarkFullDayBottomSheet(
+      BuildContext context, WidgetRef ref, DateTime date) {
     showModalBottomSheet(
       context: context,
       isScrollControlled: true,
@@ -606,7 +698,8 @@ class DashboardScreen extends ConsumerWidget {
                       if (semester != null) {
                         await ref
                             .read(attendanceRepositoryProvider)
-                            .markFullDayStatus(date, semester.id, AttendanceStatus.gt);
+                            .markFullDayStatus(
+                                date, semester.id, AttendanceStatus.gt);
                         if (context.mounted) {
                           ScaffoldMessenger.of(context).hideCurrentSnackBar();
                           ScaffoldMessenger.of(context).showSnackBar(
@@ -630,7 +723,8 @@ class DashboardScreen extends ConsumerWidget {
                       if (semester != null) {
                         await ref
                             .read(attendanceRepositoryProvider)
-                            .markFullDayStatus(date, semester.id, AttendanceStatus.medical);
+                            .markFullDayStatus(
+                                date, semester.id, AttendanceStatus.medical);
                         if (context.mounted) {
                           ScaffoldMessenger.of(context).hideCurrentSnackBar();
                           ScaffoldMessenger.of(context).showSnackBar(
@@ -654,7 +748,8 @@ class DashboardScreen extends ConsumerWidget {
                       if (semester != null) {
                         await ref
                             .read(attendanceRepositoryProvider)
-                            .markFullDayStatus(date, semester.id, AttendanceStatus.holiday);
+                            .markFullDayStatus(
+                                date, semester.id, AttendanceStatus.holiday);
                         if (context.mounted) {
                           ScaffoldMessenger.of(context).hideCurrentSnackBar();
                           ScaffoldMessenger.of(context).showSnackBar(
@@ -678,20 +773,36 @@ class DashboardScreen extends ConsumerWidget {
                       final confirm = await showDialog<bool>(
                         context: context,
                         builder: (context) => AlertDialog(
-                          backgroundColor: Theme.of(context).colorScheme.surfaceContainerHigh,
-                          title: Text('Clear Today\'s Attendance?', style: TextStyle(color: Theme.of(context).colorScheme.onSurface)),
+                          backgroundColor: Theme.of(context)
+                              .colorScheme
+                              .surfaceContainerHigh,
+                          title: Text('Clear Today\'s Attendance?',
+                              style: TextStyle(
+                                  color:
+                                      Theme.of(context).colorScheme.onSurface)),
                           content: Text(
                             'This will erase all attendance entries marked for this day.',
-                            style: TextStyle(color: Theme.of(context).colorScheme.onSurface.withValues(alpha: 0.7)),
+                            style: TextStyle(
+                                color: Theme.of(context)
+                                    .colorScheme
+                                    .onSurface
+                                    .withValues(alpha: 0.7)),
                           ),
                           actions: [
                             TextButton(
                               onPressed: () => Navigator.pop(context, false),
-                              child: Text('Cancel', style: TextStyle(color: Theme.of(context).colorScheme.onSurfaceVariant)),
+                              child: Text('Cancel',
+                                  style: TextStyle(
+                                      color: Theme.of(context)
+                                          .colorScheme
+                                          .onSurfaceVariant)),
                             ),
                             TextButton(
                               onPressed: () => Navigator.pop(context, true),
-                              child: Text('Clear', style: TextStyle(color: Theme.of(context).colorScheme.error)),
+                              child: Text('Clear',
+                                  style: TextStyle(
+                                      color:
+                                          Theme.of(context).colorScheme.error)),
                             ),
                           ],
                         ),
@@ -752,7 +863,8 @@ class DashboardScreen extends ConsumerWidget {
                   Container(
                     height: 160,
                     decoration: BoxDecoration(
-                      color: Theme.of(context).colorScheme.surfaceContainerHighest,
+                      color:
+                          Theme.of(context).colorScheme.surfaceContainerHighest,
                       borderRadius: BorderRadius.circular(20),
                     ),
                   ),
@@ -763,7 +875,9 @@ class DashboardScreen extends ConsumerWidget {
                         child: Container(
                           height: 80,
                           decoration: BoxDecoration(
-                            color: Theme.of(context).colorScheme.surfaceContainerHighest,
+                            color: Theme.of(context)
+                                .colorScheme
+                                .surfaceContainerHighest,
                             borderRadius: BorderRadius.circular(16),
                           ),
                         ),
@@ -773,7 +887,9 @@ class DashboardScreen extends ConsumerWidget {
                         child: Container(
                           height: 80,
                           decoration: BoxDecoration(
-                            color: Theme.of(context).colorScheme.surfaceContainerHighest,
+                            color: Theme.of(context)
+                                .colorScheme
+                                .surfaceContainerHighest,
                             borderRadius: BorderRadius.circular(16),
                           ),
                         ),
@@ -783,7 +899,9 @@ class DashboardScreen extends ConsumerWidget {
                         child: Container(
                           height: 80,
                           decoration: BoxDecoration(
-                            color: Theme.of(context).colorScheme.surfaceContainerHighest,
+                            color: Theme.of(context)
+                                .colorScheme
+                                .surfaceContainerHighest,
                             borderRadius: BorderRadius.circular(16),
                           ),
                         ),
@@ -794,7 +912,8 @@ class DashboardScreen extends ConsumerWidget {
                   Container(
                     height: 120,
                     decoration: BoxDecoration(
-                      color: Theme.of(context).colorScheme.surfaceContainerHighest,
+                      color:
+                          Theme.of(context).colorScheme.surfaceContainerHighest,
                       borderRadius: BorderRadius.circular(20),
                     ),
                   ),
@@ -802,7 +921,8 @@ class DashboardScreen extends ConsumerWidget {
                   Container(
                     height: 80,
                     decoration: BoxDecoration(
-                      color: Theme.of(context).colorScheme.surfaceContainerHighest,
+                      color:
+                          Theme.of(context).colorScheme.surfaceContainerHighest,
                       borderRadius: BorderRadius.circular(16),
                     ),
                   ),

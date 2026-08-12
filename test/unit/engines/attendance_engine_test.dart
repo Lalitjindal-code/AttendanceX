@@ -37,8 +37,8 @@ void main() {
     }
 
     test('calculateSubjectSummary with no attendance records', () {
-      final summary =
-          AttendanceEngine.calculateSubjectSummary(1, [], baseSettings, dummySemester);
+      final summary = AttendanceEngine.calculateSubjectSummary(
+          1, [], baseSettings, dummySemester);
       expect(summary.effectiveTotal, 0);
       expect(summary.effectivePresent, 0);
       expect(summary.attendancePercentage, 0.0);
@@ -49,8 +49,8 @@ void main() {
         createAttendance(AttendanceStatus.present),
         createAttendance(AttendanceStatus.present),
       ];
-      final summary =
-          AttendanceEngine.calculateSubjectSummary(1, records, baseSettings, dummySemester);
+      final summary = AttendanceEngine.calculateSubjectSummary(
+          1, records, baseSettings, dummySemester);
 
       expect(summary.effectiveTotal, 2);
       expect(summary.effectivePresent, 2);
@@ -63,8 +63,8 @@ void main() {
         createAttendance(AttendanceStatus.absent),
         createAttendance(AttendanceStatus.absent),
       ];
-      final summary =
-          AttendanceEngine.calculateSubjectSummary(1, records, baseSettings, dummySemester);
+      final summary = AttendanceEngine.calculateSubjectSummary(
+          1, records, baseSettings, dummySemester);
 
       expect(summary.effectiveTotal, 2);
       expect(summary.effectivePresent, 0);
@@ -78,8 +78,8 @@ void main() {
         createAttendance(AttendanceStatus.holiday),
         createAttendance(AttendanceStatus.holiday),
       ];
-      final summary =
-          AttendanceEngine.calculateSubjectSummary(1, records, baseSettings, dummySemester);
+      final summary = AttendanceEngine.calculateSubjectSummary(
+          1, records, baseSettings, dummySemester);
 
       expect(summary.effectiveTotal, 1);
       expect(summary.effectivePresent, 1);
@@ -92,8 +92,8 @@ void main() {
         createAttendance(AttendanceStatus.present),
         createAttendance(AttendanceStatus.pending),
       ];
-      final summary =
-          AttendanceEngine.calculateSubjectSummary(1, records, baseSettings, dummySemester);
+      final summary = AttendanceEngine.calculateSubjectSummary(
+          1, records, baseSettings, dummySemester);
 
       expect(summary.effectiveTotal, 1);
       expect(summary.effectivePresent, 1);
@@ -103,21 +103,23 @@ void main() {
 
     group('Medical Rules', () {
       test('Medical Leave always counts as Present regardless of settings', () {
-        final settingsWithMedicalAsPresent = baseSettings.copyWith(medicalCountsAsPresent: true);
-        final settingsWithMedicalExcluded = baseSettings.copyWith(medicalCountsAsPresent: false);
+        final settingsWithMedicalAsPresent =
+            baseSettings.copyWith(medicalCountsAsPresent: true);
+        final settingsWithMedicalExcluded =
+            baseSettings.copyWith(medicalCountsAsPresent: false);
         final records = [createAttendance(AttendanceStatus.medical)];
 
         // Test with medicalCountsAsPresent = true
-        final summary1 =
-            AttendanceEngine.calculateSubjectSummary(1, records, settingsWithMedicalAsPresent, dummySemester);
+        final summary1 = AttendanceEngine.calculateSubjectSummary(
+            1, records, settingsWithMedicalAsPresent, dummySemester);
         expect(summary1.effectiveTotal, 1);
         expect(summary1.effectivePresent, 1);
         expect(summary1.attendancePercentage, 100.0);
         expect(summary1.totalMedicalRecords, 1);
 
         // Test with medicalCountsAsPresent = false
-        final summary2 =
-            AttendanceEngine.calculateSubjectSummary(1, records, settingsWithMedicalExcluded, dummySemester);
+        final summary2 = AttendanceEngine.calculateSubjectSummary(
+            1, records, settingsWithMedicalExcluded, dummySemester);
         expect(summary2.effectiveTotal, 1);
         expect(summary2.effectivePresent, 1);
         expect(summary2.attendancePercentage, 100.0);
@@ -126,16 +128,19 @@ void main() {
     });
 
     group('GT Rules', () {
-      test('GT Leave is always excluded from calculations regardless of settings', () {
+      test(
+          'GT Leave is always excluded from calculations regardless of settings',
+          () {
         final records = [createAttendance(AttendanceStatus.gt)];
 
         for (final mode in GtMode.values) {
           final settings = baseSettings.copyWith(gtMode: mode);
-          final summary =
-              AttendanceEngine.calculateSubjectSummary(1, records, settings, dummySemester);
+          final summary = AttendanceEngine.calculateSubjectSummary(
+              1, records, settings, dummySemester);
           expect(summary.effectiveTotal, 0, reason: 'Failed for mode: $mode');
           expect(summary.effectivePresent, 0, reason: 'Failed for mode: $mode');
-          expect(summary.attendancePercentage, 0.0, reason: 'Failed for mode: $mode');
+          expect(summary.attendancePercentage, 0.0,
+              reason: 'Failed for mode: $mode');
           expect(summary.totalGTRecords, 1, reason: 'Failed for mode: $mode');
         }
       });
@@ -146,8 +151,8 @@ void main() {
         createAttendance(AttendanceStatus.present, subjectId: 1),
         createAttendance(AttendanceStatus.absent, subjectId: 2),
       ];
-      final summary =
-          AttendanceEngine.calculateOverallSummary(records, baseSettings, dummySemester);
+      final summary = AttendanceEngine.calculateOverallSummary(
+          records, baseSettings, dummySemester);
 
       expect(summary.effectiveTotal, 2);
       expect(summary.effectivePresent, 1);

@@ -3,10 +3,7 @@ import 'package:flutter/foundation.dart' show kIsWeb;
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:firebase_core/firebase_core.dart';
-import 'package:google_mobile_ads/google_mobile_ads.dart';
 
-import 'core/ads/app_open_ad_manager.dart';
-import 'core/ads/app_lifecycle_reactor.dart';
 import 'core/config/app_config.dart';
 import 'core/theme/app_theme.dart';
 import 'database/isar_service.dart';
@@ -30,7 +27,8 @@ void main() async {
 
   await Future.wait([
     (kIsWeb || !Platform.isWindows)
-        ? Firebase.initializeApp(options: DefaultFirebaseOptions.currentPlatform)
+        ? Firebase.initializeApp(
+            options: DefaultFirebaseOptions.currentPlatform)
         : Future.value(null),
     PreferencesService.instance.initialize(),
     IsarService.instance.initialize(),
@@ -59,14 +57,6 @@ void main() async {
 
   // Defer non-critical background services to run after the first frame has painted
   WidgetsBinding.instance.addPostFrameCallback((_) {
-    if (kIsWeb || !Platform.isWindows) {
-      MobileAds.instance.initialize().then((_) {
-        final appOpenAdManager = AppOpenAdManager()..loadAd();
-        final appLifecycleReactor = AppLifecycleReactor(appOpenAdManager: appOpenAdManager);
-        appLifecycleReactor.listenToAppStateChanges();
-      });
-    }
-
     final bool notificationsEnabled = PreferencesService.instance.getBool(
       PreferencesService.keyNotificationsEnabled,
       defaultValue: true,

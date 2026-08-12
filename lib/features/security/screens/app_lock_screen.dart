@@ -4,7 +4,7 @@ import 'package:local_auth/local_auth.dart';
 
 class AppLockScreen extends StatefulWidget {
   final VoidCallback onUnlocked;
-  
+
   const AppLockScreen({super.key, required this.onUnlocked});
 
   @override
@@ -23,14 +23,15 @@ class _AppLockScreenState extends State<AppLockScreen> {
 
   Future<void> _authenticate() async {
     if (_isAuthenticating) return;
-    
+
     setState(() {
       _isAuthenticating = true;
     });
 
     try {
       final bool canAuthenticateWithBiometrics = await _auth.canCheckBiometrics;
-      final bool canAuthenticate = canAuthenticateWithBiometrics || await _auth.isDeviceSupported();
+      final bool canAuthenticate =
+          canAuthenticateWithBiometrics || await _auth.isDeviceSupported();
 
       if (!canAuthenticate) {
         // If device has no security, unlock automatically to avoid locking user out permanently.
@@ -86,7 +87,10 @@ class _AppLockScreenState extends State<AppLockScreen> {
               Text(
                 'Authenticate to access your data.',
                 style: TextStyle(
-                  color: Theme.of(context).colorScheme.onSurface.withValues(alpha: 0.6),
+                  color: Theme.of(context)
+                      .colorScheme
+                      .onSurface
+                      .withValues(alpha: 0.6),
                   fontSize: 16,
                 ),
               ),
@@ -94,16 +98,23 @@ class _AppLockScreenState extends State<AppLockScreen> {
               if (!_isAuthenticating)
                 ElevatedButton.icon(
                   onPressed: _authenticate,
-                  icon: Icon(Icons.fingerprint_rounded, color: Theme.of(context).colorScheme.onPrimary),
-                  label: Text('Unlock', style: TextStyle(color: Theme.of(context).colorScheme.onPrimary, fontWeight: FontWeight.bold)),
+                  icon: Icon(Icons.fingerprint_rounded,
+                      color: Theme.of(context).colorScheme.onPrimary),
+                  label: Text('Unlock',
+                      style: TextStyle(
+                          color: Theme.of(context).colorScheme.onPrimary,
+                          fontWeight: FontWeight.bold)),
                   style: ElevatedButton.styleFrom(
                     backgroundColor: Theme.of(context).colorScheme.primary,
-                    padding: const EdgeInsets.symmetric(horizontal: 32, vertical: 16),
-                    shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
+                    padding: const EdgeInsets.symmetric(
+                        horizontal: 32, vertical: 16),
+                    shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(16)),
                   ),
                 )
               else
-                CircularProgressIndicator(color: Theme.of(context).colorScheme.primary),
+                CircularProgressIndicator(
+                    color: Theme.of(context).colorScheme.primary),
             ],
           ),
         ),

@@ -1,4 +1,5 @@
-import 'package:attendify/database/collections/attendance_collection.dart' show Attendance;
+import 'package:attendify/database/collections/attendance_collection.dart'
+    show Attendance;
 import 'package:attendify/database/collections/schedule_collection.dart';
 import 'package:attendify/database/collections/subject_collection.dart';
 import 'package:attendify/features/attendance/providers/attendance_providers.dart';
@@ -75,7 +76,8 @@ class CalendarNotifier extends _$CalendarNotifier {
       return Stream.value(CalendarState(
         selectedDate: selectedDate,
         focusedDate: focusedDate,
-        attendanceMarkers: UnmodifiableMapView<DateTime, List<AttendanceStatus>>({}),
+        attendanceMarkers:
+            UnmodifiableMapView<DateTime, List<AttendanceStatus>>({}),
         taskMarkers: UnmodifiableMapView<DateTime, List<AcademicTask>>({}),
         selectedDayDetails: DailyAttendanceDetails(date: selectedDate),
         selectedDayTasks: [],

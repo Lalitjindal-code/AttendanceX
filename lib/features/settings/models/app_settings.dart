@@ -151,22 +151,23 @@ class AppSettings {
           ? DateTime.fromMillisecondsSinceEpoch(map['lastBackupDate'])
           : null,
       isAppLockEnabled: map['isAppLockEnabled'] ?? false,
-      enabledTaskTypes: List<String>.from(map['enabledTaskTypes'] ?? const [
-        'assignment',
-        'homework',
-        'quiz',
-        'labFile',
-        'practical',
-        'viva',
-        'assessment',
-        'midSem',
-        'endSem',
-        'project',
-        'presentation',
-        'seminar',
-        'internship',
-        'other',
-      ]),
+      enabledTaskTypes: List<String>.from(map['enabledTaskTypes'] ??
+          const [
+            'assignment',
+            'homework',
+            'quiz',
+            'labFile',
+            'practical',
+            'viva',
+            'assessment',
+            'midSem',
+            'endSem',
+            'project',
+            'presentation',
+            'seminar',
+            'internship',
+            'other',
+          ]),
     );
   }
 }

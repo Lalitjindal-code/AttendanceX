@@ -36,7 +36,7 @@ Stream<SubjectAttendanceSummary> subjectSummary(
   final attendanceRepo = ref.watch(attendanceRepositoryProvider);
   final settings = ref.watch(settingsProvider);
   final semester = ref.watch(semesterStateProvider);
-  
+
   if (semester == null) {
     yield SubjectAttendanceSummary(
       subjectId: subjectId,

@@ -41,7 +41,7 @@ class Profile {
   DateTime createdAt = DateTime.now();
 
   DateTime updatedAt = DateTime.now();
-  
+
   Map<String, dynamic> toMap() {
     return {
       'id': id,
@@ -72,8 +72,13 @@ class Profile {
       ..dailyReminderEnabled = map['dailyReminderEnabled'] ?? true
       ..dailyReminderTime = map['dailyReminderTime'] ?? '08:00'
       ..lectureReminderMinutes = map['lectureReminderMinutes'] ?? 10
-      ..defaultTaskReminderOffsets = List<int>.from(map['defaultTaskReminderOffsets'] ?? [60, 1440])
-      ..createdAt = map['createdAt'] != null ? DateTime.fromMillisecondsSinceEpoch(map['createdAt']) : DateTime.now()
-      ..updatedAt = map['updatedAt'] != null ? DateTime.fromMillisecondsSinceEpoch(map['updatedAt']) : DateTime.now();
+      ..defaultTaskReminderOffsets =
+          List<int>.from(map['defaultTaskReminderOffsets'] ?? [60, 1440])
+      ..createdAt = map['createdAt'] != null
+          ? DateTime.fromMillisecondsSinceEpoch(map['createdAt'])
+          : DateTime.now()
+      ..updatedAt = map['updatedAt'] != null
+          ? DateTime.fromMillisecondsSinceEpoch(map['updatedAt'])
+          : DateTime.now();
   }
 }

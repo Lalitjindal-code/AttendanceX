@@ -46,7 +46,6 @@ class QuickStatsRow extends StatelessWidget {
       required int attended,
       required int total,
       required IconData icon}) {
-    
     final progress = total > 0 ? (attended / total) : 0.0;
     final primaryColor = Theme.of(context).colorScheme.primary;
 
@@ -111,7 +110,10 @@ class QuickStatsRow extends StatelessWidget {
                 title,
                 style: TextStyle(
                   fontSize: 12,
-                  color: Theme.of(context).colorScheme.onSurface.withValues(alpha: 0.5),
+                  color: Theme.of(context)
+                      .colorScheme
+                      .onSurface
+                      .withValues(alpha: 0.5),
                 ),
               ),
               const SizedBox(height: 12),
@@ -120,7 +122,10 @@ class QuickStatsRow extends StatelessWidget {
                 child: LinearProgressIndicator(
                   value: progress,
                   minHeight: 4,
-                  backgroundColor: Theme.of(context).colorScheme.onSurface.withValues(alpha: 0.08),
+                  backgroundColor: Theme.of(context)
+                      .colorScheme
+                      .onSurface
+                      .withValues(alpha: 0.08),
                   valueColor: AlwaysStoppedAnimation<Color>(primaryColor),
                 ),
               ),

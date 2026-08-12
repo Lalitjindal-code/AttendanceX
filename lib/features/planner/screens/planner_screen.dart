@@ -76,15 +76,20 @@ class _PlannerScreenState extends ConsumerState<PlannerScreen> {
           cacheExtent: 500,
           slivers: [
             SliverAppBar(
-              title: Text('Planner', style: TextStyle(color: Theme.of(context).colorScheme.onSurface, fontWeight: FontWeight.bold)),
+              title: Text('Planner',
+                  style: TextStyle(
+                      color: Theme.of(context).colorScheme.onSurface,
+                      fontWeight: FontWeight.bold)),
               floating: true,
               pinned: true,
               backgroundColor: Theme.of(context).colorScheme.surface,
               surfaceTintColor: Colors.transparent,
-              iconTheme: IconThemeData(color: Theme.of(context).colorScheme.onSurface),
+              iconTheme:
+                  IconThemeData(color: Theme.of(context).colorScheme.onSurface),
               actions: [
                 IconButton(
-                  icon: Icon(Icons.add, color: Theme.of(context).colorScheme.onSurface),
+                  icon: Icon(Icons.add,
+                      color: Theme.of(context).colorScheme.onSurface),
                   tooltip: 'Add Task',
                   onPressed: () => showTaskFormSheet(context),
                 ),
@@ -109,10 +114,12 @@ class _PlannerScreenState extends ConsumerState<PlannerScreen> {
                         child: Container(
                           padding: const EdgeInsets.all(32),
                           decoration: BoxDecoration(
-                            color: Theme.of(context).colorScheme.surfaceContainer,
+                            color:
+                                Theme.of(context).colorScheme.surfaceContainer,
                             borderRadius: BorderRadius.circular(24),
                             border: Border.all(
-                              color: Theme.of(context).colorScheme.outlineVariant,
+                              color:
+                                  Theme.of(context).colorScheme.outlineVariant,
                             ),
                           ),
                           child: Column(
@@ -121,7 +128,8 @@ class _PlannerScreenState extends ConsumerState<PlannerScreen> {
                               Container(
                                 padding: const EdgeInsets.all(20),
                                 decoration: BoxDecoration(
-                                  color: const Color(0xFF7E73FF).withValues(alpha: 0.2),
+                                  color: const Color(0xFF7E73FF)
+                                      .withValues(alpha: 0.2),
                                   shape: BoxShape.circle,
                                 ),
                                 child: const Icon(
@@ -136,8 +144,13 @@ class _PlannerScreenState extends ConsumerState<PlannerScreen> {
                                     ? 'All caught up!'
                                     : 'No tasks found.',
                                 textAlign: TextAlign.center,
-                                style: Theme.of(context).textTheme.titleLarge?.copyWith(
-                                      color: Theme.of(context).colorScheme.onSurface,
+                                style: Theme.of(context)
+                                    .textTheme
+                                    .titleLarge
+                                    ?.copyWith(
+                                      color: Theme.of(context)
+                                          .colorScheme
+                                          .onSurface,
                                       fontWeight: FontWeight.bold,
                                     ),
                               ),
@@ -147,8 +160,14 @@ class _PlannerScreenState extends ConsumerState<PlannerScreen> {
                                     ? "Add a deadline when you're ready."
                                     : 'No tasks match your filters.',
                                 textAlign: TextAlign.center,
-                                style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                                      color: Theme.of(context).colorScheme.onSurface.withValues(alpha: 0.6),
+                                style: Theme.of(context)
+                                    .textTheme
+                                    .bodyMedium
+                                    ?.copyWith(
+                                      color: Theme.of(context)
+                                          .colorScheme
+                                          .onSurface
+                                          .withValues(alpha: 0.6),
                                     ),
                               ),
                               const SizedBox(height: AppSpacing.xl),
@@ -156,10 +175,15 @@ class _PlannerScreenState extends ConsumerState<PlannerScreen> {
                                 FilledButton.icon(
                                   onPressed: () => showTaskFormSheet(context),
                                   style: FilledButton.styleFrom(
-                                    backgroundColor: Theme.of(context).colorScheme.primary,
-                                    foregroundColor: Theme.of(context).colorScheme.onPrimary,
-                                    padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 12),
-                                    shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+                                    backgroundColor:
+                                        Theme.of(context).colorScheme.primary,
+                                    foregroundColor:
+                                        Theme.of(context).colorScheme.onPrimary,
+                                    padding: const EdgeInsets.symmetric(
+                                        horizontal: 24, vertical: 12),
+                                    shape: RoundedRectangleBorder(
+                                        borderRadius:
+                                            BorderRadius.circular(12)),
                                   ),
                                   icon: const Icon(Icons.add_rounded),
                                   label: const Text('Add Task'),

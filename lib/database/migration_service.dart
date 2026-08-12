@@ -15,7 +15,8 @@ class MigrationService {
 
   Future<void> runMigrations() async {
     final prefs = PreferencesService.instance;
-    final isMigrated = prefs.getBool('v2_migration_complete', defaultValue: false);
+    final isMigrated =
+        prefs.getBool('v2_migration_complete', defaultValue: false);
 
     if (isMigrated) return;
 
@@ -29,8 +30,11 @@ class MigrationService {
         defaultProfile = Profile()
           ..name = 'Default Profile'
           ..isDefault = true
-          ..defaultGoalPercentage = prefs.getDouble(PreferencesService.keyDefaultGoal, defaultValue: 75.0)
-          ..medicalCountsAsPresent = prefs.getBool(PreferencesService.keyMedicalCountsAsPresent, defaultValue: false);
+          ..defaultGoalPercentage = prefs
+              .getDouble(PreferencesService.keyDefaultGoal, defaultValue: 75.0)
+          ..medicalCountsAsPresent = prefs.getBool(
+              PreferencesService.keyMedicalCountsAsPresent,
+              defaultValue: false);
         await isar.profiles.put(defaultProfile);
       }
       profileId = defaultProfile.id;
@@ -38,17 +42,22 @@ class MigrationService {
       // 2. Create Default Semester if none exist
       var defaultSemester = await isar.semesters.where().findFirst();
       if (defaultSemester == null) {
-        final oldStartStr = prefs.getStringNullable(PreferencesService.keySemesterStart);
-        final oldEndStr = prefs.getStringNullable(PreferencesService.keySemesterEnd);
+        final oldStartStr =
+            prefs.getStringNullable(PreferencesService.keySemesterStart);
+        final oldEndStr =
+            prefs.getStringNullable(PreferencesService.keySemesterEnd);
 
-        final startDate = oldStartStr != null ? DateTime.parse(oldStartStr) : DateTime.now();
+        final startDate =
+            oldStartStr != null ? DateTime.parse(oldStartStr) : DateTime.now();
         final endDate = oldEndStr != null ? DateTime.parse(oldEndStr) : null;
 
         defaultSemester = Semester()
           ..profileId = defaultProfile.id
           ..name = 'Current Semester'
           ..startDate = DateTime(startDate.year, startDate.month, startDate.day)
-          ..endDate = endDate != null ? DateTime(endDate.year, endDate.month, endDate.day) : null;
+          ..endDate = endDate != null
+              ? DateTime(endDate.year, endDate.month, endDate.day)
+              : null;
 
         await isar.semesters.put(defaultSemester);
       }
@@ -56,20 +65,23 @@ class MigrationService {
       final semesterId = defaultSemester.id;
 
       // 3. Update all existing records that have semesterId == 0
-      final subjects = await isar.subjects.filter().semesterIdEqualTo(0).findAll();
+      final subjects =
+          await isar.subjects.filter().semesterIdEqualTo(0).findAll();
       for (var subject in subjects) {
         subject.semesterId = semesterId;
       }
       if (subjects.isNotEmpty) await isar.subjects.putAll(subjects);
 
-      final schedules = await isar.schedules.filter().semesterIdEqualTo(0).findAll();
+      final schedules =
+          await isar.schedules.filter().semesterIdEqualTo(0).findAll();
       for (var schedule in schedules) {
         schedule.semesterId = semesterId;
       }
       if (schedules.isNotEmpty) await isar.schedules.putAll(schedules);
 
       // Clean up attendance duplicates & assign semesterId
-      final attendances = await isar.attendances.filter().semesterIdEqualTo(0).findAll();
+      final attendances =
+          await isar.attendances.filter().semesterIdEqualTo(0).findAll();
       final Map<String, Attendance> dedupMap = {};
       final List<int> toDelete = [];
 
@@ -92,17 +104,20 @@ class MigrationService {
         }
       }
 
-      final toKeep = attendances.where((a) => !toDelete.contains(a.id)).toList();
+      final toKeep =
+          attendances.where((a) => !toDelete.contains(a.id)).toList();
       if (toKeep.isNotEmpty) await isar.attendances.putAll(toKeep);
       if (toDelete.isNotEmpty) await isar.attendances.deleteAll(toDelete);
 
-      final histories = await isar.attendanceHistorys.filter().semesterIdEqualTo(0).findAll();
+      final histories =
+          await isar.attendanceHistorys.filter().semesterIdEqualTo(0).findAll();
       for (var h in histories) {
         h.semesterId = semesterId;
       }
       if (histories.isNotEmpty) await isar.attendanceHistorys.putAll(histories);
 
-      final tasks = await isar.academicTasks.filter().semesterIdEqualTo(0).findAll();
+      final tasks =
+          await isar.academicTasks.filter().semesterIdEqualTo(0).findAll();
       for (var task in tasks) {
         task.semesterId = semesterId;
       }

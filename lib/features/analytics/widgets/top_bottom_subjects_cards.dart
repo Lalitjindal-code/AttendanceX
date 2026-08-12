@@ -106,7 +106,10 @@ class TopBottomSubjectsCards extends StatelessWidget {
           Text(
             '${pct.toStringAsFixed(1)}%',
             style: theme.textTheme.titleSmall?.copyWith(
-              color: Theme.of(context).colorScheme.onSurface.withValues(alpha: 0.6),
+              color: Theme.of(context)
+                  .colorScheme
+                  .onSurface
+                  .withValues(alpha: 0.6),
             ),
           ),
         ],

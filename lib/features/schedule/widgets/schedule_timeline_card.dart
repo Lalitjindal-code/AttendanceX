@@ -95,7 +95,10 @@ class ScheduleTimelineCard extends ConsumerWidget {
                 Text(
                   schedule.endTime,
                   style: Theme.of(context).textTheme.bodySmall?.copyWith(
-                        color: Theme.of(context).colorScheme.onSurface.withValues(alpha: 0.6),
+                        color: Theme.of(context)
+                            .colorScheme
+                            .onSurface
+                            .withValues(alpha: 0.6),
                       ),
                 ),
               ],
@@ -219,16 +222,18 @@ class ScheduleTimelineCard extends ConsumerWidget {
                             Row(
                               children: [
                                 Expanded(
-                                    child: Text(
-                                      subject.name,
-                                      style: Theme.of(context)
-                                          .textTheme
-                                          .titleMedium
-                                          ?.copyWith(
-                                            color: Theme.of(context).colorScheme.onSurface,
-                                            fontWeight: FontWeight.bold,
-                                          ),
-                                    ),
+                                  child: Text(
+                                    subject.name,
+                                    style: Theme.of(context)
+                                        .textTheme
+                                        .titleMedium
+                                        ?.copyWith(
+                                          color: Theme.of(context)
+                                              .colorScheme
+                                              .onSurface,
+                                          fontWeight: FontWeight.bold,
+                                        ),
+                                  ),
                                 ),
                                 Container(
                                   padding: const EdgeInsets.symmetric(
@@ -256,24 +261,41 @@ class ScheduleTimelineCard extends ConsumerWidget {
                                   if (schedule.room != null) ...[
                                     Icon(Icons.location_on_outlined,
                                         size: 14,
-                                        color: Theme.of(context).colorScheme.onSurface.withValues(alpha: 0.5)),
+                                        color: Theme.of(context)
+                                            .colorScheme
+                                            .onSurface
+                                            .withValues(alpha: 0.5)),
                                     const SizedBox(width: 4),
                                     Text(schedule.room!,
                                         style: Theme.of(context)
                                             .textTheme
-                                            .bodySmall?.copyWith(color: Theme.of(context).colorScheme.onSurface.withValues(alpha: 0.7))),
+                                            .bodySmall
+                                            ?.copyWith(
+                                                color: Theme.of(context)
+                                                    .colorScheme
+                                                    .onSurface
+                                                    .withValues(alpha: 0.7))),
                                     const SizedBox(width: AppSpacing.sm),
                                   ],
                                   if (schedule.facultyOverride != null) ...[
                                     Icon(Icons.person_outline,
                                         size: 14,
-                                        color: Theme.of(context).colorScheme.onSurface.withValues(alpha: 0.5)),
+                                        color: Theme.of(context)
+                                            .colorScheme
+                                            .onSurface
+                                            .withValues(alpha: 0.5)),
                                     const SizedBox(width: 4),
                                     Expanded(
                                       child: Text(
                                         schedule.facultyOverride!,
-                                        style:
-                                            Theme.of(context).textTheme.bodySmall?.copyWith(color: Theme.of(context).colorScheme.onSurface.withValues(alpha: 0.7)),
+                                        style: Theme.of(context)
+                                            .textTheme
+                                            .bodySmall
+                                            ?.copyWith(
+                                                color: Theme.of(context)
+                                                    .colorScheme
+                                                    .onSurface
+                                                    .withValues(alpha: 0.7)),
                                         overflow: TextOverflow.ellipsis,
                                       ),
                                     ),

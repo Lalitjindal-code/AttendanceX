@@ -70,7 +70,8 @@ void main() {
       expect(fetched!.name, 'Physics');
     });
 
-    test('throws DuplicateException when updating to an existing name', () async {
+    test('throws DuplicateException when updating to an existing name',
+        () async {
       final sub1 = Subject()..name = 'Math';
       final sub2 = Subject()..name = 'Physics';
 

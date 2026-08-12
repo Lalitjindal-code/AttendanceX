@@ -14,7 +14,8 @@ class BunkSimulatorScreen extends ConsumerStatefulWidget {
   const BunkSimulatorScreen({super.key});
 
   @override
-  ConsumerState<BunkSimulatorScreen> createState() => _BunkSimulatorScreenState();
+  ConsumerState<BunkSimulatorScreen> createState() =>
+      _BunkSimulatorScreenState();
 }
 
 class _BunkSimulatorScreenState extends ConsumerState<BunkSimulatorScreen> {
@@ -45,32 +46,48 @@ class _BunkSimulatorScreenState extends ConsumerState<BunkSimulatorScreen> {
         appBar: AppBar(
           backgroundColor: Colors.transparent,
           elevation: 0,
-          title: Text('Bunk Simulator', style: TextStyle(color: Theme.of(context).colorScheme.onSurface, fontWeight: FontWeight.bold)),
+          title: Text('Bunk Simulator',
+              style: TextStyle(
+                  color: Theme.of(context).colorScheme.onSurface,
+                  fontWeight: FontWeight.bold)),
         ),
         body: Center(
-          child: Text('No active semester selected.', style: TextStyle(color: Theme.of(context).colorScheme.onSurface.withValues(alpha: 0.7))),
+          child: Text('No active semester selected.',
+              style: TextStyle(
+                  color: Theme.of(context)
+                      .colorScheme
+                      .onSurface
+                      .withValues(alpha: 0.7))),
         ),
       );
     }
 
     final subjectsAsync = ref.watch(subjectsProvider);
-    final attendanceAsync = ref.watch(attendanceRepositoryProvider).watchAll(semester.id);
+    final attendanceAsync =
+        ref.watch(attendanceRepositoryProvider).watchAll(semester.id);
 
     return Scaffold(
       appBar: AppBar(
         backgroundColor: Colors.transparent,
         elevation: 0,
         leading: IconButton(
-          icon: Icon(Icons.arrow_back_ios_new_rounded, color: Theme.of(context).colorScheme.onSurface),
+          icon: Icon(Icons.arrow_back_ios_new_rounded,
+              color: Theme.of(context).colorScheme.onSurface),
           onPressed: () => Navigator.of(context).pop(),
         ),
         title: Text(
           'Bunk & Predictor',
-          style: TextStyle(color: Theme.of(context).colorScheme.onSurface, fontWeight: FontWeight.bold),
+          style: TextStyle(
+              color: Theme.of(context).colorScheme.onSurface,
+              fontWeight: FontWeight.bold),
         ),
         actions: [
           IconButton(
-            icon: Icon(Icons.refresh_rounded, color: Theme.of(context).colorScheme.onSurface.withValues(alpha: 0.7)),
+            icon: Icon(Icons.refresh_rounded,
+                color: Theme.of(context)
+                    .colorScheme
+                    .onSurface
+                    .withValues(alpha: 0.7)),
             tooltip: 'Reset Sim',
             onPressed: _resetSliders,
           ),
@@ -110,7 +127,8 @@ class _BunkSimulatorScreenState extends ConsumerState<BunkSimulatorScreen> {
                 currentTotal = summary.effectiveTotal.toDouble();
               } else {
                 // Per-Subject Calculation
-                final subject = activeSubjects.firstWhere((s) => s.id == _selectedSubjectId);
+                final subject = activeSubjects
+                    .firstWhere((s) => s.id == _selectedSubjectId);
                 targetGoal = subject.goalPercentage;
 
                 final summary = AttendanceEngine.calculateSubjectSummary(
@@ -121,7 +139,8 @@ class _BunkSimulatorScreenState extends ConsumerState<BunkSimulatorScreen> {
 
               // Calculate Projected Values
               double projectedPresent = currentPresent + _futurePresent;
-              double projectedTotal = currentTotal + _futurePresent + _futureAbsent;
+              double projectedTotal =
+                  currentTotal + _futurePresent + _futureAbsent;
 
               // Medical count rule - always counts as Present
               projectedPresent += _futureMedical;
@@ -129,11 +148,15 @@ class _BunkSimulatorScreenState extends ConsumerState<BunkSimulatorScreen> {
 
               // GT count rule - always excluded
 
-              final currentPercentage = currentTotal == 0 ? 0.0 : (currentPresent / currentTotal);
-              final projectedPercentage = projectedTotal == 0 ? 0.0 : (projectedPresent / projectedTotal);
+              final currentPercentage =
+                  currentTotal == 0 ? 0.0 : (currentPresent / currentTotal);
+              final projectedPercentage = projectedTotal == 0
+                  ? 0.0
+                  : (projectedPresent / projectedTotal);
 
               final isSafe = (projectedPercentage * 100) >= targetGoal;
-              final Color statusColor = isSafe ? Colors.greenAccent : const Color(0xFFFF5F5F);
+              final Color statusColor =
+                  isSafe ? Colors.greenAccent : const Color(0xFFFF5F5F);
 
               return ListView(
                 padding: const EdgeInsets.all(24.0),
@@ -160,7 +183,10 @@ class _BunkSimulatorScreenState extends ConsumerState<BunkSimulatorScreen> {
                   Text(
                     'SIMULATE FUTURE CLASSES',
                     style: theme.textTheme.labelMedium?.copyWith(
-                      color: Theme.of(context).colorScheme.onSurface.withValues(alpha: 0.5),
+                      color: Theme.of(context)
+                          .colorScheme
+                          .onSurface
+                          .withValues(alpha: 0.5),
                       fontWeight: FontWeight.bold,
                       letterSpacing: 1.5,
                     ),
@@ -224,7 +250,9 @@ class _BunkSimulatorScreenState extends ConsumerState<BunkSimulatorScreen> {
           );
         },
         loading: () => const Center(child: CircularProgressIndicator()),
-        error: (e, s) => Center(child: Text('Error: $e', style: TextStyle(color: Theme.of(context).colorScheme.error))),
+        error: (e, s) => Center(
+            child: Text('Error: $e',
+                style: TextStyle(color: Theme.of(context).colorScheme.error))),
       ),
     );
   }
@@ -241,17 +269,23 @@ class _BunkSimulatorScreenState extends ConsumerState<BunkSimulatorScreen> {
         child: DropdownButton<int?>(
           value: _selectedSubjectId,
           dropdownColor: Theme.of(context).colorScheme.surfaceContainer,
-          icon: Icon(Icons.keyboard_arrow_down_rounded, color: Theme.of(context).colorScheme.onSurfaceVariant),
+          icon: Icon(Icons.keyboard_arrow_down_rounded,
+              color: Theme.of(context).colorScheme.onSurfaceVariant),
           isExpanded: true,
-          hint: Text('Overall Attendance', style: TextStyle(color: Theme.of(context).colorScheme.onSurface)),
+          hint: Text('Overall Attendance',
+              style: TextStyle(color: Theme.of(context).colorScheme.onSurface)),
           items: [
             DropdownMenuItem<int?>(
               value: null,
               child: Row(
                 children: [
-                  Icon(Icons.dashboard_rounded, color: Theme.of(context).colorScheme.primary, size: 20),
+                  Icon(Icons.dashboard_rounded,
+                      color: Theme.of(context).colorScheme.primary, size: 20),
                   const SizedBox(width: 12),
-                  Text('Overall Attendance', style: TextStyle(color: Theme.of(context).colorScheme.onSurface, fontWeight: FontWeight.bold)),
+                  Text('Overall Attendance',
+                      style: TextStyle(
+                          color: Theme.of(context).colorScheme.onSurface,
+                          fontWeight: FontWeight.bold)),
                 ],
               ),
             ),
@@ -272,7 +306,8 @@ class _BunkSimulatorScreenState extends ConsumerState<BunkSimulatorScreen> {
                     Expanded(
                       child: Text(
                         sub.name,
-                        style: TextStyle(color: Theme.of(context).colorScheme.onSurface),
+                        style: TextStyle(
+                            color: Theme.of(context).colorScheme.onSurface),
                         overflow: TextOverflow.ellipsis,
                       ),
                     ),
@@ -319,7 +354,8 @@ class _BunkSimulatorScreenState extends ConsumerState<BunkSimulatorScreen> {
                   Theme.of(context).colorScheme.surfaceContainer,
                 ],
         ),
-        border: Border.all(color: statusColor.withValues(alpha: 0.2), width: 1.5),
+        border:
+            Border.all(color: statusColor.withValues(alpha: 0.2), width: 1.5),
         boxShadow: [
           BoxShadow(
             color: statusColor.withValues(alpha: 0.1),
@@ -339,12 +375,18 @@ class _BunkSimulatorScreenState extends ConsumerState<BunkSimulatorScreen> {
                 children: [
                   const Text(
                     'CURRENT',
-                    style: TextStyle(fontSize: 11, fontWeight: FontWeight.bold, letterSpacing: 1),
+                    style: TextStyle(
+                        fontSize: 11,
+                        fontWeight: FontWeight.bold,
+                        letterSpacing: 1),
                   ),
                   const SizedBox(height: 4),
                   Text(
                     '${(currentPercentage * 100).toStringAsFixed(1)}%',
-                    style: Theme.of(context).textTheme.titleLarge?.copyWith(fontWeight: FontWeight.bold),
+                    style: Theme.of(context)
+                        .textTheme
+                        .titleLarge
+                        ?.copyWith(fontWeight: FontWeight.bold),
                   ),
                   Text(
                     '$currentPresent/$currentTotal classes',
@@ -362,12 +404,19 @@ class _BunkSimulatorScreenState extends ConsumerState<BunkSimulatorScreen> {
                 children: [
                   Text(
                     'TARGET GOAL',
-                    style: TextStyle(fontSize: 11, color: statusColor.withValues(alpha: 0.7), fontWeight: FontWeight.bold, letterSpacing: 1),
+                    style: TextStyle(
+                        fontSize: 11,
+                        color: statusColor.withValues(alpha: 0.7),
+                        fontWeight: FontWeight.bold,
+                        letterSpacing: 1),
                   ),
                   const SizedBox(height: 4),
                   Text(
                     '${targetGoal.toInt()}%',
-                    style: TextStyle(fontSize: 22, color: statusColor, fontWeight: FontWeight.bold),
+                    style: TextStyle(
+                        fontSize: 22,
+                        color: statusColor,
+                        fontWeight: FontWeight.bold),
                   ),
                 ],
               ),
@@ -388,13 +437,19 @@ class _BunkSimulatorScreenState extends ConsumerState<BunkSimulatorScreen> {
                     child: CircularProgressIndicator(
                       value: projectedPercentage,
                       strokeWidth: 8,
-                      backgroundColor: Theme.of(context).colorScheme.onSurface.withValues(alpha: 0.1),
+                      backgroundColor: Theme.of(context)
+                          .colorScheme
+                          .onSurface
+                          .withValues(alpha: 0.1),
                       valueColor: AlwaysStoppedAnimation<Color>(statusColor),
                     ),
                   ),
                   Text(
                     '${(projectedPercentage * 100).toInt()}%',
-                    style: TextStyle(fontSize: 18, color: Theme.of(context).colorScheme.onSurface, fontWeight: FontWeight.bold),
+                    style: TextStyle(
+                        fontSize: 18,
+                        color: Theme.of(context).colorScheme.onSurface,
+                        fontWeight: FontWeight.bold),
                   ),
                 ],
               ),
@@ -405,16 +460,24 @@ class _BunkSimulatorScreenState extends ConsumerState<BunkSimulatorScreen> {
                   children: [
                     Text(
                       'PROJECTED ATTENDANCE',
-                      style: TextStyle(fontSize: 11, color: Theme.of(context).colorScheme.onSurfaceVariant, fontWeight: FontWeight.bold, letterSpacing: 1),
+                      style: TextStyle(
+                          fontSize: 11,
+                          color: Theme.of(context).colorScheme.onSurfaceVariant,
+                          fontWeight: FontWeight.bold,
+                          letterSpacing: 1),
                     ),
                     const SizedBox(height: 4),
                     Text(
                       '$projectedPresent / $projectedTotal classes',
-                      style: Theme.of(context).textTheme.titleMedium?.copyWith(fontWeight: FontWeight.bold),
+                      style: Theme.of(context)
+                          .textTheme
+                          .titleMedium
+                          ?.copyWith(fontWeight: FontWeight.bold),
                     ),
                     const SizedBox(height: 6),
                     Container(
-                      padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
+                      padding: const EdgeInsets.symmetric(
+                          horizontal: 10, vertical: 4),
                       decoration: BoxDecoration(
                         color: statusColor.withValues(alpha: 0.15),
                         borderRadius: BorderRadius.circular(12),
@@ -422,11 +485,19 @@ class _BunkSimulatorScreenState extends ConsumerState<BunkSimulatorScreen> {
                       child: Row(
                         mainAxisSize: MainAxisSize.min,
                         children: [
-                          Icon(isSafe ? Icons.check_circle_rounded : Icons.warning_amber_rounded, color: statusColor, size: 14),
+                          Icon(
+                              isSafe
+                                  ? Icons.check_circle_rounded
+                                  : Icons.warning_amber_rounded,
+                              color: statusColor,
+                              size: 14),
                           const SizedBox(width: 6),
                           Text(
                             isSafe ? 'SAFE ZONE' : 'AT RISK',
-                            style: TextStyle(color: statusColor, fontSize: 11, fontWeight: FontWeight.bold),
+                            style: TextStyle(
+                                color: statusColor,
+                                fontSize: 11,
+                                fontWeight: FontWeight.bold),
                           ),
                         ],
                       ),
@@ -470,26 +541,40 @@ class _BunkSimulatorScreenState extends ConsumerState<BunkSimulatorScreen> {
                   children: [
                     Text(
                       title,
-                      style: TextStyle(color: Theme.of(context).colorScheme.onSurface, fontWeight: FontWeight.w600, fontSize: 14),
+                      style: TextStyle(
+                          color: Theme.of(context).colorScheme.onSurface,
+                          fontWeight: FontWeight.w600,
+                          fontSize: 14),
                     ),
                     if (subtitle != null)
                       Text(
                         subtitle,
-                        style: TextStyle(color: Theme.of(context).colorScheme.onSurface.withValues(alpha: 0.4), fontSize: 11),
+                        style: TextStyle(
+                            color: Theme.of(context)
+                                .colorScheme
+                                .onSurface
+                                .withValues(alpha: 0.4),
+                            fontSize: 11),
                       ),
                   ],
                 ),
               ),
               Text(
                 '+${value.toInt()}',
-                style: TextStyle(color: activeColor, fontWeight: FontWeight.bold, fontSize: 16),
+                style: TextStyle(
+                    color: activeColor,
+                    fontWeight: FontWeight.bold,
+                    fontSize: 16),
               ),
             ],
           ),
           SliderTheme(
             data: SliderThemeData(
               activeTrackColor: activeColor,
-              inactiveTrackColor: Theme.of(context).colorScheme.onSurface.withValues(alpha: 0.1),
+              inactiveTrackColor: Theme.of(context)
+                  .colorScheme
+                  .onSurface
+                  .withValues(alpha: 0.1),
               thumbColor: activeColor,
               overlayColor: activeColor.withValues(alpha: 0.2),
               trackHeight: 4,

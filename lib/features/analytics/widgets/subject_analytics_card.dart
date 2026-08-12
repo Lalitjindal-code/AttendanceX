@@ -22,7 +22,8 @@ class SubjectAnalyticsCard extends StatelessWidget {
         color: Theme.of(context).colorScheme.surfaceContainerHigh,
         borderRadius: BorderRadius.circular(16),
         border: Border.all(
-          color: Theme.of(context).colorScheme.onSurface.withValues(alpha: 0.05),
+          color:
+              Theme.of(context).colorScheme.onSurface.withValues(alpha: 0.05),
         ),
         boxShadow: [
           BoxShadow(
@@ -140,7 +141,8 @@ class SubjectAnalyticsCard extends StatelessWidget {
             borderRadius: BorderRadius.circular(4),
             child: LinearProgressIndicator(
               value: validTotal ? present / total : 0.0,
-              backgroundColor: theme.colorScheme.onSurface.withValues(alpha: 0.1),
+              backgroundColor:
+                  theme.colorScheme.onSurface.withValues(alpha: 0.1),
               minHeight: 8,
               color: Color(stats.subject.colorValue),
             ),

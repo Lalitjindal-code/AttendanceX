@@ -50,18 +50,18 @@ class AnalyticsNotifier extends _$AnalyticsNotifier {
         }
 
         // 1. Overall Monthly Trends
-        final monthlyTrends =
-            AnalyticsEngine.calculateMonthlyTrends(allAttendances, settings, semester);
+        final monthlyTrends = AnalyticsEngine.calculateMonthlyTrends(
+            allAttendances, settings, semester);
 
         // 1.5. Day of Week Trends & Bunk Heatmap
-        final dayOfWeekTrends =
-            AnalyticsEngine.calculateDayOfWeekTrends(allAttendances, settings, semester);
+        final dayOfWeekTrends = AnalyticsEngine.calculateDayOfWeekTrends(
+            allAttendances, settings, semester);
         final bunkHeatmap =
             AnalyticsEngine.calculateBunkHeatmap(allAttendances);
 
         // 2. Overall Forecast
-        final overallSummary =
-            AttendanceEngine.calculateOverallSummary(allAttendances, settings, semester);
+        final overallSummary = AttendanceEngine.calculateOverallSummary(
+            allAttendances, settings, semester);
 
         double avgGoal = 0.0;
         for (var sub in subjects) {

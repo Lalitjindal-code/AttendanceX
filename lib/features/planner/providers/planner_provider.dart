@@ -54,7 +54,8 @@ class PlannerNotifier extends StateNotifier<AsyncValue<void>> {
   final PlannerRepository _repository;
   final Ref ref;
 
-  PlannerNotifier(this._repository, this.ref) : super(const AsyncValue.data(null));
+  PlannerNotifier(this._repository, this.ref)
+      : super(const AsyncValue.data(null));
 
   Future<void> saveTask(AcademicTask task) async {
     state = const AsyncValue.loading();

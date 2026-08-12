@@ -125,11 +125,17 @@ class _CalendarWidgetState extends ConsumerState<CalendarWidget> {
         calendarStyle: CalendarStyle(
           outsideDaysVisible: true,
           outsideTextStyle: TextStyle(
-              color: Theme.of(context).colorScheme.onSurface.withValues(alpha: 0.3)),
+              color: Theme.of(context)
+                  .colorScheme
+                  .onSurface
+                  .withValues(alpha: 0.3)),
           defaultTextStyle:
               TextStyle(color: Theme.of(context).colorScheme.onSurface),
-          weekendTextStyle:
-              TextStyle(color: Theme.of(context).colorScheme.onSurface.withValues(alpha: 0.6)),
+          weekendTextStyle: TextStyle(
+              color: Theme.of(context)
+                  .colorScheme
+                  .onSurface
+                  .withValues(alpha: 0.6)),
           selectedDecoration: BoxDecoration(
             color: Theme.of(context).colorScheme.primary,
             shape: BoxShape.circle,
@@ -162,8 +168,10 @@ class _CalendarWidgetState extends ConsumerState<CalendarWidget> {
                 color: Theme.of(context).colorScheme.onSurface,
                 fontWeight: FontWeight.bold,
               ),
-          leftChevronIcon: Icon(Icons.chevron_left, color: Theme.of(context).colorScheme.onSurface),
-          rightChevronIcon: Icon(Icons.chevron_right, color: Theme.of(context).colorScheme.onSurface),
+          leftChevronIcon: Icon(Icons.chevron_left,
+              color: Theme.of(context).colorScheme.onSurface),
+          rightChevronIcon: Icon(Icons.chevron_right,
+              color: Theme.of(context).colorScheme.onSurface),
         ),
         calendarBuilders: CalendarBuilders(
           markerBuilder: (context, date, events) {
@@ -225,19 +233,25 @@ void _showAddManualAttendanceDialog(
         builder: (context, setState) {
           return AlertDialog(
             backgroundColor: Theme.of(context).colorScheme.surfaceContainerHigh,
-            title: Text('Add Manual Attendance', style: TextStyle(color: Theme.of(context).colorScheme.onSurface, fontWeight: FontWeight.bold)),
+            title: Text('Add Manual Attendance',
+                style: TextStyle(
+                    color: Theme.of(context).colorScheme.onSurface,
+                    fontWeight: FontWeight.bold)),
             content: Column(
               mainAxisSize: MainAxisSize.min,
               children: [
                 DropdownButtonFormField<Subject>(
                   key: const Key('subject_dropdown'),
                   decoration: const InputDecoration(labelText: 'Subject'),
-                  dropdownColor: Theme.of(context).colorScheme.surfaceContainerHigh,
+                  dropdownColor:
+                      Theme.of(context).colorScheme.surfaceContainerHigh,
                   initialValue: selectedSubject,
                   items: state.allSubjects.map((s) {
                     return DropdownMenuItem(
                       value: s,
-                      child: Text(s.name, style: TextStyle(color: Theme.of(context).colorScheme.onSurface)),
+                      child: Text(s.name,
+                          style: TextStyle(
+                              color: Theme.of(context).colorScheme.onSurface)),
                     );
                   }).toList(),
                   onChanged: (val) => setState(() => selectedSubject = val),
@@ -246,12 +260,15 @@ void _showAddManualAttendanceDialog(
                 DropdownButtonFormField<AttendanceStatus>(
                   key: const Key('status_dropdown'),
                   decoration: const InputDecoration(labelText: 'Status'),
-                  dropdownColor: Theme.of(context).colorScheme.surfaceContainerHigh,
+                  dropdownColor:
+                      Theme.of(context).colorScheme.surfaceContainerHigh,
                   initialValue: selectedStatus,
                   items: AttendanceStatus.values.map((status) {
                     return DropdownMenuItem(
                       value: status,
-                      child: Text(status.name.toUpperCase(), style: TextStyle(color: Theme.of(context).colorScheme.onSurface)),
+                      child: Text(status.name.toUpperCase(),
+                          style: TextStyle(
+                              color: Theme.of(context).colorScheme.onSurface)),
                     );
                   }).toList(),
                   onChanged: (val) => setState(() => selectedStatus = val),
@@ -261,7 +278,12 @@ void _showAddManualAttendanceDialog(
             actions: [
               TextButton(
                 onPressed: () => Navigator.pop(context),
-                child: Text('Cancel', style: TextStyle(color: Theme.of(context).colorScheme.onSurface.withValues(alpha: 0.7))),
+                child: Text('Cancel',
+                    style: TextStyle(
+                        color: Theme.of(context)
+                            .colorScheme
+                            .onSurface
+                            .withValues(alpha: 0.7))),
               ),
               FilledButton(
                 style: FilledButton.styleFrom(
@@ -272,7 +294,7 @@ void _showAddManualAttendanceDialog(
                     ? () {
                         final semester = ref.read(semesterStateProvider);
                         if (semester == null) return;
-                        
+
                         final att = Attendance()
                           ..semesterId = semester.id
                           ..subjectId = selectedSubject!.id

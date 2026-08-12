@@ -46,7 +46,8 @@ class _DashboardHeaderState extends State<DashboardHeader> {
 
   Future<void> _loadPendingNotificationsCount() async {
     try {
-      final notifications = await NotificationService.instance.getPendingNotifications();
+      final notifications =
+          await NotificationService.instance.getPendingNotifications();
       if (mounted) {
         setState(() {
           _pendingNotificationsCount = notifications.length;
@@ -64,10 +65,10 @@ class _DashboardHeaderState extends State<DashboardHeader> {
   @override
   Widget build(BuildContext context) {
     debugPrint('DashboardHeader widget photoUrl: ${widget.photoUrl}');
-    final timeStr = DateFormat('h:mm').format(_now); 
-    final amPmStr = DateFormat('a').format(_now); 
-    final dateStr = DateFormat('EEEE, MMMM d, yyyy').format(_now); 
-    
+    final timeStr = DateFormat('h:mm').format(_now);
+    final amPmStr = DateFormat('a').format(_now);
+    final dateStr = DateFormat('EEEE, MMMM d, yyyy').format(_now);
+
     final firstName = widget.userName.split(' ').first;
 
     return Padding(
@@ -87,7 +88,8 @@ class _DashboardHeaderState extends State<DashboardHeader> {
                       ? NetworkImage(widget.photoUrl!)
                       : null,
                   child: widget.photoUrl == null
-                      ? Icon(Icons.person, color: Theme.of(context).colorScheme.onPrimary)
+                      ? Icon(Icons.person,
+                          color: Theme.of(context).colorScheme.onPrimary)
                       : null,
                 ),
               ),
@@ -100,7 +102,10 @@ class _DashboardHeaderState extends State<DashboardHeader> {
                       'Hey there,',
                       style: TextStyle(
                         fontSize: 14,
-                        color: Theme.of(context).colorScheme.onSurface.withValues(alpha: 0.6),
+                        color: Theme.of(context)
+                            .colorScheme
+                            .onSurface
+                            .withValues(alpha: 0.6),
                         fontWeight: FontWeight.w400,
                       ),
                     ),
@@ -157,7 +162,7 @@ class _DashboardHeaderState extends State<DashboardHeader> {
             ],
           ),
           const SizedBox(height: 32),
-          
+
           // Bottom Row: Time/Date and Illustration
           Row(
             crossAxisAlignment: CrossAxisAlignment.end,
@@ -201,7 +206,10 @@ class _DashboardHeaderState extends State<DashboardHeader> {
                       overflow: TextOverflow.ellipsis,
                       style: TextStyle(
                         fontSize: 14,
-                        color: Theme.of(context).colorScheme.onSurface.withValues(alpha: 0.6),
+                        color: Theme.of(context)
+                            .colorScheme
+                            .onSurface
+                            .withValues(alpha: 0.6),
                         fontWeight: FontWeight.w500,
                       ),
                     ),

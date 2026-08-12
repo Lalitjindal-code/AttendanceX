@@ -45,7 +45,8 @@ class HeroHealthCard extends StatelessWidget {
     }
 
     return Semantics(
-      label: 'Overall Attendance: ${(percentage * 100).toInt()}%. Status: $statusText',
+      label:
+          'Overall Attendance: ${(percentage * 100).toInt()}%. Status: $statusText',
       container: true,
       excludeSemantics: true,
       child: Container(
@@ -83,7 +84,9 @@ class HeroHealthCard extends StatelessWidget {
                   child: TweenAnimationBuilder<double>(
                     tween: Tween<double>(
                         begin: 0.0,
-                        end: summary == null || summary.effectiveTotal == 0 ? 0.0 : percentage),
+                        end: summary == null || summary.effectiveTotal == 0
+                            ? 0.0
+                            : percentage),
                     duration: const Duration(milliseconds: 1000),
                     curve: Curves.easeOutCubic,
                     builder: (context, value, child) {
@@ -93,7 +96,10 @@ class HeroHealthCard extends StatelessWidget {
                           CircularProgressIndicator(
                             value: value / 100.0,
                             strokeWidth: 10,
-                            backgroundColor: Theme.of(context).colorScheme.onSurface.withValues(alpha: 0.1),
+                            backgroundColor: Theme.of(context)
+                                .colorScheme
+                                .onSurface
+                                .withValues(alpha: 0.1),
                             color: statusColor,
                             strokeCap: StrokeCap.round,
                           ),
@@ -107,7 +113,9 @@ class HeroHealthCard extends StatelessWidget {
                                     textStyle: TextStyle(
                                       fontSize: 22,
                                       fontWeight: FontWeight.bold,
-                                      color: Theme.of(context).colorScheme.onSurface,
+                                      color: Theme.of(context)
+                                          .colorScheme
+                                          .onSurface,
                                     ),
                                   ),
                                 ),
@@ -115,7 +123,10 @@ class HeroHealthCard extends StatelessWidget {
                                   'Attendance',
                                   style: TextStyle(
                                     fontSize: 10,
-                                    color: Theme.of(context).colorScheme.onSurface.withValues(alpha: 0.6),
+                                    color: Theme.of(context)
+                                        .colorScheme
+                                        .onSurface
+                                        .withValues(alpha: 0.6),
                                   ),
                                 ),
                               ],
@@ -158,7 +169,8 @@ class HeroHealthCard extends StatelessWidget {
                           }),
                       const SizedBox(height: 8),
                       Container(
-                        padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+                        padding: const EdgeInsets.symmetric(
+                            horizontal: 12, vertical: 6),
                         decoration: BoxDecoration(
                           color: Theme.of(context).colorScheme.surfaceContainer,
                           borderRadius: BorderRadius.circular(16),
@@ -187,15 +199,24 @@ class HeroHealthCard extends StatelessWidget {
                 ),
               ],
             ),
-            if (suggestion != null && suggestion.type != SmartSuggestionType.noData) ...[
+            if (suggestion != null &&
+                suggestion.type != SmartSuggestionType.noData) ...[
               const SizedBox(height: 24),
-              Divider(color: Theme.of(context).colorScheme.onSurface.withValues(alpha: 0.1), height: 1),
+              Divider(
+                  color: Theme.of(context)
+                      .colorScheme
+                      .onSurface
+                      .withValues(alpha: 0.1),
+                  height: 1),
               const SizedBox(height: 16),
               Row(
                 children: [
                   Icon(
                     Icons.lightbulb_outline_rounded,
-                    color: Theme.of(context).colorScheme.onSurface.withValues(alpha: 0.5),
+                    color: Theme.of(context)
+                        .colorScheme
+                        .onSurface
+                        .withValues(alpha: 0.5),
                     size: 20,
                   ),
                   const SizedBox(width: 12),
@@ -204,13 +225,19 @@ class HeroHealthCard extends StatelessWidget {
                       suggestion.message,
                       style: TextStyle(
                         fontSize: 13,
-                        color: Theme.of(context).colorScheme.onSurface.withValues(alpha: 0.7),
+                        color: Theme.of(context)
+                            .colorScheme
+                            .onSurface
+                            .withValues(alpha: 0.7),
                       ),
                     ),
                   ),
                   Icon(
                     Icons.chevron_right_rounded,
-                    color: Theme.of(context).colorScheme.onSurface.withValues(alpha: 0.5),
+                    color: Theme.of(context)
+                        .colorScheme
+                        .onSurface
+                        .withValues(alpha: 0.5),
                     size: 20,
                   ),
                 ],

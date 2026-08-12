@@ -157,7 +157,10 @@ class SubjectRepository {
       await _isar.schedules.filter().subjectIdEqualTo(subjectId).deleteAll();
 
       // 4. Delete Academic Tasks
-      await _isar.academicTasks.filter().subjectIdEqualTo(subjectId).deleteAll();
+      await _isar.academicTasks
+          .filter()
+          .subjectIdEqualTo(subjectId)
+          .deleteAll();
 
       // 5. Delete the Subject
       await _isar.subjects.delete(subjectId);

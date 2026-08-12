@@ -147,8 +147,13 @@ class TaskCard extends ConsumerWidget {
                                         ? TextDecoration.lineThrough
                                         : TextDecoration.none,
                                     color: isCompleted
-                                        ? Theme.of(context).colorScheme.onSurface.withValues(alpha: 0.3)
-                                        : Theme.of(context).colorScheme.onSurface,
+                                        ? Theme.of(context)
+                                            .colorScheme
+                                            .onSurface
+                                            .withValues(alpha: 0.3)
+                                        : Theme.of(context)
+                                            .colorScheme
+                                            .onSurface,
                                     fontWeight: FontWeight.bold,
                                   ),
                               child: Text(task.title),
@@ -164,7 +169,10 @@ class TaskCard extends ConsumerWidget {
                                           .textTheme
                                           .bodySmall
                                           ?.copyWith(
-                                            color: Theme.of(context).colorScheme.onSurface.withValues(alpha: 0.6),
+                                            color: Theme.of(context)
+                                                .colorScheme
+                                                .onSurface
+                                                .withValues(alpha: 0.6),
                                           ),
                                       overflow: TextOverflow.ellipsis,
                                     ),
@@ -176,7 +184,10 @@ class TaskCard extends ConsumerWidget {
                                         .textTheme
                                         .bodySmall
                                         ?.copyWith(
-                                          color: Theme.of(context).colorScheme.onSurface.withValues(alpha: 0.3),
+                                          color: Theme.of(context)
+                                              .colorScheme
+                                              .onSurface
+                                              .withValues(alpha: 0.3),
                                         ),
                                   ),
                                   const SizedBox(width: AppSpacing.sm),
@@ -189,12 +200,16 @@ class TaskCard extends ConsumerWidget {
                                         .bodySmall
                                         ?.copyWith(
                                           color: isOverdue && !isCompleted
-                                              ? Theme.of(context).colorScheme.error
-                                              : Theme.of(context).colorScheme.onSurface.withValues(alpha: 0.6),
-                                          fontWeight:
-                                              isOverdue && !isCompleted
-                                                  ? FontWeight.bold
-                                                  : FontWeight.normal,
+                                              ? Theme.of(context)
+                                                  .colorScheme
+                                                  .error
+                                              : Theme.of(context)
+                                                  .colorScheme
+                                                  .onSurface
+                                                  .withValues(alpha: 0.6),
+                                          fontWeight: isOverdue && !isCompleted
+                                              ? FontWeight.bold
+                                              : FontWeight.normal,
                                         ),
                                     overflow: TextOverflow.ellipsis,
                                   ),
@@ -209,8 +224,8 @@ class TaskCard extends ConsumerWidget {
                       IconButton(
                         icon: AnimatedSwitcher(
                           duration: const Duration(milliseconds: 300),
-                          transitionBuilder: (Widget child,
-                              Animation<double> animation) {
+                          transitionBuilder:
+                              (Widget child, Animation<double> animation) {
                             return ScaleTransition(
                                 scale: animation, child: child);
                           },
@@ -221,7 +236,10 @@ class TaskCard extends ConsumerWidget {
                             key: ValueKey<bool>(isCompleted),
                             color: isCompleted
                                 ? Theme.of(context).colorScheme.primary
-                                : Theme.of(context).colorScheme.onSurface.withValues(alpha: 0.3),
+                                : Theme.of(context)
+                                    .colorScheme
+                                    .onSurface
+                                    .withValues(alpha: 0.3),
                           ),
                         ),
                         tooltip: isCompleted

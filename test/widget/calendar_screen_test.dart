@@ -17,6 +17,8 @@ import 'package:attendify/database/repositories/attendance_repository.dart';
 import 'package:attendify/features/attendance/providers/attendance_providers.dart';
 import 'package:attendify/features/settings/providers/semester_provider.dart';
 import 'package:attendify/database/collections/semester_collection.dart';
+import 'package:attendify/services/preferences_service.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import '../helpers/golden_helper.dart';
 
 class FakeSemesterState extends SemesterState {
@@ -52,6 +54,11 @@ class FakeAttendanceRepository implements AttendanceRepository {
 }
 
 void main() {
+  setUpAll(() async {
+    SharedPreferences.setMockInitialValues({});
+    await PreferencesService.instance.initialize();
+  });
+
   final testDate = DateTime(2026, 1, 15);
   final subject = Subject()
     ..id = 1
@@ -135,13 +142,15 @@ void main() {
       // Open Subject Dropdown
       await tester.tap(find.byKey(const Key('subject_dropdown')));
       await tester.pumpAndSettle();
-      await tester.tap(find.byType(DropdownMenuItem<Subject>).last, warnIfMissed: false);
+      await tester.tap(find.byType(DropdownMenuItem<Subject>).last,
+          warnIfMissed: false);
       await tester.pumpAndSettle();
 
       // Open Status Dropdown
       await tester.tap(find.byKey(const Key('status_dropdown')));
       await tester.pumpAndSettle();
-      await tester.tap(find.byType(DropdownMenuItem<AttendanceStatus>).last, warnIfMissed: false);
+      await tester.tap(find.byType(DropdownMenuItem<AttendanceStatus>).last,
+          warnIfMissed: false);
       await tester.pumpAndSettle();
 
       // Tap Save

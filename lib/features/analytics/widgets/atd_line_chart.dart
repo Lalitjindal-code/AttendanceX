@@ -58,7 +58,10 @@ class AtdLineChart extends StatelessWidget {
               drawVerticalLine: false,
               horizontalInterval: 25,
               getDrawingHorizontalLine: (value) => FlLine(
-                color: Theme.of(context).colorScheme.onSurface.withValues(alpha: 0.1),
+                color: Theme.of(context)
+                    .colorScheme
+                    .onSurface
+                    .withValues(alpha: 0.1),
                 strokeWidth: 1,
                 dashArray: [5, 5],
               ),
@@ -112,7 +115,8 @@ class AtdLineChart extends StatelessWidget {
             ),
             lineTouchData: LineTouchData(
               touchTooltipData: LineTouchTooltipData(
-                getTooltipColor: (touchedSpot) => theme.colorScheme.surfaceContainerHigh,
+                getTooltipColor: (touchedSpot) =>
+                    theme.colorScheme.surfaceContainerHigh,
                 getTooltipItems: (touchedSpots) {
                   return touchedSpots.map((spot) {
                     final index = spot.x.toInt();
@@ -122,8 +126,9 @@ class AtdLineChart extends StatelessWidget {
                         .format(DateTime(trend.year, trend.month));
                     return LineTooltipItem(
                       '${spot.y.toStringAsFixed(1)}%\n',
-                      theme.textTheme.labelLarge!
-                          .copyWith(fontWeight: FontWeight.bold, color: theme.colorScheme.onSurface),
+                      theme.textTheme.labelLarge!.copyWith(
+                          fontWeight: FontWeight.bold,
+                          color: theme.colorScheme.onSurface),
                       children: [
                         TextSpan(
                           text: dateStr,

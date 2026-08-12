@@ -29,9 +29,18 @@ class SemesterRepository {
       // Transactional delete of all semester-owned data
       await _isar.subjects.filter().semesterIdEqualTo(semesterId).deleteAll();
       await _isar.schedules.filter().semesterIdEqualTo(semesterId).deleteAll();
-      await _isar.attendances.filter().semesterIdEqualTo(semesterId).deleteAll();
-      await _isar.attendanceHistorys.filter().semesterIdEqualTo(semesterId).deleteAll();
-      await _isar.academicTasks.filter().semesterIdEqualTo(semesterId).deleteAll();
+      await _isar.attendances
+          .filter()
+          .semesterIdEqualTo(semesterId)
+          .deleteAll();
+      await _isar.attendanceHistorys
+          .filter()
+          .semesterIdEqualTo(semesterId)
+          .deleteAll();
+      await _isar.academicTasks
+          .filter()
+          .semesterIdEqualTo(semesterId)
+          .deleteAll();
       await _isar.semesters.delete(semesterId);
     });
   }
@@ -45,6 +54,9 @@ class SemesterRepository {
   }
 
   Stream<List<Semester>> watchSemestersByProfile(int profileId) {
-    return _isar.semesters.filter().profileIdEqualTo(profileId).watch(fireImmediately: true);
+    return _isar.semesters
+        .filter()
+        .profileIdEqualTo(profileId)
+        .watch(fireImmediately: true);
   }
 }

@@ -30,6 +30,9 @@ class PlannerRepository {
   }
 
   Stream<List<AcademicTask>> watchAllTasks(int semesterId) {
-    return _isar.academicTasks.filter().semesterIdEqualTo(semesterId).watch(fireImmediately: true);
+    return _isar.academicTasks
+        .filter()
+        .semesterIdEqualTo(semesterId)
+        .watch(fireImmediately: true);
   }
 }

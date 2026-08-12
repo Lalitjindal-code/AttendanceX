@@ -74,11 +74,13 @@ class NotificationEngine {
     required DateTime now,
   }) {
     final alerts = <ScheduledNotification>[];
-    
+
     // Check if target date is within semester
     if (semester != null) {
-      if (targetDate.isBefore(_normalizeDate(semester.startDate))) return alerts;
-      if (semester.endDate != null && targetDate.isAfter(_normalizeDate(semester.endDate!))) return alerts;
+      if (targetDate.isBefore(_normalizeDate(semester.startDate)))
+        return alerts;
+      if (semester.endDate != null &&
+          targetDate.isAfter(_normalizeDate(semester.endDate!))) return alerts;
     }
 
     final dayOfWeek = DayOfWeek.fromInt(targetDate.weekday).value;
@@ -150,7 +152,8 @@ class NotificationEngine {
     // Check if target date is within semester
     if (semester != null) {
       if (targetDate.isBefore(_normalizeDate(semester.startDate))) return null;
-      if (semester.endDate != null && targetDate.isAfter(_normalizeDate(semester.endDate!))) return null;
+      if (semester.endDate != null &&
+          targetDate.isAfter(_normalizeDate(semester.endDate!))) return null;
     }
 
     // Parse daily reminder time
@@ -214,7 +217,8 @@ class NotificationEngine {
         final checkDate = targetDate.subtract(Duration(days: i));
 
         // We only care if `checkDate` is on or after the semester start date?
-        if (semester != null && checkDate.isBefore(_normalizeDate(semester.startDate))) {
+        if (semester != null &&
+            checkDate.isBefore(_normalizeDate(semester.startDate))) {
           continue;
         }
 

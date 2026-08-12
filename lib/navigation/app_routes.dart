@@ -6,6 +6,7 @@ abstract final class AppRoutes {
   AppRoutes._();
 
   static const String dashboard = '/';
+  static const String splash = '/splash';
   static const String subjects = '/subjects';
   static const String schedule = '/schedule';
   static const String planner = '/planner';

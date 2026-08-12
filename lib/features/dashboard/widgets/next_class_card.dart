@@ -84,7 +84,8 @@ class _NextClassCardState extends State<NextClassCard> {
         borderRadius: BorderRadius.circular(20),
         boxShadow: [
           BoxShadow(
-            color: Theme.of(context).colorScheme.primary.withValues(alpha: 0.35),
+            color:
+                Theme.of(context).colorScheme.primary.withValues(alpha: 0.35),
             blurRadius: 16,
             offset: const Offset(0, 6),
           ),
@@ -113,7 +114,10 @@ class _NextClassCardState extends State<NextClassCard> {
                             .withValues(alpha: 0.15),
                         borderRadius: BorderRadius.circular(12),
                         border: Border.all(
-                          color: Theme.of(context).colorScheme.onPrimary.withValues(alpha: 0.2),
+                          color: Theme.of(context)
+                              .colorScheme
+                              .onPrimary
+                              .withValues(alpha: 0.2),
                         ),
                       ),
                       child: Row(
@@ -127,8 +131,12 @@ class _NextClassCardState extends State<NextClassCard> {
                           const SizedBox(width: 4),
                           Text(
                             'Next Class',
-                            style: Theme.of(context).textTheme.labelSmall?.copyWith(
-                                  color: Theme.of(context).colorScheme.onPrimary,
+                            style: Theme.of(context)
+                                .textTheme
+                                .labelSmall
+                                ?.copyWith(
+                                  color:
+                                      Theme.of(context).colorScheme.onPrimary,
                                   fontWeight: FontWeight.bold,
                                 ),
                           ),

@@ -89,7 +89,8 @@ class AttendanceRepository {
   }
 
   /// Returns a stream of all attendance records across a date range for a semester.
-  Stream<List<Attendance>> watchByDateRange(int semesterId, DateTime start, DateTime end) {
+  Stream<List<Attendance>> watchByDateRange(
+      int semesterId, DateTime start, DateTime end) {
     return _isar.attendances
         .filter()
         .semesterIdEqualTo(semesterId)
@@ -100,11 +101,15 @@ class AttendanceRepository {
 
   /// Returns a stream of all attendance records for a semester.
   Stream<List<Attendance>> watchAll(int semesterId) {
-    return _isar.attendances.filter().semesterIdEqualTo(semesterId).watch(fireImmediately: true);
+    return _isar.attendances
+        .filter()
+        .semesterIdEqualTo(semesterId)
+        .watch(fireImmediately: true);
   }
 
   /// Returns a stream of history for a specific subject within a semester.
-  Stream<List<AttendanceHistory>> watchHistoryBySubject(int semesterId, int subjectId) {
+  Stream<List<AttendanceHistory>> watchHistoryBySubject(
+      int semesterId, int subjectId) {
     return _isar.attendanceHistorys
         .filter()
         .semesterIdEqualTo(semesterId)
@@ -159,7 +164,8 @@ class AttendanceRepository {
   }
 
   /// Marks the entire day (all schedules) as the specified status (GT, Medical, or Holiday).
-  Future<void> markFullDayStatus(DateTime date, int semesterId, AttendanceStatus status) async {
+  Future<void> markFullDayStatus(
+      DateTime date, int semesterId, AttendanceStatus status) async {
     final todayUtc = DateTime.utc(date.year, date.month, date.day);
     final dayOfWeek = date.weekday;
 
@@ -191,12 +197,13 @@ class AttendanceRepository {
           continue;
         }
 
-        final attendance = existing ?? (Attendance()
-          ..semesterId = semesterId
-          ..scheduleId = schedule.id
-          ..subjectId = schedule.subjectId
-          ..date = todayUtc
-          ..createdAt = DateTime.now());
+        final attendance = existing ??
+            (Attendance()
+              ..semesterId = semesterId
+              ..scheduleId = schedule.id
+              ..subjectId = schedule.subjectId
+              ..date = todayUtc
+              ..createdAt = DateTime.now());
 
         attendance.status = status;
         attendance.updatedAt = DateTime.now();

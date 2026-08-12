@@ -29,13 +29,19 @@ class DayDetailPanel extends ConsumerWidget {
                 Icon(
                   Icons.event_busy_outlined,
                   size: 64,
-                  color: Theme.of(context).colorScheme.onSurface.withValues(alpha: 0.2),
+                  color: Theme.of(context)
+                      .colorScheme
+                      .onSurface
+                      .withValues(alpha: 0.2),
                 ),
                 const SizedBox(height: AppSpacing.md),
                 Text(
                   'No classes or tasks scheduled for',
                   style: Theme.of(context).textTheme.titleMedium?.copyWith(
-                        color: Theme.of(context).colorScheme.onSurface.withValues(alpha: 0.6),
+                        color: Theme.of(context)
+                            .colorScheme
+                            .onSurface
+                            .withValues(alpha: 0.6),
                       ),
                 ),
                 Text(
@@ -72,18 +78,22 @@ class DayDetailPanel extends ConsumerWidget {
                     children: [
                       Text(
                         'Classes',
-                        style: Theme.of(context).textTheme.titleMedium?.copyWith(
-                              fontWeight: FontWeight.bold,
-                              color: Theme.of(context).colorScheme.primary,
-                            ),
+                        style:
+                            Theme.of(context).textTheme.titleMedium?.copyWith(
+                                  fontWeight: FontWeight.bold,
+                                  color: Theme.of(context).colorScheme.primary,
+                                ),
                       ),
                       TextButton.icon(
-                        onPressed: () => _showMarkFullDayBottomSheet(context, ref, state.selectedDate),
+                        onPressed: () => _showMarkFullDayBottomSheet(
+                            context, ref, state.selectedDate),
                         icon: const Icon(Icons.edit_calendar_rounded, size: 18),
                         label: const Text('Mark Day'),
                         style: TextButton.styleFrom(
-                          foregroundColor: Theme.of(context).colorScheme.primary,
-                          padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 4),
+                          foregroundColor:
+                              Theme.of(context).colorScheme.primary,
+                          padding: const EdgeInsets.symmetric(
+                              horizontal: 12, vertical: 4),
                           minimumSize: Size.zero,
                           tapTargetSize: MaterialTapTargetSize.shrinkWrap,
                         ),
@@ -144,7 +154,8 @@ class DayDetailPanel extends ConsumerWidget {
     );
   }
 
-  void _showMarkFullDayBottomSheet(BuildContext context, WidgetRef ref, DateTime date) {
+  void _showMarkFullDayBottomSheet(
+      BuildContext context, WidgetRef ref, DateTime date) {
     showModalBottomSheet(
       context: context,
       isScrollControlled: true,
@@ -201,7 +212,8 @@ class DayDetailPanel extends ConsumerWidget {
                       if (semester != null) {
                         await ref
                             .read(attendanceRepositoryProvider)
-                            .markFullDayStatus(date, semester.id, AttendanceStatus.gt);
+                            .markFullDayStatus(
+                                date, semester.id, AttendanceStatus.gt);
                         if (context.mounted) {
                           ScaffoldMessenger.of(context).hideCurrentSnackBar();
                           ScaffoldMessenger.of(context).showSnackBar(
@@ -225,7 +237,8 @@ class DayDetailPanel extends ConsumerWidget {
                       if (semester != null) {
                         await ref
                             .read(attendanceRepositoryProvider)
-                            .markFullDayStatus(date, semester.id, AttendanceStatus.medical);
+                            .markFullDayStatus(
+                                date, semester.id, AttendanceStatus.medical);
                         if (context.mounted) {
                           ScaffoldMessenger.of(context).hideCurrentSnackBar();
                           ScaffoldMessenger.of(context).showSnackBar(
@@ -249,7 +262,8 @@ class DayDetailPanel extends ConsumerWidget {
                       if (semester != null) {
                         await ref
                             .read(attendanceRepositoryProvider)
-                            .markFullDayStatus(date, semester.id, AttendanceStatus.holiday);
+                            .markFullDayStatus(
+                                date, semester.id, AttendanceStatus.holiday);
                         if (context.mounted) {
                           ScaffoldMessenger.of(context).hideCurrentSnackBar();
                           ScaffoldMessenger.of(context).showSnackBar(
@@ -273,20 +287,35 @@ class DayDetailPanel extends ConsumerWidget {
                       final confirm = await showDialog<bool>(
                         context: context,
                         builder: (context) => AlertDialog(
-                          backgroundColor: Theme.of(context).colorScheme.surfaceContainerHigh,
-                          title: Text('Clear Today\'s Attendance?', style: TextStyle(color: Theme.of(context).colorScheme.onSurface)),
+                          backgroundColor: Theme.of(context)
+                              .colorScheme
+                              .surfaceContainerHigh,
+                          title: Text('Clear Today\'s Attendance?',
+                              style: TextStyle(
+                                  color:
+                                      Theme.of(context).colorScheme.onSurface)),
                           content: Text(
                             'This will erase all attendance entries marked for this day.',
-                            style: TextStyle(color: Theme.of(context).colorScheme.onSurfaceVariant),
+                            style: TextStyle(
+                                color: Theme.of(context)
+                                    .colorScheme
+                                    .onSurfaceVariant),
                           ),
                           actions: [
                             TextButton(
                               onPressed: () => Navigator.pop(context, false),
-                              child: Text('Cancel', style: TextStyle(color: Theme.of(context).colorScheme.onSurfaceVariant)),
+                              child: Text('Cancel',
+                                  style: TextStyle(
+                                      color: Theme.of(context)
+                                          .colorScheme
+                                          .onSurfaceVariant)),
                             ),
                             TextButton(
                               onPressed: () => Navigator.pop(context, true),
-                              child: Text('Clear', style: TextStyle(color: Theme.of(context).colorScheme.error)),
+                              child: Text('Clear',
+                                  style: TextStyle(
+                                      color:
+                                          Theme.of(context).colorScheme.error)),
                             ),
                           ],
                         ),

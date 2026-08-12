@@ -1,21 +1,23 @@
 import 'dart:io';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:google_mobile_ads/google_mobile_ads.dart';
+import '../ads/providers/ad_free_provider.dart';
 
-class BannerAdWidget extends StatefulWidget {
+class BannerAdWidget extends ConsumerStatefulWidget {
   const BannerAdWidget({super.key});
 
   @override
-  State<BannerAdWidget> createState() => _BannerAdWidgetState();
+  ConsumerState<BannerAdWidget> createState() => _BannerAdWidgetState();
 }
 
-class _BannerAdWidgetState extends State<BannerAdWidget> {
+class _BannerAdWidgetState extends ConsumerState<BannerAdWidget> {
   BannerAd? _bannerAd;
   bool _isLoaded = false;
 
   final String _realAdUnitId = 'ca-app-pub-1540123321445233/9516802444';
-  
+
   // Test IDs provided by Google for development
   final String _testAdUnitIdAndroid = 'ca-app-pub-3940256099942544/6300978111';
   final String _testAdUnitIdIOS = 'ca-app-pub-3940256099942544/2934735716';
@@ -33,10 +35,13 @@ class _BannerAdWidgetState extends State<BannerAdWidget> {
   void initState() {
     super.initState();
     if (!kIsWeb && Platform.isWindows) return;
-    _loadAd();
+    // Delay loading ad until build to allow reading provider if needed,
+    // but initState is fine if we use ref.read (though ad is loaded independently)
+    // Actually we can let build trigger it or just use listen manually.
   }
 
   void _loadAd() {
+    if (_bannerAd != null) return; // Already loaded
     _bannerAd = BannerAd(
       adUnitId: _adUnitId,
       request: const AdRequest(),
@@ -64,6 +69,21 @@ class _BannerAdWidgetState extends State<BannerAdWidget> {
 
   @override
   Widget build(BuildContext context) {
+    final isAdFree = ref.watch(adFreeProvider);
+    if (isAdFree) {
+      if (_bannerAd != null) {
+        _bannerAd?.dispose();
+        _bannerAd = null;
+        _isLoaded = false;
+      }
+      return const SizedBox(); // Completely hide ad space
+    }
+
+    // If not ad-free and not loaded, load it.
+    if (!_isLoaded && _bannerAd == null) {
+      _loadAd();
+    }
+
     if (_isLoaded && _bannerAd != null) {
       return Container(
         width: _bannerAd!.size.width.toDouble(),

@@ -35,7 +35,8 @@ class _AtdDonutChartState extends State<AtdDonutChart> {
         color: Theme.of(context).colorScheme.surfaceContainerHigh,
         borderRadius: BorderRadius.circular(24),
         border: Border.all(
-          color: Theme.of(context).colorScheme.onSurface.withValues(alpha: 0.05),
+          color:
+              Theme.of(context).colorScheme.onSurface.withValues(alpha: 0.05),
         ),
         boxShadow: [
           BoxShadow(
@@ -73,9 +74,13 @@ class _AtdDonutChartState extends State<AtdDonutChart> {
                   value: presentCount.toDouble(),
                   title: touchedIndex == 0 ? '$presentCount\nPresent' : '',
                   titleStyle: theme.textTheme.labelSmall?.copyWith(
-                      fontWeight: FontWeight.bold, color: theme.colorScheme.onSurface),
+                      fontWeight: FontWeight.bold,
+                      color: theme.colorScheme.onSurface),
                   radius: touchedIndex == 0 ? 35.0 : 25.0,
-                  badgeWidget: touchedIndex == 0 ? const _Badge(icon: Icons.check, color: Color(0xFF00E676)) : null,
+                  badgeWidget: touchedIndex == 0
+                      ? const _Badge(
+                          icon: Icons.check, color: Color(0xFF00E676))
+                      : null,
                   badgePositionPercentageOffset: .98,
                 ),
                 PieChartSectionData(
@@ -83,9 +88,13 @@ class _AtdDonutChartState extends State<AtdDonutChart> {
                   value: absentCount.toDouble(),
                   title: touchedIndex == 1 ? '$absentCount\nAbsent' : '',
                   titleStyle: theme.textTheme.labelSmall?.copyWith(
-                      fontWeight: FontWeight.bold, color: theme.colorScheme.onSurface),
+                      fontWeight: FontWeight.bold,
+                      color: theme.colorScheme.onSurface),
                   radius: touchedIndex == 1 ? 35.0 : 25.0,
-                  badgeWidget: touchedIndex == 1 ? const _Badge(icon: Icons.close, color: Color(0xFFFF5252)) : null,
+                  badgeWidget: touchedIndex == 1
+                      ? const _Badge(
+                          icon: Icons.close, color: Color(0xFFFF5252))
+                      : null,
                   badgePositionPercentageOffset: .98,
                 ),
                 if (otherCount > 0)
@@ -94,7 +103,8 @@ class _AtdDonutChartState extends State<AtdDonutChart> {
                     value: otherCount.toDouble(),
                     title: touchedIndex == 2 ? '$otherCount\nOther' : '',
                     titleStyle: theme.textTheme.labelSmall?.copyWith(
-                        fontWeight: FontWeight.bold, color: theme.colorScheme.onSurface),
+                        fontWeight: FontWeight.bold,
+                        color: theme.colorScheme.onSurface),
                     radius: touchedIndex == 2 ? 35.0 : 25.0,
                   ),
               ],

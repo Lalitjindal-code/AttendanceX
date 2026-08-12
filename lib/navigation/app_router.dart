@@ -24,6 +24,7 @@ import '../features/college/screens/college_zone_screen.dart';
 import '../features/simulator/screens/bunk_simulator_screen.dart';
 import 'app_routes.dart';
 import 'shell_scaffold.dart';
+import '../features/splash/screens/splash_screen.dart';
 
 part 'app_router.g.dart';
 
@@ -42,11 +43,14 @@ GoRouter appRouter(AppRouterRef ref) {
 
   return GoRouter(
     navigatorKey: _rootNavigatorKey,
-    initialLocation: AppRoutes.dashboard,
+    initialLocation: AppRoutes.splash,
     redirect: (context, state) {
+      final isGoingToSplash = state.uri.path == AppRoutes.splash;
       final isGoingToOnboarding = state.uri.path == AppRoutes.onboarding;
       final isGoingToLogin = state.uri.path == AppRoutes.login;
       final isGoingToSignup = state.uri.path == AppRoutes.signup;
+
+      if (isGoingToSplash) return null;
 
       if (authState.isLoading) return null;
       final user = authState.valueOrNull;
@@ -70,6 +74,10 @@ GoRouter appRouter(AppRouterRef ref) {
       return null;
     },
     routes: [
+      GoRoute(
+        path: AppRoutes.splash,
+        builder: (context, state) => const SplashScreen(),
+      ),
       GoRoute(
         path: AppRoutes.login,
         builder: (context, state) => const LoginScreen(),

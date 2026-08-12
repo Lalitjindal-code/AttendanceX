@@ -9,10 +9,12 @@ class PlannerEngine {
   static List<AcademicTask> sortTasks(List<AcademicTask> tasks) {
     tasks.sort((a, b) {
       // Completed tasks go to the bottom
-      if (a.status == TaskStatus.completed && b.status != TaskStatus.completed) {
+      if (a.status == TaskStatus.completed &&
+          b.status != TaskStatus.completed) {
         return 1;
       }
-      if (b.status == TaskStatus.completed && a.status != TaskStatus.completed) {
+      if (b.status == TaskStatus.completed &&
+          a.status != TaskStatus.completed) {
         return -1;
       }
 
@@ -147,7 +149,8 @@ class PlannerEngine {
       if (subject.id != 0 && !subject.plannerNotificationsEnabled) continue;
 
       // Skip if this task type notification is disabled
-      if (enabledTaskTypes != null && !enabledTaskTypes.contains(task.type.name)) continue;
+      if (enabledTaskTypes != null &&
+          !enabledTaskTypes.contains(task.type.name)) continue;
 
       DateTime dueDateTime = task.dueDate;
       if (task.dueTime != null) {

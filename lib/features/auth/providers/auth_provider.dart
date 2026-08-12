@@ -42,7 +42,8 @@ class MockUserCredential implements UserCredential {
 // Provides the global instance of FirebaseAuth
 final firebaseAuthProvider = Provider<FirebaseAuth>((ref) {
   if (!kIsWeb && Platform.isWindows) {
-    throw UnsupportedError('FirebaseAuth is not supported on Windows. Use authProvider instead.');
+    throw UnsupportedError(
+        'FirebaseAuth is not supported on Windows. Use authProvider instead.');
   }
   return FirebaseAuth.instance;
 });
@@ -52,7 +53,8 @@ final authStateProvider = StreamProvider<User?>((ref) {
   if (!kIsWeb && Platform.isWindows) {
     final controller = StreamController<User?>();
     controller.add(_mockCurrentUser);
-    final sub = _mockAuthStreamController.stream.listen((u) => controller.add(u));
+    final sub =
+        _mockAuthStreamController.stream.listen((u) => controller.add(u));
     ref.onDispose(() {
       sub.cancel();
       controller.close();
@@ -64,7 +66,8 @@ final authStateProvider = StreamProvider<User?>((ref) {
 
 // Provider to handle authentication logic
 final authProvider = Provider<AuthService>((ref) {
-  final auth = (!kIsWeb && Platform.isWindows) ? null : ref.watch(firebaseAuthProvider);
+  final auth =
+      (!kIsWeb && Platform.isWindows) ? null : ref.watch(firebaseAuthProvider);
   return AuthService(auth);
 });
 

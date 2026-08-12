@@ -16,7 +16,8 @@ class OnboardingSemesterForm extends ConsumerStatefulWidget {
       _OnboardingSemesterFormState();
 }
 
-class _OnboardingSemesterFormState extends ConsumerState<OnboardingSemesterForm> {
+class _OnboardingSemesterFormState
+    extends ConsumerState<OnboardingSemesterForm> {
   final _formKey = GlobalKey<FormState>();
   final _nameController = TextEditingController(text: 'Semester 1');
   DateTime? _selectedDate;
@@ -65,7 +66,9 @@ class _OnboardingSemesterFormState extends ConsumerState<OnboardingSemesterForm>
 
     try {
       final isCollegeUser = ref.read(isCollegeUserProvider);
-      final name = isCollegeUser ? 'Semester $_selectedSemester - $_selectedBranch' : _nameController.text.trim();
+      final name = isCollegeUser
+          ? 'Semester $_selectedSemester - $_selectedBranch'
+          : _nameController.text.trim();
       await ref
           .read(semesterStateProvider.notifier)
           .updateSemester(name, _selectedDate ?? DateTime.now());
@@ -83,7 +86,7 @@ class _OnboardingSemesterFormState extends ConsumerState<OnboardingSemesterForm>
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
-    
+
     return Center(
       child: SingleChildScrollView(
         child: Padding(
@@ -97,32 +100,42 @@ class _OnboardingSemesterFormState extends ConsumerState<OnboardingSemesterForm>
                 Text(
                   'Set up your semester',
                   style: theme.textTheme.headlineMedium?.copyWith(
-                        fontWeight: FontWeight.bold,
-                        color: theme.colorScheme.onSurface,
-                      ),
+                    fontWeight: FontWeight.bold,
+                    color: theme.colorScheme.onSurface,
+                  ),
                   textAlign: TextAlign.center,
                 ),
                 const SizedBox(height: AppSpacing.md),
                 Text(
                   'Specify your current semester name and when it started.',
                   style: theme.textTheme.bodyLarge?.copyWith(
-                        color: theme.colorScheme.onSurfaceVariant,
-                      ),
+                    color: theme.colorScheme.onSurfaceVariant,
+                  ),
                   textAlign: TextAlign.center,
                 ),
                 const SizedBox(height: AppSpacing.xxl),
                 if (ref.watch(isCollegeUserProvider)) ...[
                   DropdownButtonFormField<int>(
                     initialValue: _selectedSemester,
-                    decoration: const InputDecoration(labelText: 'Semester', prefixIcon: Icon(Icons.school_outlined)),
-                    items: CollegeData.semesters.map((s) => DropdownMenuItem(value: s, child: Text('Semester $s'))).toList(),
-                    onChanged: (val) => setState(() => _selectedSemester = val!),
+                    decoration: const InputDecoration(
+                        labelText: 'Semester',
+                        prefixIcon: Icon(Icons.school_outlined)),
+                    items: CollegeData.semesters
+                        .map((s) => DropdownMenuItem(
+                            value: s, child: Text('Semester $s')))
+                        .toList(),
+                    onChanged: (val) =>
+                        setState(() => _selectedSemester = val!),
                   ),
                   const SizedBox(height: AppSpacing.lg),
                   DropdownButtonFormField<String>(
                     initialValue: _selectedBranch,
-                    decoration: const InputDecoration(labelText: 'Branch', prefixIcon: Icon(Icons.class_outlined)),
-                    items: CollegeData.branches.map((b) => DropdownMenuItem(value: b, child: Text(b))).toList(),
+                    decoration: const InputDecoration(
+                        labelText: 'Branch',
+                        prefixIcon: Icon(Icons.class_outlined)),
+                    items: CollegeData.branches
+                        .map((b) => DropdownMenuItem(value: b, child: Text(b)))
+                        .toList(),
                     onChanged: (val) => setState(() => _selectedBranch = val!),
                   ),
                 ] else ...[
@@ -155,7 +168,9 @@ class _OnboardingSemesterFormState extends ConsumerState<OnboardingSemesterForm>
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: [
                         Text(
-                          _selectedDate == null ? 'Not set' : _dateFormatter.format(_selectedDate!),
+                          _selectedDate == null
+                              ? 'Not set'
+                              : _dateFormatter.format(_selectedDate!),
                           style: theme.textTheme.bodyLarge,
                         ),
                         Icon(
@@ -183,7 +198,8 @@ class _OnboardingSemesterFormState extends ConsumerState<OnboardingSemesterForm>
                         )
                       : const Text(
                           'Next',
-                          style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+                          style: TextStyle(
+                              fontSize: 16, fontWeight: FontWeight.bold),
                         ),
                 ),
               ],

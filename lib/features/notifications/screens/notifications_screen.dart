@@ -7,7 +7,8 @@ class NotificationsScreen extends ConsumerStatefulWidget {
   const NotificationsScreen({super.key});
 
   @override
-  ConsumerState<NotificationsScreen> createState() => _NotificationsScreenState();
+  ConsumerState<NotificationsScreen> createState() =>
+      _NotificationsScreenState();
 }
 
 class _NotificationsScreenState extends ConsumerState<NotificationsScreen> {
@@ -23,7 +24,8 @@ class _NotificationsScreenState extends ConsumerState<NotificationsScreen> {
   Future<void> _loadPendingNotifications() async {
     setState(() => _isLoading = true);
     try {
-      final notifications = await NotificationService.instance.getPendingNotifications();
+      final notifications =
+          await NotificationService.instance.getPendingNotifications();
       setState(() {
         _pendingNotifications = notifications;
         _isLoading = false;
@@ -61,19 +63,30 @@ class _NotificationsScreenState extends ConsumerState<NotificationsScreen> {
       context: context,
       builder: (context) => AlertDialog(
         backgroundColor: Theme.of(context).colorScheme.surfaceContainerHigh,
-        title: Text('Clear All Reminders?', style: TextStyle(color: Theme.of(context).colorScheme.onSurface)),
+        title: Text('Clear All Reminders?',
+            style: TextStyle(color: Theme.of(context).colorScheme.onSurface)),
         content: Text(
           'This will cancel all upcoming scheduled reminders. Note: They may be rescheduled if app data changes.',
-          style: TextStyle(color: Theme.of(context).colorScheme.onSurface.withValues(alpha: 0.7)),
+          style: TextStyle(
+              color: Theme.of(context)
+                  .colorScheme
+                  .onSurface
+                  .withValues(alpha: 0.7)),
         ),
         actions: [
           TextButton(
             onPressed: () => Navigator.pop(context, false),
-            child: Text('Cancel', style: TextStyle(color: Theme.of(context).colorScheme.onSurface.withValues(alpha: 0.5))),
+            child: Text('Cancel',
+                style: TextStyle(
+                    color: Theme.of(context)
+                        .colorScheme
+                        .onSurface
+                        .withValues(alpha: 0.5))),
           ),
           TextButton(
             onPressed: () => Navigator.pop(context, true),
-            child: const Text('Clear All', style: TextStyle(color: Colors.redAccent)),
+            child: const Text('Clear All',
+                style: TextStyle(color: Colors.redAccent)),
           ),
         ],
       ),
@@ -101,12 +114,15 @@ class _NotificationsScreenState extends ConsumerState<NotificationsScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      
       appBar: AppBar(
         backgroundColor: Colors.transparent,
         elevation: 0,
-        title: Text('Notification Center', style: TextStyle(color: Theme.of(context).colorScheme.onSurface, fontWeight: FontWeight.bold)),
-        iconTheme: IconThemeData(color: Theme.of(context).colorScheme.onSurface),
+        title: Text('Notification Center',
+            style: TextStyle(
+                color: Theme.of(context).colorScheme.onSurface,
+                fontWeight: FontWeight.bold)),
+        iconTheme:
+            IconThemeData(color: Theme.of(context).colorScheme.onSurface),
         actions: [
           IconButton(
             icon: const Icon(Icons.refresh_rounded),
@@ -114,7 +130,8 @@ class _NotificationsScreenState extends ConsumerState<NotificationsScreen> {
             tooltip: 'Refresh',
           ),
           IconButton(
-            icon: const Icon(Icons.delete_sweep_rounded, color: Colors.redAccent),
+            icon:
+                const Icon(Icons.delete_sweep_rounded, color: Colors.redAccent),
             onPressed: _clearAllNotifications,
             tooltip: 'Clear All',
           ),
@@ -127,23 +144,40 @@ class _NotificationsScreenState extends ConsumerState<NotificationsScreen> {
                   child: Column(
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [
-                      Icon(Icons.notifications_off_rounded, size: 64, color: Theme.of(context).colorScheme.onSurface.withValues(alpha: 0.2)),
+                      Icon(Icons.notifications_off_rounded,
+                          size: 64,
+                          color: Theme.of(context)
+                              .colorScheme
+                              .onSurface
+                              .withValues(alpha: 0.2)),
                       const SizedBox(height: 16),
                       Text(
                         'No Scheduled Reminders',
-                        style: TextStyle(color: Theme.of(context).colorScheme.onSurface.withValues(alpha: 0.8), fontSize: 18, fontWeight: FontWeight.bold),
+                        style: TextStyle(
+                            color: Theme.of(context)
+                                .colorScheme
+                                .onSurface
+                                .withValues(alpha: 0.8),
+                            fontSize: 18,
+                            fontWeight: FontWeight.bold),
                       ),
                       const SizedBox(height: 8),
                       Text(
                         'Upcoming lecture or attendance reminders\nwill appear here.',
                         textAlign: TextAlign.center,
-                        style: TextStyle(color: Theme.of(context).colorScheme.onSurface.withValues(alpha: 0.5), fontSize: 14),
+                        style: TextStyle(
+                            color: Theme.of(context)
+                                .colorScheme
+                                .onSurface
+                                .withValues(alpha: 0.5),
+                            fontSize: 14),
                       ),
                     ],
                   ),
                 )
               : ListView(
-                  padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+                  padding:
+                      const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
                   children: [
                     _buildPendingSectionHeader(),
                     ..._buildPendingListItems(),
@@ -175,21 +209,30 @@ class _NotificationsScreenState extends ConsumerState<NotificationsScreen> {
         decoration: BoxDecoration(
           color: Theme.of(context).colorScheme.surfaceContainerHigh,
           borderRadius: BorderRadius.circular(16),
-          border: Border.all(color: Theme.of(context).colorScheme.onSurface.withValues(alpha: 0.05)),
+          border: Border.all(
+              color: Theme.of(context)
+                  .colorScheme
+                  .onSurface
+                  .withValues(alpha: 0.05)),
         ),
         child: ListTile(
-          contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+          contentPadding:
+              const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
           leading: Container(
             padding: const EdgeInsets.all(10),
             decoration: BoxDecoration(
-              color: Theme.of(context).colorScheme.primary.withValues(alpha: 0.2),
+              color:
+                  Theme.of(context).colorScheme.primary.withValues(alpha: 0.2),
               borderRadius: BorderRadius.circular(12),
             ),
-            child: Icon(Icons.schedule_rounded, color: Theme.of(context).colorScheme.primary),
+            child: Icon(Icons.schedule_rounded,
+                color: Theme.of(context).colorScheme.primary),
           ),
           title: Text(
             notification.title ?? 'No Title',
-            style: TextStyle(color: Theme.of(context).colorScheme.onSurface, fontWeight: FontWeight.bold),
+            style: TextStyle(
+                color: Theme.of(context).colorScheme.onSurface,
+                fontWeight: FontWeight.bold),
           ),
           subtitle: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
@@ -197,17 +240,27 @@ class _NotificationsScreenState extends ConsumerState<NotificationsScreen> {
               const SizedBox(height: 4),
               Text(
                 notification.body ?? 'No Body',
-                style: TextStyle(color: Theme.of(context).colorScheme.onSurface.withValues(alpha: 0.7)),
+                style: TextStyle(
+                    color: Theme.of(context)
+                        .colorScheme
+                        .onSurface
+                        .withValues(alpha: 0.7)),
               ),
               const SizedBox(height: 8),
               Text(
                 'ID: ${notification.id}',
-                style: TextStyle(color: Theme.of(context).colorScheme.onSurface.withValues(alpha: 0.4), fontSize: 11),
+                style: TextStyle(
+                    color: Theme.of(context)
+                        .colorScheme
+                        .onSurface
+                        .withValues(alpha: 0.4),
+                    fontSize: 11),
               ),
             ],
           ),
           trailing: IconButton(
-            icon: const Icon(Icons.delete_outline_rounded, color: Colors.redAccent),
+            icon: const Icon(Icons.delete_outline_rounded,
+                color: Colors.redAccent),
             onPressed: () => _cancelNotification(notification.id),
             tooltip: 'Cancel reminder',
           ),

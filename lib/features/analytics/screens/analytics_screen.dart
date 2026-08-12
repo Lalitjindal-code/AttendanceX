@@ -37,12 +37,16 @@ class AnalyticsScreen extends ConsumerWidget {
           return CustomScrollView(
             slivers: [
               SliverAppBar.large(
-                title: Text('Analytics', style: TextStyle(color: Theme.of(context).colorScheme.onSurface, fontWeight: FontWeight.bold)),
+                title: Text('Analytics',
+                    style: TextStyle(
+                        color: Theme.of(context).colorScheme.onSurface,
+                        fontWeight: FontWeight.bold)),
                 floating: true,
                 pinned: true,
                 backgroundColor: Theme.of(context).colorScheme.surface,
                 surfaceTintColor: Colors.transparent,
-                iconTheme: IconThemeData(color: Theme.of(context).colorScheme.onSurface),
+                iconTheme: IconThemeData(
+                    color: Theme.of(context).colorScheme.onSurface),
               ),
 
               // 1. Overview Donut Chart & Cards
@@ -91,8 +95,10 @@ class AnalyticsScreen extends ConsumerWidget {
 
               SliverToBoxAdapter(
                 child: Padding(
-                  padding: const EdgeInsets.symmetric(horizontal: AppSpacing.md),
-                  child: Divider(color: Theme.of(context).colorScheme.outlineVariant),
+                  padding:
+                      const EdgeInsets.symmetric(horizontal: AppSpacing.md),
+                  child: Divider(
+                      color: Theme.of(context).colorScheme.outlineVariant),
                 ),
               ),
 
@@ -120,8 +126,10 @@ class AnalyticsScreen extends ConsumerWidget {
 
               SliverToBoxAdapter(
                 child: Padding(
-                  padding: const EdgeInsets.symmetric(horizontal: AppSpacing.md),
-                  child: Divider(color: Theme.of(context).colorScheme.outlineVariant),
+                  padding:
+                      const EdgeInsets.symmetric(horizontal: AppSpacing.md),
+                  child: Divider(
+                      color: Theme.of(context).colorScheme.outlineVariant),
                 ),
               ),
 
@@ -160,8 +168,10 @@ class AnalyticsScreen extends ConsumerWidget {
 
               SliverToBoxAdapter(
                 child: Padding(
-                  padding: const EdgeInsets.symmetric(horizontal: AppSpacing.md),
-                  child: Divider(color: Theme.of(context).colorScheme.outlineVariant),
+                  padding:
+                      const EdgeInsets.symmetric(horizontal: AppSpacing.md),
+                  child: Divider(
+                      color: Theme.of(context).colorScheme.outlineVariant),
                 ),
               ),
 
@@ -223,13 +233,17 @@ class AnalyticsScreen extends ConsumerWidget {
           Icon(
             Icons.analytics_outlined,
             size: 64,
-            color: Theme.of(context).colorScheme.onSurface.withValues(alpha: 0.2),
+            color:
+                Theme.of(context).colorScheme.onSurface.withValues(alpha: 0.2),
           ),
           const SizedBox(height: AppSpacing.md),
           Text(
             'Nothing to analyse yet.',
             style: Theme.of(context).textTheme.titleLarge?.copyWith(
-                  color: Theme.of(context).colorScheme.onSurface.withValues(alpha: 0.6),
+                  color: Theme.of(context)
+                      .colorScheme
+                      .onSurface
+                      .withValues(alpha: 0.6),
                   fontWeight: FontWeight.bold,
                 ),
           ),
@@ -237,7 +251,10 @@ class AnalyticsScreen extends ConsumerWidget {
           Text(
             'Start marking attendance to see insights.',
             style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                  color: Theme.of(context).colorScheme.onSurface.withValues(alpha: 0.4),
+                  color: Theme.of(context)
+                      .colorScheme
+                      .onSurface
+                      .withValues(alpha: 0.4),
                 ),
           ),
         ],
