@@ -189,6 +189,18 @@ class Settings extends _$Settings {
         PreferencesService.keyIsOnboardingComplete, isComplete);
   }
 
+  Future<void> updateProfile({String? name, String? branch, String? currentSemester}) async {
+    if (name != null) _activeProfile.name = name;
+    if (branch != null) _activeProfile.branch = branch;
+    if (currentSemester != null) _activeProfile.currentSemester = currentSemester;
+    
+    await ref.read(profileRepositoryProvider).upsertProfile(_activeProfile);
+    
+    // We update state with a new AppSettings instance to trigger a rebuild
+    // even though name/branch are not currently in AppSettings
+    state = state.copyWith();
+  }
+
   Future<void> updateEnabledTaskTypes(List<String> types) async {
     state = state.copyWith(enabledTaskTypes: types);
     await _prefs.setStringList('enabled_task_types', types);

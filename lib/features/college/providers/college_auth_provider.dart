@@ -3,6 +3,8 @@ import '../../auth/providers/auth_provider.dart';
 
 final isCollegeUserProvider = Provider<bool>((ref) {
   final user = ref.watch(authStateProvider).value;
-  if (user == null || user.email == null) return false;
-  return user.email!.trim().toLowerCase().endsWith('@satiengg.in');
+  if (user == null) return false;
+  
+  // SATI Zone is now accessible to all authenticated users, regardless of domain.
+  return true;
 });

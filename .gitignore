@@ -58,9 +58,14 @@ test_google.dart
 fix_radius.dart
 check_db.dart
 test_output.log
+scratch_*.dart
+test_*.dart
+resize*.ps1
+resize*.py
 
 # Firebase/Environment files
 .env
 google-services.json
 GoogleService-Info.plist
 
+serviceAccountKey.json

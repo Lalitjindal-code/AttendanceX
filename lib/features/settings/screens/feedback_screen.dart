@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
+import 'package:url_launcher/url_launcher.dart';
 
 class FeedbackScreen extends ConsumerStatefulWidget {
   const FeedbackScreen({super.key});
@@ -120,7 +121,28 @@ class _FeedbackScreenState extends ConsumerState<FeedbackScreen> {
                     fontSize: 16,
                   ),
                 ),
-                const SizedBox(height: 32),
+                const SizedBox(height: 16),
+                Card(
+                  elevation: 0,
+                  color: const Color(0xFF4CAF50).withValues(alpha: 0.1),
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(16),
+                    side: BorderSide(color: const Color(0xFF4CAF50).withValues(alpha: 0.3)),
+                  ),
+                  child: ListTile(
+                    leading: const Icon(Icons.groups_rounded, color: Color(0xFF4CAF50)),
+                    title: const Text('Join the community', style: TextStyle(fontWeight: FontWeight.bold)),
+                    subtitle: const Text('For fast feedback and review'),
+                    trailing: const Icon(Icons.open_in_new_rounded, color: Color(0xFF4CAF50)),
+                    onTap: () async {
+                      final url = Uri.parse('https://chat.whatsapp.com/JuejidlVtPpFTv4E1P4SF7');
+                      if (await canLaunchUrl(url)) {
+                        await launchUrl(url, mode: LaunchMode.externalApplication);
+                      }
+                    },
+                  ),
+                ),
+                const SizedBox(height: 24),
 
                 // Name Field
                 TextFormField(

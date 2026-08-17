@@ -38,6 +38,10 @@ class Profile {
   /// Default notification offsets for tasks (in minutes).
   List<int> defaultTaskReminderOffsets = [60, 1440];
 
+  String? branch;
+
+  String? currentSemester;
+
   DateTime createdAt = DateTime.now();
 
   DateTime updatedAt = DateTime.now();
@@ -55,6 +59,8 @@ class Profile {
       'dailyReminderTime': dailyReminderTime,
       'lectureReminderMinutes': lectureReminderMinutes,
       'defaultTaskReminderOffsets': defaultTaskReminderOffsets,
+      'branch': branch,
+      'currentSemester': currentSemester,
       'createdAt': createdAt.millisecondsSinceEpoch,
       'updatedAt': updatedAt.millisecondsSinceEpoch,
     };
@@ -74,6 +80,8 @@ class Profile {
       ..lectureReminderMinutes = map['lectureReminderMinutes'] ?? 10
       ..defaultTaskReminderOffsets =
           List<int>.from(map['defaultTaskReminderOffsets'] ?? [60, 1440])
+      ..branch = map['branch']
+      ..currentSemester = map['currentSemester']
       ..createdAt = map['createdAt'] != null
           ? DateTime.fromMillisecondsSinceEpoch(map['createdAt'])
           : DateTime.now()

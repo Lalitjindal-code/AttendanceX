@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
+import 'package:showcaseview/showcaseview.dart';
 
 import '../features/analytics/screens/analytics_screen.dart';
 import '../features/dashboard/screens/dashboard_screen.dart';
@@ -22,6 +23,11 @@ import '../features/auth/providers/auth_provider.dart';
 import '../features/profile/screens/profile_screen.dart';
 import '../features/college/screens/college_zone_screen.dart';
 import '../features/simulator/screens/bunk_simulator_screen.dart';
+import '../features/admin/screens/admin_requests_screen.dart';
+import '../features/admin/screens/admin_users_screen.dart';
+import '../features/admin/screens/admin_reminders_screen.dart';
+import '../features/admin/screens/admin_feedbacks_screen.dart';
+import '../features/schedule/screens/request_timetable_screen.dart';
 import 'app_routes.dart';
 import 'shell_scaffold.dart';
 import '../features/splash/screens/splash_screen.dart';
@@ -94,6 +100,16 @@ GoRouter appRouter(AppRouterRef ref) {
         path: AppRoutes.collegeZone,
         builder: (context, state) => const CollegeZoneScreen(),
       ),
+      GoRoute(
+        path: AppRoutes.requestTimetable,
+        builder: (context, state) {
+          final args = state.extra as Map<String, dynamic>? ?? {};
+          return RequestTimetableScreen(
+            branch: args['branch'] ?? 'Unknown',
+            semester: args['semester']?.toString() ?? '1',
+          );
+        },
+      ),
       StatefulShellRoute.indexedStack(
         builder: (context, state, navigationShell) {
           return ShellScaffold(navigationShell: navigationShell);
@@ -104,7 +120,9 @@ GoRouter appRouter(AppRouterRef ref) {
             routes: [
               GoRoute(
                 path: AppRoutes.dashboard,
-                builder: (context, state) => const DashboardScreen(),
+                builder: (context, state) => ShowCaseWidget(
+                  builder: (context) => const DashboardScreen(),
+                ),
               ),
             ],
           ),
@@ -193,6 +211,22 @@ GoRouter appRouter(AppRouterRef ref) {
               GoRoute(
                 path: AppRoutes.bunkSimulator,
                 builder: (context, state) => const BunkSimulatorScreen(),
+              ),
+              GoRoute(
+                path: AppRoutes.adminRequests,
+                builder: (context, state) => const AdminRequestsScreen(),
+              ),
+              GoRoute(
+                path: AppRoutes.adminUsers,
+                builder: (context, state) => const AdminUsersScreen(),
+              ),
+              GoRoute(
+                path: AppRoutes.adminReminders,
+                builder: (context, state) => const AdminRemindersScreen(),
+              ),
+              GoRoute(
+                path: AppRoutes.adminFeedbacks,
+                builder: (context, state) => const AdminFeedbacksScreen(),
               ),
             ],
           ),

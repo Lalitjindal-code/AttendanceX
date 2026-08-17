@@ -4,8 +4,10 @@
 
 list(APPEND FLUTTER_PLUGIN_LIST
   cloud_firestore
+  file_selector_windows
   firebase_auth
   firebase_core
+  firebase_remote_config
   flutter_timezone
   isar_flutter_libs
   local_auth_windows

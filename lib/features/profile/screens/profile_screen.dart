@@ -1,13 +1,83 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../auth/providers/auth_provider.dart';
+import '../providers/active_profile_provider.dart';
+import '../../settings/providers/settings_provider.dart';
 
 class ProfileScreen extends ConsumerWidget {
   const ProfileScreen({super.key});
 
+  void _showEditProfileDialog(BuildContext context, WidgetRef ref, String currentName, String? currentBranch, String? currentSemester) {
+    final nameController = TextEditingController(text: currentName);
+    String? selectedBranch = currentBranch;
+    String? selectedSemester = currentSemester;
+    
+    final branches = ['CSE', 'IT', 'ECE', 'AI & DS', 'Mechanical', 'Civil', 'Electrical', 'Other'];
+    final semesters = ['1st Semester', '2nd Semester', '3rd Semester', '4th Semester', '5th Semester', '6th Semester', '7th Semester', '8th Semester', 'Other'];
+
+    if (selectedBranch != null && !branches.contains(selectedBranch)) branches.add(selectedBranch);
+    if (selectedSemester != null && !semesters.contains(selectedSemester)) semesters.add(selectedSemester);
+
+    showDialog(
+      context: context,
+      builder: (context) {
+        return StatefulBuilder(
+          builder: (context, setState) {
+            return AlertDialog(
+              title: const Text('Edit Profile'),
+              content: SingleChildScrollView(
+                child: Column(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    TextField(
+                      controller: nameController,
+                      decoration: const InputDecoration(labelText: 'Full Name'),
+                    ),
+                    const SizedBox(height: 16),
+                    DropdownButtonFormField<String>(
+                      decoration: const InputDecoration(labelText: 'Branch'),
+                      value: selectedBranch,
+                      items: branches.map((b) => DropdownMenuItem(value: b, child: Text(b))).toList(),
+                      onChanged: (val) => setState(() => selectedBranch = val),
+                    ),
+                    const SizedBox(height: 16),
+                    DropdownButtonFormField<String>(
+                      decoration: const InputDecoration(labelText: 'Semester'),
+                      value: selectedSemester,
+                      items: semesters.map((s) => DropdownMenuItem(value: s, child: Text(s))).toList(),
+                      onChanged: (val) => setState(() => selectedSemester = val),
+                    ),
+                  ],
+                ),
+              ),
+              actions: [
+                TextButton(
+                  onPressed: () => Navigator.pop(context),
+                  child: const Text('Cancel'),
+                ),
+                FilledButton(
+                  onPressed: () {
+                    ref.read(settingsProvider.notifier).updateProfile(
+                      name: nameController.text.trim(),
+                      branch: selectedBranch,
+                      currentSemester: selectedSemester,
+                    );
+                    Navigator.pop(context);
+                  },
+                  child: const Text('Save'),
+                ),
+              ],
+            );
+          },
+        );
+      },
+    );
+  }
+
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final user = ref.watch(authStateProvider).valueOrNull;
+    final profileAsync = ref.watch(activeProfileStreamProvider);
     final theme = Theme.of(context);
 
     if (user == null) {
@@ -21,6 +91,14 @@ class ProfileScreen extends ConsumerWidget {
       appBar: AppBar(
         title: const Text('Profile'),
         actions: [
+          IconButton(
+            icon: const Icon(Icons.edit),
+            tooltip: 'Edit Profile',
+            onPressed: () {
+              final profile = profileAsync.valueOrNull;
+              _showEditProfileDialog(context, ref, profile?.name ?? user.displayName ?? '', profile?.branch, profile?.currentSemester);
+            },
+          ),
           IconButton(
             icon: const Icon(Icons.logout),
             tooltip: 'Sign Out',
@@ -47,10 +125,26 @@ class ProfileScreen extends ConsumerWidget {
               ),
             ),
             const SizedBox(height: 24),
-            Text(
-              user.displayName ?? 'Student',
-              style: theme.textTheme.headlineMedium
-                  ?.copyWith(fontWeight: FontWeight.bold),
+            profileAsync.when(
+              data: (profile) => Column(
+                children: [
+                  Text(
+                    profile.name.isNotEmpty ? profile.name : (user.displayName ?? 'Student'),
+                    style: theme.textTheme.headlineMedium
+                        ?.copyWith(fontWeight: FontWeight.bold),
+                  ),
+                  if (profile.branch != null || profile.currentSemester != null) ...[
+                    const SizedBox(height: 8),
+                    Text(
+                      [profile.branch, profile.currentSemester].where((e) => e != null && e.isNotEmpty).join(' • '),
+                      style: theme.textTheme.titleMedium
+                          ?.copyWith(color: theme.colorScheme.primary),
+                    ),
+                  ],
+                ],
+              ),
+              loading: () => const CircularProgressIndicator(),
+              error: (err, stack) => Text('Error loading profile: $err'),
             ),
             const SizedBox(height: 8),
             Text(
@@ -60,7 +154,6 @@ class ProfileScreen extends ConsumerWidget {
             ),
             const SizedBox(height: 40),
 
-            // Add more profile settings or info here in the future
             Card(
               elevation: 0,
               shape: RoundedRectangleBorder(

@@ -9,6 +9,7 @@ import '../../settings/providers/settings_provider.dart';
 import '../../subjects/providers/subject_providers.dart';
 import '../../attendance/providers/attendance_providers.dart';
 import '../../../core/widgets/banner_ad_widget.dart';
+import '../../../core/ads/interstitial_ad_manager.dart';
 
 class BunkSimulatorScreen extends ConsumerStatefulWidget {
   const BunkSimulatorScreen({super.key});
@@ -73,7 +74,14 @@ class _BunkSimulatorScreenState extends ConsumerState<BunkSimulatorScreen> {
         leading: IconButton(
           icon: Icon(Icons.arrow_back_ios_new_rounded,
               color: Theme.of(context).colorScheme.onSurface),
-          onPressed: () => Navigator.of(context).pop(),
+          onPressed: () {
+            InterstitialAdManager.instance.showAdIfAvailable(
+              feature: 'bunk_sim_exit',
+              onNavigation: () {
+                Navigator.of(context).pop();
+              },
+            );
+          },
         ),
         title: Text(
           'Bunk & Predictor',

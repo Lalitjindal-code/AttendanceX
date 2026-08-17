@@ -163,6 +163,121 @@ class AttendanceRepository {
     WidgetService.instance.updateWidget();
   }
 
+  /// Deletes all attendances that have a scheduleId, but the schedule no longer exists.
+  /// Useful for cleaning up duplicates when a user recreates their timetable.
+  Future<int> deleteOrphanedAttendances(int semesterId) async {
+    int deletedCount = 0;
+    await _isar.writeTxn(() async {
+      final allAttendances = await _isar.attendances
+          .filter()
+          .semesterIdEqualTo(semesterId)
+          .and()
+          .scheduleIdIsNotNull()
+          .findAll();
+
+      final allSchedules = await _isar.schedules
+          .filter()
+          .semesterIdEqualTo(semesterId)
+          .findAll();
+      
+      final validScheduleIds = allSchedules.map((s) => s.id).toSet();
+
+      final orphanedIds = allAttendances
+          .where((a) => !validScheduleIds.contains(a.scheduleId))
+          .map((a) => a.id)
+          .toList();
+
+      if (orphanedIds.isNotEmpty) {
+        await _isar.attendanceHistorys
+            .filter()
+            .anyOf(orphanedIds, (q, int id) => q.attendanceIdEqualTo(id))
+            .deleteAll();
+        await _isar.attendances.deleteAll(orphanedIds);
+        deletedCount += orphanedIds.length;
+      }
+
+      // 2. Fix manual attendances (scheduleId == null)
+      final manualAttendances = await _isar.attendances
+          .filter()
+          .semesterIdEqualTo(semesterId)
+          .and()
+          .scheduleIdIsNull()
+          .findAll();
+
+      for (final manual in manualAttendances) {
+        final dayOfWeek = manual.date.weekday;
+        
+        // Find matching schedules for this subject on this day
+        final matchingSchedules = allSchedules
+            .where((s) => s.subjectId == manual.subjectId && s.dayOfWeek == dayOfWeek)
+            .toList();
+
+        if (matchingSchedules.isNotEmpty) {
+          // Check if there are scheduled attendances already on this date for these schedules
+          final existingScheduled = await _isar.attendances
+              .filter()
+              .semesterIdEqualTo(semesterId)
+              .and()
+              .dateEqualTo(manual.date)
+              .and()
+              .subjectIdEqualTo(manual.subjectId)
+              .and()
+              .scheduleIdIsNotNull()
+              .findAll();
+
+          // Find a schedule that doesn't have an attendance yet, or just use the first one
+          int? targetScheduleId;
+          for (final schedule in matchingSchedules) {
+            if (!existingScheduled.any((a) => a.scheduleId == schedule.id)) {
+              targetScheduleId = schedule.id;
+              break;
+            }
+          }
+
+          if (targetScheduleId != null) {
+            // We found a schedule slot that doesn't have attendance yet. Convert manual to this schedule.
+            manual.scheduleId = targetScheduleId;
+            manual.updatedAt = DateTime.now();
+            await _isar.attendances.put(manual);
+            deletedCount++; // Count as modified/cleaned
+          } else {
+            // All scheduled slots for this subject on this day ALREADY have attendance.
+            // Find a scheduled attendance that is currently 'pending' to receive this manual status.
+            Attendance? targetAttendance;
+            for (var a in existingScheduled) {
+              if (a.status == AttendanceStatus.pending) {
+                targetAttendance = a;
+                break;
+              }
+            }
+            targetAttendance ??= existingScheduled.first;
+
+            if (targetAttendance.status == AttendanceStatus.pending && manual.status != AttendanceStatus.pending) {
+              targetAttendance.status = manual.status;
+              targetAttendance.updatedAt = DateTime.now();
+              await _isar.attendances.put(targetAttendance);
+            }
+            
+            // Delete the duplicate manual attendance
+            await _isar.attendanceHistorys.filter().attendanceIdEqualTo(manual.id).deleteAll();
+            await _isar.attendances.delete(manual.id);
+            deletedCount++;
+          }
+        } else {
+          // No schedule exists for this subject on this day.
+          // Since user said "manual attandance hat jaye", we will delete it to clean up the calendar.
+          await _isar.attendanceHistorys.filter().attendanceIdEqualTo(manual.id).deleteAll();
+          await _isar.attendances.delete(manual.id);
+          deletedCount++;
+        }
+      }
+    });
+    if (deletedCount > 0) {
+      WidgetService.instance.updateWidget();
+    }
+    return deletedCount;
+  }
+
   /// Marks the entire day (all schedules) as the specified status (GT, Medical, or Holiday).
   Future<void> markFullDayStatus(
       DateTime date, int semesterId, AttendanceStatus status) async {

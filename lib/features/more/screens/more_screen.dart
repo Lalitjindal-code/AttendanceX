@@ -71,6 +71,7 @@ class _MoreScreenState extends ConsumerState<MoreScreen> {
   Widget build(BuildContext context) {
     final user = ref.watch(authStateProvider).valueOrNull;
     final isAdFree = ref.watch(adFreeProvider);
+    final isAdmin = user?.email == 'lalitjindal519@gmail.com';
 
     return Scaffold(
       appBar: AppBar(
@@ -117,6 +118,60 @@ class _MoreScreenState extends ConsumerState<MoreScreen> {
             title: 'Settings',
             onTap: () => context.push(AppRoutes.settings),
           ),
+          if (isAdmin) ...[
+            const SizedBox(height: 24),
+            Text(
+              'ADMIN DASHBOARD',
+              style: TextStyle(
+                color: Theme.of(context).colorScheme.primary,
+                fontWeight: FontWeight.bold,
+                letterSpacing: 1.2,
+                fontSize: 12,
+              ),
+            ),
+            const SizedBox(height: 12),
+            _buildMenuCard(
+              context: context,
+              icon: Icons.people_alt_rounded,
+              iconColor: const Color(0xFF3949AB),
+              title: 'Registered Users',
+              onTap: () => context.push(AppRoutes.adminUsers),
+            ),
+            const SizedBox(height: 24),
+            Text(
+              'ADMIN COMMUNICATION',
+              style: TextStyle(
+                color: Theme.of(context).colorScheme.primary,
+                fontWeight: FontWeight.bold,
+                letterSpacing: 1.2,
+                fontSize: 12,
+              ),
+            ),
+            const SizedBox(height: 12),
+            _buildMenuCard(
+              context: context,
+              icon: Icons.chat_rounded,
+              iconColor: const Color(0xFFE53935),
+              title: 'Support Chats & Requests',
+              onTap: () => context.push(AppRoutes.adminRequests),
+            ),
+            const SizedBox(height: 12),
+            _buildMenuCard(
+              context: context,
+              icon: Icons.feedback_rounded,
+              iconColor: const Color(0xFFFFA726),
+              title: 'User Feedbacks',
+              onTap: () => context.push(AppRoutes.adminFeedbacks),
+            ),
+            const SizedBox(height: 12),
+            _buildMenuCard(
+              context: context,
+              icon: Icons.campaign_rounded,
+              iconColor: const Color(0xFF43A047),
+              title: 'Notification Center',
+              onTap: () => context.push(AppRoutes.adminReminders),
+            ),
+          ],
           if (!isAdFree) ...[
             const SizedBox(height: 24),
             _buildRemoveAdsCard(context),

@@ -3,6 +3,7 @@ import 'package:flutter/foundation.dart';
 import 'package:google_mobile_ads/google_mobile_ads.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'ad_eligibility_service.dart';
+import 'ad_network_controller.dart';
 
 class AppOpenAdManager {
   static final AppOpenAdManager instance = AppOpenAdManager._internal();
@@ -36,6 +37,12 @@ class AppOpenAdManager {
       {VoidCallback? onAdLoaded, VoidCallback? onAdFailedToLoad}) {
     if (AdEligibilityService.isAdFree) {
       debugPrint('Ad-Free is active. Skipping AppOpenAd load.');
+      onAdFailedToLoad?.call();
+      return;
+    }
+
+    if (AdNetworkController.instance.activeNetwork != AdNetworkType.admob) {
+      debugPrint('AdMob is not active. Skipping AppOpenAd load.');
       onAdFailedToLoad?.call();
       return;
     }
@@ -81,6 +88,12 @@ class AppOpenAdManager {
   void showAdIfAvailable({VoidCallback? onAdDismissed}) {
     if (AdEligibilityService.isAdFree) {
       debugPrint('Ad-Free is active. Skipping AppOpenAd show.');
+      onAdDismissed?.call();
+      return;
+    }
+
+    if (AdNetworkController.instance.activeNetwork != AdNetworkType.admob) {
+      debugPrint('AdMob is not active. Skipping AppOpenAd show.');
       onAdDismissed?.call();
       return;
     }

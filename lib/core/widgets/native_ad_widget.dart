@@ -5,6 +5,7 @@ import 'package:google_mobile_ads/google_mobile_ads.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../ads/providers/ad_free_provider.dart';
 import '../ads/ad_eligibility_service.dart';
+import '../ads/ad_network_controller.dart';
 
 class NativeAdWidget extends ConsumerStatefulWidget {
   const NativeAdWidget({super.key});
@@ -30,6 +31,9 @@ class _NativeAdWidgetState extends ConsumerState<NativeAdWidget> {
   void _loadAd() {
     if (kIsWeb || Platform.isWindows) return;
     if (AdEligibilityService.isAdFree) return;
+    
+    // Only load native ads if AdMob is the active network
+    if (AdNetworkController.instance.activeNetwork != AdNetworkType.admob) return;
 
     _nativeAd = NativeAd(
       adUnitId: kDebugMode ? (Platform.isAndroid ? _testAdUnitIdAndroid : _testAdUnitIdIOS) : _realAdUnitId,
@@ -82,7 +86,9 @@ class _NativeAdWidgetState extends ConsumerState<NativeAdWidget> {
   @override
   Widget build(BuildContext context) {
     final isAdFree = ref.watch(adFreeProvider);
-    if (isAdFree || !_nativeAdIsLoaded || _nativeAd == null || kIsWeb || Platform.isWindows) {
+    final isAdMobActive = AdNetworkController.instance.activeNetwork == AdNetworkType.admob;
+
+    if (isAdFree || !_nativeAdIsLoaded || _nativeAd == null || kIsWeb || Platform.isWindows || !isAdMobActive) {
       return const SizedBox.shrink();
     }
 

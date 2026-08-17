@@ -7,6 +7,7 @@ import '../../settings/providers/settings_provider.dart';
 import '../widgets/onboarding_page.dart';
 import '../widgets/onboarding_subject_form.dart';
 import '../widgets/onboarding_semester_form.dart';
+import '../widgets/onboarding_profile_form.dart';
 import '../../college/providers/college_auth_provider.dart';
 
 class OnboardingScreen extends ConsumerStatefulWidget {
@@ -26,8 +27,8 @@ class _OnboardingScreenState extends ConsumerState<OnboardingScreen> {
     super.dispose();
   }
 
-  void _onNext() {
-    if (_currentPage < 3) {
+  void _onNext(int totalPages) {
+    if (_currentPage < totalPages - 1) {
       _pageController.nextPage(
         duration: const Duration(milliseconds: 300),
         curve: Curves.easeIn,
@@ -45,7 +46,9 @@ class _OnboardingScreenState extends ConsumerState<OnboardingScreen> {
   @override
   Widget build(BuildContext context) {
     final isCollegeUser = ref.watch(isCollegeUserProvider);
-    final totalPages = isCollegeUser ? 3 : 4;
+    // 4 tutorial pages + 2 or 3 forms
+    final totalTutorialPages = 4;
+    final totalPages = isCollegeUser ? totalTutorialPages + 2 : totalTutorialPages + 3;
 
     return Scaffold(
       body: SafeArea(
@@ -58,7 +61,7 @@ class _OnboardingScreenState extends ConsumerState<OnboardingScreen> {
               child: Row(
                 mainAxisAlignment: MainAxisAlignment.end,
                 children: [
-                  if (_currentPage == totalPages - 1)
+                  if (_currentPage >= totalTutorialPages)
                     TextButton(
                       onPressed: _completeOnboarding,
                       child: const Text('Skip'),
@@ -78,21 +81,38 @@ class _OnboardingScreenState extends ConsumerState<OnboardingScreen> {
                 },
                 children: [
                   OnboardingPage(
-                    iconData: Icons.track_changes_outlined,
-                    title: 'Never miss a class... unless you want to.',
+                    iconData: Icons.school_outlined,
+                    title: 'Welcome to Attendify',
                     subtitle:
-                        'Set attendance goals, track your progress, and get smart suggestions on when it is safe to bunk.',
+                        'Your ultimate companion to manage classes, track attendance, and stay on top of your academic schedule seamlessly.',
                     color: Theme.of(context).colorScheme.primary,
                   ),
                   const OnboardingPage(
-                    iconData: Icons.insert_chart_outlined,
-                    title: 'Smart Analytics at your fingertips',
+                    iconData: Icons.cloud_done_outlined,
+                    title: 'Seamless Cloud Sync',
                     subtitle:
-                        'Beautiful charts help you visualize your attendance trends across the entire semester.',
+                        'Your data is now safely backed up to the cloud! Enjoy the new Dashboard with cleaner progress rings and insights.',
                     color: Colors.blue,
                   ),
+                  const OnboardingPage(
+                    iconData: Icons.groups_rounded,
+                    title: 'Join Our Community',
+                    subtitle:
+                        'Connect with other students, share feedback, and get the latest updates by joining our WhatsApp community.',
+                    color: Color(0xFF4CAF50),
+                  ),
+                  const OnboardingPage(
+                    iconData: Icons.notifications_active_outlined,
+                    title: 'Bunk Predictor & Reminders',
+                    subtitle:
+                        'Get smart suggestions on when it is safe to bunk, and never miss a class with timely notifications.',
+                    color: Colors.orange,
+                  ),
+                  OnboardingProfileForm(
+                    onComplete: () => _onNext(totalPages),
+                  ),
                   OnboardingSemesterForm(
-                    onComplete: isCollegeUser ? _completeOnboarding : _onNext,
+                    onComplete: isCollegeUser ? _completeOnboarding : () => _onNext(totalPages),
                   ),
                   if (!isCollegeUser)
                     OnboardingSubjectForm(
@@ -103,7 +123,7 @@ class _OnboardingScreenState extends ConsumerState<OnboardingScreen> {
             ),
 
             // Bottom indicators and next button
-            if (_currentPage < 2)
+            if (_currentPage < totalTutorialPages)
               Padding(
                 padding: const EdgeInsets.all(AppSpacing.xl),
                 child: Row(
@@ -131,7 +151,7 @@ class _OnboardingScreenState extends ConsumerState<OnboardingScreen> {
                     // Next Button
                     FloatingActionButton(
                       heroTag: 'onboarding_fab',
-                      onPressed: _onNext,
+                      onPressed: () => _onNext(totalPages),
                       elevation: 0,
                       child: const Icon(Icons.arrow_forward),
                     ),

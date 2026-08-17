@@ -8,6 +8,7 @@ import '../../../core/enums/task_type.dart';
 import '../../../database/collections/academic_task_collection.dart';
 import '../../subjects/providers/subject_providers.dart';
 import '../providers/planner_provider.dart';
+import '../../../core/ads/interstitial_ad_manager.dart';
 
 class TaskFormSheet extends ConsumerStatefulWidget {
   final int? taskId;
@@ -140,7 +141,12 @@ class _TaskFormSheetState extends ConsumerState<TaskFormSheet> {
     task.notificationOffsets = _reminderOffsets;
 
     ref.read(plannerNotifierProvider.notifier).saveTask(task);
-    Navigator.of(context).pop();
+    InterstitialAdManager.instance.showAdIfAvailable(
+      feature: 'task_save',
+      onNavigation: () {
+        Navigator.of(context).pop();
+      },
+    );
   }
 
   @override

@@ -3,7 +3,9 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:google_mobile_ads/google_mobile_ads.dart';
+import 'package:unity_ads_plugin/unity_ads_plugin.dart';
 import '../ads/providers/ad_free_provider.dart';
+import '../ads/ad_network_controller.dart';
 
 class BannerAdWidget extends ConsumerStatefulWidget {
   const BannerAdWidget({super.key});
@@ -13,44 +15,46 @@ class BannerAdWidget extends ConsumerStatefulWidget {
 }
 
 class _BannerAdWidgetState extends ConsumerState<BannerAdWidget> {
-  BannerAd? _bannerAd;
-  bool _isLoaded = false;
+  BannerAd? _admobBannerAd;
+  bool _isAdmobLoaded = false;
+  bool _isUnityLoaded = true; // Unity banner handles its own loading state visually
 
-  final String _realAdUnitId = 'ca-app-pub-1540123321445233/9516802444';
+  final String _realAdMobUnitId = 'ca-app-pub-1540123321445233/9516802444';
+  final String _testAdMobUnitIdAndroid = 'ca-app-pub-3940256099942544/6300978111';
+  final String _testAdMobUnitIdIOS = 'ca-app-pub-3940256099942544/2934735716';
 
-  // Test IDs provided by Google for development
-  final String _testAdUnitIdAndroid = 'ca-app-pub-3940256099942544/6300978111';
-  final String _testAdUnitIdIOS = 'ca-app-pub-3940256099942544/2934735716';
+  final String _unityAdUnitIdAndroid = 'Banner_Android';
+  final String _unityAdUnitIdIOS = 'Banner_iOS';
 
-  String get _adUnitId {
+  String get _adMobUnitId {
     if (kIsWeb || Platform.isWindows) return '';
     if (kDebugMode) {
-      return Platform.isAndroid ? _testAdUnitIdAndroid : _testAdUnitIdIOS;
+      return Platform.isAndroid ? _testAdMobUnitIdAndroid : _testAdMobUnitIdIOS;
     }
-    // In release mode, use the real ID
-    return _realAdUnitId;
+    return _realAdMobUnitId;
+  }
+
+  String get _unityAdUnitId {
+    return Platform.isAndroid ? _unityAdUnitIdAndroid : _unityAdUnitIdIOS;
   }
 
   @override
   void initState() {
     super.initState();
     if (!kIsWeb && Platform.isWindows) return;
-    // Delay loading ad until build to allow reading provider if needed,
-    // but initState is fine if we use ref.read (though ad is loaded independently)
-    // Actually we can let build trigger it or just use listen manually.
   }
 
-  void _loadAd() {
-    if (_bannerAd != null) return; // Already loaded
-    _bannerAd = BannerAd(
-      adUnitId: _adUnitId,
+  void _loadAdMobAd() {
+    if (_admobBannerAd != null) return;
+    _admobBannerAd = BannerAd(
+      adUnitId: _adMobUnitId,
       request: const AdRequest(),
       size: AdSize.banner,
       listener: BannerAdListener(
         onAdLoaded: (ad) {
           debugPrint('$ad loaded.');
           setState(() {
-            _isLoaded = true;
+            _isAdmobLoaded = true;
           });
         },
         onAdFailedToLoad: (ad, err) {
@@ -63,7 +67,7 @@ class _BannerAdWidgetState extends ConsumerState<BannerAdWidget> {
 
   @override
   void dispose() {
-    _bannerAd?.dispose();
+    _admobBannerAd?.dispose();
     super.dispose();
   }
 
@@ -71,28 +75,44 @@ class _BannerAdWidgetState extends ConsumerState<BannerAdWidget> {
   Widget build(BuildContext context) {
     final isAdFree = ref.watch(adFreeProvider);
     if (isAdFree) {
-      if (_bannerAd != null) {
-        _bannerAd?.dispose();
-        _bannerAd = null;
-        _isLoaded = false;
+      if (_admobBannerAd != null) {
+        _admobBannerAd?.dispose();
+        _admobBannerAd = null;
+        _isAdmobLoaded = false;
       }
       return const SizedBox(); // Completely hide ad space
     }
 
-    // If not ad-free and not loaded, load it.
-    if (!_isLoaded && _bannerAd == null) {
-      _loadAd();
-    }
+    final network = AdNetworkController.instance.activeNetwork;
 
-    if (_isLoaded && _bannerAd != null) {
+    if (network == AdNetworkType.admob) {
+      if (!_isAdmobLoaded && _admobBannerAd == null) {
+        _loadAdMobAd();
+      }
+
+      if (_isAdmobLoaded && _admobBannerAd != null) {
+        return Container(
+          width: _admobBannerAd!.size.width.toDouble(),
+          height: _admobBannerAd!.size.height.toDouble(),
+          margin: const EdgeInsets.symmetric(vertical: 8.0),
+          alignment: Alignment.center,
+          child: AdWidget(ad: _admobBannerAd!),
+        );
+      }
+    } else {
+      // Unity Network
       return Container(
-        width: _bannerAd!.size.width.toDouble(),
-        height: _bannerAd!.size.height.toDouble(),
         margin: const EdgeInsets.symmetric(vertical: 8.0),
         alignment: Alignment.center,
-        child: AdWidget(ad: _bannerAd!),
+        child: UnityBannerAd(
+          placementId: _unityAdUnitId,
+          onLoad: (placementId) => debugPrint('Unity Banner loaded: $placementId'),
+          onClick: (placementId) => debugPrint('Unity Banner clicked: $placementId'),
+          onFailed: (placementId, error, message) => debugPrint('Unity Banner failed: $error $message'),
+        ),
       );
     }
+    
     return const SizedBox(); // Empty space if ad isn't loaded yet
   }
 }

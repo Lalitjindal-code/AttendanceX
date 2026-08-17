@@ -22,14 +22,17 @@ class _BackupRestoreScreenState extends ConsumerState<BackupRestoreScreen> {
     try {
       String? outputFile;
 
+      final controller = ref.read(backupControllerProvider.notifier);
+      final backupBytes = await controller.generateBackupBytes();
+
       if (Platform.isAndroid || Platform.isIOS) {
         // file_picker saveFile requires bytes parameter on mobile.
-        // We will pass empty bytes since we write contents later.
+        // On modern Android, this directly writes the bytes via SAF.
         outputFile = await FilePicker.platform.saveFile(
           dialogTitle: 'Save Backup File',
           fileName:
               'Attendify_Backup_${DateFormat('yyyy-MM-dd_HH-mm').format(DateTime.now())}.atfy',
-          bytes: Uint8List(0),
+          bytes: backupBytes,
         );
       } else {
         outputFile = await FilePicker.platform.saveFile(
@@ -41,23 +44,70 @@ class _BackupRestoreScreenState extends ConsumerState<BackupRestoreScreen> {
       }
 
       if (outputFile == null) return;
+      
+      if (!Platform.isAndroid && !Platform.isIOS) {
+        final file = File(outputFile);
+        await file.writeAsBytes(backupBytes, flush: true);
+      }
 
-      await ref
-          .read(backupControllerProvider.notifier)
-          .createBackup(outputFile);
       await ref
           .read(settingsProvider.notifier)
           .updateLastBackupDate(DateTime.now());
 
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text('Backup created successfully at $outputFile')),
+          SnackBar(content: Text('Backup created successfully!')),
         );
       }
     } catch (e) {
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(content: Text('Failed to create backup: $e')),
+        );
+      }
+    }
+  }
+
+  Future<void> _handleCreateJsonBackup() async {
+    try {
+      String? outputFile;
+      
+      final controller = ref.read(backupControllerProvider.notifier);
+      final jsonBytes = await controller.generateJsonBackupBytes();
+
+      if (Platform.isAndroid || Platform.isIOS) {
+        outputFile = await FilePicker.platform.saveFile(
+          dialogTitle: 'Save JSON Backup',
+          fileName:
+              'Attendify_Backup_${DateFormat('yyyy-MM-dd_HH-mm').format(DateTime.now())}.json',
+          bytes: jsonBytes,
+        );
+      } else {
+        outputFile = await FilePicker.platform.saveFile(
+          dialogTitle: 'Save JSON Backup',
+          fileName:
+              'Attendify_Backup_${DateFormat('yyyy-MM-dd_HH-mm').format(DateTime.now())}.json',
+          type: FileType.any,
+        );
+      }
+
+      if (outputFile == null) return;
+      
+      // For desktop/web, write to the output file directly if bytes aren't auto-saved
+      if (!Platform.isAndroid && !Platform.isIOS) {
+        final file = File(outputFile);
+        await file.writeAsBytes(jsonBytes, flush: true);
+      }
+
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text('JSON Backup created successfully!')),
+        );
+      }
+    } catch (e) {
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text('Failed to create JSON backup: $e')),
         );
       }
     }
@@ -75,8 +125,8 @@ class _BackupRestoreScreenState extends ConsumerState<BackupRestoreScreen> {
       final path = result.files.single.path;
       if (path == null) throw Exception('Unable to access file path.');
 
-      if (!path.endsWith('.atfy')) {
-        throw Exception('Please select a valid Attendify backup file (.atfy)');
+      if (!path.endsWith('.atfy') && !path.endsWith('.json')) {
+        throw Exception('Please select a valid Attendify backup file (.atfy or .json)');
       }
 
       final controller = ref.read(backupControllerProvider.notifier);
@@ -169,9 +219,15 @@ class _BackupRestoreScreenState extends ConsumerState<BackupRestoreScreen> {
                   onTap: _handleCreateBackup,
                 ),
                 ListTile(
+                  leading: const Icon(Icons.data_object_rounded),
+                  title: const Text('Export JSON'),
+                  subtitle: const Text('Save as readable .json file'),
+                  onTap: _handleCreateJsonBackup,
+                ),
+                ListTile(
                   leading: const Icon(Icons.restore),
                   title: const Text('Restore from file'),
-                  subtitle: const Text('Import .atfy backup'),
+                  subtitle: const Text('Import .atfy or .json backup'),
                   onTap: _handleRestoreBackup,
                 ),
                 ListTile(

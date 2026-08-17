@@ -43,6 +43,7 @@ class PreferencesService {
   static const String keyLastBackupDate = 'last_backup_date';
   static const String keyIsOnboardingComplete = 'is_onboarding_complete';
   static const String keyIsAppLockEnabled = 'is_app_lock_enabled';
+  static const String keyHasShownDashboardTutorial = 'has_shown_dashboard_tutorial';
 
   // Ad-related keys
   static const String keyAdFreeUntil = 'ad_free_until';

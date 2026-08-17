@@ -36,4 +36,8 @@ class ProfileRepository {
   Stream<List<Profile>> watchAllProfiles() {
     return _isar.profiles.where().watch(fireImmediately: true);
   }
+
+  Stream<Profile?> watchProfile(int id) {
+    return _isar.profiles.watchObject(id, fireImmediately: true);
+  }
 }

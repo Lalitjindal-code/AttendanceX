@@ -17,64 +17,74 @@ const ProfileSchema = CollectionSchema(
   name: r'Profile',
   id: 1266279811925214857,
   properties: {
-    r'createdAt': PropertySchema(
+    r'branch': PropertySchema(
       id: 0,
+      name: r'branch',
+      type: IsarType.string,
+    ),
+    r'createdAt': PropertySchema(
+      id: 1,
       name: r'createdAt',
       type: IsarType.dateTime,
     ),
+    r'currentSemester': PropertySchema(
+      id: 2,
+      name: r'currentSemester',
+      type: IsarType.string,
+    ),
     r'dailyReminderEnabled': PropertySchema(
-      id: 1,
+      id: 3,
       name: r'dailyReminderEnabled',
       type: IsarType.bool,
     ),
     r'dailyReminderTime': PropertySchema(
-      id: 2,
+      id: 4,
       name: r'dailyReminderTime',
       type: IsarType.string,
     ),
     r'defaultGoalPercentage': PropertySchema(
-      id: 3,
+      id: 5,
       name: r'defaultGoalPercentage',
       type: IsarType.double,
     ),
     r'defaultTaskReminderOffsets': PropertySchema(
-      id: 4,
+      id: 6,
       name: r'defaultTaskReminderOffsets',
       type: IsarType.longList,
     ),
     r'gtMode': PropertySchema(
-      id: 5,
+      id: 7,
       name: r'gtMode',
       type: IsarType.string,
       enumMap: _ProfilegtModeEnumValueMap,
     ),
     r'isDefault': PropertySchema(
-      id: 6,
+      id: 8,
       name: r'isDefault',
       type: IsarType.bool,
     ),
     r'lectureReminderMinutes': PropertySchema(
-      id: 7,
+      id: 9,
       name: r'lectureReminderMinutes',
       type: IsarType.long,
     ),
     r'medicalCountsAsPresent': PropertySchema(
-      id: 8,
+      id: 10,
       name: r'medicalCountsAsPresent',
       type: IsarType.bool,
     ),
     r'name': PropertySchema(
-      id: 9,
+      id: 11,
       name: r'name',
       type: IsarType.string,
     ),
     r'notificationsEnabled': PropertySchema(
-      id: 10,
+      id: 12,
       name: r'notificationsEnabled',
       type: IsarType.bool,
     ),
     r'updatedAt': PropertySchema(
-      id: 11,
+      id: 13,
       name: r'updatedAt',
       type: IsarType.dateTime,
     )
@@ -99,6 +109,18 @@ int _profileEstimateSize(
   Map<Type, List<int>> allOffsets,
 ) {
   var bytesCount = offsets.last;
+  {
+    final value = object.branch;
+    if (value != null) {
+      bytesCount += 3 + value.length * 3;
+    }
+  }
+  {
+    final value = object.currentSemester;
+    if (value != null) {
+      bytesCount += 3 + value.length * 3;
+    }
+  }
   bytesCount += 3 + object.dailyReminderTime.length * 3;
   bytesCount += 3 + object.defaultTaskReminderOffsets.length * 8;
   bytesCount += 3 + object.gtMode.name.length * 3;
@@ -112,18 +134,20 @@ void _profileSerialize(
   List<int> offsets,
   Map<Type, List<int>> allOffsets,
 ) {
-  writer.writeDateTime(offsets[0], object.createdAt);
-  writer.writeBool(offsets[1], object.dailyReminderEnabled);
-  writer.writeString(offsets[2], object.dailyReminderTime);
-  writer.writeDouble(offsets[3], object.defaultGoalPercentage);
-  writer.writeLongList(offsets[4], object.defaultTaskReminderOffsets);
-  writer.writeString(offsets[5], object.gtMode.name);
-  writer.writeBool(offsets[6], object.isDefault);
-  writer.writeLong(offsets[7], object.lectureReminderMinutes);
-  writer.writeBool(offsets[8], object.medicalCountsAsPresent);
-  writer.writeString(offsets[9], object.name);
-  writer.writeBool(offsets[10], object.notificationsEnabled);
-  writer.writeDateTime(offsets[11], object.updatedAt);
+  writer.writeString(offsets[0], object.branch);
+  writer.writeDateTime(offsets[1], object.createdAt);
+  writer.writeString(offsets[2], object.currentSemester);
+  writer.writeBool(offsets[3], object.dailyReminderEnabled);
+  writer.writeString(offsets[4], object.dailyReminderTime);
+  writer.writeDouble(offsets[5], object.defaultGoalPercentage);
+  writer.writeLongList(offsets[6], object.defaultTaskReminderOffsets);
+  writer.writeString(offsets[7], object.gtMode.name);
+  writer.writeBool(offsets[8], object.isDefault);
+  writer.writeLong(offsets[9], object.lectureReminderMinutes);
+  writer.writeBool(offsets[10], object.medicalCountsAsPresent);
+  writer.writeString(offsets[11], object.name);
+  writer.writeBool(offsets[12], object.notificationsEnabled);
+  writer.writeDateTime(offsets[13], object.updatedAt);
 }
 
 Profile _profileDeserialize(
@@ -133,21 +157,23 @@ Profile _profileDeserialize(
   Map<Type, List<int>> allOffsets,
 ) {
   final object = Profile();
-  object.createdAt = reader.readDateTime(offsets[0]);
-  object.dailyReminderEnabled = reader.readBool(offsets[1]);
-  object.dailyReminderTime = reader.readString(offsets[2]);
-  object.defaultGoalPercentage = reader.readDouble(offsets[3]);
-  object.defaultTaskReminderOffsets = reader.readLongList(offsets[4]) ?? [];
+  object.branch = reader.readStringOrNull(offsets[0]);
+  object.createdAt = reader.readDateTime(offsets[1]);
+  object.currentSemester = reader.readStringOrNull(offsets[2]);
+  object.dailyReminderEnabled = reader.readBool(offsets[3]);
+  object.dailyReminderTime = reader.readString(offsets[4]);
+  object.defaultGoalPercentage = reader.readDouble(offsets[5]);
+  object.defaultTaskReminderOffsets = reader.readLongList(offsets[6]) ?? [];
   object.gtMode =
-      _ProfilegtModeValueEnumMap[reader.readStringOrNull(offsets[5])] ??
+      _ProfilegtModeValueEnumMap[reader.readStringOrNull(offsets[7])] ??
           GtMode.exclude;
   object.id = id;
-  object.isDefault = reader.readBool(offsets[6]);
-  object.lectureReminderMinutes = reader.readLong(offsets[7]);
-  object.medicalCountsAsPresent = reader.readBool(offsets[8]);
-  object.name = reader.readString(offsets[9]);
-  object.notificationsEnabled = reader.readBool(offsets[10]);
-  object.updatedAt = reader.readDateTime(offsets[11]);
+  object.isDefault = reader.readBool(offsets[8]);
+  object.lectureReminderMinutes = reader.readLong(offsets[9]);
+  object.medicalCountsAsPresent = reader.readBool(offsets[10]);
+  object.name = reader.readString(offsets[11]);
+  object.notificationsEnabled = reader.readBool(offsets[12]);
+  object.updatedAt = reader.readDateTime(offsets[13]);
   return object;
 }
 
@@ -159,29 +185,33 @@ P _profileDeserializeProp<P>(
 ) {
   switch (propertyId) {
     case 0:
-      return (reader.readDateTime(offset)) as P;
+      return (reader.readStringOrNull(offset)) as P;
     case 1:
-      return (reader.readBool(offset)) as P;
+      return (reader.readDateTime(offset)) as P;
     case 2:
-      return (reader.readString(offset)) as P;
+      return (reader.readStringOrNull(offset)) as P;
     case 3:
-      return (reader.readDouble(offset)) as P;
+      return (reader.readBool(offset)) as P;
     case 4:
-      return (reader.readLongList(offset) ?? []) as P;
+      return (reader.readString(offset)) as P;
     case 5:
+      return (reader.readDouble(offset)) as P;
+    case 6:
+      return (reader.readLongList(offset) ?? []) as P;
+    case 7:
       return (_ProfilegtModeValueEnumMap[reader.readStringOrNull(offset)] ??
           GtMode.exclude) as P;
-    case 6:
-      return (reader.readBool(offset)) as P;
-    case 7:
-      return (reader.readLong(offset)) as P;
     case 8:
       return (reader.readBool(offset)) as P;
     case 9:
-      return (reader.readString(offset)) as P;
+      return (reader.readLong(offset)) as P;
     case 10:
       return (reader.readBool(offset)) as P;
     case 11:
+      return (reader.readString(offset)) as P;
+    case 12:
+      return (reader.readBool(offset)) as P;
+    case 13:
       return (reader.readDateTime(offset)) as P;
     default:
       throw IsarError('Unknown property with id $propertyId');
@@ -288,6 +318,152 @@ extension ProfileQueryWhere on QueryBuilder<Profile, Profile, QWhereClause> {
 
 extension ProfileQueryFilter
     on QueryBuilder<Profile, Profile, QFilterCondition> {
+  QueryBuilder<Profile, Profile, QAfterFilterCondition> branchIsNull() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(const FilterCondition.isNull(
+        property: r'branch',
+      ));
+    });
+  }
+
+  QueryBuilder<Profile, Profile, QAfterFilterCondition> branchIsNotNull() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(const FilterCondition.isNotNull(
+        property: r'branch',
+      ));
+    });
+  }
+
+  QueryBuilder<Profile, Profile, QAfterFilterCondition> branchEqualTo(
+    String? value, {
+    bool caseSensitive = true,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.equalTo(
+        property: r'branch',
+        value: value,
+        caseSensitive: caseSensitive,
+      ));
+    });
+  }
+
+  QueryBuilder<Profile, Profile, QAfterFilterCondition> branchGreaterThan(
+    String? value, {
+    bool include = false,
+    bool caseSensitive = true,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.greaterThan(
+        include: include,
+        property: r'branch',
+        value: value,
+        caseSensitive: caseSensitive,
+      ));
+    });
+  }
+
+  QueryBuilder<Profile, Profile, QAfterFilterCondition> branchLessThan(
+    String? value, {
+    bool include = false,
+    bool caseSensitive = true,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.lessThan(
+        include: include,
+        property: r'branch',
+        value: value,
+        caseSensitive: caseSensitive,
+      ));
+    });
+  }
+
+  QueryBuilder<Profile, Profile, QAfterFilterCondition> branchBetween(
+    String? lower,
+    String? upper, {
+    bool includeLower = true,
+    bool includeUpper = true,
+    bool caseSensitive = true,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.between(
+        property: r'branch',
+        lower: lower,
+        includeLower: includeLower,
+        upper: upper,
+        includeUpper: includeUpper,
+        caseSensitive: caseSensitive,
+      ));
+    });
+  }
+
+  QueryBuilder<Profile, Profile, QAfterFilterCondition> branchStartsWith(
+    String value, {
+    bool caseSensitive = true,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.startsWith(
+        property: r'branch',
+        value: value,
+        caseSensitive: caseSensitive,
+      ));
+    });
+  }
+
+  QueryBuilder<Profile, Profile, QAfterFilterCondition> branchEndsWith(
+    String value, {
+    bool caseSensitive = true,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.endsWith(
+        property: r'branch',
+        value: value,
+        caseSensitive: caseSensitive,
+      ));
+    });
+  }
+
+  QueryBuilder<Profile, Profile, QAfterFilterCondition> branchContains(
+      String value,
+      {bool caseSensitive = true}) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.contains(
+        property: r'branch',
+        value: value,
+        caseSensitive: caseSensitive,
+      ));
+    });
+  }
+
+  QueryBuilder<Profile, Profile, QAfterFilterCondition> branchMatches(
+      String pattern,
+      {bool caseSensitive = true}) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.matches(
+        property: r'branch',
+        wildcard: pattern,
+        caseSensitive: caseSensitive,
+      ));
+    });
+  }
+
+  QueryBuilder<Profile, Profile, QAfterFilterCondition> branchIsEmpty() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.equalTo(
+        property: r'branch',
+        value: '',
+      ));
+    });
+  }
+
+  QueryBuilder<Profile, Profile, QAfterFilterCondition> branchIsNotEmpty() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.greaterThan(
+        property: r'branch',
+        value: '',
+      ));
+    });
+  }
+
   QueryBuilder<Profile, Profile, QAfterFilterCondition> createdAtEqualTo(
       DateTime value) {
     return QueryBuilder.apply(this, (query) {
@@ -337,6 +513,158 @@ extension ProfileQueryFilter
         includeLower: includeLower,
         upper: upper,
         includeUpper: includeUpper,
+      ));
+    });
+  }
+
+  QueryBuilder<Profile, Profile, QAfterFilterCondition>
+      currentSemesterIsNull() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(const FilterCondition.isNull(
+        property: r'currentSemester',
+      ));
+    });
+  }
+
+  QueryBuilder<Profile, Profile, QAfterFilterCondition>
+      currentSemesterIsNotNull() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(const FilterCondition.isNotNull(
+        property: r'currentSemester',
+      ));
+    });
+  }
+
+  QueryBuilder<Profile, Profile, QAfterFilterCondition> currentSemesterEqualTo(
+    String? value, {
+    bool caseSensitive = true,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.equalTo(
+        property: r'currentSemester',
+        value: value,
+        caseSensitive: caseSensitive,
+      ));
+    });
+  }
+
+  QueryBuilder<Profile, Profile, QAfterFilterCondition>
+      currentSemesterGreaterThan(
+    String? value, {
+    bool include = false,
+    bool caseSensitive = true,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.greaterThan(
+        include: include,
+        property: r'currentSemester',
+        value: value,
+        caseSensitive: caseSensitive,
+      ));
+    });
+  }
+
+  QueryBuilder<Profile, Profile, QAfterFilterCondition> currentSemesterLessThan(
+    String? value, {
+    bool include = false,
+    bool caseSensitive = true,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.lessThan(
+        include: include,
+        property: r'currentSemester',
+        value: value,
+        caseSensitive: caseSensitive,
+      ));
+    });
+  }
+
+  QueryBuilder<Profile, Profile, QAfterFilterCondition> currentSemesterBetween(
+    String? lower,
+    String? upper, {
+    bool includeLower = true,
+    bool includeUpper = true,
+    bool caseSensitive = true,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.between(
+        property: r'currentSemester',
+        lower: lower,
+        includeLower: includeLower,
+        upper: upper,
+        includeUpper: includeUpper,
+        caseSensitive: caseSensitive,
+      ));
+    });
+  }
+
+  QueryBuilder<Profile, Profile, QAfterFilterCondition>
+      currentSemesterStartsWith(
+    String value, {
+    bool caseSensitive = true,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.startsWith(
+        property: r'currentSemester',
+        value: value,
+        caseSensitive: caseSensitive,
+      ));
+    });
+  }
+
+  QueryBuilder<Profile, Profile, QAfterFilterCondition> currentSemesterEndsWith(
+    String value, {
+    bool caseSensitive = true,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.endsWith(
+        property: r'currentSemester',
+        value: value,
+        caseSensitive: caseSensitive,
+      ));
+    });
+  }
+
+  QueryBuilder<Profile, Profile, QAfterFilterCondition> currentSemesterContains(
+      String value,
+      {bool caseSensitive = true}) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.contains(
+        property: r'currentSemester',
+        value: value,
+        caseSensitive: caseSensitive,
+      ));
+    });
+  }
+
+  QueryBuilder<Profile, Profile, QAfterFilterCondition> currentSemesterMatches(
+      String pattern,
+      {bool caseSensitive = true}) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.matches(
+        property: r'currentSemester',
+        wildcard: pattern,
+        caseSensitive: caseSensitive,
+      ));
+    });
+  }
+
+  QueryBuilder<Profile, Profile, QAfterFilterCondition>
+      currentSemesterIsEmpty() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.equalTo(
+        property: r'currentSemester',
+        value: '',
+      ));
+    });
+  }
+
+  QueryBuilder<Profile, Profile, QAfterFilterCondition>
+      currentSemesterIsNotEmpty() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.greaterThan(
+        property: r'currentSemester',
+        value: '',
       ));
     });
   }
@@ -1157,6 +1485,18 @@ extension ProfileQueryLinks
     on QueryBuilder<Profile, Profile, QFilterCondition> {}
 
 extension ProfileQuerySortBy on QueryBuilder<Profile, Profile, QSortBy> {
+  QueryBuilder<Profile, Profile, QAfterSortBy> sortByBranch() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'branch', Sort.asc);
+    });
+  }
+
+  QueryBuilder<Profile, Profile, QAfterSortBy> sortByBranchDesc() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'branch', Sort.desc);
+    });
+  }
+
   QueryBuilder<Profile, Profile, QAfterSortBy> sortByCreatedAt() {
     return QueryBuilder.apply(this, (query) {
       return query.addSortBy(r'createdAt', Sort.asc);
@@ -1166,6 +1506,18 @@ extension ProfileQuerySortBy on QueryBuilder<Profile, Profile, QSortBy> {
   QueryBuilder<Profile, Profile, QAfterSortBy> sortByCreatedAtDesc() {
     return QueryBuilder.apply(this, (query) {
       return query.addSortBy(r'createdAt', Sort.desc);
+    });
+  }
+
+  QueryBuilder<Profile, Profile, QAfterSortBy> sortByCurrentSemester() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'currentSemester', Sort.asc);
+    });
+  }
+
+  QueryBuilder<Profile, Profile, QAfterSortBy> sortByCurrentSemesterDesc() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'currentSemester', Sort.desc);
     });
   }
 
@@ -1297,6 +1649,18 @@ extension ProfileQuerySortBy on QueryBuilder<Profile, Profile, QSortBy> {
 
 extension ProfileQuerySortThenBy
     on QueryBuilder<Profile, Profile, QSortThenBy> {
+  QueryBuilder<Profile, Profile, QAfterSortBy> thenByBranch() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'branch', Sort.asc);
+    });
+  }
+
+  QueryBuilder<Profile, Profile, QAfterSortBy> thenByBranchDesc() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'branch', Sort.desc);
+    });
+  }
+
   QueryBuilder<Profile, Profile, QAfterSortBy> thenByCreatedAt() {
     return QueryBuilder.apply(this, (query) {
       return query.addSortBy(r'createdAt', Sort.asc);
@@ -1306,6 +1670,18 @@ extension ProfileQuerySortThenBy
   QueryBuilder<Profile, Profile, QAfterSortBy> thenByCreatedAtDesc() {
     return QueryBuilder.apply(this, (query) {
       return query.addSortBy(r'createdAt', Sort.desc);
+    });
+  }
+
+  QueryBuilder<Profile, Profile, QAfterSortBy> thenByCurrentSemester() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'currentSemester', Sort.asc);
+    });
+  }
+
+  QueryBuilder<Profile, Profile, QAfterSortBy> thenByCurrentSemesterDesc() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'currentSemester', Sort.desc);
     });
   }
 
@@ -1449,9 +1825,24 @@ extension ProfileQuerySortThenBy
 
 extension ProfileQueryWhereDistinct
     on QueryBuilder<Profile, Profile, QDistinct> {
+  QueryBuilder<Profile, Profile, QDistinct> distinctByBranch(
+      {bool caseSensitive = true}) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addDistinctBy(r'branch', caseSensitive: caseSensitive);
+    });
+  }
+
   QueryBuilder<Profile, Profile, QDistinct> distinctByCreatedAt() {
     return QueryBuilder.apply(this, (query) {
       return query.addDistinctBy(r'createdAt');
+    });
+  }
+
+  QueryBuilder<Profile, Profile, QDistinct> distinctByCurrentSemester(
+      {bool caseSensitive = true}) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addDistinctBy(r'currentSemester',
+          caseSensitive: caseSensitive);
     });
   }
 
@@ -1535,9 +1926,21 @@ extension ProfileQueryProperty
     });
   }
 
+  QueryBuilder<Profile, String?, QQueryOperations> branchProperty() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addPropertyName(r'branch');
+    });
+  }
+
   QueryBuilder<Profile, DateTime, QQueryOperations> createdAtProperty() {
     return QueryBuilder.apply(this, (query) {
       return query.addPropertyName(r'createdAt');
+    });
+  }
+
+  QueryBuilder<Profile, String?, QQueryOperations> currentSemesterProperty() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addPropertyName(r'currentSemester');
     });
   }
 

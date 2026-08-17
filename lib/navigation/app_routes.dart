@@ -22,7 +22,15 @@ abstract final class AppRoutes {
   static const String login = '/login';
   static const String signup = '/signup';
   static const String collegeZone = '/college-zone';
+  static const String requestTimetable = '/request-timetable';
   static const String feedback = '/feedback';
+  
+  // Admin Routes
+  static const String adminRequests = '/admin-requests';
+  static const String adminUsers = '/admin-users';
+  static const String adminReminders = '/admin-reminders';
+  static const String adminFeedbacks = '/admin-feedbacks';
+  
   static const String bunkSimulator = '/bunk-simulator';
 
   // Sub-routes

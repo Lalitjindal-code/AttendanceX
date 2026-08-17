@@ -24,9 +24,74 @@ import 'package:flutter_animate/flutter_animate.dart';
 import 'package:shimmer/shimmer.dart';
 import '../../../core/utils/haptics.dart';
 import '../../../core/widgets/banner_ad_widget.dart';
+import 'package:showcaseview/showcaseview.dart';
+import '../providers/tutorial_provider.dart';
 
-class DashboardScreen extends ConsumerWidget {
+import '../../../core/constants/app_spacing.dart';
+import '../../profile/providers/active_profile_provider.dart';
+import '../../settings/providers/settings_provider.dart';
+
+class DashboardScreen extends ConsumerStatefulWidget {
   const DashboardScreen({super.key});
+
+  @override
+  ConsumerState<DashboardScreen> createState() => _DashboardScreenState();
+}
+
+class _DashboardScreenState extends ConsumerState<DashboardScreen> {
+  final GlobalKey _headerKey = GlobalKey();
+  final GlobalKey _heroHealthKey = GlobalKey();
+  final GlobalKey _quickStatsKey = GlobalKey();
+  final GlobalKey _scheduleKey = GlobalKey();
+  bool _hasShownProfilePopup = false;
+
+  @override
+  void initState() {
+    super.initState();
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      final hasShown = ref.read(tutorialNotifierProvider);
+      if (!hasShown) {
+        ShowCaseWidget.of(context).startShowCase([
+          _headerKey,
+          _heroHealthKey,
+          _quickStatsKey,
+          _scheduleKey,
+        ]);
+        ref.read(tutorialNotifierProvider.notifier).markDashboardTutorialShown();
+      }
+    });
+  }
+
+  void _showCompleteProfileDialog() {
+    if (_hasShownProfilePopup) return;
+    _hasShownProfilePopup = true;
+    
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      showDialog(
+        context: context,
+        barrierDismissible: false,
+        builder: (context) => AlertDialog(
+          title: const Text('Complete Your Profile'),
+          content: const Text('Please update your Branch and Semester in your profile to get the best experience.'),
+          actions: [
+            TextButton(
+              onPressed: () {
+                Navigator.pop(context);
+              },
+              child: const Text('Later'),
+            ),
+            FilledButton(
+              onPressed: () {
+                Navigator.pop(context);
+                context.push(AppRoutes.profile);
+              },
+              child: const Text('Go to Profile'),
+            ),
+          ],
+        ),
+      );
+    });
+  }
 
   Future<void> _onRefresh(WidgetRef ref) async {
     Haptics.selection();
@@ -36,7 +101,18 @@ class DashboardScreen extends ConsumerWidget {
   }
 
   @override
-  Widget build(BuildContext context, WidgetRef ref) {
+  Widget build(BuildContext context) {
+    ref.listen(activeProfileStreamProvider, (previous, next) {
+      final profile = next.valueOrNull;
+      if (profile != null) {
+        final settings = ref.read(settingsProvider);
+        if (settings.isOnboardingComplete && 
+            (profile.branch == null || profile.branch!.isEmpty || profile.currentSemester == null || profile.currentSemester!.isEmpty)) {
+          _showCompleteProfileDialog();
+        }
+      }
+    });
+
     final stateStream = ref.watch(dashboardNotifierProvider);
     final user = ref.watch(authStateProvider).valueOrNull;
     final userName = user?.displayName;
@@ -80,26 +156,34 @@ class DashboardScreen extends ConsumerWidget {
                 physics: const AlwaysScrollableScrollPhysics(),
                 slivers: [
                   SliverToBoxAdapter(
-                    child: DashboardHeader(
-                      subtitle: subtitle,
-                      userName: userName ?? 'User',
-                      photoUrl: user?.photoURL,
-                    ).animate().fade(duration: 400.ms).slideY(
-                        begin: 0.1,
-                        duration: 400.ms,
-                        curve: Curves.easeOutQuad),
+                    child: Showcase(
+                      key: _headerKey,
+                      description: 'Welcome to your Dashboard! Start your day here.',
+                      child: DashboardHeader(
+                        subtitle: subtitle,
+                        userName: userName ?? 'User',
+                        photoUrl: user?.photoURL,
+                      ).animate().fade(duration: 400.ms).slideY(
+                          begin: 0.1,
+                          duration: 400.ms,
+                          curve: Curves.easeOutQuad),
+                    ),
                   ),
 
                   // Hero Attendance Health Card
                   SliverToBoxAdapter(
-                    child: HeroHealthCard(state: state)
-                        .animate()
-                        .fade(delay: 100.ms, duration: 400.ms)
-                        .slideY(
-                            begin: 0.1,
-                            delay: 100.ms,
-                            duration: 400.ms,
-                            curve: Curves.easeOutQuad),
+                    child: Showcase(
+                      key: _heroHealthKey,
+                      description: 'Track your overall attendance health. Keep it in the green zone!',
+                      child: HeroHealthCard(state: state)
+                          .animate()
+                          .fade(delay: 100.ms, duration: 400.ms)
+                          .slideY(
+                              begin: 0.1,
+                              delay: 100.ms,
+                              duration: 400.ms,
+                              curve: Curves.easeOutQuad),
+                    ),
                   ),
 
                   if (state.patternInsight != null)
@@ -153,14 +237,18 @@ class DashboardScreen extends ConsumerWidget {
 
                   // Quick Stats Row
                   SliverToBoxAdapter(
-                    child: QuickStatsRow(quickStats: state.quickStats)
-                        .animate()
-                        .fade(delay: 200.ms, duration: 400.ms)
-                        .slideY(
-                            begin: 0.1,
-                            delay: 200.ms,
-                            duration: 400.ms,
-                            curve: Curves.easeOutQuad),
+                    child: Showcase(
+                      key: _quickStatsKey,
+                      description: 'Quick summary of classes attended and bunked.',
+                      child: QuickStatsRow(quickStats: state.quickStats)
+                          .animate()
+                          .fade(delay: 200.ms, duration: 400.ms)
+                          .slideY(
+                              begin: 0.1,
+                              delay: 200.ms,
+                              duration: 400.ms,
+                              curve: Curves.easeOutQuad),
+                    ),
                   ),
 
                   // Upcoming Deadlines Section
@@ -222,20 +310,23 @@ class DashboardScreen extends ConsumerWidget {
 
                   // Today's Schedule Section
                   SliverToBoxAdapter(
-                    child: Padding(
-                      padding: const EdgeInsets.fromLTRB(16, 24, 16, 8),
-                      child: Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                        children: [
-                          Text(
-                            "Today's Schedule",
-                            style: Theme.of(context)
-                                .textTheme
-                                .titleLarge
-                                ?.copyWith(
-                                  fontWeight: FontWeight.bold,
-                                ),
-                          ),
+                    child: Showcase(
+                      key: _scheduleKey,
+                      description: 'Manage today\'s classes. Mark attendance directly from here.',
+                      child: Padding(
+                        padding: const EdgeInsets.fromLTRB(16, 24, 16, 8),
+                        child: Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                          children: [
+                            Text(
+                              "Today's Schedule",
+                              style: Theme.of(context)
+                                  .textTheme
+                                  .titleLarge
+                                  ?.copyWith(
+                                    fontWeight: FontWeight.bold,
+                                  ),
+                            ),
                           if (pendingLectures.isNotEmpty ||
                               markedLectures.isNotEmpty)
                             IconButton(
@@ -252,10 +343,11 @@ class DashboardScreen extends ConsumerWidget {
                       ),
                     ),
                   ),
+                ),
 
-                  // Next Class Card (if there's a pending class)
-                  if (pendingLectures.isNotEmpty)
-                    SliverToBoxAdapter(
+                // Next Class Card (if there's a pending class)
+                if (pendingLectures.isNotEmpty)
+                  SliverToBoxAdapter(
                       child: NextClassCard(
                         lecture: pendingLectures.first,
                         onMarkAttendance: () {

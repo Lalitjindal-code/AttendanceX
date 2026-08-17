@@ -5,6 +5,7 @@ import '../../../core/constants/app_spacing.dart';
 import '../../settings/providers/semester_provider.dart';
 import '../../college/providers/college_auth_provider.dart';
 import '../../college/data/college_data.dart';
+import '../../../scripts/import_aids_1st_sem.dart';
 
 class OnboardingSemesterForm extends ConsumerStatefulWidget {
   final VoidCallback onComplete;
@@ -73,6 +74,10 @@ class _OnboardingSemesterFormState
           .read(semesterStateProvider.notifier)
           .updateSemester(name, _selectedDate ?? DateTime.now());
 
+      if (isCollegeUser && _selectedSemester == 1 && _selectedBranch == 'AIADS') {
+        await ImportAids1stSem.run();
+      }
+
       widget.onComplete();
     } catch (e) {
       if (mounted) {
@@ -134,7 +139,13 @@ class _OnboardingSemesterFormState
                         labelText: 'Branch',
                         prefixIcon: Icon(Icons.class_outlined)),
                     items: CollegeData.branches
-                        .map((b) => DropdownMenuItem(value: b, child: Text(b)))
+                        .map((b) {
+                          final isAvailable = _selectedSemester == 1 && b == 'AIADS';
+                          return DropdownMenuItem(
+                            value: b, 
+                            child: Text(isAvailable ? '$b (Available)' : b)
+                          );
+                        })
                         .toList(),
                     onChanged: (val) => setState(() => _selectedBranch = val!),
                   ),

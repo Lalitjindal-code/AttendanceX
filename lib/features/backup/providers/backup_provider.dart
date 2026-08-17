@@ -1,3 +1,4 @@
+import 'dart:typed_data';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 import 'package:isar/isar.dart';
 import '../../../database/database_providers.dart';
@@ -45,6 +46,106 @@ class BackupController extends _$BackupController {
 
       await _engine.exportBackup(
         path: customPath,
+        profiles: profiles,
+        semesters: semesters,
+        subjects: subjects,
+        schedules: schedules,
+        attendanceRecords: attendances,
+        attendanceHistory: history,
+        tasks: tasks,
+        settings: currentSettings,
+        appVersion: '1.0.0', // Standardize app version
+        databaseVersion: 1,
+        onProgress: (progress) {
+          state = progress;
+        },
+      );
+    } finally {
+      state = null;
+    }
+  }
+
+  Future<Uint8List> generateBackupBytes() async {
+    state = 0.0;
+    try {
+      final isar = ref.read(isarProvider);
+      final profiles = await isar.profiles.where().findAll();
+      final semesters = await isar.semesters.where().findAll();
+      final subjects = await isar.subjects.where().findAll();
+      final schedules = await isar.schedules.where().findAll();
+      final attendances = await isar.attendances.where().findAll();
+      final history = await isar.attendanceHistorys.where().findAll();
+      final tasks = await isar.academicTasks.where().findAll();
+      final currentSettings = ref.read(settingsProvider);
+
+      return await _engine.getBackupBytes(
+        profiles: profiles,
+        semesters: semesters,
+        subjects: subjects,
+        schedules: schedules,
+        attendanceRecords: attendances,
+        attendanceHistory: history,
+        tasks: tasks,
+        settings: currentSettings,
+        appVersion: '1.0.0', // Standardize app version
+        databaseVersion: 1,
+        onProgress: (progress) {
+          state = progress;
+        },
+      );
+    } finally {
+      state = null;
+    }
+  }
+
+  Future<void> createJsonBackup(String customPath) async {
+    state = 0.0;
+    try {
+      final isar = ref.read(isarProvider);
+      final profiles = await isar.profiles.where().findAll();
+      final semesters = await isar.semesters.where().findAll();
+      final subjects = await isar.subjects.where().findAll();
+      final schedules = await isar.schedules.where().findAll();
+      final attendances = await isar.attendances.where().findAll();
+      final history = await isar.attendanceHistorys.where().findAll();
+      final tasks = await isar.academicTasks.where().findAll();
+      final currentSettings = ref.read(settingsProvider);
+
+      await _engine.exportJsonBackup(
+        path: customPath,
+        profiles: profiles,
+        semesters: semesters,
+        subjects: subjects,
+        schedules: schedules,
+        attendanceRecords: attendances,
+        attendanceHistory: history,
+        tasks: tasks,
+        settings: currentSettings,
+        appVersion: '1.0.0', // Standardize app version
+        databaseVersion: 1,
+        onProgress: (progress) {
+          state = progress;
+        },
+      );
+    } finally {
+      state = null;
+    }
+  }
+
+  Future<Uint8List> generateJsonBackupBytes() async {
+    state = 0.0;
+    try {
+      final isar = ref.read(isarProvider);
+      final profiles = await isar.profiles.where().findAll();
+      final semesters = await isar.semesters.where().findAll();
+      final subjects = await isar.subjects.where().findAll();
+      final schedules = await isar.schedules.where().findAll();
+      final attendances = await isar.attendances.where().findAll();
+      final history = await isar.attendanceHistorys.where().findAll();
+      final tasks = await isar.academicTasks.where().findAll();
+      final currentSettings = ref.read(settingsProvider);
+
+      return await _engine.getJsonBackupBytes(
         profiles: profiles,
         semesters: semesters,
         subjects: subjects,

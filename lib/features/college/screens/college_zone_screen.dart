@@ -3,7 +3,9 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import '../../../core/constants/app_spacing.dart';
 import '../data/college_data.dart';
-
+import '../../../scripts/import_aids_1st_sem.dart';
+import '../../settings/providers/semester_provider.dart';
+import '../../../navigation/app_routes.dart';
 class CollegeZoneScreen extends ConsumerStatefulWidget {
   const CollegeZoneScreen({super.key});
 
@@ -94,15 +96,39 @@ class _CollegeZoneScreenState extends ConsumerState<CollegeZoneScreen> {
           child: ListTile(
             contentPadding: const EdgeInsets.symmetric(
                 horizontal: AppSpacing.lg, vertical: AppSpacing.xs),
-            title: Text(branch,
+            title: Text(
+                (_selectedSemester == 1 && branch == 'AIADS') ? '$branch (Available)' : branch,
                 style: TextStyle(
-                    color: Theme.of(context).colorScheme.onSurface,
+                    color: (_selectedSemester == 1 && branch == 'AIADS') 
+                        ? Colors.green 
+                        : Theme.of(context).colorScheme.onSurface,
                     fontSize: 16,
                     fontWeight: FontWeight.w600)),
             trailing: Icon(Icons.download_rounded,
                 color: Theme.of(context).colorScheme.primary),
-            onTap: () {
-              _showComingSoonDialog(branch);
+            onTap: () async {
+              if (_selectedSemester == 1 && branch == 'AIADS') {
+                showDialog(
+                  context: context,
+                  barrierDismissible: false,
+                  builder: (context) => const Center(child: CircularProgressIndicator()),
+                );
+                
+                // Ensure name and start date are set correctly
+                await ref.read(semesterStateProvider.notifier).updateSemester(
+                      'B.Tech AI&DS 1st Sem',
+                      DateTime(2026, 8, 17),
+                    );
+
+                await ImportAids1stSem.run();
+                
+                if (mounted) {
+                  Navigator.pop(context); // hide loading
+                  context.go(AppRoutes.dashboard); // or show success toast
+                }
+              } else {
+                _showComingSoonDialog(branch);
+              }
             },
           ),
         );
@@ -132,11 +158,22 @@ class _CollegeZoneScreenState extends ConsumerState<CollegeZoneScreen> {
         actions: [
           TextButton(
             onPressed: () => Navigator.pop(context),
-            child: Text('Okay',
+            child: Text('Cancel',
                 style: TextStyle(
-                    color: Theme.of(context).colorScheme.primary,
+                    color: Theme.of(context).colorScheme.onSurface.withValues(alpha: 0.6),
                     fontWeight: FontWeight.bold,
                     fontSize: 16)),
+          ),
+          FilledButton(
+            onPressed: () {
+              Navigator.pop(context); // Close dialog
+              context.push(AppRoutes.requestTimetable, extra: {
+                'branch': branch,
+                'semester': _selectedSemester.toString(),
+              });
+            },
+            child: const Text('Upload Timetable',
+                style: TextStyle(fontWeight: FontWeight.bold, fontSize: 16)),
           ),
         ],
       ),

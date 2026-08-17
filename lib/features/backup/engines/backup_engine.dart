@@ -99,9 +99,148 @@ class BackupEngine {
     final backupModel = BackupModel.fromMap(map);
     return backupModel;
   }
+
+  /// Generates a readable JSON backup and writes it to [path].
+  Future<void> exportJsonBackup({
+    required String path,
+    required List<Profile> profiles,
+    required List<Semester> semesters,
+    required List<Subject> subjects,
+    required List<Schedule> schedules,
+    required List<Attendance> attendanceRecords,
+    required List<AttendanceHistory> attendanceHistory,
+    required List<AcademicTask> tasks,
+    required AppSettings settings,
+    required String appVersion,
+    required int databaseVersion,
+    void Function(double)? onProgress,
+  }) async {
+    onProgress?.call(0.1);
+
+    final backupModel = BackupModel(
+      metadata: BackupMetadata(
+        version: 1,
+        appVersion: appVersion,
+        databaseVersion: databaseVersion,
+        createdAt: DateTime.now(),
+        platform: Platform.operatingSystem,
+        checksum: '',
+        compressionType: 'none',
+      ),
+      profiles: profiles,
+      semesters: semesters,
+      subjects: subjects,
+      schedules: schedules,
+      attendanceRecords: attendanceRecords,
+      attendanceHistory: attendanceHistory,
+      tasks: tasks,
+      settings: settings,
+    );
+
+    onProgress?.call(0.3);
+
+    final jsonBytes = await compute(_serializeJson, backupModel.toMap());
+
+    onProgress?.call(0.8);
+
+    await _repository.writeBackup(path, jsonBytes);
+
+    onProgress?.call(1.0);
+  }
+
+  Future<Uint8List> getJsonBackupBytes({
+    required List<Profile> profiles,
+    required List<Semester> semesters,
+    required List<Subject> subjects,
+    required List<Schedule> schedules,
+    required List<Attendance> attendanceRecords,
+    required List<AttendanceHistory> attendanceHistory,
+    required List<AcademicTask> tasks,
+    required AppSettings settings,
+    required String appVersion,
+    required int databaseVersion,
+    void Function(double)? onProgress,
+  }) async {
+    onProgress?.call(0.1);
+
+    final backupModel = BackupModel(
+      metadata: BackupMetadata(
+        version: 1,
+        appVersion: appVersion,
+        databaseVersion: databaseVersion,
+        createdAt: DateTime.now(),
+        platform: Platform.operatingSystem,
+        checksum: '',
+        compressionType: 'none',
+      ),
+      profiles: profiles,
+      semesters: semesters,
+      subjects: subjects,
+      schedules: schedules,
+      attendanceRecords: attendanceRecords,
+      attendanceHistory: attendanceHistory,
+      tasks: tasks,
+      settings: settings,
+    );
+
+    onProgress?.call(0.5);
+
+    final jsonBytes = await compute(_serializeJson, backupModel.toMap());
+
+    onProgress?.call(1.0);
+    return Uint8List.fromList(jsonBytes);
+  }
+
+  Future<Uint8List> getBackupBytes({
+    required List<Profile> profiles,
+    required List<Semester> semesters,
+    required List<Subject> subjects,
+    required List<Schedule> schedules,
+    required List<Attendance> attendanceRecords,
+    required List<AttendanceHistory> attendanceHistory,
+    required List<AcademicTask> tasks,
+    required AppSettings settings,
+    required String appVersion,
+    required int databaseVersion,
+    void Function(double)? onProgress,
+  }) async {
+    onProgress?.call(0.1);
+
+    final backupModel = BackupModel(
+      metadata: BackupMetadata(
+        version: 1,
+        appVersion: appVersion,
+        databaseVersion: databaseVersion,
+        createdAt: DateTime.now(),
+        platform: Platform.operatingSystem,
+        checksum: '',
+        compressionType: 'gzip',
+      ),
+      profiles: profiles,
+      semesters: semesters,
+      subjects: subjects,
+      schedules: schedules,
+      attendanceRecords: attendanceRecords,
+      attendanceHistory: attendanceHistory,
+      tasks: tasks,
+      settings: settings,
+    );
+
+    onProgress?.call(0.3);
+
+    final compressedBytes = await compute(_compressBackup, backupModel.toMap());
+
+    onProgress?.call(1.0);
+    return Uint8List.fromList(compressedBytes);
+  }
 }
 
 // ── Isolates ─────────────────────────────────────────────────────────────────
+
+List<int> _serializeJson(Map<String, dynamic> rawMap) {
+  final jsonString = const JsonEncoder.withIndent('  ').convert(rawMap);
+  return utf8.encode(jsonString);
+}
 
 List<int> _compressBackup(Map<String, dynamic> rawMap) {
   // First, serialize to JSON string
@@ -124,27 +263,47 @@ List<int> _compressBackup(Map<String, dynamic> rawMap) {
 }
 
 Map<String, dynamic> _decompressBackup(List<int> compressedBytes) {
-  // Decompress GZIP
-  final decompressedBytes = gzip.decode(compressedBytes);
-  final jsonString = utf8.decode(decompressedBytes);
+  String jsonString;
+  
+  try {
+    // Try to Decompress GZIP
+    final decompressedBytes = gzip.decode(compressedBytes);
+    jsonString = utf8.decode(decompressedBytes);
+  } catch (e) {
+    // Fallback to plain JSON (for .json backups)
+    try {
+      jsonString = utf8.decode(compressedBytes);
+    } catch (_) {
+      throw Exception('Invalid backup format: Not GZIP and not valid UTF-8 JSON.');
+    }
+  }
 
   // Decode JSON
   final map = json.decode(jsonString) as Map<String, dynamic>;
 
-  // Validate checksum
-  final storedChecksum = map['metadata']['checksum'];
+  // Check if it has metadata
+  if (!map.containsKey('metadata')) {
+    throw Exception('Invalid backup format: Missing metadata.');
+  }
 
-  // Temporarily clear checksum to re-calculate
-  map['metadata']['checksum'] = '';
-  final rawJsonBytes = utf8.encode(json.encode(map));
-  final computedChecksum = sha256.convert(rawJsonBytes).toString();
+  // Validate checksum only if compressionType is 'gzip' or checksum exists and is not empty
+  final metadata = map['metadata'] as Map<String, dynamic>;
+  final compressionType = metadata['compressionType'] as String? ?? 'gzip';
+  final storedChecksum = metadata['checksum'] as String? ?? '';
 
-  // Put it back
-  map['metadata']['checksum'] = storedChecksum;
+  if (compressionType == 'gzip' && storedChecksum.isNotEmpty) {
+    // Temporarily clear checksum to re-calculate
+    map['metadata']['checksum'] = '';
+    final rawJsonBytes = utf8.encode(json.encode(map));
+    final computedChecksum = sha256.convert(rawJsonBytes).toString();
 
-  if (storedChecksum != '' && storedChecksum != computedChecksum) {
-    throw Exception(
-        'Backup checksum validation failed. The file may be corrupted.');
+    // Put it back
+    map['metadata']['checksum'] = storedChecksum;
+
+    if (storedChecksum != computedChecksum) {
+      throw Exception(
+          'Backup checksum validation failed. The file may be corrupted.');
+    }
   }
 
   return map;

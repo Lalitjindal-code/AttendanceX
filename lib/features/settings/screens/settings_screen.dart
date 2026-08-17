@@ -3,11 +3,9 @@ import 'package:attendify/services/notification_service.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
-import 'package:local_auth/local_auth.dart';
 import 'package:intl/intl.dart';
 import '../../../core/constants/app_strings.dart';
 import '../../../navigation/app_routes.dart';
-import '../../../scripts/import_timetable.dart';
 import '../providers/settings_provider.dart';
 import '../../../database/database_providers.dart';
 import '../../../database/collections/attendance_collection.dart';
@@ -22,6 +20,9 @@ import '../../college/providers/college_auth_provider.dart';
 import '../../../database/collections/subject_collection.dart';
 import '../../../services/widget_service.dart';
 import '../../subjects/providers/subject_providers.dart';
+import '../../attendance/providers/attendance_providers.dart';
+import 'package:url_launcher/url_launcher.dart';
+import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 
 class SettingsScreen extends ConsumerWidget {
   const SettingsScreen({super.key});
@@ -61,13 +62,9 @@ class SettingsScreen extends ConsumerWidget {
           const SizedBox(height: 24),
           _buildNotificationsSection(context, settings, notifier),
           const SizedBox(height: 24),
-          _buildSecuritySection(context, settings, notifier),
-          const SizedBox(height: 24),
           _buildStorageBackupSection(context, ref, settings, notifier),
           const SizedBox(height: 24),
           _buildAboutSection(context),
-          const SizedBox(height: 32),
-          _buildDangerZoneSection(context, ref),
           const SizedBox(height: 48),
         ],
       ),
@@ -641,80 +638,6 @@ class SettingsScreen extends ConsumerWidget {
     );
   }
 
-  Widget _buildSecuritySection(
-      BuildContext context, AppSettings settings, Settings notifier) {
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        _buildSectionHeader(context, 'Security'),
-        _buildSettingCard(
-          children: [
-            ListTile(
-              leading: _buildIcon(
-                  Icons.fingerprint_rounded, const Color(0xFFAB47BC)),
-              title: const Text(
-                'Biometric App Lock',
-              ),
-              subtitle: Text(
-                'Require authentication to open app',
-              ),
-              trailing: Switch(
-                value: settings.isAppLockEnabled,
-                activeTrackColor: Theme.of(context).colorScheme.primary,
-                activeThumbColor: Theme.of(context).colorScheme.onPrimary,
-                inactiveTrackColor: Theme.of(context)
-                    .colorScheme
-                    .onSurface
-                    .withValues(alpha: 0.1),
-                inactiveThumbColor: Theme.of(context)
-                    .colorScheme
-                    .onSurface
-                    .withValues(alpha: 0.4),
-                trackOutlineColor: WidgetStateProperty.all(Colors.transparent),
-                onChanged: (val) async {
-                  if (val) {
-                    // Try to authenticate before enabling
-                    final localAuth = LocalAuthentication();
-                    try {
-                      final bool canCheck =
-                          await localAuth.canCheckBiometrics ||
-                              await localAuth.isDeviceSupported();
-                      if (!canCheck) {
-                        if (context.mounted) {
-                          ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
-                              content: Text(
-                                  'Your device does not support biometric/PIN authentication.')));
-                        }
-                        return;
-                      }
-
-                      final didAuth = await localAuth.authenticate(
-                        localizedReason: 'Authenticate to enable App Lock',
-                        persistAcrossBackgrounding: true,
-                        biometricOnly: false,
-                      );
-
-                      if (didAuth) {
-                        notifier.updateIsAppLockEnabled(true);
-                      }
-                    } catch (e) {
-                      if (context.mounted) {
-                        ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-                            content: Text('Authentication error: $e')));
-                      }
-                    }
-                  } else {
-                    notifier.updateIsAppLockEnabled(false);
-                  }
-                },
-              ),
-            ),
-          ],
-        ),
-      ],
-    );
-  }
-
   Widget _buildStorageBackupSection(BuildContext context, WidgetRef ref,
       AppSettings settings, Settings notifier) {
     return Column(
@@ -837,6 +760,35 @@ class SettingsScreen extends ConsumerWidget {
                 color: Theme.of(context).colorScheme.outlineVariant, height: 1),
             ListTile(
               leading:
+                  _buildIcon(Icons.groups_rounded, const Color(0xFF4CAF50)),
+              title: const Text(
+                'Join the community',
+              ),
+              subtitle: const Text(
+                'For feedback and review',
+              ),
+              trailing: Icon(Icons.open_in_new_rounded,
+                  color: Theme.of(context)
+                      .colorScheme
+                      .onSurface
+                      .withValues(alpha: 0.3)),
+              onTap: () async {
+                final url = Uri.parse('https://chat.whatsapp.com/JuejidlVtPpFTv4E1P4SF7');
+                if (await canLaunchUrl(url)) {
+                  await launchUrl(url, mode: LaunchMode.externalApplication);
+                } else {
+                  if (context.mounted) {
+                    ScaffoldMessenger.of(context).showSnackBar(
+                      const SnackBar(content: Text('Could not open WhatsApp')),
+                    );
+                  }
+                }
+              },
+            ),
+            Divider(
+                color: Theme.of(context).colorScheme.outlineVariant, height: 1),
+            ListTile(
+              leading:
                   _buildIcon(Icons.feedback_outlined, const Color(0xFFFFA726)),
               title: const Text(
                 'Feedback',
@@ -855,104 +807,73 @@ class SettingsScreen extends ConsumerWidget {
                 color: Theme.of(context).colorScheme.outlineVariant, height: 1),
             ListTile(
               leading:
+                  _buildIcon(Icons.privacy_tip_outlined, const Color(0xFF9575CD)),
+              title: const Text(
+                'Privacy Policy',
+              ),
+              subtitle: Text(
+                'How we handle your data',
+              ),
+              trailing: Icon(Icons.open_in_new_rounded,
+                  color: Theme.of(context)
+                      .colorScheme
+                      .onSurface
+                      .withValues(alpha: 0.3)),
+              onTap: () async {
+                // TODO: Replace with your actual Privacy Policy URL
+                final url = Uri.parse('https://www.freeprivacypolicy.com/live/f06cdb75-10eb-4043-a6cd-567f13db79c2'); // Replace with your generated privacy policy link
+                if (await canLaunchUrl(url)) {
+                  await launchUrl(url, mode: LaunchMode.externalApplication);
+                }
+              },
+            ),
+            Divider(
+                color: Theme.of(context).colorScheme.outlineVariant, height: 1),
+            ListTile(
+              leading:
                   _buildIcon(Icons.favorite_rounded, const Color(0xFFFF6B8A)),
               title: const Text(
                 'Developed by',
               ),
-              subtitle: ShaderMask(
-                shaderCallback: (bounds) => const LinearGradient(
-                  colors: [Color(0xFF7E73FF), Color(0xFFFF6B8A)],
-                ).createShader(bounds),
-                child: const Text(
-                  'Lallit Jindal',
-                  style: TextStyle(
-                    color: Colors.white,
-                    fontWeight: FontWeight.bold,
-                    fontSize: 15,
+              subtitle: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  ShaderMask(
+                    shaderCallback: (bounds) => const LinearGradient(
+                      colors: [Color(0xFF7E73FF), Color(0xFFFF6B8A)],
+                    ).createShader(bounds),
+                    child: const Text(
+                      'Lalit Jindal',
+                      style: TextStyle(
+                        color: Colors.white,
+                        fontWeight: FontWeight.bold,
+                        fontSize: 15,
+                      ),
+                    ),
                   ),
-                ),
+                  const SizedBox(height: 12),
+                  Row(
+                    children: [
+                      InkWell(
+                        onTap: () => launchUrl(Uri.parse('https://www.linkedin.com/in/lalitjindal-ai/'), mode: LaunchMode.externalApplication),
+                        child: const FaIcon(FontAwesomeIcons.linkedin, size: 22, color: Color(0xFF0A66C2)),
+                      ),
+                      const SizedBox(width: 16),
+                      InkWell(
+                        onTap: () => launchUrl(Uri.parse('https://github.com/Lalitjindal-code'), mode: LaunchMode.externalApplication),
+                        child: const FaIcon(FontAwesomeIcons.github, size: 22, color: Colors.grey),
+                      ),
+                      const SizedBox(width: 16),
+                      InkWell(
+                        onTap: () => launchUrl(Uri.parse('https://www.instagram.com/lalitjindal__/'), mode: LaunchMode.externalApplication),
+                        child: const FaIcon(FontAwesomeIcons.instagram, size: 22, color: Color(0xFFE1306C)),
+                      ),
+                    ],
+                  ),
+                ],
               ),
             ),
           ],
-        ),
-      ],
-    );
-  }
-
-  Widget _buildDangerZoneSection(BuildContext context, WidgetRef ref) {
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        Padding(
-          padding: const EdgeInsets.only(left: 8, bottom: 12),
-          child: Text(
-            'DANGER ZONE',
-            style: TextStyle(
-              color: const Color(0xFFFF5F5F).withValues(alpha: 0.8),
-              fontWeight: FontWeight.bold,
-              letterSpacing: 1.2,
-              fontSize: 12,
-            ),
-          ),
-        ),
-        Container(
-          decoration: BoxDecoration(
-            color: const Color(0xFFFF5F5F).withValues(alpha: 0.05),
-            borderRadius: BorderRadius.circular(20),
-            border: Border.all(
-                color: const Color(0xFFFF5F5F).withValues(alpha: 0.3)),
-          ),
-          child: Column(
-            children: [
-              ListTile(
-                leading: _buildIcon(
-                    Icons.delete_outline_rounded, const Color(0xFFFF5F5F)),
-                title: const Text('Clear Today\'s Attendance',
-                    style: TextStyle(
-                        color: Color(0xFFFF5F5F), fontWeight: FontWeight.bold)),
-                subtitle: Text('Deletes all attendance marked today',
-                    style: TextStyle(
-                        color: const Color(0xFFFF5F5F).withValues(alpha: 0.6))),
-                onTap: () async {
-                  final isar = ref.read(isarProvider);
-                  final now = DateTime.now();
-                  final todayUtc = DateTime.utc(now.year, now.month, now.day);
-                  await isar.writeTxn(() async {
-                    await isar.attendances
-                        .filter()
-                        .dateEqualTo(todayUtc)
-                        .deleteAll();
-                  });
-                  WidgetService.instance.updateWidget();
-                  if (context.mounted) {
-                    ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
-                        content: Text('Cleared today\'s attendance!')));
-                  }
-                },
-              ),
-              Divider(
-                  color: const Color(0xFFFF5F5F).withValues(alpha: 0.2),
-                  height: 1),
-              ListTile(
-                leading:
-                    _buildIcon(Icons.download_rounded, const Color(0xFFEF5350)),
-                title: const Text(
-                  'Import Timetable',
-                ),
-                subtitle: Text(
-                  'Warning: Overwrites existing schedule',
-                ),
-                onTap: () async {
-                  await ImportTimetable.run();
-                  if (context.mounted) {
-                    ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
-                        content: Text(
-                            'Timetable Imported! Restart app if needed.')));
-                  }
-                },
-              ),
-            ],
-          ),
         ),
       ],
     );

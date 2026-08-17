@@ -7,6 +7,7 @@ import '../../../engines/subject_validator.dart';
 import '../providers/subject_providers.dart';
 import '../widgets/subject_color_picker.dart';
 import '../../settings/providers/semester_provider.dart';
+import '../../../core/ads/interstitial_ad_manager.dart';
 
 class SubjectFormSheet extends ConsumerStatefulWidget {
   final int? subjectId;
@@ -114,7 +115,12 @@ class _SubjectFormSheetState extends ConsumerState<SubjectFormSheet> {
       } else {
         await repo.update(subject);
       }
-      if (mounted) Navigator.of(context).pop();
+      InterstitialAdManager.instance.showAdIfAvailable(
+        feature: 'subject_save',
+        onNavigation: () {
+          if (mounted) Navigator.of(context).pop();
+        },
+      );
     } on AppException catch (e) {
       if (mounted) {
         ScaffoldMessenger.of(context)
