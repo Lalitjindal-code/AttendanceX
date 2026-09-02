@@ -1,5 +1,6 @@
 import 'dart:io';
 import 'package:isar/isar.dart';
+import 'package:package_info_plus/package_info_plus.dart';
 import 'package:path_provider/path_provider.dart';
 import '../engines/backup_engine.dart';
 import '../repositories/local_storage_repository.dart';
@@ -111,7 +112,7 @@ class BackupRestoreService {
       attendanceHistory: history,
       tasks: tasks,
       settings: currentSettings,
-      appVersion: '1.0.0', // TODO: Get real app version
+      appVersion: (await PackageInfo.fromPlatform()).version,
       databaseVersion: 1,
     );
 

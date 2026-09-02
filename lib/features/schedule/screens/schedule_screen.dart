@@ -13,6 +13,9 @@ import 'schedule_form_screen.dart';
 import '../../../core/utils/haptics.dart';
 import 'package:flutter/rendering.dart';
 import '../../../core/widgets/banner_ad_widget.dart';
+import 'ocr_import_screen.dart';
+import 'package:showcaseview/showcaseview.dart';
+import '../../tutorials/providers/tutorial_provider.dart';
 
 class ScheduleScreen extends ConsumerStatefulWidget {
   const ScheduleScreen({super.key});
@@ -25,6 +28,7 @@ class _ScheduleScreenState extends ConsumerState<ScheduleScreen> {
   final ScrollController _scrollController = ScrollController();
   int _currentDayIndex = 0;
   bool _isFabExtended = true;
+  final GlobalKey _importScheduleKey = GlobalKey();
 
   @override
   void initState() {
@@ -37,6 +41,13 @@ class _ScheduleScreenState extends ConsumerState<ScheduleScreen> {
       _currentDayIndex = 0;
     }
     _scrollController.addListener(_onScroll);
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      final hasShown = ref.read(scheduleTutorialNotifierProvider);
+      if (!hasShown) {
+        ShowCaseWidget.of(context).startShowCase([_importScheduleKey]);
+        ref.read(scheduleTutorialNotifierProvider.notifier).markShown();
+      }
+    });
   }
 
   @override
@@ -91,6 +102,20 @@ class _ScheduleScreenState extends ConsumerState<ScheduleScreen> {
               iconTheme:
                   IconThemeData(color: Theme.of(context).colorScheme.onSurface),
               actions: [
+                Showcase(
+                  key: _importScheduleKey,
+                  description: 'Tap here to import your timetable from a photo',
+                  child: IconButton(
+                    icon: Icon(Icons.document_scanner_outlined,
+                        color: Theme.of(context).colorScheme.onSurface),
+                    tooltip: 'Import from Photo',
+                    onPressed: () => Navigator.of(context).push(
+                      MaterialPageRoute(
+                        builder: (_) => const OcrImportScreen(),
+                      ),
+                    ),
+                  ),
+                ),
                 if (subjectsAsync.valueOrNull?.isNotEmpty == true)
                   IconButton(
                     icon: Icon(Icons.add,

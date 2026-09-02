@@ -1,0 +1,490 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>AttendifyX — Smart Attendance Tracker for College Students</title>
+  <meta name="description" content="AttendifyX is a premium, offline-first Android app for college students to track attendance, predict safe bunks, manage timetables, and mark exam days. 100% free. No login required." />
+  <meta name="keywords" content="attendance tracker, college attendance app, attendance calculator, bunk calculator, timetable app, flutter attendance app, AttendifyX" />
+  <meta name="author" content="Lalit Jindal" />
+  <meta property="og:title" content="AttendifyX — Smart Attendance Tracker" />
+  <meta property="og:description" content="Never miss a class — or attend one too many. Premium offline attendance tracker for students." />
+  <meta property="og:type" content="website" />
+  <meta name="theme-color" content="#6366f1" />
+
+  <!-- AdSense Script — Replace ca-pub-XXXXXXXXX with your publisher ID -->
+  <!-- <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-XXXXXXXXXXXXXXXXX" crossorigin="anonymous"></script> -->
+
+  <link rel="stylesheet" href="style.css" />
+
+  <link rel="icon" type="image/png" href="icon.png" />
+</head>
+<body>
+
+<!-- ── Animated Background ── -->
+<div class="bg-gradient"></div>
+<canvas id="particles-canvas"></canvas>
+
+<!-- ════════════════════════════════════════════════
+     NAVIGATION
+════════════════════════════════════════════════ -->
+<nav id="main-nav" role="navigation" aria-label="Main navigation">
+  <a href="#" class="nav-logo" aria-label="AttendifyX Home">
+    <img src="icon.png" alt="AttendifyX App Icon" />
+    <span>AttendifyX</span>
+  </a>
+
+  <ul class="nav-links">
+    <li><a href="#features">Features</a></li>
+    <li><a href="#screenshots">Screenshots</a></li>
+    <li><a href="#releases">Releases</a></li>
+    <li><a href="https://github.com/Lalitjindal-code/AttendanceX" target="_blank" rel="noopener">GitHub</a></li>
+    <li>
+      <a href="https://github.com/Lalitjindal-code/AttendanceX/releases/download/v1.1.0-beta.3/app-release.apk"
+         class="btn-nav-cta" id="nav-download-btn" aria-label="Download AttendifyX APK">
+        ⬇ Download Free
+      </a>
+    </li>
+  </ul>
+
+  <button class="hamburger" id="hamburger-btn" aria-label="Toggle mobile menu" aria-expanded="false">
+    <span></span><span></span><span></span>
+  </button>
+</nav>
+
+<!-- Mobile Menu -->
+<div class="mobile-menu" id="mobile-menu" role="dialog" aria-label="Mobile navigation">
+  <a href="#features">Features</a>
+  <a href="#screenshots">Screenshots</a>
+  <a href="#releases">Releases</a>
+  <a href="https://github.com/Lalitjindal-code/AttendanceX" target="_blank" rel="noopener">GitHub ↗</a>
+  <a href="https://github.com/Lalitjindal-code/AttendanceX/releases/download/v1.1.0-beta.3/app-release.apk"
+     id="mobile-download-btn">⬇ Download Free APK</a>
+</div>
+
+<!-- ════════════════════════════════════════════════
+     HERO
+════════════════════════════════════════════════ -->
+<main>
+<section class="hero" id="hero" aria-label="Hero section">
+  <!-- Left: Text -->
+  <div class="hero-content">
+    <div class="hero-badge reveal">
+      <span class="pulse"></span>
+      Now Available — v1.1.0
+    </div>
+
+    <h1 class="hero-title reveal reveal-delay-1">
+      Never Miss a Class<br/>
+      — Or Attend<br/>
+      <span class="gradient-text">One Too Many.</span>
+    </h1>
+
+    <p class="hero-subtitle reveal reveal-delay-2">
+      AttendifyX is a premium, offline-first attendance tracker built for college students.
+      Smart analytics, exam day marking, safe bunk predictions — all without an internet connection.
+    </p>
+
+    <div class="hero-cta-group reveal reveal-delay-3">
+      <a href="https://github.com/Lalitjindal-code/AttendanceX/releases/download/v1.1.0-beta.3/app-release.apk"
+         class="btn-primary" id="hero-download-btn" aria-label="Download AttendifyX v1.1.0 APK">
+        ⬇ Download APK
+        <span class="version-tag">v1.1.0</span>
+      </a>
+      <a href="https://github.com/Lalitjindal-code/AttendanceX" target="_blank" rel="noopener"
+         class="btn-secondary" id="hero-github-btn">
+        ⭐ View on GitHub
+      </a>
+    </div>
+
+    <div class="hero-stats reveal reveal-delay-4">
+      <div class="stat-item">
+        <span class="stat-value" data-count="100" data-suffix="%">0%</span>
+        <span class="stat-label">Free Forever</span>
+      </div>
+      <div class="stat-divider"></div>
+      <div class="stat-item">
+        <span class="stat-value">Zero</span>
+        <span class="stat-label">Login Required</span>
+      </div>
+      <div class="stat-divider"></div>
+      <div class="stat-item">
+        <span class="stat-value">Offline</span>
+        <span class="stat-label">First Architecture</span>
+      </div>
+      <div class="stat-divider"></div>
+      <div class="stat-item">
+        <span class="stat-value" data-count="89" data-suffix="+">0+</span>
+        <span class="stat-label">Unit Tests</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- Right: Phone Mockup -->
+  <div class="hero-visual">
+    <div class="phone-mockup-wrapper">
+      <div class="phone-glow"></div>
+      <div class="phone-frame" role="img" aria-label="AttendifyX app screenshots">
+        <div class="phone-notch"></div>
+        <div class="phone-screen">
+          <div class="phone-screen-carousel" id="phone-carousel">
+            <img src="screenshot/dashboard.jpg" alt="AttendifyX Dashboard" loading="eager" />
+            <img src="screenshot/analytics.jpg" alt="AttendifyX Analytics" loading="lazy" />
+            <img src="screenshot/calender.jpg" alt="AttendifyX Calendar" loading="lazy" />
+            <img src="screenshot/schedule.jpg" alt="AttendifyX Schedule" loading="lazy" />
+          </div>
+        </div>
+      </div>
+
+      <!-- Floating Chips -->
+      <div class="hero-chip chip-1">
+        <span class="chip-icon">✅</span> 84.5% Present
+      </div>
+      <div class="hero-chip chip-2">
+        <span class="chip-icon">🎯</span> 3 Safe Bunks
+      </div>
+      <div class="hero-chip chip-3">
+        <span class="chip-icon">📅</span> Exam Day Marked
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ════════════════════════════════════════════════
+     AD SLOT 1 — Leaderboard (Below Hero)
+════════════════════════════════════════════════ -->
+<div class="ad-section" aria-hidden="true">
+  <div class="ad-unit" id="ad-leaderboard-hero">
+    <!-- AdSense Leaderboard 728x90 -->
+    <!--
+    <ins class="adsbygoogle"
+         style="display:block"
+         data-ad-client="ca-pub-XXXXXXXXXXXXXXXXX"
+         data-ad-slot="XXXXXXXXXX"
+         data-ad-format="auto"
+         data-full-width-responsive="true"></ins>
+    <script>(adsbygoogle = window.adsbygoogle || []).push({});</script>
+    -->
+    <!-- Placeholder visible before AdSense activated -->
+    <span>Ad · Sponsored</span>
+  </div>
+</div>
+
+<!-- ════════════════════════════════════════════════
+     FEATURES
+════════════════════════════════════════════════ -->
+<section class="section" id="features" aria-labelledby="features-heading">
+  <div class="section-header">
+    <span class="section-eyebrow reveal">✦ Core Features</span>
+    <h2 class="section-title reveal reveal-delay-1" id="features-heading">
+      Everything a Student Needs
+    </h2>
+    <p class="section-sub reveal reveal-delay-2">
+      Powerful tools to keep your attendance on track — from smart dashboards to exam day marking.
+    </p>
+  </div>
+
+  <div class="features-grid">
+    <div class="feature-card reveal reveal-delay-1">
+      <div class="feature-icon-wrap violet">📊</div>
+      <h3 class="feature-title">Smart Dashboard</h3>
+      <p class="feature-desc">
+        See today's full class schedule at a glance. Mark attendance with one tap. Dashboard auto-splits
+        pending and marked lectures with live attendance percentage.
+      </p>
+    </div>
+
+    <div class="feature-card reveal reveal-delay-2">
+      <div class="feature-icon-wrap cyan">🧠</div>
+      <h3 class="feature-title">Prediction Engine</h3>
+      <p class="feature-desc">
+        Know exactly how many classes you can safely skip. Get real-time predictions on safe bunks,
+        classes needed, and end-of-semester projected attendance.
+      </p>
+    </div>
+
+    <div class="feature-card reveal reveal-delay-3">
+      <div class="feature-icon-wrap green">⚡</div>
+      <h3 class="feature-title">100% Offline First</h3>
+      <p class="feature-desc">
+        Built on Isar NoSQL — the fastest Flutter database. All data lives on your phone. Zero internet
+        required. Sub-100ms response times guaranteed.
+      </p>
+    </div>
+
+    <div class="feature-card reveal reveal-delay-1">
+      <div class="feature-icon-wrap orange">📅</div>
+      <h3 class="feature-title">Calendar & Timetable</h3>
+      <p class="feature-desc">
+        Set up your weekly timetable once and forget. The app auto-generates today's classes every day.
+        View full attendance history on a color-coded calendar.
+      </p>
+    </div>
+
+    <div class="feature-card reveal reveal-delay-2">
+      <div class="feature-icon-wrap red">🎓</div>
+      <h3 class="feature-title">Exam Day Marking</h3>
+      <p class="feature-desc">
+        Mark Mid Sem 1, Mid Sem 2, End Sem, and Practical Exam days. Exam days are intelligently excluded
+        from regular attendance calculations automatically.
+      </p>
+    </div>
+
+    <div class="feature-card reveal reveal-delay-3">
+      <div class="feature-icon-wrap pink">🔔</div>
+      <h3 class="feature-title">Smart Notifications</h3>
+      <p class="feature-desc">
+        Timely reminders before each class. Attendance shortage alerts. Goal achievement celebrations.
+        Auto daily backups keep your data safe.
+      </p>
+    </div>
+  </div>
+</section>
+
+<!-- ════════════════════════════════════════════════
+     SCREENSHOTS
+════════════════════════════════════════════════ -->
+<section class="screenshots-section" id="screenshots" aria-labelledby="screenshots-heading">
+  <div class="section-header">
+    <span class="section-eyebrow reveal">✦ App Screenshots</span>
+    <h2 class="section-title reveal reveal-delay-1" id="screenshots-heading">
+      Beautiful by Design
+    </h2>
+    <p class="section-sub reveal reveal-delay-2">
+      Material 3 design with smooth 60fps animations, haptic feedback, and a strict dark-first UI.
+    </p>
+  </div>
+
+  <div class="screenshots-track" id="screenshots-track" role="list" aria-label="App screenshots">
+    <div class="screenshot-card" role="listitem">
+      <img src="screenshot/dashboard.jpg" alt="AttendifyX Dashboard" loading="lazy" />
+    </div>
+    <div class="screenshot-card" role="listitem">
+      <img src="screenshot/analytics.jpg" alt="AttendifyX Analytics" loading="lazy" />
+    </div>
+    <div class="screenshot-card" role="listitem">
+      <img src="screenshot/calender.jpg" alt="AttendifyX Calendar" loading="lazy" />
+    </div>
+    <div class="screenshot-card" role="listitem">
+      <img src="screenshot/subjects.jpg" alt="AttendifyX Subjects" loading="lazy" />
+    </div>
+    <div class="screenshot-card" role="listitem">
+      <img src="screenshot/schedule.jpg" alt="AttendifyX Schedule" loading="lazy" />
+    </div>
+    <div class="screenshot-card" role="listitem">
+      <img src="screenshot/bunk simulator.jpg" alt="AttendifyX Bunk Simulator" loading="lazy" />
+    </div>
+    <div class="screenshot-card" role="listitem">
+      <img src="screenshot/planner.jpg" alt="AttendifyX Planner" loading="lazy" />
+    </div>
+    <div class="screenshot-card" role="listitem">
+      <img src="screenshot/more screen.jpg" alt="AttendifyX More" loading="lazy" />
+    </div>
+    <div class="screenshot-card" role="listitem">
+      <img src="screenshot/setting.jpg" alt="AttendifyX Settings" loading="lazy" />
+    </div>
+  </div>
+
+  <!-- Scroll hint + dots -->
+  <div class="screenshots-dots" id="screenshots-dots" aria-hidden="true">
+    <span class="active"></span>
+    <span></span>
+    <span></span>
+    <span></span>
+    <span></span>
+    <span></span>
+    <span></span>
+    <span></span>
+    <span></span>
+  </div>
+  <p style="text-align:center;font-size:.75rem;color:var(--text-muted);margin-top:.75rem;letter-spacing:.05em;">
+    ← Swipe or drag to explore →
+  </p>
+</section>
+
+<!-- ════════════════════════════════════════════════
+     AD SLOT 2 — Rectangle (Mid-page)
+════════════════════════════════════════════════ -->
+<div class="ad-mid" aria-hidden="true">
+  <div class="ad-mid-inner">
+    <div class="ad-unit ad-unit-rect" id="ad-rect-mid">
+      <!-- AdSense Rectangle 300x250 -->
+      <!--
+      <ins class="adsbygoogle"
+           style="display:block"
+           data-ad-client="ca-pub-XXXXXXXXXXXXXXXXX"
+           data-ad-slot="XXXXXXXXXX"
+           data-ad-format="rectangle"></ins>
+      <script>(adsbygoogle = window.adsbygoogle || []).push({});</script>
+      -->
+      <span>Ad · Sponsored</span>
+    </div>
+    <div class="ad-unit ad-unit-rect" id="ad-rect-mid-2">
+      <!--
+      <ins class="adsbygoogle"
+           style="display:block"
+           data-ad-client="ca-pub-XXXXXXXXXXXXXXXXX"
+           data-ad-slot="XXXXXXXXXX"
+           data-ad-format="rectangle"></ins>
+      <script>(adsbygoogle = window.adsbygoogle || []).push({});</script>
+      -->
+      <span>Ad · Sponsored</span>
+    </div>
+  </div>
+</div>
+
+<!-- ════════════════════════════════════════════════
+     RELEASES
+════════════════════════════════════════════════ -->
+<section class="releases-section" id="releases" aria-labelledby="releases-heading">
+  <div class="section-header">
+    <span class="section-eyebrow reveal">✦ Release History</span>
+    <h2 class="section-title reveal reveal-delay-1" id="releases-heading">
+      All Versions
+    </h2>
+    <p class="section-sub reveal reveal-delay-2">
+      Full changelog for every release. Direct APK downloads — no account, no Play Store.
+    </p>
+  </div>
+
+  <div class="releases-grid">
+
+    <!-- v1.1.0 — LATEST -->
+    <div class="release-card latest reveal">
+      <div class="release-header">
+        <div class="release-version-group">
+          <span class="release-version">v1.1.0-beta.3</span>
+          <span class="release-date">📅 September 2, 2026</span>
+        </div>
+        <div style="display:flex;flex-direction:column;gap:6px;align-items:flex-end">
+          <span class="badge latest">⚡ Latest</span>
+          <span class="badge beta">Beta</span>
+        </div>
+      </div>
+      <ul class="release-changelog">
+        <li>Exam Day Marking — Mid Sem 1, Mid Sem 2, End Sem, Practical Exam</li>
+        <li>Exam days intelligently excluded from attendance calculations</li>
+        <li>In-app update engine with Firebase Remote Config</li>
+        <li>Auto APK download and install via GitHub Releases</li>
+        <li>89/89 unit tests passing — rock-solid stability</li>
+        <li>Performance improvements and UI polish</li>
+      </ul>
+      <a href="https://github.com/Lalitjindal-code/AttendanceX/releases/download/v1.1.0-beta.3/app-release.apk"
+         class="btn-download primary" id="release-v110-download"
+         aria-label="Download AttendifyX v1.1.0-beta.3">
+        ⬇ Download APK (v1.1.0)
+      </a>
+    </div>
+
+    <!-- v1.0.0 — Previous -->
+    <div class="release-card reveal reveal-delay-1">
+      <div class="release-header">
+        <div class="release-version-group">
+          <span class="release-version">v1.0.0-beta.1</span>
+          <span class="release-date">📅 August 2026</span>
+        </div>
+        <div style="display:flex;flex-direction:column;gap:6px;align-items:flex-end">
+          <span class="badge old">Previous</span>
+          <span class="badge beta">Beta</span>
+        </div>
+      </div>
+      <ul class="release-changelog">
+        <li>Initial public beta release</li>
+        <li>Smart Dashboard with pending &amp; marked class separation</li>
+        <li>Offline-first Isar database integration</li>
+        <li>Weekly timetable auto-generation</li>
+        <li>Attendance analytics with safe bunk prediction</li>
+        <li>Calendar view with full attendance history</li>
+        <li>Present, Absent, GT, Medical, Holiday status support</li>
+        <li>Smart notifications and daily backup</li>
+      </ul>
+      <a href="https://github.com/Lalitjindal-code/AttendanceX/releases"
+         class="btn-download secondary" id="release-v100-download"
+         target="_blank" rel="noopener"
+         aria-label="View all releases on GitHub">
+        View on GitHub Releases ↗
+      </a>
+    </div>
+
+  </div>
+
+  <!-- GitHub all releases link -->
+  <div style="text-align:center;margin-top:2.5rem" class="reveal">
+    <a href="https://github.com/Lalitjindal-code/AttendanceX/releases"
+       target="_blank" rel="noopener"
+       class="btn-secondary" id="all-releases-btn"
+       style="display:inline-flex">
+      📦 View All Releases on GitHub ↗
+    </a>
+  </div>
+</section>
+
+<!-- ════════════════════════════════════════════════
+     TECH STACK STRIP
+════════════════════════════════════════════════ -->
+<div class="tech-strip reveal" role="list" aria-label="Technology stack">
+  <span class="tech-label">Built with</span>
+  <a href="https://flutter.dev" target="_blank" rel="noopener" class="tech-badge" role="listitem">
+    <span>🐦</span> Flutter
+  </a>
+  <a href="https://dart.dev" target="_blank" rel="noopener" class="tech-badge" role="listitem">
+    <span>🎯</span> Dart
+  </a>
+  <a href="https://isar.dev" target="_blank" rel="noopener" class="tech-badge" role="listitem">
+    <span>⚡</span> Isar DB
+  </a>
+  <a href="https://firebase.google.com" target="_blank" rel="noopener" class="tech-badge" role="listitem">
+    <span>🔥</span> Firebase
+  </a>
+  <a href="https://riverpod.dev" target="_blank" rel="noopener" class="tech-badge" role="listitem">
+    <span>🌊</span> Riverpod
+  </a>
+  <a href="https://pub.dev/packages/go_router" target="_blank" rel="noopener" class="tech-badge" role="listitem">
+    <span>🗺️</span> GoRouter
+  </a>
+</div>
+
+<!-- ════════════════════════════════════════════════
+     AD SLOT 3 — Leaderboard (Above Footer)
+════════════════════════════════════════════════ -->
+<div class="ad-section" aria-hidden="true">
+  <div class="ad-unit" id="ad-leaderboard-footer">
+    <!--
+    <ins class="adsbygoogle"
+         style="display:block"
+         data-ad-client="ca-pub-XXXXXXXXXXXXXXXXX"
+         data-ad-slot="XXXXXXXXXX"
+         data-ad-format="auto"
+         data-full-width-responsive="true"></ins>
+    <script>(adsbygoogle = window.adsbygoogle || []).push({});</script>
+    -->
+    <span>Ad · Sponsored</span>
+  </div>
+</div>
+
+</main>
+
+<!-- ════════════════════════════════════════════════
+     FOOTER
+════════════════════════════════════════════════ -->
+<footer>
+  <div class="footer-left">
+    <span class="footer-brand">AttendifyX</span>
+    <span class="footer-credit">Made with ❤️ by Lalit Jindal · © 2026</span>
+  </div>
+
+  <nav class="footer-links" aria-label="Footer navigation">
+    <a href="https://github.com/Lalitjindal-code/AttendanceX" target="_blank" rel="noopener">GitHub</a>
+    <a href="https://github.com/Lalitjindal-code/AttendanceX/releases" target="_blank" rel="noopener">Releases</a>
+    <a href="https://github.com/Lalitjindal-code/AttendanceX/blob/main/PRIVACY_POLICY.md" target="_blank" rel="noopener">Privacy</a>
+    <a href="mailto:lalitjindal.dev@gmail.com">Contact</a>
+  </nav>
+
+  <div class="footer-version">
+    <span>🟢</span> Current: v1.1.0
+  </div>
+</footer>
+
+<script src="script.js"></script>
+</body>
+</html>

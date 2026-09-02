@@ -7,7 +7,7 @@ import 'package:flutter/material.dart';
 import 'package:isar/isar.dart';
 import 'package:attendify/services/widget_service.dart';
 
-class ImportTimetable {
+class ImportTimetableAiads3rdSem {
   static Future<void> run() async {
     final isar = IsarService.instance.isar;
     final prefs = PreferencesService.instance;

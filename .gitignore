@@ -12,21 +12,25 @@
 .swiftpm/
 migrate_working_dir/
 
-# IntelliJ related
+# IntelliJ / VSCode related
 *.iml
 *.ipr
 *.iws
 .idea/
+.vscode/
 
-# The .vscode folder contains launch configuration and tasks you configure in
-# VS Code which you may wish to be included in version control, so this line
-# is commented out by default.
-#.vscode/
+# Shorebird related
+.shorebird/
+
+# Node related (backend)
+**/node_modules/
+npm-debug.log*
 
 # Flutter/Dart/Pub related
 **/doc/api/
 **/ios/Flutter/.last_build_id
 .dart_tool/
+.flutter-plugins
 .flutter-plugins-dependencies
 .pub-cache/
 .pub/
@@ -39,18 +43,17 @@ app.*.symbols
 # Obfuscation related
 app.*.map.json
 
-# Android Studio will place build artifacts here
+# Android Studio build artifacts
 /android/app/debug
 /android/app/profile
 /android/app/release
+/android/build/
 
-# Local database files and DLLs
+# Local database files, lock files, and DLLs
 *.isar
 *.isar-lck
+*_test_db*
 isar.dll
-
-# Android build directory
-/android/build/
 
 # Temporary and local test files
 analyze.txt
@@ -67,5 +70,5 @@ resize*.py
 .env
 google-services.json
 GoogleService-Info.plist
-
 serviceAccountKey.json
+

@@ -11,6 +11,8 @@ import '../../../core/widgets/native_ad_widget.dart';
 import '../../../core/ads/providers/ad_free_provider.dart';
 import '../../../core/utils/haptics.dart';
 import 'package:flutter/rendering.dart';
+import 'package:showcaseview/showcaseview.dart';
+import '../../tutorials/providers/tutorial_provider.dart';
 
 class SubjectsScreen extends ConsumerStatefulWidget {
   const SubjectsScreen({super.key});
@@ -22,11 +24,19 @@ class SubjectsScreen extends ConsumerStatefulWidget {
 class _SubjectsScreenState extends ConsumerState<SubjectsScreen> {
   final ScrollController _scrollController = ScrollController();
   bool _isFabExtended = true;
+  final GlobalKey _addSubjectKey = GlobalKey();
 
   @override
   void initState() {
     super.initState();
     _scrollController.addListener(_onScroll);
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      final hasShown = ref.read(subjectsTutorialNotifierProvider);
+      if (!hasShown) {
+        ShowCaseWidget.of(context).startShowCase([_addSubjectKey]);
+        ref.read(subjectsTutorialNotifierProvider.notifier).markShown();
+      }
+    });
   }
 
   @override
@@ -80,11 +90,15 @@ class _SubjectsScreenState extends ConsumerState<SubjectsScreen> {
               backgroundColor: Theme.of(context).colorScheme.surface,
               surfaceTintColor: Colors.transparent,
               actions: [
-                IconButton(
-                  icon: Icon(Icons.add,
-                      color: Theme.of(context).colorScheme.onSurface),
-                  tooltip: 'Add Subject',
-                  onPressed: () => showSubjectFormSheet(context),
+                Showcase(
+                  key: _addSubjectKey,
+                  description: 'Tap here to add your subjects',
+                  child: IconButton(
+                    icon: Icon(Icons.add,
+                        color: Theme.of(context).colorScheme.onSurface),
+                    tooltip: 'Add Subject',
+                    onPressed: () => showSubjectFormSheet(context),
+                  ),
                 ),
               ],
             ),

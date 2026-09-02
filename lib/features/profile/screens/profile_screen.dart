@@ -1,8 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../auth/providers/auth_provider.dart';
+import '../../college/data/college_data.dart';
 import '../providers/active_profile_provider.dart';
 import '../../settings/providers/settings_provider.dart';
+import '../../backup/providers/backup_provider.dart';
 
 class ProfileScreen extends ConsumerWidget {
   const ProfileScreen({super.key});
@@ -12,7 +14,7 @@ class ProfileScreen extends ConsumerWidget {
     String? selectedBranch = currentBranch;
     String? selectedSemester = currentSemester;
     
-    final branches = ['CSE', 'IT', 'ECE', 'AI & DS', 'Mechanical', 'Civil', 'Electrical', 'Other'];
+    final branches = CollegeData.branches.toList();
     final semesters = ['1st Semester', '2nd Semester', '3rd Semester', '4th Semester', '5th Semester', '6th Semester', '7th Semester', '8th Semester', 'Other'];
 
     if (selectedBranch != null && !branches.contains(selectedBranch)) branches.add(selectedBranch);
@@ -37,14 +39,16 @@ class ProfileScreen extends ConsumerWidget {
                     DropdownButtonFormField<String>(
                       decoration: const InputDecoration(labelText: 'Branch'),
                       value: selectedBranch,
-                      items: branches.map((b) => DropdownMenuItem(value: b, child: Text(b))).toList(),
+                      isExpanded: true,
+                      items: branches.map((b) => DropdownMenuItem(value: b, child: Text(b, overflow: TextOverflow.ellipsis))).toList(),
                       onChanged: (val) => setState(() => selectedBranch = val),
                     ),
                     const SizedBox(height: 16),
                     DropdownButtonFormField<String>(
                       decoration: const InputDecoration(labelText: 'Semester'),
                       value: selectedSemester,
-                      items: semesters.map((s) => DropdownMenuItem(value: s, child: Text(s))).toList(),
+                      isExpanded: true,
+                      items: semesters.map((s) => DropdownMenuItem(value: s, child: Text(s, overflow: TextOverflow.ellipsis))).toList(),
                       onChanged: (val) => setState(() => selectedSemester = val),
                     ),
                   ],
@@ -103,6 +107,7 @@ class ProfileScreen extends ConsumerWidget {
             icon: const Icon(Icons.logout),
             tooltip: 'Sign Out',
             onPressed: () async {
+              await ref.read(backupControllerProvider.notifier).createAutoBackup();
               await ref.read(authProvider).signOut();
             },
           ),
@@ -133,56 +138,81 @@ class ProfileScreen extends ConsumerWidget {
                     style: theme.textTheme.headlineMedium
                         ?.copyWith(fontWeight: FontWeight.bold),
                   ),
-                  if (profile.branch != null || profile.currentSemester != null) ...[
-                    const SizedBox(height: 8),
-                    Text(
-                      [profile.branch, profile.currentSemester].where((e) => e != null && e.isNotEmpty).join(' • '),
-                      style: theme.textTheme.titleMedium
-                          ?.copyWith(color: theme.colorScheme.primary),
+                  const SizedBox(height: 8),
+                  Text(
+                    user.email ?? '',
+                    style: theme.textTheme.titleMedium
+                        ?.copyWith(color: theme.colorScheme.onSurfaceVariant),
+                  ),
+                  const SizedBox(height: 32),
+                  
+                  // Academic Details Card
+                  Card(
+                    elevation: 0,
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(16),
+                      side: BorderSide(color: theme.colorScheme.outlineVariant),
                     ),
-                  ],
+                    child: Column(
+                      children: [
+                        ListTile(
+                          leading: const Icon(Icons.school_outlined),
+                          title: const Text('Branch'),
+                          subtitle: Text(profile.branch?.isNotEmpty == true ? profile.branch! : 'Not set'),
+                        ),
+                        const Divider(height: 1),
+                        ListTile(
+                          leading: const Icon(Icons.menu_book_outlined),
+                          title: const Text('Semester'),
+                          subtitle: Text(profile.currentSemester?.isNotEmpty == true ? profile.currentSemester! : 'Not set'),
+                        ),
+                        const Divider(height: 1),
+                        ListTile(
+                          leading: const Icon(Icons.track_changes_outlined),
+                          title: const Text('Attendance Goal'),
+                          subtitle: Text('${profile.defaultGoalPercentage.toStringAsFixed(0)}%'),
+                        ),
+                      ],
+                    ),
+                  ),
+                  const SizedBox(height: 24),
+
+                  // Account Details Card
+                  Card(
+                    elevation: 0,
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(16),
+                      side: BorderSide(color: theme.colorScheme.outlineVariant),
+                    ),
+                    child: Column(
+                      children: [
+                        ListTile(
+                          leading: const Icon(Icons.badge_outlined),
+                          title: const Text('Account ID'),
+                          subtitle: Text(user.uid),
+                        ),
+                        const Divider(height: 1),
+                        ListTile(
+                          leading: const Icon(Icons.verified_user_outlined),
+                          title: const Text('Status'),
+                          subtitle: const Text('Active & Verified'),
+                          trailing: Icon(Icons.check_circle,
+                              color: theme.colorScheme.primary),
+                        ),
+                      ],
+                    ),
+                  ),
                 ],
               ),
               loading: () => const CircularProgressIndicator(),
               error: (err, stack) => Text('Error loading profile: $err'),
-            ),
-            const SizedBox(height: 8),
-            Text(
-              user.email ?? '',
-              style: theme.textTheme.titleMedium
-                  ?.copyWith(color: theme.colorScheme.onSurfaceVariant),
-            ),
-            const SizedBox(height: 40),
-
-            Card(
-              elevation: 0,
-              shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.circular(16),
-                side: BorderSide(color: theme.colorScheme.outlineVariant),
-              ),
-              child: Column(
-                children: [
-                  ListTile(
-                    leading: const Icon(Icons.badge_outlined),
-                    title: const Text('Account ID'),
-                    subtitle: Text(user.uid),
-                  ),
-                  const Divider(height: 1),
-                  ListTile(
-                    leading: const Icon(Icons.verified_user_outlined),
-                    title: const Text('Status'),
-                    subtitle: const Text('Active & Verified'),
-                    trailing: Icon(Icons.check_circle,
-                        color: Theme.of(context).colorScheme.primary),
-                  ),
-                ],
-              ),
             ),
             const SizedBox(height: 24),
             SizedBox(
               width: double.infinity,
               child: OutlinedButton.icon(
                 onPressed: () async {
+                  await ref.read(backupControllerProvider.notifier).createAutoBackup();
                   await ref.read(authProvider).signOut();
                 },
                 icon: Icon(Icons.logout,

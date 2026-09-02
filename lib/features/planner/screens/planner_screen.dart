@@ -11,6 +11,8 @@ import '../providers/planner_provider.dart';
 import '../widgets/task_card.dart';
 import '../widgets/task_filter_chips.dart';
 import 'task_form_screen.dart';
+import 'package:showcaseview/showcaseview.dart';
+import '../../tutorials/providers/tutorial_provider.dart';
 
 import '../../../core/utils/haptics.dart';
 import '../../../core/widgets/banner_ad_widget.dart';
@@ -25,11 +27,19 @@ class PlannerScreen extends ConsumerStatefulWidget {
 class _PlannerScreenState extends ConsumerState<PlannerScreen> {
   final ScrollController _scrollController = ScrollController();
   bool _isFabExtended = true;
+  final GlobalKey _addTaskKey = GlobalKey();
 
   @override
   void initState() {
     super.initState();
     _scrollController.addListener(_onScroll);
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      final hasShown = ref.read(plannerTutorialNotifierProvider);
+      if (!hasShown) {
+        ShowCaseWidget.of(context).startShowCase([_addTaskKey]);
+        ref.read(plannerTutorialNotifierProvider.notifier).markShown();
+      }
+    });
   }
 
   @override
@@ -87,11 +97,15 @@ class _PlannerScreenState extends ConsumerState<PlannerScreen> {
               iconTheme:
                   IconThemeData(color: Theme.of(context).colorScheme.onSurface),
               actions: [
-                IconButton(
-                  icon: Icon(Icons.add,
-                      color: Theme.of(context).colorScheme.onSurface),
-                  tooltip: 'Add Task',
-                  onPressed: () => showTaskFormSheet(context),
+                Showcase(
+                  key: _addTaskKey,
+                  description: 'Tap here to add assignments and deadlines',
+                  child: IconButton(
+                    icon: Icon(Icons.add,
+                        color: Theme.of(context).colorScheme.onSurface),
+                    tooltip: 'Add Task',
+                    onPressed: () => showTaskFormSheet(context),
+                  ),
                 ),
               ],
             ),

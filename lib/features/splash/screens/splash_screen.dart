@@ -49,6 +49,13 @@ class _SplashScreenState extends State<SplashScreen> {
         onFailed: (error, message) => debugPrint('Unity failed: $error $message'),
       );
 
+      // If the active network is Unity, we don't need to show an AdMob App Open Ad.
+      // Navigate to dashboard immediately to speed up startup.
+      if (AdNetworkController.instance.activeNetwork == AdNetworkType.unity) {
+        if (mounted) _navigateToDashboard();
+        return;
+      }
+
       // 4. Start loading App Open Ad and set up lifecycle reactor for warm starts
       AppLifecycleReactor.instance.listenToAppStateChanges();
 
@@ -108,31 +115,15 @@ class _SplashScreenState extends State<SplashScreen> {
 
   @override
   Widget build(BuildContext context) {
-    // A simple splash UI that matches the app theme.
+    // A simple splash UI that matches the native splash screen (flutter_native_splash).
+    final isDark = Theme.of(context).brightness == Brightness.dark;
+    
     return Scaffold(
-      backgroundColor: Theme.of(context).colorScheme.surface,
+      backgroundColor: isDark ? const Color(0xFF000000) : const Color(0xFFFFFFFF),
       body: Center(
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            // App Logo / Icon (Placeholder or your actual logo widget)
-            Icon(
-              Icons.school_rounded,
-              size: 80,
-              color: Theme.of(context).colorScheme.primary,
-            ),
-            const SizedBox(height: 24),
-            Text(
-              'Attendify',
-              style: TextStyle(
-                fontSize: 32,
-                fontWeight: FontWeight.bold,
-                color: Theme.of(context).colorScheme.primary,
-              ),
-            ),
-            const SizedBox(height: 48),
-            if (_isInitializing) const CircularProgressIndicator(),
-          ],
+        child: Image.asset(
+          'assets/images/app_logo.png',
+          // Assuming the native splash shows the logo at its natural size or a reasonable centered size
         ),
       ),
     );

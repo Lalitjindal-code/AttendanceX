@@ -27,39 +27,45 @@ const AttendanceSchema = CollectionSchema(
       name: r'date',
       type: IsarType.dateTime,
     ),
-    r'holidayReason': PropertySchema(
+    r'examType': PropertySchema(
       id: 2,
+      name: r'examType',
+      type: IsarType.string,
+      enumMap: _AttendanceexamTypeEnumValueMap,
+    ),
+    r'holidayReason': PropertySchema(
+      id: 3,
       name: r'holidayReason',
       type: IsarType.string,
     ),
     r'notes': PropertySchema(
-      id: 3,
+      id: 4,
       name: r'notes',
       type: IsarType.string,
     ),
     r'scheduleId': PropertySchema(
-      id: 4,
+      id: 5,
       name: r'scheduleId',
       type: IsarType.long,
     ),
     r'semesterId': PropertySchema(
-      id: 5,
+      id: 6,
       name: r'semesterId',
       type: IsarType.long,
     ),
     r'status': PropertySchema(
-      id: 6,
+      id: 7,
       name: r'status',
       type: IsarType.string,
       enumMap: _AttendancestatusEnumValueMap,
     ),
     r'subjectId': PropertySchema(
-      id: 7,
+      id: 8,
       name: r'subjectId',
       type: IsarType.long,
     ),
     r'updatedAt': PropertySchema(
-      id: 8,
+      id: 9,
       name: r'updatedAt',
       type: IsarType.dateTime,
     )
@@ -138,6 +144,12 @@ int _attendanceEstimateSize(
 ) {
   var bytesCount = offsets.last;
   {
+    final value = object.examType;
+    if (value != null) {
+      bytesCount += 3 + value.name.length * 3;
+    }
+  }
+  {
     final value = object.holidayReason;
     if (value != null) {
       bytesCount += 3 + value.length * 3;
@@ -161,13 +173,14 @@ void _attendanceSerialize(
 ) {
   writer.writeDateTime(offsets[0], object.createdAt);
   writer.writeDateTime(offsets[1], object.date);
-  writer.writeString(offsets[2], object.holidayReason);
-  writer.writeString(offsets[3], object.notes);
-  writer.writeLong(offsets[4], object.scheduleId);
-  writer.writeLong(offsets[5], object.semesterId);
-  writer.writeString(offsets[6], object.status.name);
-  writer.writeLong(offsets[7], object.subjectId);
-  writer.writeDateTime(offsets[8], object.updatedAt);
+  writer.writeString(offsets[2], object.examType?.name);
+  writer.writeString(offsets[3], object.holidayReason);
+  writer.writeString(offsets[4], object.notes);
+  writer.writeLong(offsets[5], object.scheduleId);
+  writer.writeLong(offsets[6], object.semesterId);
+  writer.writeString(offsets[7], object.status.name);
+  writer.writeLong(offsets[8], object.subjectId);
+  writer.writeDateTime(offsets[9], object.updatedAt);
 }
 
 Attendance _attendanceDeserialize(
@@ -179,16 +192,18 @@ Attendance _attendanceDeserialize(
   final object = Attendance();
   object.createdAt = reader.readDateTime(offsets[0]);
   object.date = reader.readDateTime(offsets[1]);
-  object.holidayReason = reader.readStringOrNull(offsets[2]);
+  object.examType =
+      _AttendanceexamTypeValueEnumMap[reader.readStringOrNull(offsets[2])];
+  object.holidayReason = reader.readStringOrNull(offsets[3]);
   object.id = id;
-  object.notes = reader.readStringOrNull(offsets[3]);
-  object.scheduleId = reader.readLongOrNull(offsets[4]);
-  object.semesterId = reader.readLong(offsets[5]);
+  object.notes = reader.readStringOrNull(offsets[4]);
+  object.scheduleId = reader.readLongOrNull(offsets[5]);
+  object.semesterId = reader.readLong(offsets[6]);
   object.status =
-      _AttendancestatusValueEnumMap[reader.readStringOrNull(offsets[6])] ??
+      _AttendancestatusValueEnumMap[reader.readStringOrNull(offsets[7])] ??
           AttendanceStatus.present;
-  object.subjectId = reader.readLong(offsets[7]);
-  object.updatedAt = reader.readDateTime(offsets[8]);
+  object.subjectId = reader.readLong(offsets[8]);
+  object.updatedAt = reader.readDateTime(offsets[9]);
   return object;
 }
 
@@ -204,31 +219,47 @@ P _attendanceDeserializeProp<P>(
     case 1:
       return (reader.readDateTime(offset)) as P;
     case 2:
-      return (reader.readStringOrNull(offset)) as P;
+      return (_AttendanceexamTypeValueEnumMap[reader.readStringOrNull(offset)])
+          as P;
     case 3:
       return (reader.readStringOrNull(offset)) as P;
     case 4:
-      return (reader.readLongOrNull(offset)) as P;
+      return (reader.readStringOrNull(offset)) as P;
     case 5:
-      return (reader.readLong(offset)) as P;
+      return (reader.readLongOrNull(offset)) as P;
     case 6:
+      return (reader.readLong(offset)) as P;
+    case 7:
       return (_AttendancestatusValueEnumMap[reader.readStringOrNull(offset)] ??
           AttendanceStatus.present) as P;
-    case 7:
-      return (reader.readLong(offset)) as P;
     case 8:
+      return (reader.readLong(offset)) as P;
+    case 9:
       return (reader.readDateTime(offset)) as P;
     default:
       throw IsarError('Unknown property with id $propertyId');
   }
 }
 
+const _AttendanceexamTypeEnumValueMap = {
+  r'midSem1': r'midSem1',
+  r'midSem2': r'midSem2',
+  r'endSem': r'endSem',
+  r'practicalExam': r'practicalExam',
+};
+const _AttendanceexamTypeValueEnumMap = {
+  r'midSem1': ExamType.midSem1,
+  r'midSem2': ExamType.midSem2,
+  r'endSem': ExamType.endSem,
+  r'practicalExam': ExamType.practicalExam,
+};
 const _AttendancestatusEnumValueMap = {
   r'present': r'present',
   r'absent': r'absent',
   r'medical': r'medical',
   r'gt': r'gt',
   r'holiday': r'holiday',
+  r'exam': r'exam',
   r'pending': r'pending',
 };
 const _AttendancestatusValueEnumMap = {
@@ -237,6 +268,7 @@ const _AttendancestatusValueEnumMap = {
   r'medical': AttendanceStatus.medical,
   r'gt': AttendanceStatus.gt,
   r'holiday': AttendanceStatus.holiday,
+  r'exam': AttendanceStatus.exam,
   r'pending': AttendanceStatus.pending,
 };
 
@@ -847,6 +879,157 @@ extension AttendanceQueryFilter
         includeLower: includeLower,
         upper: upper,
         includeUpper: includeUpper,
+      ));
+    });
+  }
+
+  QueryBuilder<Attendance, Attendance, QAfterFilterCondition> examTypeIsNull() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(const FilterCondition.isNull(
+        property: r'examType',
+      ));
+    });
+  }
+
+  QueryBuilder<Attendance, Attendance, QAfterFilterCondition>
+      examTypeIsNotNull() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(const FilterCondition.isNotNull(
+        property: r'examType',
+      ));
+    });
+  }
+
+  QueryBuilder<Attendance, Attendance, QAfterFilterCondition> examTypeEqualTo(
+    ExamType? value, {
+    bool caseSensitive = true,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.equalTo(
+        property: r'examType',
+        value: value,
+        caseSensitive: caseSensitive,
+      ));
+    });
+  }
+
+  QueryBuilder<Attendance, Attendance, QAfterFilterCondition>
+      examTypeGreaterThan(
+    ExamType? value, {
+    bool include = false,
+    bool caseSensitive = true,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.greaterThan(
+        include: include,
+        property: r'examType',
+        value: value,
+        caseSensitive: caseSensitive,
+      ));
+    });
+  }
+
+  QueryBuilder<Attendance, Attendance, QAfterFilterCondition> examTypeLessThan(
+    ExamType? value, {
+    bool include = false,
+    bool caseSensitive = true,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.lessThan(
+        include: include,
+        property: r'examType',
+        value: value,
+        caseSensitive: caseSensitive,
+      ));
+    });
+  }
+
+  QueryBuilder<Attendance, Attendance, QAfterFilterCondition> examTypeBetween(
+    ExamType? lower,
+    ExamType? upper, {
+    bool includeLower = true,
+    bool includeUpper = true,
+    bool caseSensitive = true,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.between(
+        property: r'examType',
+        lower: lower,
+        includeLower: includeLower,
+        upper: upper,
+        includeUpper: includeUpper,
+        caseSensitive: caseSensitive,
+      ));
+    });
+  }
+
+  QueryBuilder<Attendance, Attendance, QAfterFilterCondition>
+      examTypeStartsWith(
+    String value, {
+    bool caseSensitive = true,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.startsWith(
+        property: r'examType',
+        value: value,
+        caseSensitive: caseSensitive,
+      ));
+    });
+  }
+
+  QueryBuilder<Attendance, Attendance, QAfterFilterCondition> examTypeEndsWith(
+    String value, {
+    bool caseSensitive = true,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.endsWith(
+        property: r'examType',
+        value: value,
+        caseSensitive: caseSensitive,
+      ));
+    });
+  }
+
+  QueryBuilder<Attendance, Attendance, QAfterFilterCondition> examTypeContains(
+      String value,
+      {bool caseSensitive = true}) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.contains(
+        property: r'examType',
+        value: value,
+        caseSensitive: caseSensitive,
+      ));
+    });
+  }
+
+  QueryBuilder<Attendance, Attendance, QAfterFilterCondition> examTypeMatches(
+      String pattern,
+      {bool caseSensitive = true}) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.matches(
+        property: r'examType',
+        wildcard: pattern,
+        caseSensitive: caseSensitive,
+      ));
+    });
+  }
+
+  QueryBuilder<Attendance, Attendance, QAfterFilterCondition>
+      examTypeIsEmpty() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.equalTo(
+        property: r'examType',
+        value: '',
+      ));
+    });
+  }
+
+  QueryBuilder<Attendance, Attendance, QAfterFilterCondition>
+      examTypeIsNotEmpty() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.greaterThan(
+        property: r'examType',
+        value: '',
       ));
     });
   }
@@ -1605,6 +1788,18 @@ extension AttendanceQuerySortBy
     });
   }
 
+  QueryBuilder<Attendance, Attendance, QAfterSortBy> sortByExamType() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'examType', Sort.asc);
+    });
+  }
+
+  QueryBuilder<Attendance, Attendance, QAfterSortBy> sortByExamTypeDesc() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'examType', Sort.desc);
+    });
+  }
+
   QueryBuilder<Attendance, Attendance, QAfterSortBy> sortByHolidayReason() {
     return QueryBuilder.apply(this, (query) {
       return query.addSortBy(r'holidayReason', Sort.asc);
@@ -1713,6 +1908,18 @@ extension AttendanceQuerySortThenBy
   QueryBuilder<Attendance, Attendance, QAfterSortBy> thenByDateDesc() {
     return QueryBuilder.apply(this, (query) {
       return query.addSortBy(r'date', Sort.desc);
+    });
+  }
+
+  QueryBuilder<Attendance, Attendance, QAfterSortBy> thenByExamType() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'examType', Sort.asc);
+    });
+  }
+
+  QueryBuilder<Attendance, Attendance, QAfterSortBy> thenByExamTypeDesc() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'examType', Sort.desc);
     });
   }
 
@@ -1827,6 +2034,13 @@ extension AttendanceQueryWhereDistinct
     });
   }
 
+  QueryBuilder<Attendance, Attendance, QDistinct> distinctByExamType(
+      {bool caseSensitive = true}) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addDistinctBy(r'examType', caseSensitive: caseSensitive);
+    });
+  }
+
   QueryBuilder<Attendance, Attendance, QDistinct> distinctByHolidayReason(
       {bool caseSensitive = true}) {
     return QueryBuilder.apply(this, (query) {
@@ -1891,6 +2105,12 @@ extension AttendanceQueryProperty
   QueryBuilder<Attendance, DateTime, QQueryOperations> dateProperty() {
     return QueryBuilder.apply(this, (query) {
       return query.addPropertyName(r'date');
+    });
+  }
+
+  QueryBuilder<Attendance, ExamType?, QQueryOperations> examTypeProperty() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addPropertyName(r'examType');
     });
   }
 

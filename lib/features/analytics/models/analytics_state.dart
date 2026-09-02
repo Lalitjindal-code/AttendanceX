@@ -1,3 +1,4 @@
+import 'package:attendify/database/collections/attendance_collection.dart';
 import 'monthly_trend.dart';
 import 'subject_statistics.dart';
 import 'attendance_forecast.dart';
@@ -15,6 +16,7 @@ class AnalyticsState {
   final AttendanceForecast? overallForecast;
   final OverallAttendanceSummary? overallSummary;
   final PlannerMetrics? plannerMetrics;
+  final List<Attendance> allAttendances;
 
   const AnalyticsState({
     this.isLoading = true,
@@ -26,6 +28,7 @@ class AnalyticsState {
     this.overallForecast,
     this.overallSummary,
     this.plannerMetrics,
+    this.allAttendances = const [],
   });
 
   AnalyticsState copyWith({
@@ -38,6 +41,7 @@ class AnalyticsState {
     AttendanceForecast? overallForecast,
     OverallAttendanceSummary? overallSummary,
     PlannerMetrics? plannerMetrics,
+    List<Attendance>? allAttendances,
   }) {
     return AnalyticsState(
       isLoading: isLoading ?? this.isLoading,
@@ -49,6 +53,7 @@ class AnalyticsState {
       overallForecast: overallForecast ?? this.overallForecast,
       overallSummary: overallSummary ?? this.overallSummary,
       plannerMetrics: plannerMetrics ?? this.plannerMetrics,
+      allAttendances: allAttendances ?? this.allAttendances,
     );
   }
 }

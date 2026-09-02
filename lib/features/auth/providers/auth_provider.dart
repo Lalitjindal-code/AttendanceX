@@ -4,6 +4,7 @@ import 'package:flutter/foundation.dart' show kIsWeb;
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:google_sign_in/google_sign_in.dart';
+import '../../../core/providers/firebase_provider.dart';
 
 final _mockAuthStreamController = StreamController<User?>.broadcast();
 User? _mockCurrentUser;
@@ -49,7 +50,7 @@ final firebaseAuthProvider = Provider<FirebaseAuth>((ref) {
 });
 
 // A stream provider that emits the current user whenever the auth state changes
-final authStateProvider = StreamProvider<User?>((ref) {
+final authStateProvider = StreamProvider<User?>((ref) async* {
   if (!kIsWeb && Platform.isWindows) {
     final controller = StreamController<User?>();
     controller.add(_mockCurrentUser);
@@ -59,9 +60,13 @@ final authStateProvider = StreamProvider<User?>((ref) {
       sub.cancel();
       controller.close();
     });
-    return controller.stream;
+    yield* controller.stream;
+    return;
   }
-  return ref.watch(firebaseAuthProvider).authStateChanges();
+  
+  // Wait for Firebase to initialize before reading auth state
+  await ref.watch(firebaseInitProvider.future);
+  yield* ref.watch(firebaseAuthProvider).authStateChanges();
 });
 
 // Provider to handle authentication logic
@@ -114,6 +119,15 @@ class AuthService {
       _mockAuthStreamController.add(null);
       return;
     }
+    
+    // Sign out and disconnect from Google to force account selection next time
+    try {
+      await GoogleSignIn().signOut();
+      await GoogleSignIn().disconnect();
+    } catch (e) {
+      // Ignore disconnect errors (e.g. if not signed in via Google)
+    }
+    
     await _auth!.signOut();
   }
 

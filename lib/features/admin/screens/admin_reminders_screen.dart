@@ -46,6 +46,13 @@ class _AdminRemindersScreenState extends State<AdminRemindersScreen> with Single
       return;
     }
 
+    if (customMessage.isEmpty) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('Message cannot be empty')),
+      );
+      return;
+    }
+
     setState(() => _isSending = true);
     bool success = false;
     String responseMessage = '';
@@ -153,7 +160,7 @@ class _AdminRemindersScreenState extends State<AdminRemindersScreen> with Single
                     controller: _messageController,
                     maxLines: 3,
                     decoration: InputDecoration(
-                      labelText: 'Custom Message (Optional)',
+                      labelText: 'Message',
                       hintText: 'e.g., Please complete your profile as soon as possible.',
                       prefixIcon: const Icon(Icons.message),
                       border: OutlineInputBorder(borderRadius: BorderRadius.circular(12)),

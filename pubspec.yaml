@@ -1,6 +1,6 @@
 name: attendify
 description: A premium offline-first attendance tracker for college students.
-version: 1.0.0-beta+2
+version: 1.1.0+3
 publish_to: none
 
 environment:
@@ -76,6 +76,14 @@ dependencies:
   font_awesome_flutter: ^11.0.0
   firebase_crashlytics: ^5.2.7
   firebase_analytics: ^12.4.6
+  pdf: ^3.11.1
+  printing: ^5.13.2
+  package_info_plus: ^8.0.2
+  google_mlkit_text_recognition: ^0.13.0
+  connectivity_plus: ^6.0.5
+  dio: ^5.7.0
+  open_filex: ^4.5.0
+  permission_handler: ^11.3.1
 
 dev_dependencies:
   flutter_test:

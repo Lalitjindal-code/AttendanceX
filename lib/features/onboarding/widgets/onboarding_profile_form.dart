@@ -17,33 +17,7 @@ class _OnboardingProfileFormState extends ConsumerState<OnboardingProfileForm> {
   final _formKey = GlobalKey<FormState>();
   final _nameController = TextEditingController();
   
-  String? _selectedBranch;
-  String? _selectedSemester;
-  
   bool _isLoading = false;
-
-  final List<String> _branches = [
-    'CSE',
-    'IT',
-    'ECE',
-    'AI & DS',
-    'Mechanical',
-    'Civil',
-    'Electrical',
-    'Other'
-  ];
-
-  final List<String> _semesters = [
-    '1st Semester',
-    '2nd Semester',
-    '3rd Semester',
-    '4th Semester',
-    '5th Semester',
-    '6th Semester',
-    '7th Semester',
-    '8th Semester',
-    'Other'
-  ];
 
   @override
   void dispose() {
@@ -53,19 +27,12 @@ class _OnboardingProfileFormState extends ConsumerState<OnboardingProfileForm> {
 
   Future<void> _submit() async {
     if (!_formKey.currentState!.validate()) return;
-    if (_selectedBranch == null || _selectedSemester == null) {
-       ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(content: Text('Please select branch and semester')));
-       return;
-    }
 
     setState(() => _isLoading = true);
 
     try {
       await ref.read(settingsProvider.notifier).updateProfile(
         name: _nameController.text.trim(),
-        branch: _selectedBranch,
-        currentSemester: _selectedSemester,
       );
 
       widget.onComplete();
@@ -121,32 +88,6 @@ class _OnboardingProfileFormState extends ConsumerState<OnboardingProfileForm> {
                     }
                     return null;
                   },
-                ),
-                const SizedBox(height: AppSpacing.lg),
-                DropdownButtonFormField<String>(
-                  decoration: const InputDecoration(
-                    labelText: 'Branch',
-                    prefixIcon: Icon(Icons.account_tree_outlined),
-                  ),
-                  value: _selectedBranch,
-                  items: _branches.map((b) => DropdownMenuItem(value: b, child: Text(b))).toList(),
-                  onChanged: (val) {
-                    setState(() => _selectedBranch = val);
-                  },
-                  validator: (val) => val == null ? 'Please select a branch' : null,
-                ),
-                const SizedBox(height: AppSpacing.lg),
-                DropdownButtonFormField<String>(
-                  decoration: const InputDecoration(
-                    labelText: 'Semester',
-                    prefixIcon: Icon(Icons.school_outlined),
-                  ),
-                  value: _selectedSemester,
-                  items: _semesters.map((s) => DropdownMenuItem(value: s, child: Text(s))).toList(),
-                  onChanged: (val) {
-                    setState(() => _selectedSemester = val);
-                  },
-                  validator: (val) => val == null ? 'Please select a semester' : null,
                 ),
                 const SizedBox(height: AppSpacing.xxl),
                 FilledButton(

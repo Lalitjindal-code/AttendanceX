@@ -270,11 +270,12 @@ class NotificationEngine {
 
   static int _generateLectureId(int scheduleId, DateTime date) {
     final dateInt = date.year * 10000 + date.month * 100 + date.day;
-    return Object.hash(scheduleId, dateInt, _typeLecture) & 0x7FFFFFFF;
+    // Object.hash is not stable across app restarts. Use XOR and primes for a stable hash.
+    return (scheduleId.hashCode ^ dateInt.hashCode ^ _typeLecture.hashCode) & 0x7FFFFFFF;
   }
 
   static int _generateDailyId(DateTime date) {
     final dateInt = date.year * 10000 + date.month * 100 + date.day;
-    return Object.hash(dateInt, _typeDaily) & 0x7FFFFFFF;
+    return (dateInt.hashCode ^ _typeDaily.hashCode) & 0x7FFFFFFF;
   }
 }

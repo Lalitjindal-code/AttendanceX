@@ -1,10 +1,7 @@
 import 'dart:io' show Platform;
-import 'dart:ui';
 import 'package:flutter/foundation.dart' show kIsWeb;
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:firebase_core/firebase_core.dart';
-import 'package:firebase_crashlytics/firebase_crashlytics.dart';
 
 import 'core/config/app_config.dart';
 import 'core/theme/app_theme.dart';
@@ -15,34 +12,24 @@ import 'features/notifications/providers/notification_provider.dart';
 import 'navigation/app_router.dart';
 import 'services/preferences_service.dart';
 import 'services/notification_service.dart';
-import 'firebase_options.dart';
 import 'features/sync/services/firebase_sync_service.dart';
 import 'features/security/widgets/app_lock_wrapper.dart';
+import 'core/widgets/app_updater_wrapper.dart';
 import 'services/widget_service.dart';
 import 'package:home_widget/home_widget.dart';
+import 'core/providers/firebase_provider.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   if (!kIsWeb && !Platform.isWindows) {
     await HomeWidget.registerInteractivityCallback(widgetInteractiveCallback);
+    await HomeWidget.registerBackgroundCallback(widgetInteractiveCallback);
   }
 
   await Future.wait([
-    (kIsWeb || !Platform.isWindows)
-        ? Firebase.initializeApp(
-            options: DefaultFirebaseOptions.currentPlatform)
-        : Future.value(null),
     PreferencesService.instance.initialize(),
     IsarService.instance.initialize(),
   ]);
-
-  if (!kIsWeb && !Platform.isWindows) {
-    FlutterError.onError = FirebaseCrashlytics.instance.recordFlutterFatalError;
-    PlatformDispatcher.instance.onError = (error, stack) {
-      FirebaseCrashlytics.instance.recordError(error, stack, fatal: true);
-      return true;
-    };
-  }
 
   // Set Dark and AMOLED theme configuration as default on first startup launch
   final prefs = PreferencesService.instance;
@@ -53,11 +40,24 @@ void main() async {
     await prefs.setBool(PreferencesService.keyIsAmoled, true);
   }
 
-  // One-time migration: fix notification defaults for subjects created before
-  // classNotificationsEnabled / plannerNotificationsEnabled were added.
-  // Isar sets new bool fields to false on old records; we force them to true.
-  await SubjectRepository(IsarService.instance.isar)
-      .migrateNotificationDefaults();
+  // Migration for existing users: disable tutorials if they've already onboarded
+  if (prefs.getBool(PreferencesService.keyIsOnboardingComplete, defaultValue: false)) {
+    if (!prefs.containsKey(PreferencesService.keyTutorialsMigrated)) {
+      await Future.wait([
+        prefs.setBool(PreferencesService.keyHasShownDashboardTutorial, true),
+        prefs.setBool(PreferencesService.keyHasShownSubjectsTutorial, true),
+        prefs.setBool(PreferencesService.keyHasShownPlannerTutorial, true),
+        prefs.setBool(PreferencesService.keyHasShownScheduleTutorial, true),
+        prefs.setBool(PreferencesService.keyHasShownMoreTutorial, true),
+        prefs.setBool(PreferencesService.keyHasShownAnalyticsTutorial, true),
+        prefs.setBool(PreferencesService.keyHasShownCalendarTutorial, true),
+        prefs.setBool(PreferencesService.keyHasShownFeedbackTutorial, true),
+        prefs.setBool(PreferencesService.keyHasShownBottomNavTutorial, true),
+        prefs.setBool(PreferencesService.keyHasShownSettingsTutorial, true),
+        prefs.setBool(PreferencesService.keyTutorialsMigrated, true),
+      ]);
+    }
+  }
 
   runApp(
     const ProviderScope(
@@ -78,6 +78,9 @@ void main() async {
       });
     }
 
+    // Run DB migrations asynchronously in background
+    SubjectRepository(IsarService.instance.isar).migrateNotificationDefaults();
+
     WidgetService.instance.initialize().then((_) {
       WidgetService.instance.updateWidget();
     });
@@ -89,6 +92,8 @@ class AttendifyApp extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
+    // Initialize Firebase in the background
+    ref.listen(firebaseInitProvider, (_, __) {});
     // Keep the notification orchestrator alive and reacting to changes globally
     ref.listen(notificationOrchestratorProvider, (_, __) {});
     // Keep the Firebase sync orchestrator alive to watch local DB changes
@@ -105,7 +110,9 @@ class AttendifyApp extends ConsumerWidget {
       darkTheme: settings.isAmoled ? AppTheme.amoled : AppTheme.dark,
       routerConfig: router,
       builder: (context, child) {
-        return AppLockWrapper(child: child!);
+        return AppUpdaterWrapper(
+          child: AppLockWrapper(child: child!),
+        );
       },
     );
   }

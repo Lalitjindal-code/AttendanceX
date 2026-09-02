@@ -3,10 +3,12 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:intl/intl.dart';
 import '../../../core/constants/app_spacing.dart';
 import '../../../core/enums/attendance_status.dart';
+import '../../../core/enums/exam_type.dart';
 import '../models/calendar_state.dart';
 import '../../settings/providers/semester_provider.dart';
 import '../../attendance/providers/attendance_providers.dart';
 import 'daily_attendance_card.dart';
+import 'mark_exam_dialog.dart';
 import '../../planner/widgets/task_card.dart';
 
 class DayDetailPanel extends ConsumerWidget {
@@ -272,6 +274,43 @@ class DayDetailPanel extends ConsumerWidget {
                               behavior: SnackBarBehavior.floating,
                             ),
                           );
+                        }
+                      }
+                      if (context.mounted) Navigator.pop(context);
+                    },
+                  ),
+                  _buildQuickMarkButton(
+                    context,
+                    'EXAM',
+                    Icons.assignment_rounded,
+                    Colors.amber.shade800,
+                    () async {
+                      final semester = ref.read(semesterStateProvider);
+                      if (semester != null) {
+                        final selectedExam = await MarkExamDialog.show(
+                          context,
+                          date: date,
+                        );
+                        if (selectedExam != null && context.mounted) {
+                          await ref
+                              .read(attendanceRepositoryProvider)
+                              .markFullDayStatus(
+                                date,
+                                semester.id,
+                                AttendanceStatus.exam,
+                                examType: selectedExam,
+                              );
+                          if (context.mounted) {
+                            ScaffoldMessenger.of(context).hideCurrentSnackBar();
+                            ScaffoldMessenger.of(context).showSnackBar(
+                              SnackBar(
+                                content: Text(
+                                  'Marked entire day as Exam (${selectedExam.displayName})',
+                                ),
+                                behavior: SnackBarBehavior.floating,
+                              ),
+                            );
+                          }
                         }
                       }
                       if (context.mounted) Navigator.pop(context);

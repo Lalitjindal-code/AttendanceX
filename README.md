@@ -1,61 +1,78 @@
 <div align="center">
 
-# 🎓 Attendify
+# 🎓 AttendifyX
 
-**Your Ultimate Academic Companion**
+**Smart Attendance Tracker & Academic Companion for College Students**
 
-[![Flutter CI](https://github.com/Lalitjindal-code/Attendify/actions/workflows/ci.yml/badge.svg)](https://github.com/Lalitjindal-code/Attendify/actions/workflows/ci.yml)
+[![Flutter CI](https://github.com/Lalitjindal-code/AttendanceX/actions/workflows/ci.yml/badge.svg)](https://github.com/Lalitjindal-code/AttendanceX/actions/workflows/ci.yml)
 [![Flutter Version](https://img.shields.io/badge/Flutter-3.19+-02569B?logo=flutter)](https://flutter.dev/)
 [![Dart Version](https://img.shields.io/badge/Dart-3.3+-0175C2?logo=dart)](https://dart.dev/)
+[![Latest Release](https://img.shields.io/badge/Release-v1.1.0--beta.3-6366f1)](https://github.com/Lalitjindal-code/AttendanceX/releases/tag/v1.1.0-beta.3)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 
-Attendify is a production-grade, offline-first Flutter application designed for students to track their academic attendance with precision, smart analytics, and a buttery-smooth user interface. 
+AttendifyX is a production-grade, offline-first Flutter application built for college students to track attendance with high precision, safe bunk predictions, exam day marking, and a buttery-smooth Material 3 user interface.
+
+[🌐 View Landing Page](landing/index.html) · [⬇ Download Latest APK](https://github.com/Lalitjindal-code/AttendanceX/releases/download/v1.1.0-beta.3/app-release.apk)
 
 </div>
 
 ---
 
 <div align="center">
-  <img src="screenshot_1.jpg" width="250" />
-  <img src="screenshot_2.jpg" width="250" />
-  <img src="screenshot_3.jpg" width="250" />
+  <img src="landing/screenshot/dashboard.jpg" width="220" alt="Dashboard" />
+  <img src="landing/screenshot/analytics.jpg" width="220" alt="Analytics" />
+  <img src="landing/screenshot/calender.jpg" width="220" alt="Calendar" />
+  <img src="landing/screenshot/bunk%20simulator.jpg" width="220" alt="Bunk Simulator" />
 </div>
 
 ---
 
 ## 🚀 Key Features
 
-* 📊 **Smart Dashboard**: A beautifully animated dashboard that cleanly separates your upcoming classes ("Pending") from the ones you've already completed ("Marked").
-* 🎯 **Granular Attendance Tracking**: Track attendance with high specificity—*Present*, *Absent*, *GT (Duty Leave)*, *Medical Leave*, and *Holidays*.
-* 🧠 **Analytics & Smart Suggestions**: 
-  * Powered by a robust `AttendanceEngine`, the app dynamically calculates effective percentages based on your custom rules (e.g., whether Medical Leaves count as present).
-  * Provides actionable insights like **"Safe Bunks Available"** or **"Classes to Attend"** to help you hit your target goal without stress.
-* ⚡ **Offline-First & Lightning Fast**: Built on top of **Isar NoSQL**, ensuring that all data operations are instantaneous and completely functional without an internet connection. 
-* ⚙️ **Highly Customisable**: Set your target percentage (e.g., 75%), adjust semester dates, and toggle specific attendance calculation rules to fit your college's guidelines.
-* 🎨 **Beautiful UI/UX**: Built with implicit animations, smooth transitions, haptic feedback, and a strictly enforced Material 3 design system.
+* 📊 **Smart Dashboard**: Real-time view of today's schedule with a clean split between upcoming ("Pending") and marked classes, live attendance percentage ring, and quick action cards.
+* 🎯 **Safe Bunk & Attendance Prediction Engine**:
+  * Powered by `AttendanceEngine`, dynamically calculates exact safe bunks available and minimum classes required to maintain target percentage (e.g., 75%).
+  * Simulates future attendance scenarios with an interactive Bunk Simulator.
+* 📝 **Exam Day Marking**: Easily mark Mid Sem 1, Mid Sem 2, End Sem, and Practical Exam days. Exam days are intelligently excluded from regular attendance calculations automatically.
+* 🔄 **In-App Update Engine**: Powered by Firebase Remote Config and GitHub Releases, notifying users of new updates instantly with one-tap APK downloading and installation.
+* ⚡ **100% Offline-First & Private**: Built on top of **Isar NoSQL** database — zero internet required, sub-100ms response times, and 100% private with no mandatory login.
+* 📅 **Calendar & Timetable Auto-Generation**: Set up your weekly schedule once and let AttendifyX populate your daily dashboard automatically. View full attendance history on a color-coded calendar.
+* ⏰ **Smart Notifications & Daily Backups**: Timely class reminders, low attendance alerts, goal celebrations, and automated local data backups.
+* 🌐 **Modern Landing Page**: Built-in dark glassmorphism web landing page in `/landing` ready for static deployment.
 
 ---
 
 ## 🛠 Tech Stack
 
-| Technology | Description |
+| Technology | Purpose / Usage |
 |---|---|
-| **Flutter (Dart)** | Core UI Framework |
+| **Flutter (Dart 3.3+)** | Cross-platform UI Framework (Material 3) |
 | **Riverpod** | State Management (`flutter_riverpod` + `riverpod_annotation`) |
 | **Isar NoSQL** | Blazing fast, offline-first local database |
-| **Firebase** | Backend services for Authentication & Cloud Firestore sync |
-| **GitHub Actions** | Automated CI/CD pipelines for linting and testing |
+| **Firebase** | Remote Config (In-App Updates) & Cloud Services |
+| **GoRouter** | Declarative type-safe routing |
+| **GitHub Actions** | Automated CI/CD pipeline for linting, unit testing, and builds |
 
 ---
 
 ## 📂 Architecture Overview
 
-Attendify follows a highly structured, scalable, layer-based architecture that cleanly separates business logic from presentation:
+AttendifyX follows a modular, layer-based architecture enforcing clean separation of concerns:
 
-* 🗄️ **`/database`**: Contains Isar collections (`Subject`, `Schedule`, `Attendance`) and data Repositories.
-* ⚙️ **`/engines`**: Core business logic modules (e.g. `AttendanceEngine`) that are completely decoupled from UI and State Management. These are highly testable, pure Dart classes.
-* 📱 **`/features`**: UI code separated by domain (e.g., `dashboard`, `analytics`, `calendar`, `settings`, `subjects`, `schedule`), each containing its own screens, widgets, and local Riverpod providers.
-* 🔧 **`/core`**: Core utilities, app-wide Enums, Theme data, custom extensions (e.g., `AttendanceStatusUI`), and global configuration.
+```
+lib/
+├── core/            # Enums, Extensions, Theme, Common UI Widgets, App Updater
+├── database/        # Isar Collections (Subject, Schedule, Attendance, History) & Repositories
+├── engines/         # Decoupled business logic (AttendanceEngine, NotificationEngine)
+├── features/        # Feature modules (dashboard, analytics, calendar, subjects, schedule, etc.)
+│   ├── analytics/   # Analytics calculations, providers, and screen
+│   ├── calendar/    # Calendar grid, day details, exam marking
+│   ├── dashboard/   # Header, class list cards, summary state
+│   ├── schedule/    # Weekly timetable setup & OCR import
+│   └── settings/    # App settings, preferences, feedback service
+├── navigation/      # GoRouter routes and shell scaffold
+└── services/        # UpdateService, BackupRestoreService, PreferencesService
+```
 
 ---
 
@@ -63,53 +80,52 @@ Attendify follows a highly structured, scalable, layer-based architecture that c
 
 ### Prerequisites
 * [Flutter SDK](https://flutter.dev/docs/get-started/install) (v3.19 or higher)
-* Dart SDK
+* Dart SDK (v3.3 or higher)
+* Android Studio / VS Code
 
-### Installation
+### Setup & Installation
 
-1. **Clone the repository**
+1. **Clone the Repository**
    ```bash
-   git clone https://github.com/Lalitjindal-code/Attendify.git
-   cd Attendify
+   git clone https://github.com/Lalitjindal-code/AttendanceX.git
+   cd AttendanceX
    ```
 
-2. **Install dependencies**
+2. **Install Dependencies**
    ```bash
    flutter pub get
    ```
 
-3. **Generate Isar & Riverpod files**  
-   *(Required if you modify models or providers)*
+3. **Generate Code (Isar & Riverpod)**
    ```bash
    dart run build_runner build --delete-conflicting-outputs
    ```
 
-4. **Run the App**
+4. **Run the Application**
    ```bash
    flutter run
    ```
 
 ---
 
-## 📝 Testing
+## 🧪 Testing
 
-The project includes comprehensive Unit Tests and Widget Tests (including Golden tests using `golden_toolkit` to ensure pixel-perfect UI). Run the test suite using:
+The project is backed by **89+ unit and widget tests** covering the calculation engine, repository data flows, and notification scheduling.
 
 ```bash
+# Run unit and widget tests
 flutter test
 ```
 
 ---
 
-## ✨ Recent Updates
-* 🔒 **Settings Revamp**: Simplified settings page, removed legacy features, and added Privacy Policy.
-* 🤖 **GitHub Actions CI/CD**: Added automated workflow for linting, testing, and building Android/iOS apps.
-* ☁️ **Firebase Integration**: Added Firebase Auth and Cloud Firestore dependencies for seamless cloud sync.
-* 📈 **Dashboard Overhaul**: Seamlessly split Pending vs Marked classes with dynamic progress rings, clean badges, and reusable BottomSheets.
-* 📅 **Date Sync Fixes**: Improved time-zone resilient UTC/Local `DateTime` comparisons for robust daily tracking.
+## 📄 License
+
+This project is licensed under the MIT License — see the [LICENSE](LICENSE) file for details.
 
 ---
 
 <div align="center">
   <i>Built with ❤️ by Lalit Jindal</i>
 </div>
+

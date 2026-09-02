@@ -44,6 +44,16 @@ class PreferencesService {
   static const String keyIsOnboardingComplete = 'is_onboarding_complete';
   static const String keyIsAppLockEnabled = 'is_app_lock_enabled';
   static const String keyHasShownDashboardTutorial = 'has_shown_dashboard_tutorial';
+  static const String keyHasShownSubjectsTutorial = 'has_shown_subjects_tutorial';
+  static const String keyHasShownPlannerTutorial = 'has_shown_planner_tutorial';
+  static const String keyHasShownScheduleTutorial = 'has_shown_schedule_tutorial';
+  static const String keyHasShownMoreTutorial = 'has_shown_more_tutorial';
+  static const String keyHasShownAnalyticsTutorial = 'has_shown_analytics_tutorial';
+  static const String keyHasShownCalendarTutorial = 'has_shown_calendar_tutorial';
+  static const String keyHasShownFeedbackTutorial = 'has_shown_feedback_tutorial';
+  static const String keyHasShownBottomNavTutorial = 'has_shown_bottom_nav_tutorial';
+  static const String keyHasShownSettingsTutorial = 'has_shown_settings_tutorial';
+  static const String keyTutorialsMigrated = 'tutorials_migrated';
 
   // Ad-related keys
   static const String keyAdFreeUntil = 'ad_free_until';

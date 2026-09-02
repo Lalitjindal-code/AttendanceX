@@ -4,7 +4,10 @@ import 'package:go_router/go_router.dart';
 import 'package:intl/intl.dart';
 import '../../../navigation/app_routes.dart';
 import 'header_illustration.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:flutter_animate/flutter_animate.dart';
 import 'package:attendify/services/notification_service.dart';
+import 'package:attendify/features/sync/services/firebase_sync_service.dart';
 
 class DashboardHeader extends StatefulWidget {
   final String? subtitle;
@@ -64,7 +67,6 @@ class _DashboardHeaderState extends State<DashboardHeader> {
 
   @override
   Widget build(BuildContext context) {
-    debugPrint('DashboardHeader widget photoUrl: ${widget.photoUrl}');
     final timeStr = DateFormat('h:mm').format(_now);
     final amPmStr = DateFormat('a').format(_now);
     final dateStr = DateFormat('EEEE, MMMM d, yyyy').format(_now);
@@ -128,6 +130,49 @@ class _DashboardHeaderState extends State<DashboardHeader> {
                     ),
                   ],
                 ),
+              ),
+              Consumer(
+                builder: (context, ref, child) {
+                  final syncState = ref.watch(syncStateProvider);
+                  IconData icon;
+                  Color color;
+                  bool isSpinning = false;
+                  String tooltip;
+
+                  switch (syncState) {
+                    case SyncState.online:
+                      icon = Icons.cloud_done_rounded;
+                      color = Colors.green;
+                      tooltip = 'Online & Synced';
+                      break;
+                    case SyncState.offline:
+                      icon = Icons.cloud_off_rounded;
+                      color = Colors.red;
+                      tooltip = 'Offline';
+                      break;
+                    case SyncState.syncing:
+                      icon = Icons.sync_rounded;
+                      color = Theme.of(context).colorScheme.primary;
+                      isSpinning = true;
+                      tooltip = 'Syncing...';
+                      break;
+                  }
+
+                  Widget iconWidget = Icon(icon, color: color, size: 24);
+                  if (isSpinning) {
+                    iconWidget = iconWidget
+                        .animate(onPlay: (controller) => controller.repeat())
+                        .rotate(duration: 2.seconds);
+                  }
+
+                  return Tooltip(
+                    message: tooltip,
+                    child: IconButton(
+                      icon: iconWidget,
+                      onPressed: () {},
+                    ),
+                  );
+                },
               ),
               Stack(
                 children: [

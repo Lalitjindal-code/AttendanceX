@@ -3,7 +3,9 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:connectivity_plus/connectivity_plus.dart';
 import 'package:isar/isar.dart';
+import 'package:attendify/core/providers/firebase_provider.dart';
 
 import 'package:attendify/database/isar_service.dart';
 import 'package:attendify/database/collections/subject_collection.dart';
@@ -14,14 +16,52 @@ import 'package:attendify/database/collections/profile_collection.dart';
 import 'package:attendify/database/collections/semester_collection.dart';
 import 'package:attendify/services/preferences_service.dart';
 
+enum SyncState { online, offline, syncing }
+
+final syncStateProvider = StateNotifierProvider<SyncStateNotifier, SyncState>((ref) {
+  return SyncStateNotifier();
+});
+
+class SyncStateNotifier extends StateNotifier<SyncState> {
+  SyncStateNotifier() : super(SyncState.offline) {
+    _init();
+  }
+  
+  void _init() {
+    Connectivity().onConnectivityChanged.listen((result) {
+      if (result.contains(ConnectivityResult.none)) {
+        state = SyncState.offline;
+      } else {
+        state = SyncState.online;
+      }
+    });
+    // Check initial status
+    Connectivity().checkConnectivity().then((result) {
+      if (result.contains(ConnectivityResult.none)) {
+        state = SyncState.offline;
+      } else {
+        state = SyncState.online;
+      }
+    });
+  }
+  
+  void setSyncing(bool isSyncing) {
+    if (state == SyncState.offline) return;
+    state = isSyncing ? SyncState.syncing : SyncState.online;
+  }
+}
+
 final firebaseSyncServiceProvider = Provider<FirebaseSyncService>((ref) {
   if (!kIsWeb && Platform.isWindows) {
-    return FirebaseSyncService(null, null, IsarService.instance.isar);
+    return FirebaseSyncService(null, null, IsarService.instance.isar, ref);
   }
+  
+  final isInit = ref.watch(firebaseInitProvider).hasValue;
   return FirebaseSyncService(
-    FirebaseAuth.instance,
-    FirebaseFirestore.instance,
+    isInit ? FirebaseAuth.instance : null,
+    isInit ? FirebaseFirestore.instance : null,
     IsarService.instance.isar,
+    ref,
   );
 });
 
@@ -35,7 +75,9 @@ class FirebaseSyncService {
   final FirebaseFirestore? _firestore;
   final Isar? _isar;
 
-  FirebaseSyncService(this._auth, this._firestore, this._isar);
+  final Ref _ref;
+
+  FirebaseSyncService(this._auth, this._firestore, this._isar, this._ref);
 
   bool _isListening = false;
 
@@ -61,6 +103,8 @@ class FirebaseSyncService {
     if (auth == null || firestore == null || isar == null) return;
     final user = auth.currentUser;
     if (user == null) return;
+
+    _ref.read(syncStateProvider.notifier).setSyncing(true);
 
     try {
       final uid = user.uid;
@@ -88,9 +132,33 @@ class FirebaseSyncService {
       };
 
       await backupRef.set(backupData);
+
+      // Write profile summary directly to users/{uid} for admin dash
+      String? name;
+      String? branch;
+      String? semester;
+      
+      if (profiles.isNotEmpty) {
+        final profile = profiles.first;
+        name = profile.name;
+        branch = profile.branch;
+        semester = profile.currentSemester;
+      }
+      
+      final userDocRef = firestore.collection('users').doc(uid);
+      await userDocRef.set({
+        'name': name ?? user.displayName ?? 'Unknown',
+        'email': user.email ?? 'No email',
+        'branch': branch ?? '-',
+        'semester': semester ?? '-',
+        'updatedAt': FieldValue.serverTimestamp(),
+      }, SetOptions(merge: true));
+
     } catch (e) {
       // Background backup failed, log it or handle it gracefully
       debugPrint('Backup failed: $e');
+    } finally {
+      _ref.read(syncStateProvider.notifier).setSyncing(false);
     }
   }
 

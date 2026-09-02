@@ -51,6 +51,8 @@ class _CalendarWidgetState extends ConsumerState<CalendarWidget> {
         return Theme.of(context).colorScheme.primary;
       case AttendanceStatus.gt:
         return Colors.purple;
+      case AttendanceStatus.exam:
+        return Colors.amber.shade700;
       case AttendanceStatus.pending:
         return Theme.of(context).colorScheme.outlineVariant;
     }

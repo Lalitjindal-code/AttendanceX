@@ -20,3 +20,6 @@
 -keep class sun.misc.Unsafe { *; }
 -dontwarn com.google.android.gms.**
 -dontwarn com.google.android.play.core.**
+
+# ML Kit Text Recognition (Prevent R8 crash for missing language models)
+-dontwarn com.google.mlkit.vision.text.**

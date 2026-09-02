@@ -4,8 +4,11 @@ import 'package:go_router/go_router.dart';
 import '../../../core/constants/app_spacing.dart';
 import '../data/college_data.dart';
 import '../../../scripts/import_aids_1st_sem.dart';
+import '../../../scripts/aiads_3rd_sem_script.dart';
+import '../../../scripts/cse_blockchain_1st_sem_script.dart';
 import '../../settings/providers/semester_provider.dart';
 import '../../../navigation/app_routes.dart';
+
 class CollegeZoneScreen extends ConsumerStatefulWidget {
   const CollegeZoneScreen({super.key});
 
@@ -15,6 +18,13 @@ class CollegeZoneScreen extends ConsumerStatefulWidget {
 
 class _CollegeZoneScreenState extends ConsumerState<CollegeZoneScreen> {
   int? _selectedSemester;
+
+  bool _isAvailable(int? sem, String branch) {
+    if (sem == 1 && branch == 'AIADS') return true;
+    if (sem == 3 && branch == 'AIADS') return true;
+    if (sem == 1 && branch == 'BCT (Blockchain Technology)') return true;
+    return false;
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -88,6 +98,8 @@ class _CollegeZoneScreenState extends ConsumerState<CollegeZoneScreen> {
       itemCount: CollegeData.branches.length,
       itemBuilder: (context, index) {
         final branch = CollegeData.branches[index];
+        final available = _isAvailable(_selectedSemester, branch);
+        
         return Card(
           color: Theme.of(context).colorScheme.surfaceContainerHigh,
           margin: const EdgeInsets.only(bottom: AppSpacing.sm),
@@ -97,30 +109,37 @@ class _CollegeZoneScreenState extends ConsumerState<CollegeZoneScreen> {
             contentPadding: const EdgeInsets.symmetric(
                 horizontal: AppSpacing.lg, vertical: AppSpacing.xs),
             title: Text(
-                (_selectedSemester == 1 && branch == 'AIADS') ? '$branch (Available)' : branch,
+                available 
+                    ? '$branch (Available)' 
+                    : '$branch (Not Available Request)',
                 style: TextStyle(
-                    color: (_selectedSemester == 1 && branch == 'AIADS') 
+                    color: available 
                         ? Colors.green 
-                        : Theme.of(context).colorScheme.onSurface,
-                    fontSize: 16,
+                        : Theme.of(context).colorScheme.onSurface.withValues(alpha: 0.7),
+                    fontSize: 14,
                     fontWeight: FontWeight.w600)),
             trailing: Icon(Icons.download_rounded,
                 color: Theme.of(context).colorScheme.primary),
             onTap: () async {
-              if (_selectedSemester == 1 && branch == 'AIADS') {
+              if (available) {
                 showDialog(
                   context: context,
                   barrierDismissible: false,
                   builder: (context) => const Center(child: CircularProgressIndicator()),
                 );
                 
-                // Ensure name and start date are set correctly
                 await ref.read(semesterStateProvider.notifier).updateSemester(
-                      'B.Tech AI&DS 1st Sem',
+                      'B.Tech $branch ${_selectedSemester}th Sem',
                       DateTime(2026, 8, 17),
                     );
 
-                await ImportAids1stSem.run();
+                if (_selectedSemester == 1 && branch == 'AIADS') {
+                  await ImportAids1stSem.run();
+                } else if (_selectedSemester == 3 && branch == 'AIADS') {
+                  await ImportTimetableAiads3rdSem.run();
+                } else if (_selectedSemester == 1 && branch == 'BCT (Blockchain Technology)') {
+                  await ImportTimetableCseBlockchain1stSem.run();
+                }
                 
                 if (mounted) {
                   Navigator.pop(context); // hide loading

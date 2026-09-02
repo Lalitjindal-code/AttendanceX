@@ -43,6 +43,7 @@ class AttendanceEngine {
     int totalHolidayRecords = 0;
     int totalMedicalRecords = 0;
     int totalGTRecords = 0;
+    int totalExamRecords = 0;
     int totalPendingRecords = 0;
 
     for (final attendance in attendances) {
@@ -62,6 +63,10 @@ class AttendanceEngine {
         case AttendanceStatus.holiday:
           totalHolidayRecords++;
           // Always excluded
+          break;
+        case AttendanceStatus.exam:
+          totalExamRecords++;
+          // Always excluded from calculation
           break;
         case AttendanceStatus.pending:
           totalPendingRecords++;
@@ -89,6 +94,7 @@ class AttendanceEngine {
       totalHolidayRecords: totalHolidayRecords,
       totalMedicalRecords: totalMedicalRecords,
       totalGTRecords: totalGTRecords,
+      totalExamRecords: totalExamRecords,
       totalPendingRecords: totalPendingRecords,
     );
   }
@@ -130,6 +136,7 @@ class AttendanceEngine {
     int totalHolidayRecords = 0;
     int totalMedicalRecords = 0;
     int totalGTRecords = 0;
+    int totalExamRecords = 0;
     int totalPendingRecords = 0;
 
     for (final attendance in allAttendances) {
@@ -147,6 +154,9 @@ class AttendanceEngine {
           break;
         case AttendanceStatus.holiday:
           totalHolidayRecords++;
+          break;
+        case AttendanceStatus.exam:
+          totalExamRecords++;
           break;
         case AttendanceStatus.pending:
           totalPendingRecords++;
@@ -172,6 +182,7 @@ class AttendanceEngine {
       totalHolidayRecords: totalHolidayRecords,
       totalMedicalRecords: totalMedicalRecords,
       totalGTRecords: totalGTRecords,
+      totalExamRecords: totalExamRecords,
       totalPendingRecords: totalPendingRecords,
     );
   }

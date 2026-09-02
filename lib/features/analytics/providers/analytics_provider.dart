@@ -166,6 +166,7 @@ class AnalyticsNotifier extends _$AnalyticsNotifier {
           overallForecast: overallForecast,
           overallSummary: overallSummary,
           plannerMetrics: plannerMetrics,
+          allAttendances: allAttendances,
         );
       },
     );

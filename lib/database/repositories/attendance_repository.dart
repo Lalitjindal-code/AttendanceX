@@ -1,5 +1,6 @@
 import 'package:isar/isar.dart';
 import '../../core/enums/attendance_status.dart';
+import '../../core/enums/exam_type.dart';
 import '../collections/attendance_collection.dart';
 import '../collections/attendance_history_collection.dart';
 import '../collections/schedule_collection.dart';
@@ -264,8 +265,6 @@ class AttendanceRepository {
             deletedCount++;
           }
         } else {
-          // No schedule exists for this subject on this day.
-          // Since user said "manual attandance hat jaye", we will delete it to clean up the calendar.
           await _isar.attendanceHistorys.filter().attendanceIdEqualTo(manual.id).deleteAll();
           await _isar.attendances.delete(manual.id);
           deletedCount++;
@@ -278,9 +277,10 @@ class AttendanceRepository {
     return deletedCount;
   }
 
-  /// Marks the entire day (all schedules) as the specified status (GT, Medical, or Holiday).
+  /// Marks the entire day (all schedules) as the specified status (GT, Medical, Holiday, or Exam).
   Future<void> markFullDayStatus(
-      DateTime date, int semesterId, AttendanceStatus status) async {
+      DateTime date, int semesterId, AttendanceStatus status,
+      {ExamType? examType}) async {
     final todayUtc = DateTime.utc(date.year, date.month, date.day);
     final dayOfWeek = date.weekday;
 
@@ -308,7 +308,9 @@ class AttendanceRepository {
 
         final previousStatus = existing?.status ?? AttendanceStatus.pending;
 
-        if (existing != null && previousStatus == status) {
+        if (existing != null &&
+            previousStatus == status &&
+            existing.examType == examType) {
           continue;
         }
 
@@ -321,6 +323,7 @@ class AttendanceRepository {
               ..createdAt = DateTime.now());
 
         attendance.status = status;
+        attendance.examType = examType;
         attendance.updatedAt = DateTime.now();
         await _isar.attendances.put(attendance);
 
@@ -340,9 +343,12 @@ class AttendanceRepository {
       for (final attendance in existingAttendances) {
         if (attendance.scheduleId == null) {
           final previousStatus = attendance.status;
-          if (previousStatus == status) continue;
+          if (previousStatus == status && attendance.examType == examType) {
+            continue;
+          }
 
           attendance.status = status;
+          attendance.examType = examType;
           attendance.updatedAt = DateTime.now();
           await _isar.attendances.put(attendance);
 

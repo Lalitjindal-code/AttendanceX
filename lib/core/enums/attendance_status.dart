@@ -21,6 +21,10 @@ enum AttendanceStatus {
   /// Always excluded from attendance calculation. Never configurable.
   holiday,
 
+  /// Day or slot is marked for an Exam (Mid Sem 1, Mid Sem 2, End Sem, Practical).
+  /// Always excluded from attendance calculation. Never configurable.
+  exam,
+
   /// Status has not been marked yet by the student.
   pending,
 }

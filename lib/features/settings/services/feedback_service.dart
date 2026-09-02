@@ -62,4 +62,31 @@ class FeedbackService {
         .collection('feedbacks')
         .snapshots(); // orderBy requires index, will sort locally instead
   }
+
+  Stream<QuerySnapshot<Map<String, dynamic>>> getUserFeedbacks() {
+    final user = _auth.currentUser;
+    if (user == null) return const Stream.empty();
+    return _firestore
+        .collection('feedbacks')
+        .where('userId', isEqualTo: user.uid)
+        .snapshots();
+  }
+
+  Future<void> sendChatMessage(String feedbackId, String sender, String text) async {
+    await _firestore.collection('feedbacks').doc(feedbackId).update({
+      'messages': FieldValue.arrayUnion([
+        {
+          'sender': sender,
+          'text': text,
+          'timestamp': DateTime.now(),
+        }
+      ]),
+    });
+  }
+
+  Future<void> closeChatSession(String feedbackId) async {
+    await _firestore.collection('feedbacks').doc(feedbackId).update({
+      'isChatClosed': true,
+    });
+  }
 }

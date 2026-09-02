@@ -59,17 +59,30 @@ class WidgetService {
       final now = DateTime.now();
       final todayWeekday = now.weekday; // 1=Mon … 7=Sun
 
+      final activeSemesterId = PreferencesService.instance.getInt(
+          'active_semester_id',
+          defaultValue: 1);
+
       // Fetch ALL schedule slots for the entire week
-      final schedules =
-          await isar.schedules.where().sortByStartTime().findAll();
+      final schedules = await isar.schedules
+          .filter()
+          .semesterIdEqualTo(activeSemesterId)
+          .sortByStartTime()
+          .findAll();
 
       // Fetch all active subjects (for name + color lookup)
-      final subjects =
-          await isar.subjects.filter().isActiveEqualTo(true).findAll();
+      final subjects = await isar.subjects
+          .filter()
+          .semesterIdEqualTo(activeSemesterId)
+          .isActiveEqualTo(true)
+          .findAll();
 
       // Fetch today's attendance records
       final todayUtc = DateTime.utc(now.year, now.month, now.day);
-      final allAttendances = await isar.attendances.where().findAll();
+      final allAttendances = await isar.attendances
+          .filter()
+          .semesterIdEqualTo(activeSemesterId)
+          .findAll();
       final todayAttendances = allAttendances
           .where((a) =>
               a.date.year == todayUtc.year &&
@@ -86,11 +99,15 @@ class WidgetService {
         final subjectRecords =
             allAttendances.where((a) => a.subjectId == subject.id).toList();
         final total = subjectRecords
-            .where(
-                (a) => a.status.name == 'present' || a.status.name == 'absent')
+            .where((a) =>
+                a.status.name == 'present' ||
+                a.status.name == 'absent' ||
+                a.status.name == 'medical')
             .length;
-        final present =
-            subjectRecords.where((a) => a.status.name == 'present').length;
+        final present = subjectRecords
+            .where((a) =>
+                a.status.name == 'present' || a.status.name == 'medical')
+            .length;
 
         if (subject.isIncludedInOverall) {
           totalLecturesAll += total;

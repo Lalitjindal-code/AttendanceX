@@ -1,4 +1,7 @@
 import 'dart:typed_data';
+import 'package:flutter/foundation.dart';
+import 'package:path_provider/path_provider.dart';
+import 'package:intl/intl.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 import 'package:isar/isar.dart';
 import '../../../database/database_providers.dart';
@@ -178,6 +181,49 @@ class BackupController extends _$BackupController {
           state = progress;
         },
       );
+    } finally {
+      state = null;
+    }
+  }
+
+  Future<void> createAutoBackup() async {
+    state = 0.0;
+    try {
+      final isar = ref.read(isarProvider);
+      final profiles = await isar.profiles.where().findAll();
+      final semesters = await isar.semesters.where().findAll();
+      final subjects = await isar.subjects.where().findAll();
+      final schedules = await isar.schedules.where().findAll();
+      final attendances = await isar.attendances.where().findAll();
+      final history = await isar.attendanceHistorys.where().findAll();
+      final tasks = await isar.academicTasks.where().findAll();
+      final currentSettings = ref.read(settingsProvider);
+
+      final dir = await getApplicationDocumentsDirectory();
+      final formatter = DateFormat('yyyy-MM-dd_HH-mm');
+      final customPath = '${dir.path}/Attendify_AutoBackup_${formatter.format(DateTime.now())}.atfy';
+
+      await _engine.exportBackup(
+        path: customPath,
+        profiles: profiles,
+        semesters: semesters,
+        subjects: subjects,
+        schedules: schedules,
+        attendanceRecords: attendances,
+        attendanceHistory: history,
+        tasks: tasks,
+        settings: currentSettings,
+        appVersion: '1.0.0', // Standardize app version
+        databaseVersion: 1,
+        onProgress: (progress) {
+          state = progress;
+        },
+      );
+      
+      await ref.read(settingsProvider.notifier).updateLastBackupDate(DateTime.now());
+      debugPrint('Auto backup created at: $customPath');
+    } catch (e) {
+      debugPrint('Auto backup failed: $e');
     } finally {
       state = null;
     }

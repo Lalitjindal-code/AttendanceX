@@ -24,6 +24,8 @@ abstract final class AppRoutes {
   static const String collegeZone = '/college-zone';
   static const String requestTimetable = '/request-timetable';
   static const String feedback = '/feedback';
+  static const String userSupport = '/support';
+  static const String ticketChat = '/support/chat';
   
   // Admin Routes
   static const String adminRequests = '/admin-requests';

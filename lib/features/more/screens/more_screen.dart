@@ -11,6 +11,9 @@ import '../../../core/ads/rewarded_ad_manager.dart';
 import '../../../core/ads/app_open_ad_manager.dart';
 import '../../../core/ads/providers/ad_free_provider.dart';
 import '../../../core/ads/ad_eligibility_service.dart';
+import 'package:showcaseview/showcaseview.dart';
+import '../../tutorials/providers/tutorial_provider.dart';
+import '../../backup/providers/backup_provider.dart';
 
 class MoreScreen extends ConsumerStatefulWidget {
   const MoreScreen({super.key});
@@ -20,12 +23,21 @@ class MoreScreen extends ConsumerStatefulWidget {
 }
 
 class _MoreScreenState extends ConsumerState<MoreScreen> {
+  final GlobalKey _simulatorKey = GlobalKey();
+  final GlobalKey _settingsKey = GlobalKey();
   @override
   void initState() {
     super.initState();
     // Preload ads if not already loaded
     InterstitialAdManager.instance.loadAd();
     RewardedAdManager.instance.loadAd();
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      final hasShown = ref.read(moreTutorialNotifierProvider);
+      if (!hasShown) {
+        ShowCaseWidget.of(context).startShowCase([_simulatorKey, _settingsKey]);
+        ref.read(moreTutorialNotifierProvider.notifier).markShown();
+      }
+    });
   }
 
   void _navigateWithInterstitial(String route, String feature) {
@@ -103,20 +115,28 @@ class _MoreScreenState extends ConsumerState<MoreScreen> {
             onTap: () => _navigateWithInterstitial(AppRoutes.analytics, 'analytics'),
           ),
           const SizedBox(height: 12),
-          _buildMenuCard(
-            context: context,
-            icon: Icons.psychology_outlined,
-            iconColor: Colors.orangeAccent,
-            title: 'Bunk Simulator & Predictor',
-            onTap: () => _navigateWithInterstitial(AppRoutes.bunkSimulator, 'bunk_simulator'),
+          Showcase(
+            key: _simulatorKey,
+            description: 'Try the Bunk Simulator to plan your attendance!',
+            child: _buildMenuCard(
+              context: context,
+              icon: Icons.psychology_outlined,
+              iconColor: Colors.orangeAccent,
+              title: 'Bunk Simulator & Predictor',
+              onTap: () => _navigateWithInterstitial(AppRoutes.bunkSimulator, 'bunk_simulator'),
+            ),
           ),
           const SizedBox(height: 12),
-          _buildMenuCard(
-            context: context,
-            icon: AppIcons.settings,
-            iconColor: const Color(0xFF7E73FF),
-            title: 'Settings',
-            onTap: () => context.push(AppRoutes.settings),
+          Showcase(
+            key: _settingsKey,
+            description: 'Go to Settings here to find the WhatsApp Community link!',
+            child: _buildMenuCard(
+              context: context,
+              icon: AppIcons.settings,
+              iconColor: const Color(0xFF7E73FF),
+              title: 'Settings',
+              onTap: () => context.push(AppRoutes.settings),
+            ),
           ),
           if (isAdmin) ...[
             const SizedBox(height: 24),
@@ -399,6 +419,7 @@ class _MoreScreenState extends ConsumerState<MoreScreen> {
         onPressed: () async {
           AppOpenAdManager.instance.isPaused = true;
           try {
+            await ref.read(backupControllerProvider.notifier).createAutoBackup();
             await ref.read(authProvider).signOut();
           } finally {
             AppOpenAdManager.instance.isPaused = false;

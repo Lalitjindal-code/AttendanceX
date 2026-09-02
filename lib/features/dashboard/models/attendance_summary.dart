@@ -9,6 +9,7 @@ class SubjectAttendanceSummary {
   final int totalHolidayRecords;
   final int totalMedicalRecords;
   final int totalGTRecords;
+  final int totalExamRecords;
   final int totalPendingRecords;
 
   const SubjectAttendanceSummary({
@@ -20,6 +21,7 @@ class SubjectAttendanceSummary {
     required this.totalHolidayRecords,
     required this.totalMedicalRecords,
     required this.totalGTRecords,
+    this.totalExamRecords = 0,
     required this.totalPendingRecords,
   });
 
@@ -37,6 +39,7 @@ class OverallAttendanceSummary {
   final int totalHolidayRecords;
   final int totalMedicalRecords;
   final int totalGTRecords;
+  final int totalExamRecords;
   final int totalPendingRecords;
 
   const OverallAttendanceSummary({
@@ -47,6 +50,7 @@ class OverallAttendanceSummary {
     required this.totalHolidayRecords,
     required this.totalMedicalRecords,
     required this.totalGTRecords,
+    this.totalExamRecords = 0,
     required this.totalPendingRecords,
   });
 

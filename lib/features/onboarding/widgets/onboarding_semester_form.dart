@@ -6,6 +6,9 @@ import '../../settings/providers/semester_provider.dart';
 import '../../college/providers/college_auth_provider.dart';
 import '../../college/data/college_data.dart';
 import '../../../scripts/import_aids_1st_sem.dart';
+import '../../../scripts/aiads_3rd_sem_script.dart';
+import '../../../scripts/cse_blockchain_1st_sem_script.dart';
+import '../../settings/providers/settings_provider.dart';
 
 class OnboardingSemesterForm extends ConsumerStatefulWidget {
   final VoidCallback onComplete;
@@ -31,6 +34,13 @@ class _OnboardingSemesterFormState
   void dispose() {
     _nameController.dispose();
     super.dispose();
+  }
+
+  bool _isAvailable(int? sem, String branch) {
+    if (sem == 1 && branch == 'AIADS') return true;
+    if (sem == 3 && branch == 'AIADS') return true;
+    if (sem == 1 && branch == 'BCT (Blockchain Technology)') return true;
+    return false;
   }
 
   Future<void> _selectDate() async {
@@ -70,12 +80,27 @@ class _OnboardingSemesterFormState
       final name = isCollegeUser
           ? 'Semester $_selectedSemester - $_selectedBranch'
           : _nameController.text.trim();
+          
+      // Also update the profile with these details
+      if (isCollegeUser) {
+        await ref.read(settingsProvider.notifier).updateProfile(
+          branch: _selectedBranch,
+          currentSemester: 'Semester $_selectedSemester',
+        );
+      }
+
       await ref
           .read(semesterStateProvider.notifier)
           .updateSemester(name, _selectedDate ?? DateTime.now());
 
-      if (isCollegeUser && _selectedSemester == 1 && _selectedBranch == 'AIADS') {
-        await ImportAids1stSem.run();
+      if (isCollegeUser) {
+        if (_selectedSemester == 1 && _selectedBranch == 'AIADS') {
+          await ImportAids1stSem.run();
+        } else if (_selectedSemester == 3 && _selectedBranch == 'AIADS') {
+          await ImportTimetableAiads3rdSem.run();
+        } else if (_selectedSemester == 1 && _selectedBranch == 'BCT (Blockchain Technology)') {
+          await ImportTimetableCseBlockchain1stSem.run();
+        }
       }
 
       widget.onComplete();
@@ -140,7 +165,7 @@ class _OnboardingSemesterFormState
                         prefixIcon: Icon(Icons.class_outlined)),
                     items: CollegeData.branches
                         .map((b) {
-                          final isAvailable = _selectedSemester == 1 && b == 'AIADS';
+                          final isAvailable = _isAvailable(_selectedSemester, b);
                           return DropdownMenuItem(
                             value: b, 
                             child: Text(isAvailable ? '$b (Available)' : b)

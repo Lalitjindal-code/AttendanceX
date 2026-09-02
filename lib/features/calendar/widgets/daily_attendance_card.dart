@@ -2,11 +2,13 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../../core/constants/app_spacing.dart';
 import '../../../core/enums/attendance_status.dart';
+import '../../../core/enums/exam_type.dart';
 import '../../../core/utils/haptics.dart';
 import '../../../database/collections/attendance_collection.dart';
 import '../../attendance/providers/attendance_providers.dart';
 import '../../settings/providers/semester_provider.dart';
 import '../models/daily_attendance_item.dart';
+import 'mark_exam_dialog.dart';
 
 class DailyAttendanceCard extends ConsumerWidget {
   final DailyAttendanceItem item;
@@ -40,6 +42,9 @@ class DailyAttendanceCard extends ConsumerWidget {
         break;
       case AttendanceStatus.gt:
         statusColor = Colors.purple;
+        break;
+      case AttendanceStatus.exam:
+        statusColor = Colors.amber.shade700;
         break;
       default:
         statusColor = colorScheme.outlineVariant;
@@ -154,7 +159,11 @@ class DailyAttendanceCard extends ConsumerWidget {
                             borderRadius: BorderRadius.circular(20),
                           ),
                           child: Text(
-                            item.status?.name.toUpperCase() ?? 'PENDING',
+                            item.status == AttendanceStatus.exam
+                                ? (item.attendance?.examType != null
+                                    ? 'EXAM (${item.attendance!.examType!.shortName.toUpperCase()})'
+                                    : 'EXAM')
+                                : (item.status?.name.toUpperCase() ?? 'PENDING'),
                             style: theme.textTheme.labelMedium?.copyWith(
                               color: item.status != null
                                   ? statusColor
@@ -231,6 +240,11 @@ class DailyAttendanceCard extends ConsumerWidget {
                   children: AttendanceStatus.values
                       .map((status) {
                         final isSelected = item.status == status;
+                        final label = status == AttendanceStatus.exam &&
+                                isSelected &&
+                                item.attendance?.examType != null
+                            ? 'EXAM (${item.attendance!.examType!.displayName})'
+                            : status.name.toUpperCase();
                         return Padding(
                           padding: const EdgeInsets.only(bottom: AppSpacing.xs),
                           child: ListTile(
@@ -240,7 +254,7 @@ class DailyAttendanceCard extends ConsumerWidget {
                             selectedTileColor:
                                 Theme.of(context).colorScheme.primaryContainer,
                             title: Text(
-                              status.name.toUpperCase(),
+                              label,
                               style: TextStyle(
                                 fontWeight: isSelected
                                     ? FontWeight.bold
@@ -249,10 +263,23 @@ class DailyAttendanceCard extends ConsumerWidget {
                             ),
                             trailing:
                                 isSelected ? const Icon(Icons.check) : null,
-                            onTap: () {
-                              _updateAttendance(ref, status);
-                              Haptics.light();
+                            onTap: () async {
                               Navigator.pop(context);
+                              if (status == AttendanceStatus.exam) {
+                                final selectedExam = await MarkExamDialog.show(
+                                  context,
+                                  date: date,
+                                  initialExamType: item.attendance?.examType,
+                                );
+                                if (selectedExam != null) {
+                                  _updateAttendance(ref, status,
+                                      examType: selectedExam);
+                                  Haptics.light();
+                                }
+                              } else {
+                                _updateAttendance(ref, status);
+                                Haptics.light();
+                              }
                             },
                           ),
                         );
@@ -294,7 +321,8 @@ class DailyAttendanceCard extends ConsumerWidget {
     );
   }
 
-  void _updateAttendance(WidgetRef ref, AttendanceStatus newStatus) {
+  void _updateAttendance(WidgetRef ref, AttendanceStatus newStatus,
+      {ExamType? examType}) {
     final repo = ref.read(attendanceRepositoryProvider);
     final semester = ref.read(semesterStateProvider);
     if (semester == null) return;
@@ -306,6 +334,9 @@ class DailyAttendanceCard extends ConsumerWidget {
       ..date = DateTime(date.year, date.month, date.day);
 
     att.status = newStatus;
+    if (newStatus == AttendanceStatus.exam) {
+      att.examType = examType;
+    }
 
     // Perform background update
     repo.upsertAttendance(att);

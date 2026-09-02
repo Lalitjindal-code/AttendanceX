@@ -28,6 +28,8 @@ import '../features/admin/screens/admin_users_screen.dart';
 import '../features/admin/screens/admin_reminders_screen.dart';
 import '../features/admin/screens/admin_feedbacks_screen.dart';
 import '../features/schedule/screens/request_timetable_screen.dart';
+import '../features/support/screens/user_support_screen.dart';
+import '../features/support/screens/ticket_chat_screen.dart';
 import 'app_routes.dart';
 import 'shell_scaffold.dart';
 import '../features/splash/screens/splash_screen.dart';
@@ -35,7 +37,7 @@ import '../features/splash/screens/splash_screen.dart';
 part 'app_router.g.dart';
 
 /// Global navigator key.
-final GlobalKey<NavigatorState> _rootNavigatorKey = GlobalKey<NavigatorState>();
+final GlobalKey<NavigatorState> rootNavigatorKey = GlobalKey<NavigatorState>();
 
 /// Provider for the GoRouter instance.
 ///
@@ -48,7 +50,7 @@ GoRouter appRouter(AppRouterRef ref) {
   final authState = ref.watch(authStateProvider);
 
   return GoRouter(
-    navigatorKey: _rootNavigatorKey,
+    navigatorKey: rootNavigatorKey,
     initialLocation: AppRoutes.splash,
     redirect: (context, state) {
       final isGoingToSplash = state.uri.path == AppRoutes.splash;
@@ -131,7 +133,9 @@ GoRouter appRouter(AppRouterRef ref) {
             routes: [
               GoRoute(
                 path: AppRoutes.subjects,
-                builder: (context, state) => const SubjectsScreen(),
+                builder: (context, state) => ShowCaseWidget(
+                  builder: (context) => const SubjectsScreen(),
+                ),
                 routes: [
                   GoRoute(
                     path: AppRoutes.subjectDetail,
@@ -155,7 +159,9 @@ GoRouter appRouter(AppRouterRef ref) {
             routes: [
               GoRoute(
                 path: AppRoutes.schedule,
-                builder: (context, state) => const ScheduleScreen(),
+                builder: (context, state) => ShowCaseWidget(
+                  builder: (context) => const ScheduleScreen(),
+                ),
               ),
             ],
           ),
@@ -164,7 +170,9 @@ GoRouter appRouter(AppRouterRef ref) {
             routes: [
               GoRoute(
                 path: AppRoutes.planner,
-                builder: (context, state) => const PlannerScreen(),
+                builder: (context, state) => ShowCaseWidget(
+                  builder: (context) => const PlannerScreen(),
+                ),
               ),
             ],
           ),
@@ -173,7 +181,9 @@ GoRouter appRouter(AppRouterRef ref) {
             routes: [
               GoRoute(
                 path: AppRoutes.more,
-                builder: (context, state) => const MoreScreen(),
+                builder: (context, state) => ShowCaseWidget(
+                  builder: (context) => const MoreScreen(),
+                ),
                 routes: const <RouteBase>[],
                 // Sub-routes for More tab (no leading slash for sub-routes, but AppRoutes are absolute)
                 // Wait, if they are absolute, we can just define them inside the branch directly instead of nested.
@@ -185,15 +195,21 @@ GoRouter appRouter(AppRouterRef ref) {
               ),
               GoRoute(
                 path: AppRoutes.calendar,
-                builder: (context, state) => const CalendarScreen(),
+                builder: (context, state) => ShowCaseWidget(
+                  builder: (context) => const CalendarScreen(),
+                ),
               ),
               GoRoute(
                 path: AppRoutes.analytics,
-                builder: (context, state) => const AnalyticsScreen(),
+                builder: (context, state) => ShowCaseWidget(
+                  builder: (context) => const AnalyticsScreen(),
+                ),
               ),
               GoRoute(
                 path: AppRoutes.settings,
-                builder: (context, state) => const SettingsScreen(),
+                builder: (context, state) => ShowCaseWidget(
+                  builder: (context) => const SettingsScreen(),
+                ),
               ),
               GoRoute(
                 path: AppRoutes.notifications,
@@ -206,7 +222,23 @@ GoRouter appRouter(AppRouterRef ref) {
               ),
               GoRoute(
                 path: AppRoutes.feedback,
-                builder: (context, state) => const FeedbackScreen(),
+                builder: (context, state) => ShowCaseWidget(
+                  builder: (context) => const FeedbackScreen(),
+                ),
+              ),
+              GoRoute(
+                path: AppRoutes.userSupport,
+                builder: (context, state) => const UserSupportScreen(),
+              ),
+              GoRoute(
+                path: AppRoutes.ticketChat,
+                builder: (context, state) {
+                  final args = state.extra as Map<String, dynamic>? ?? {};
+                  return TicketChatScreen(
+                    ticketId: args['id'] ?? '',
+                    ticketType: args['type'] ?? 'feedback',
+                  );
+                },
               ),
               GoRoute(
                 path: AppRoutes.bunkSimulator,

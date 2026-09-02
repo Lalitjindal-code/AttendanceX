@@ -5,12 +5,33 @@ import '../providers/calendar_provider.dart';
 import '../widgets/calendar_widget.dart';
 import '../widgets/day_detail_panel.dart';
 import '../../../core/widgets/banner_ad_widget.dart';
+import 'package:showcaseview/showcaseview.dart';
+import '../../tutorials/providers/tutorial_provider.dart';
 
-class CalendarScreen extends ConsumerWidget {
+class CalendarScreen extends ConsumerStatefulWidget {
   const CalendarScreen({super.key});
 
   @override
-  Widget build(BuildContext context, WidgetRef ref) {
+  ConsumerState<CalendarScreen> createState() => _CalendarScreenState();
+}
+
+class _CalendarScreenState extends ConsumerState<CalendarScreen> {
+  final GlobalKey _calendarKey = GlobalKey();
+
+  @override
+  void initState() {
+    super.initState();
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      final hasShown = ref.read(calendarTutorialNotifierProvider);
+      if (!hasShown) {
+        ShowCaseWidget.of(context).startShowCase([_calendarKey]);
+        ref.read(calendarTutorialNotifierProvider.notifier).markShown();
+      }
+    });
+  }
+
+  @override
+  Widget build(BuildContext context) {
     final calendarStateAsync = ref.watch(calendarNotifierProvider);
 
     return Scaffold(
@@ -32,7 +53,11 @@ class CalendarScreen extends ConsumerWidget {
                     color: Theme.of(context).colorScheme.onSurface),
               ),
               SliverToBoxAdapter(
-                child: CalendarWidget(state: state),
+                child: Showcase(
+                  key: _calendarKey,
+                  description: 'Select any date to view your schedule and attendance for that day',
+                  child: CalendarWidget(state: state),
+                ),
               ),
               SliverToBoxAdapter(
                 child: Padding(

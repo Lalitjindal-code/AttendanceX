@@ -5,7 +5,9 @@ import 'package:collection/collection.dart';
 import 'package:intl/intl.dart';
 import '../../../navigation/app_routes.dart';
 import '../../../core/enums/attendance_status.dart';
+import '../../../core/enums/exam_type.dart';
 import '../../../core/extensions/attendance_status_extension.dart';
+import '../../calendar/widgets/mark_exam_dialog.dart';
 import '../../subjects/providers/subject_providers.dart';
 import '../../settings/providers/semester_provider.dart';
 import '../../attendance/providers/attendance_providers.dart';
@@ -25,7 +27,7 @@ import 'package:shimmer/shimmer.dart';
 import '../../../core/utils/haptics.dart';
 import '../../../core/widgets/banner_ad_widget.dart';
 import 'package:showcaseview/showcaseview.dart';
-import '../providers/tutorial_provider.dart';
+import '../../tutorials/providers/tutorial_provider.dart';
 
 import '../../../core/constants/app_spacing.dart';
 import '../../profile/providers/active_profile_provider.dart';
@@ -49,7 +51,7 @@ class _DashboardScreenState extends ConsumerState<DashboardScreen> {
   void initState() {
     super.initState();
     WidgetsBinding.instance.addPostFrameCallback((_) {
-      final hasShown = ref.read(tutorialNotifierProvider);
+      final hasShown = ref.read(dashboardTutorialNotifierProvider);
       if (!hasShown) {
         ShowCaseWidget.of(context).startShowCase([
           _headerKey,
@@ -57,7 +59,7 @@ class _DashboardScreenState extends ConsumerState<DashboardScreen> {
           _quickStatsKey,
           _scheduleKey,
         ]);
-        ref.read(tutorialNotifierProvider.notifier).markDashboardTutorialShown();
+        ref.read(dashboardTutorialNotifierProvider.notifier).markShown();
       }
     });
   }
@@ -116,7 +118,6 @@ class _DashboardScreenState extends ConsumerState<DashboardScreen> {
     final stateStream = ref.watch(dashboardNotifierProvider);
     final user = ref.watch(authStateProvider).valueOrNull;
     final userName = user?.displayName;
-    debugPrint('DashboardScreen user photoURL: ${user?.photoURL}');
 
     return Scaffold(
       body: stateStream.when(
@@ -850,6 +851,43 @@ class _DashboardScreenState extends ConsumerState<DashboardScreen> {
                               behavior: SnackBarBehavior.floating,
                             ),
                           );
+                        }
+                      }
+                      if (context.mounted) Navigator.pop(context);
+                    },
+                  ),
+                  _buildQuickMarkButton(
+                    context,
+                    'EXAM',
+                    Icons.assignment_rounded,
+                    Colors.amber.shade800,
+                    () async {
+                      final semester = ref.read(semesterStateProvider);
+                      if (semester != null) {
+                        final selectedExam = await MarkExamDialog.show(
+                          context,
+                          date: date,
+                        );
+                        if (selectedExam != null && context.mounted) {
+                          await ref
+                              .read(attendanceRepositoryProvider)
+                              .markFullDayStatus(
+                                date,
+                                semester.id,
+                                AttendanceStatus.exam,
+                                examType: selectedExam,
+                              );
+                          if (context.mounted) {
+                            ScaffoldMessenger.of(context).hideCurrentSnackBar();
+                            ScaffoldMessenger.of(context).showSnackBar(
+                              SnackBar(
+                                content: Text(
+                                  'Marked entire day as Exam (${selectedExam.displayName})',
+                                ),
+                                behavior: SnackBarBehavior.floating,
+                              ),
+                            );
+                          }
                         }
                       }
                       if (context.mounted) Navigator.pop(context);

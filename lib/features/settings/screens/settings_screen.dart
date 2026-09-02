@@ -23,12 +23,43 @@ import '../../subjects/providers/subject_providers.dart';
 import '../../attendance/providers/attendance_providers.dart';
 import 'package:url_launcher/url_launcher.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
+import 'package:package_info_plus/package_info_plus.dart';
+import 'package:showcaseview/showcaseview.dart';
+import '../../tutorials/providers/tutorial_provider.dart';
 
-class SettingsScreen extends ConsumerWidget {
+class SettingsScreen extends ConsumerStatefulWidget {
   const SettingsScreen({super.key});
 
   @override
-  Widget build(BuildContext context, WidgetRef ref) {
+  ConsumerState<SettingsScreen> createState() => _SettingsScreenState();
+}
+
+class _SettingsScreenState extends ConsumerState<SettingsScreen> {
+  String _appVersion = '...';
+  final GlobalKey _communityKey = GlobalKey();
+
+  @override
+  void initState() {
+    super.initState();
+    _loadVersion();
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      final hasShown = ref.read(settingsTutorialNotifierProvider);
+      if (!hasShown) {
+        ShowCaseWidget.of(context).startShowCase([_communityKey]);
+        ref.read(settingsTutorialNotifierProvider.notifier).markShown();
+      }
+    });
+  }
+
+  Future<void> _loadVersion() async {
+    final info = await PackageInfo.fromPlatform();
+    if (mounted) {
+      setState(() => _appVersion = 'v${info.version} (Build ${info.buildNumber})');
+    }
+  }
+
+  @override
+  Widget build(BuildContext context) {
     final settings = ref.watch(settingsProvider);
     final notifier = ref.read(settingsProvider.notifier);
     final semester = ref.watch(semesterStateProvider);
@@ -753,37 +784,40 @@ class SettingsScreen extends ConsumerWidget {
                 'App Version',
               ),
               subtitle: Text(
-                '1.0.0 (Beta)',
+                _appVersion,
               ),
             ),
             Divider(
                 color: Theme.of(context).colorScheme.outlineVariant, height: 1),
-            ListTile(
-              leading:
-                  _buildIcon(Icons.groups_rounded, const Color(0xFF4CAF50)),
-              title: const Text(
-                'Join the community',
-              ),
-              subtitle: const Text(
-                'For feedback and review',
-              ),
-              trailing: Icon(Icons.open_in_new_rounded,
-                  color: Theme.of(context)
-                      .colorScheme
-                      .onSurface
-                      .withValues(alpha: 0.3)),
-              onTap: () async {
-                final url = Uri.parse('https://chat.whatsapp.com/JuejidlVtPpFTv4E1P4SF7');
-                if (await canLaunchUrl(url)) {
-                  await launchUrl(url, mode: LaunchMode.externalApplication);
-                } else {
-                  if (context.mounted) {
-                    ScaffoldMessenger.of(context).showSnackBar(
-                      const SnackBar(content: Text('Could not open WhatsApp')),
-                    );
+            Showcase(
+              key: _communityKey,
+              description: 'Join our WhatsApp Community to get updates, report bugs, and give feedback!',
+              child: ListTile(
+                leading:
+                    _buildIcon(Icons.groups_rounded, const Color(0xFF4CAF50)),
+                title: const Text(
+                  'Join the community',
+                ),
+                subtitle: const Text(
+                  'For feedback and review',
+                ),
+                trailing: Icon(Icons.open_in_new_rounded,
+                    color: Theme.of(context)
+                        .colorScheme
+                        .onSurface
+                        .withValues(alpha: 0.3)),
+                onTap: () async {
+                  final url = Uri.parse('https://chat.whatsapp.com/JuejidlVtPpFTv4E1P4SF7');
+                  if (await canLaunchUrl(url)) {
+                    await launchUrl(url, mode: LaunchMode.externalApplication);
+                  } else {
+                    if (context.mounted) {
+                      ScaffoldMessenger.of(context).showSnackBar(
+                          const SnackBar(content: Text('Could not open link')));
+                    }
                   }
-                }
-              },
+                },
+              ),
             ),
             Divider(
                 color: Theme.of(context).colorScheme.outlineVariant, height: 1),
@@ -807,6 +841,24 @@ class SettingsScreen extends ConsumerWidget {
                 color: Theme.of(context).colorScheme.outlineVariant, height: 1),
             ListTile(
               leading:
+                  _buildIcon(Icons.support_agent_rounded, const Color(0xFF26A69A)),
+              title: const Text(
+                'My Requests & Support',
+              ),
+              subtitle: const Text(
+                'View and chat on your tickets',
+              ),
+              trailing: Icon(Icons.chevron_right_rounded,
+                  color: Theme.of(context)
+                      .colorScheme
+                      .onSurface
+                      .withValues(alpha: 0.3)),
+              onTap: () => context.push(AppRoutes.userSupport),
+            ),
+            Divider(
+                color: Theme.of(context).colorScheme.outlineVariant, height: 1),
+            ListTile(
+              leading:
                   _buildIcon(Icons.privacy_tip_outlined, const Color(0xFF9575CD)),
               title: const Text(
                 'Privacy Policy',
@@ -820,8 +872,7 @@ class SettingsScreen extends ConsumerWidget {
                       .onSurface
                       .withValues(alpha: 0.3)),
               onTap: () async {
-                // TODO: Replace with your actual Privacy Policy URL
-                final url = Uri.parse('https://www.freeprivacypolicy.com/live/f06cdb75-10eb-4043-a6cd-567f13db79c2'); // Replace with your generated privacy policy link
+                final url = Uri.parse('https://www.freeprivacypolicy.com/live/f06cdb75-10eb-4043-a6cd-567f13db79c2');
                 if (await canLaunchUrl(url)) {
                   await launchUrl(url, mode: LaunchMode.externalApplication);
                 }

@@ -206,6 +206,7 @@ const _AttendanceHistorynewStatusEnumValueMap = {
   r'medical': r'medical',
   r'gt': r'gt',
   r'holiday': r'holiday',
+  r'exam': r'exam',
   r'pending': r'pending',
 };
 const _AttendanceHistorynewStatusValueEnumMap = {
@@ -214,6 +215,7 @@ const _AttendanceHistorynewStatusValueEnumMap = {
   r'medical': AttendanceStatus.medical,
   r'gt': AttendanceStatus.gt,
   r'holiday': AttendanceStatus.holiday,
+  r'exam': AttendanceStatus.exam,
   r'pending': AttendanceStatus.pending,
 };
 const _AttendanceHistorypreviousStatusEnumValueMap = {
@@ -222,6 +224,7 @@ const _AttendanceHistorypreviousStatusEnumValueMap = {
   r'medical': r'medical',
   r'gt': r'gt',
   r'holiday': r'holiday',
+  r'exam': r'exam',
   r'pending': r'pending',
 };
 const _AttendanceHistorypreviousStatusValueEnumMap = {
@@ -230,6 +233,7 @@ const _AttendanceHistorypreviousStatusValueEnumMap = {
   r'medical': AttendanceStatus.medical,
   r'gt': AttendanceStatus.gt,
   r'holiday': AttendanceStatus.holiday,
+  r'exam': AttendanceStatus.exam,
   r'pending': AttendanceStatus.pending,
 };
 

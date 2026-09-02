@@ -1,5 +1,6 @@
 import 'package:isar/isar.dart';
 import '../../core/enums/attendance_status.dart';
+import '../../core/enums/exam_type.dart';
 
 part 'attendance_collection.g.dart';
 
@@ -43,6 +44,10 @@ class Attendance {
   /// Reason for the holiday if [status] is [AttendanceStatus.holiday].
   String? holidayReason;
 
+  /// Type of exam if [status] is [AttendanceStatus.exam].
+  @Enumerated(EnumType.name)
+  ExamType? examType;
+
   /// Timestamp when this record was first created.
   DateTime createdAt = DateTime.now();
 
@@ -62,6 +67,7 @@ class Attendance {
       'status': status.name,
       'notes': notes,
       'holidayReason': holidayReason,
+      'examType': examType?.name,
       'createdAt': createdAt.millisecondsSinceEpoch,
       'updatedAt': updatedAt.millisecondsSinceEpoch,
     };
@@ -81,6 +87,12 @@ class Attendance {
           orElse: () => AttendanceStatus.pending)
       ..notes = map['notes']
       ..holidayReason = map['holidayReason']
+      ..examType = map['examType'] != null
+          ? ExamType.values.firstWhere(
+              (e) => e.name == map['examType'],
+              orElse: () => ExamType.midSem1,
+            )
+          : null
       ..createdAt = map['createdAt'] != null
           ? DateTime.fromMillisecondsSinceEpoch(map['createdAt'])
           : DateTime.now()

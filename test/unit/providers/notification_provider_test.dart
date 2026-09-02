@@ -1,5 +1,6 @@
 import 'package:attendify/core/enums/day_of_week.dart';
 import 'package:attendify/core/enums/attendance_status.dart';
+import 'package:attendify/core/enums/exam_type.dart';
 import 'package:attendify/database/collections/attendance_collection.dart';
 import 'package:attendify/database/collections/attendance_history_collection.dart';
 import 'package:attendify/database/collections/schedule_collection.dart';
@@ -129,7 +130,8 @@ class FakeAttendanceRepository implements AttendanceRepository {
   Future<void> deleteAttendancesByDate(DateTime date, int semesterId) async {}
   @override
   Future<void> markFullDayStatus(
-      DateTime date, int semesterId, AttendanceStatus status) async {}
+      DateTime date, int semesterId, AttendanceStatus status,
+      {ExamType? examType}) async {}
   @override
   Stream<List<Attendance>> watchBySubject(int subjectId, int semesterId) =>
       Stream.value([]);
@@ -137,6 +139,8 @@ class FakeAttendanceRepository implements AttendanceRepository {
   Future<List<Attendance>> getBySubjectId(
           int subjectId, int semesterId) async =>
       [];
+  @override
+  Future<int> deleteOrphanedAttendances(int semesterId) async => 0;
   @override
   Stream<List<AttendanceHistory>> watchHistoryBySubject(
           int subjectId, int semesterId) =>

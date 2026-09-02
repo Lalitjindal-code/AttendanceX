@@ -14,6 +14,8 @@ extension AttendanceStatusUI on AttendanceStatus {
         return Colors.blue;
       case AttendanceStatus.holiday:
         return Colors.purple;
+      case AttendanceStatus.exam:
+        return Colors.amber.shade700;
       case AttendanceStatus.pending:
         return Colors.grey;
     }
@@ -31,6 +33,8 @@ extension AttendanceStatusUI on AttendanceStatus {
         return Icons.directions_walk;
       case AttendanceStatus.holiday:
         return Icons.celebration;
+      case AttendanceStatus.exam:
+        return Icons.assignment_rounded;
       case AttendanceStatus.pending:
         return Icons.help_outline;
     }
@@ -48,6 +52,8 @@ extension AttendanceStatusUI on AttendanceStatus {
         return 'GT';
       case AttendanceStatus.holiday:
         return 'Holiday';
+      case AttendanceStatus.exam:
+        return 'Exam';
       case AttendanceStatus.pending:
         return 'Pending';
     }

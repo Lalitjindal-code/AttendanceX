@@ -1,9 +1,15 @@
 import 'dart:convert';
+import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:url_launcher/url_launcher.dart';
+import 'package:image_picker/image_picker.dart';
+import '../services/feedback_service.dart';
+import '../services/feedback_service.dart';
+import 'package:showcaseview/showcaseview.dart';
+import '../../tutorials/providers/tutorial_provider.dart';
 
 class FeedbackScreen extends ConsumerStatefulWidget {
   const FeedbackScreen({super.key});
@@ -17,12 +23,22 @@ class _FeedbackScreenState extends ConsumerState<FeedbackScreen> {
   final _nameController = TextEditingController();
   final _emailController = TextEditingController();
   final _messageController = TextEditingController();
-
+  
+  XFile? _selectedImage;
   bool _isSubmitting = false;
+  final GlobalKey _communityKey = GlobalKey();
 
-  // Web3Forms Access Key
-  static const String _web3FormsAccessKey =
-      'b7b85c02-2e6d-4045-940c-a91fbcc38e64';
+  @override
+  void initState() {
+    super.initState();
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      final hasShown = ref.read(feedbackTutorialNotifierProvider);
+      if (!hasShown) {
+        ShowCaseWidget.of(context).startShowCase([_communityKey]);
+        ref.read(feedbackTutorialNotifierProvider.notifier).markShown();
+      }
+    });
+  }
 
   @override
   void dispose() {
@@ -30,6 +46,22 @@ class _FeedbackScreenState extends ConsumerState<FeedbackScreen> {
     _emailController.dispose();
     _messageController.dispose();
     super.dispose();
+  }
+
+  Future<void> _pickImage() async {
+    final ImagePicker picker = ImagePicker();
+    final XFile? image = await picker.pickImage(source: ImageSource.gallery);
+    if (image != null) {
+      setState(() {
+        _selectedImage = image;
+      });
+    }
+  }
+
+  void _removeImage() {
+    setState(() {
+      _selectedImage = null;
+    });
   }
 
   Future<void> _submitFeedback() async {
@@ -40,37 +72,25 @@ class _FeedbackScreenState extends ConsumerState<FeedbackScreen> {
     });
 
     try {
-      final response = await http.post(
-        Uri.parse('https://api.web3forms.com/submit'),
-        headers: {'Content-Type': 'application/json'},
-        body: jsonEncode({
-          'access_key': _web3FormsAccessKey,
-          'name': _nameController.text,
-          'email': _emailController.text.isNotEmpty
-              ? _emailController.text
-              : 'No Email Provided',
-          'message': _messageController.text,
-          'subject': 'New Feedback from Attendify User',
-        }),
+      final feedbackService = ref.read(feedbackServiceProvider);
+      await feedbackService.submitFeedback(
+        name: _nameController.text.trim().isNotEmpty ? _nameController.text.trim() : 'Anonymous User',
+        email: _emailController.text.trim(),
+        message: _messageController.text.trim(),
+        imageFile: _selectedImage != null ? File(_selectedImage!.path) : null,
       );
 
       if (!mounted) return;
 
-      if (response.statusCode == 200) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(
-              content: Text('Feedback sent successfully! Thank you.')),
-        );
-        context.pop();
-      } else {
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text('Failed to send feedback: ${response.body}')),
-        );
-      }
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(
+            content: Text('Feedback sent successfully! Thank you.')),
+      );
+      context.pop();
     } catch (e) {
       if (!mounted) return;
       ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text('An error occurred: $e')),
+        SnackBar(content: Text('Failed to send feedback: $e')),
       );
     } finally {
       if (mounted) {
@@ -122,24 +142,28 @@ class _FeedbackScreenState extends ConsumerState<FeedbackScreen> {
                   ),
                 ),
                 const SizedBox(height: 16),
-                Card(
-                  elevation: 0,
-                  color: const Color(0xFF4CAF50).withValues(alpha: 0.1),
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(16),
-                    side: BorderSide(color: const Color(0xFF4CAF50).withValues(alpha: 0.3)),
-                  ),
-                  child: ListTile(
-                    leading: const Icon(Icons.groups_rounded, color: Color(0xFF4CAF50)),
-                    title: const Text('Join the community', style: TextStyle(fontWeight: FontWeight.bold)),
-                    subtitle: const Text('For fast feedback and review'),
-                    trailing: const Icon(Icons.open_in_new_rounded, color: Color(0xFF4CAF50)),
-                    onTap: () async {
-                      final url = Uri.parse('https://chat.whatsapp.com/JuejidlVtPpFTv4E1P4SF7');
-                      if (await canLaunchUrl(url)) {
-                        await launchUrl(url, mode: LaunchMode.externalApplication);
-                      }
-                    },
+                Showcase(
+                  key: _communityKey,
+                  description: 'Join our WhatsApp community to directly share ideas with the team',
+                  child: Card(
+                    elevation: 0,
+                    color: const Color(0xFF4CAF50).withValues(alpha: 0.1),
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(16),
+                      side: BorderSide(color: const Color(0xFF4CAF50).withValues(alpha: 0.3)),
+                    ),
+                    child: ListTile(
+                      leading: const Icon(Icons.groups_rounded, color: Color(0xFF4CAF50)),
+                      title: const Text('Join the community', style: TextStyle(fontWeight: FontWeight.bold)),
+                      subtitle: const Text('For fast feedback and review'),
+                      trailing: const Icon(Icons.open_in_new_rounded, color: Color(0xFF4CAF50)),
+                      onTap: () async {
+                        final url = Uri.parse('https://chat.whatsapp.com/JuejidlVtPpFTv4E1P4SF7');
+                        if (await canLaunchUrl(url)) {
+                          await launchUrl(url, mode: LaunchMode.externalApplication);
+                        }
+                      },
+                    ),
                   ),
                 ),
                 const SizedBox(height: 24),
@@ -217,6 +241,48 @@ class _FeedbackScreenState extends ConsumerState<FeedbackScreen> {
                     ),
                   ),
                 ),
+                const SizedBox(height: 16),
+                
+                // Image Attachment Section
+                if (_selectedImage == null)
+                  OutlinedButton.icon(
+                    onPressed: _pickImage,
+                    icon: const Icon(Icons.image_outlined),
+                    label: const Text('Attach Screenshot (Optional)'),
+                    style: OutlinedButton.styleFrom(
+                      padding: const EdgeInsets.symmetric(vertical: 16),
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(16),
+                      ),
+                    ),
+                  )
+                else
+                  Stack(
+                    alignment: Alignment.topRight,
+                    children: [
+                      Container(
+                        width: double.infinity,
+                        height: 200,
+                        decoration: BoxDecoration(
+                          borderRadius: BorderRadius.circular(16),
+                          image: DecorationImage(
+                            image: FileImage(File(_selectedImage!.path)),
+                            fit: BoxFit.cover,
+                          ),
+                        ),
+                      ),
+                      Padding(
+                        padding: const EdgeInsets.all(8.0),
+                        child: CircleAvatar(
+                          backgroundColor: Colors.black54,
+                          child: IconButton(
+                            icon: const Icon(Icons.close, color: Colors.white),
+                            onPressed: _removeImage,
+                          ),
+                        ),
+                      ),
+                    ],
+                  ),
                 const SizedBox(height: 32),
 
                 // Submit Button
