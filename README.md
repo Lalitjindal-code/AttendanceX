@@ -12,7 +12,7 @@
 
 AttendifyX is a production-grade, offline-first Flutter application built for college students to track attendance with high precision, safe bunk predictions, exam day marking, and a buttery-smooth Material 3 user interface.
 
-[🌐 View Landing Page](landing/index.html) · [⬇ Download Latest APK](https://github.com/Lalitjindal-code/AttendanceX/releases/download/v1.1.0-beta.3/app-release.apk)
+[🌐 View Live Landing Page](https://attendify-official.vercel.app) · [⬇ Download Latest APK](https://github.com/Lalitjindal-code/AttendanceX/releases/download/v1.1.0-beta.3/app-release.apk)
 
 </div>
 

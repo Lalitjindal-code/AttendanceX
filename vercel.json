@@ -1,0 +1,7 @@
+{
+  "name": "attendify",
+  "cleanUrls": true,
+  "rewrites": [
+    { "source": "/(.*)", "destination": "/landing/$1" }
+  ]
+}
