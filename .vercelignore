@@ -1,0 +1,15 @@
+build/
+.dart_tool/
+android/
+ios/
+windows/
+web/
+linux/
+macos/
+lib/
+backend/
+scripts/
+test/
+.github/
+.idea/
+assets/
