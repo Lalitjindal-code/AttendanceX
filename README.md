@@ -1,6 +1,6 @@
-<div align="center">
+﻿<div align="center">
 
-# 🎓 AttendifyX
+# 🎓 Attendify
 
 **Smart Attendance Tracker & Academic Companion for College Students**
 
@@ -10,7 +10,7 @@
 [![Latest Release](https://img.shields.io/badge/Release-v1.1.0--beta.3-6366f1)](https://github.com/Lalitjindal-code/AttendanceX/releases/tag/v1.1.0-beta.3)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 
-AttendifyX is a production-grade, offline-first Flutter application built for college students to track attendance with high precision, safe bunk predictions, exam day marking, and a buttery-smooth Material 3 user interface.
+Attendify is a production-grade, offline-first Flutter application built for college students to track attendance with high precision, safe bunk predictions, exam day marking, and a buttery-smooth Material 3 user interface.
 
 [🌐 View Live Landing Page](https://attendify-official.vercel.app) · [⬇ Download Latest APK](https://github.com/Lalitjindal-code/AttendanceX/releases/download/v1.1.0-beta.3/app-release.apk)
 
@@ -36,7 +36,7 @@ AttendifyX is a production-grade, offline-first Flutter application built for co
 * 📝 **Exam Day Marking**: Easily mark Mid Sem 1, Mid Sem 2, End Sem, and Practical Exam days. Exam days are intelligently excluded from regular attendance calculations automatically.
 * 🔄 **In-App Update Engine**: Powered by Firebase Remote Config and GitHub Releases, notifying users of new updates instantly with one-tap APK downloading and installation.
 * ⚡ **100% Offline-First & Private**: Built on top of **Isar NoSQL** database — zero internet required, sub-100ms response times, and 100% private with no mandatory login.
-* 📅 **Calendar & Timetable Auto-Generation**: Set up your weekly schedule once and let AttendifyX populate your daily dashboard automatically. View full attendance history on a color-coded calendar.
+* 📅 **Calendar & Timetable Auto-Generation**: Set up your weekly schedule once and let Attendify populate your daily dashboard automatically. View full attendance history on a color-coded calendar.
 * ⏰ **Smart Notifications & Daily Backups**: Timely class reminders, low attendance alerts, goal celebrations, and automated local data backups.
 * 🌐 **Modern Landing Page**: Built-in dark glassmorphism web landing page in `/landing` ready for static deployment.
 
@@ -57,7 +57,7 @@ AttendifyX is a production-grade, offline-first Flutter application built for co
 
 ## 📂 Architecture Overview
 
-AttendifyX follows a modular, layer-based architecture enforcing clean separation of concerns:
+Attendify follows a modular, layer-based architecture enforcing clean separation of concerns:
 
 ```
 lib/
