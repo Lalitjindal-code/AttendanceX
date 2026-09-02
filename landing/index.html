@@ -1,17 +1,21 @@
-﻿<!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Attendify — Smart Attendance Tracker for College Students</title>
-  <meta name="description" content="Attendify is a premium, offline-first Android app for college students to track attendance, predict safe bunks, manage timetables, and mark exam days. 100% free. No login required." />
-  <meta name="keywords" content="attendance tracker, college attendance app, attendance calculator, bunk calculator, timetable app, flutter attendance app, Attendify" />
+  <title>Attendify — Free Attendance Tracker & Bunk Calculator for College Students</title>
+  <meta name="description" content="Attendify is the #1 free offline Android attendance tracker for college students. Calculate safe bunks, manage timetables, predict attendance percentage & mark exam days — no login, no internet needed." />
+  <meta name="keywords" content="attendance tracker, attendance app, college attendance tracker, bunk calculator, safe bunk predictor, attendance calculator, attendance percentage calculator, how to calculate attendance, attendify, attendance management app, timetable app, college app, student app, android attendance app, free attendance app, offline attendance tracker, bunk predictor, how many classes can i skip, attendance shortage alert, flutter attendance app" />
   <meta name="author" content="Lalit Jindal" />
-  <!-- SEO Core Meta Tags -->
+  <meta name="theme-color" content="#0a0a0f" />
+  <meta name="application-name" content="Attendify" />
+  <meta name="category" content="Education" />
+  <meta name="classification" content="Education" />
+  <meta name="coverage" content="Worldwide" />
+  <meta name="target" content="college students, university students" />
   <link rel="canonical" href="https://attendify-official.vercel.app/" />
   <meta name="robots" content="index, follow, max-image-preview:large, max-snippet:-1, max-video-preview:-1" />
-
-  <!-- Google Search Console Verification Slot -->
+  <!-- Google Search Console Verification -->
   <meta name="google-site-verification" content="googlec70278efa5acb639" />
 
   <!-- Open Graph / Facebook / WhatsApp -->
@@ -29,25 +33,143 @@
   <meta name="twitter:description" content="Never miss a class — or attend one too many. Premium, offline-first college attendance tracker with safe bunk prediction & exam marking." />
   <meta name="twitter:image" content="https://attendify-official.vercel.app/screenshot/dashboard.jpg" />
 
-  <!-- Schema.org JSON-LD Structured Data for Google Rich Snippets -->
+  <!-- Schema.org JSON-LD — SoftwareApplication -->
   <script type="application/ld+json">
   {
     "@context": "https://schema.org",
     "@type": "SoftwareApplication",
     "name": "Attendify",
-    "operatingSystem": "Android",
-    "applicationCategory": "EducationalApplication",
+    "url": "https://attendify-official.vercel.app/",
+    "logo": "https://attendify-official.vercel.app/icon.png",
+    "operatingSystem": "Android 6.0+",
+    "applicationCategory": "EducationApplication",
+    "applicationSubCategory": "Attendance Tracker",
+    "downloadUrl": "https://github.com/Lalitjindal-code/AttendanceX/releases",
+    "softwareVersion": "1.1.0",
+    "releaseNotes": "Exam day marking, bunk prediction engine, offline-first architecture",
     "offers": {
       "@type": "Offer",
       "price": "0",
-      "priceCurrency": "USD"
+      "priceCurrency": "USD",
+      "availability": "https://schema.org/InStock"
     },
     "aggregateRating": {
       "@type": "AggregateRating",
       "ratingValue": "4.9",
-      "ratingCount": "128"
+      "ratingCount": "128",
+      "bestRating": "5",
+      "worstRating": "1"
     },
-    "description": "Smart, offline-first attendance tracker built for college students to track attendance, predict safe bunks, auto-generate timetables, and mark exam days."
+    "author": {
+      "@type": "Person",
+      "name": "Lalit Jindal",
+      "email": "lalitjindal.dev@gmail.com"
+    },
+    "description": "Attendify is a free, offline-first Android attendance tracker for college students. Track attendance percentage, calculate safe bunks, predict how many classes you can skip, auto-generate weekly timetables, and mark exam days — all without internet.",
+    "keywords": "attendance tracker, bunk calculator, attendance calculator, college app, timetable app",
+    "screenshot": [
+      "https://attendify-official.vercel.app/screenshot/dashboard.jpg",
+      "https://attendify-official.vercel.app/screenshot/analytics.jpg",
+      "https://attendify-official.vercel.app/screenshot/calender.jpg"
+    ],
+    "featureList": [
+      "Offline attendance tracking",
+      "Safe bunk prediction",
+      "Attendance percentage calculator",
+      "Weekly timetable auto-generation",
+      "Exam day marking",
+      "Smart notifications and alerts",
+      "Color-coded attendance calendar"
+    ]
+  }
+  </script>
+
+  <!-- Schema.org JSON-LD — WebSite (enables Google Sitelinks Search) -->
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "WebSite",
+    "name": "Attendify",
+    "url": "https://attendify-official.vercel.app/",
+    "description": "Free offline attendance tracker and bunk calculator for college students",
+    "publisher": {
+      "@type": "Person",
+      "name": "Lalit Jindal"
+    }
+  }
+  </script>
+
+  <!-- Schema.org JSON-LD — FAQPage (targets Google Featured Snippets & PAA boxes) -->
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "FAQPage",
+    "mainEntity": [
+      {
+        "@type": "Question",
+        "name": "What is Attendify?",
+        "acceptedAnswer": {
+          "@type": "Answer",
+          "text": "Attendify is a free, offline-first Android app for college students to track their class attendance, calculate attendance percentage, predict how many classes they can safely skip (bunk), manage their weekly timetable, and mark exam days. It requires no internet connection, no login, and no account."
+        }
+      },
+      {
+        "@type": "Question",
+        "name": "How do I calculate my attendance percentage?",
+        "acceptedAnswer": {
+          "@type": "Answer",
+          "text": "Attendance percentage = (Classes Attended ÷ Total Classes Held) × 100. For example, if you attended 42 out of 50 classes, your attendance is 84%. Attendify calculates this automatically for every subject and shows it in real-time on your dashboard."
+        }
+      },
+      {
+        "@type": "Question",
+        "name": "How many classes can I safely bunk?",
+        "acceptedAnswer": {
+          "@type": "Answer",
+          "text": "To maintain 75% attendance, you can bunk at most (Total Classes × 0.25 − Classes Missed) more classes. Attendify's Prediction Engine calculates your exact safe bunk count in real-time, so you always know the limit without doing manual math."
+        }
+      },
+      {
+        "@type": "Question",
+        "name": "Is Attendify free to download?",
+        "acceptedAnswer": {
+          "@type": "Answer",
+          "text": "Yes, Attendify is 100% free. There are no subscriptions, no in-app purchases, and no hidden costs. Download the APK directly from GitHub Releases — no Play Store account needed."
+        }
+      },
+      {
+        "@type": "Question",
+        "name": "Does Attendify work without internet?",
+        "acceptedAnswer": {
+          "@type": "Answer",
+          "text": "Yes. Attendify is built with an offline-first architecture using Isar NoSQL database. All your attendance data is stored locally on your phone. You never need an internet connection to mark attendance, view analytics, or use any feature."
+        }
+      },
+      {
+        "@type": "Question",
+        "name": "How do I maintain 75% attendance?",
+        "acceptedAnswer": {
+          "@type": "Answer",
+          "text": "To maintain 75% attendance, you need to attend at least 3 out of every 4 classes. Attendify shows you a real-time count of how many classes you need to attend versus how many you can skip for each subject, so you never accidentally fall below the 75% threshold."
+        }
+      },
+      {
+        "@type": "Question",
+        "name": "Does Attendify work on Android?",
+        "acceptedAnswer": {
+          "@type": "Answer",
+          "text": "Yes. Attendify is an Android app built with Flutter. It supports Android 6.0 and above. An iOS version is not currently available."
+        }
+      },
+      {
+        "@type": "Question",
+        "name": "How do I download Attendify?",
+        "acceptedAnswer": {
+          "@type": "Answer",
+          "text": "Download the latest Attendify APK directly from the GitHub Releases page or click the Download button on attendify-official.vercel.app. Enable 'Install from unknown sources' in your Android settings, then open the downloaded APK to install."
+        }
+      }
+    ]
   }
   </script>
 
@@ -76,6 +198,8 @@
   <ul class="nav-links">
     <li><a href="#features">Features</a></li>
     <li><a href="#screenshots">Screenshots</a></li>
+    <li><a href="#how-it-works">How It Works</a></li>
+    <li><a href="#faq">FAQ</a></li>
     <li><a href="#releases">Releases</a></li>
     <li><a href="https://github.com/Lalitjindal-code/AttendanceX" target="_blank" rel="noopener">GitHub</a></li>
     <li>
@@ -95,6 +219,8 @@
 <div class="mobile-menu" id="mobile-menu" role="dialog" aria-label="Mobile navigation">
   <a href="#features">Features</a>
   <a href="#screenshots">Screenshots</a>
+  <a href="#how-it-works">How It Works</a>
+  <a href="#faq">FAQ</a>
   <a href="#releases">Releases</a>
   <a href="https://github.com/Lalitjindal-code/AttendanceX" target="_blank" rel="noopener">GitHub ↗</a>
   <a href="https://github.com/Lalitjindal-code/AttendanceX/releases/download/v1.1.0-beta.3/app-release.apk"
@@ -455,6 +581,145 @@
        style="display:inline-flex">
       📦 View All Releases on GitHub ↗
     </a>
+  </div>
+</section>
+
+<!-- ════════════════════════════════════════════════
+     HOW IT WORKS
+════════════════════════════════════════════════ -->
+<section class="section how-it-works" id="how-it-works" aria-labelledby="how-heading">
+  <div class="section-header">
+    <span class="section-eyebrow reveal">✦ Simple Setup</span>
+    <h2 class="section-title reveal reveal-delay-1" id="how-heading">
+      How Attendify Works
+    </h2>
+    <p class="section-sub reveal reveal-delay-2">
+      From install to tracking in under 2 minutes. No account, no internet — just open and go.
+    </p>
+  </div>
+
+  <div class="steps-grid">
+    <div class="step-card reveal reveal-delay-1">
+      <div class="step-number">01</div>
+      <div class="step-icon">📲</div>
+      <h3 class="step-title">Download & Install</h3>
+      <p class="step-desc">Download the free APK from GitHub Releases. Enable "Install from unknown sources" and open the file — done in 30 seconds.</p>
+    </div>
+    <div class="step-card reveal reveal-delay-2">
+      <div class="step-number">02</div>
+      <div class="step-icon">📋</div>
+      <h3 class="step-title">Set Up Your Timetable</h3>
+      <p class="step-desc">Add your subjects and set your weekly schedule once. Attendify auto-generates today's class list every morning — no manual input daily.</p>
+    </div>
+    <div class="step-card reveal reveal-delay-3">
+      <div class="step-number">03</div>
+      <div class="step-icon">✅</div>
+      <h3 class="step-title">Mark Attendance Daily</h3>
+      <p class="step-desc">One tap to mark Present, Absent, Medical, GT or Holiday. Your attendance percentage updates instantly, offline.</p>
+    </div>
+    <div class="step-card reveal reveal-delay-1">
+      <div class="step-number">04</div>
+      <div class="step-icon">🎯</div>
+      <h3 class="step-title">See Your Safe Bunks</h3>
+      <p class="step-desc">The Prediction Engine calculates exactly how many classes you can safely skip to stay above 75%. Know your limit before you bunk.</p>
+    </div>
+  </div>
+</section>
+
+<!-- ════════════════════════════════════════════════
+     FAQ SECTION — targets Google Featured Snippets
+════════════════════════════════════════════════ -->
+<section class="section faq-section" id="faq" aria-labelledby="faq-heading">
+  <div class="section-header">
+    <span class="section-eyebrow reveal">✦ Got Questions?</span>
+    <h2 class="section-title reveal reveal-delay-1" id="faq-heading">
+      Frequently Asked Questions
+    </h2>
+    <p class="section-sub reveal reveal-delay-2">
+      Everything you need to know about Attendify, attendance tracking, and bunk calculation.
+    </p>
+  </div>
+
+  <div class="faq-grid">
+    <div class="faq-item reveal reveal-delay-1">
+      <button class="faq-question" aria-expanded="false">
+        <span>How do I calculate my attendance percentage?</span>
+        <span class="faq-icon">+</span>
+      </button>
+      <div class="faq-answer">
+        <p>Attendance % = (Classes Attended ÷ Total Classes Held) × 100. If you attended <strong>42 out of 50</strong> classes, your attendance is <strong>84%</strong>. Attendify calculates this <em>automatically</em> per subject in real-time — no math needed.</p>
+      </div>
+    </div>
+
+    <div class="faq-item reveal reveal-delay-2">
+      <button class="faq-question" aria-expanded="false">
+        <span>How many classes can I safely bunk?</span>
+        <span class="faq-icon">+</span>
+      </button>
+      <div class="faq-answer">
+        <p>To stay above 75% attendance: <strong>Safe Bunks = (Total Classes × 0.25) − Classes Already Missed</strong>. Attendify's Prediction Engine shows this number live for every subject, so you always know exactly how many classes you can skip without risking attendance shortage.</p>
+      </div>
+    </div>
+
+    <div class="faq-item reveal reveal-delay-3">
+      <button class="faq-question" aria-expanded="false">
+        <span>How do I maintain 75% attendance?</span>
+        <span class="faq-icon">+</span>
+      </button>
+      <div class="faq-answer">
+        <p>You need to attend at least <strong>3 out of every 4 classes</strong> to maintain 75%. Attendify shows a real-time alert when you're approaching the danger zone and tells you exactly how many consecutive classes you must attend to recover your percentage.</p>
+      </div>
+    </div>
+
+    <div class="faq-item reveal reveal-delay-1">
+      <button class="faq-question" aria-expanded="false">
+        <span>Is Attendify free? Do I need an account?</span>
+        <span class="faq-icon">+</span>
+      </button>
+      <div class="faq-answer">
+        <p><strong>100% free, forever. No account, no login, no subscription.</strong> Download the APK directly — no Play Store needed. All data stays on your phone. No data is ever sent to any server.</p>
+      </div>
+    </div>
+
+    <div class="faq-item reveal reveal-delay-2">
+      <button class="faq-question" aria-expanded="false">
+        <span>Does Attendify work without internet?</span>
+        <span class="faq-icon">+</span>
+      </button>
+      <div class="faq-answer">
+        <p>Yes — Attendify is <strong>100% offline</strong>. Built on Isar NoSQL (the fastest Flutter database), all data lives on your phone. You can track attendance, view analytics, and use every feature with zero internet connection, even in your college building with no signal.</p>
+      </div>
+    </div>
+
+    <div class="faq-item reveal reveal-delay-3">
+      <button class="faq-question" aria-expanded="false">
+        <span>What Android version does Attendify support?</span>
+        <span class="faq-icon">+</span>
+      </button>
+      <div class="faq-answer">
+        <p>Attendify works on <strong>Android 6.0 (Marshmallow) and above</strong>. It's built with Flutter so it runs smoothly on both old and new Android devices. An iOS version is not available yet.</p>
+      </div>
+    </div>
+
+    <div class="faq-item reveal reveal-delay-1">
+      <button class="faq-question" aria-expanded="false">
+        <span>How do I install Attendify APK?</span>
+        <span class="faq-icon">+</span>
+      </button>
+      <div class="faq-answer">
+        <p>1. Click <strong>Download APK</strong> on this page. 2. Open your Android Settings → Security → Enable <strong>"Install from unknown sources"</strong>. 3. Open the downloaded APK file and tap Install. Done — Attendify is ready to use in under a minute.</p>
+      </div>
+    </div>
+
+    <div class="faq-item reveal reveal-delay-2">
+      <button class="faq-question" aria-expanded="false">
+        <span>What is a bunk calculator / bunk predictor?</span>
+        <span class="faq-icon">+</span>
+      </button>
+      <div class="faq-answer">
+        <p>A bunk calculator tells you how many classes you can skip while keeping your attendance above a minimum threshold (usually 75%). Attendify's built-in bunk predictor does this <em>per subject</em>, in real-time, so you never accidentally cross the line.</p>
+      </div>
+    </div>
   </div>
 </section>
 

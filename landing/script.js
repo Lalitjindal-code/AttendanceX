@@ -1,4 +1,4 @@
-﻿// ============================================================
+// ============================================================
 // Attendify Landing Page — Premium JS
 // ============================================================
 
@@ -222,3 +222,25 @@ document.querySelectorAll('a[href^="#"]').forEach(a => {
     target.scrollIntoView({ behavior: 'smooth', block: 'start' });
   });
 });
+
+// ── FAQ Accordion ────────────────────────────────────────────
+(function initFAQ() {
+  const questions = document.querySelectorAll('.faq-question');
+  questions.forEach(btn => {
+    btn.addEventListener('click', () => {
+      const isOpen = btn.getAttribute('aria-expanded') === 'true';
+      // Close all
+      questions.forEach(q => {
+        q.setAttribute('aria-expanded', 'false');
+        const ans = q.nextElementSibling;
+        if (ans) ans.classList.remove('open');
+      });
+      // Open clicked if it was closed
+      if (!isOpen) {
+        btn.setAttribute('aria-expanded', 'true');
+        const ans = btn.nextElementSibling;
+        if (ans) ans.classList.add('open');
+      }
+    });
+  });
+})();
