@@ -87,6 +87,8 @@ class FirebaseSyncService {
     if (_isListening) return; // Guard against duplicate listeners
     _isListening = true;
     // Debounce or listen to collection changes
+    isar.profiles.watchLazy().listen((_) => backupData());
+    isar.semesters.watchLazy().listen((_) => backupData());
     isar.subjects.watchLazy().listen((_) => backupData());
     isar.attendances.watchLazy().listen((_) => backupData());
     isar.schedules.watchLazy().listen((_) => backupData());

@@ -14,10 +14,10 @@ import 'services/preferences_service.dart';
 import 'services/notification_service.dart';
 import 'features/sync/services/firebase_sync_service.dart';
 import 'features/security/widgets/app_lock_wrapper.dart';
-import 'core/widgets/app_updater_wrapper.dart';
 import 'services/widget_service.dart';
 import 'package:home_widget/home_widget.dart';
 import 'core/providers/firebase_provider.dart';
+import 'services/fcm_service.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -98,6 +98,8 @@ class AttendifyApp extends ConsumerWidget {
     ref.listen(notificationOrchestratorProvider, (_, __) {});
     // Keep the Firebase sync orchestrator alive to watch local DB changes
     ref.listen(firebaseSyncOrchestratorProvider, (_, __) {});
+    // Keep the FCM token orchestrator alive
+    ref.listen(fcmTokenOrchestratorProvider, (_, __) {});
 
     final router = ref.watch(appRouterProvider); // Generated router provider
     final settings = ref.watch(settingsProvider); // Watches ThemeMode changes
@@ -110,9 +112,7 @@ class AttendifyApp extends ConsumerWidget {
       darkTheme: settings.isAmoled ? AppTheme.amoled : AppTheme.dark,
       routerConfig: router,
       builder: (context, child) {
-        return AppUpdaterWrapper(
-          child: AppLockWrapper(child: child!),
-        );
+        return AppLockWrapper(child: child!);
       },
     );
   }

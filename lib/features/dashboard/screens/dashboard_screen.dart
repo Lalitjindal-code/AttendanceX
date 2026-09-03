@@ -32,6 +32,13 @@ import '../../tutorials/providers/tutorial_provider.dart';
 import '../../../core/constants/app_spacing.dart';
 import '../../profile/providers/active_profile_provider.dart';
 import '../../settings/providers/settings_provider.dart';
+import 'package:package_info_plus/package_info_plus.dart';
+import 'package:firebase_remote_config/firebase_remote_config.dart';
+import '../../../services/update_service.dart';
+import '../../../services/preferences_service.dart';
+import '../../../core/widgets/update_dialog.dart';
+import '../../../core/widgets/whats_new_dialog.dart';
+import '../../../core/providers/firebase_provider.dart';
 
 class DashboardScreen extends ConsumerStatefulWidget {
   const DashboardScreen({super.key});
@@ -57,11 +64,57 @@ class _DashboardScreenState extends ConsumerState<DashboardScreen> {
           _headerKey,
           _heroHealthKey,
           _quickStatsKey,
-          _scheduleKey,
         ]);
         ref.read(dashboardTutorialNotifierProvider.notifier).markShown();
       }
+      _checkAppUpdate();
     });
+  }
+
+  Future<void> _checkAppUpdate() async {
+    try {
+      final firebaseApp = await ref.read(firebaseInitProvider.future);
+      if (firebaseApp == null) return;
+
+      final packageInfo = await PackageInfo.fromPlatform();
+      final currentVersion = packageInfo.version;
+      
+      final prefs = PreferencesService.instance;
+      final lastSeenVersion = prefs.getStringNullable(PreferencesService.keyLastSeenAppVersion);
+      
+      final remoteConfig = FirebaseRemoteConfig.instance;
+      final updateService = UpdateService(remoteConfig);
+      await updateService.initialize();
+
+      if (lastSeenVersion != null && lastSeenVersion != currentVersion) {
+        if (mounted) {
+          final releaseNotes = remoteConfig.getString('update_release_notes');
+          await showDialog(
+            context: context,
+            builder: (context) => WhatsNewDialog(
+              releaseNotes: releaseNotes,
+              version: currentVersion,
+            ),
+          );
+        }
+      }
+      await prefs.setString(PreferencesService.keyLastSeenAppVersion, currentVersion);
+
+      final updateInfo = await updateService.checkForUpdate();
+      
+      if (updateInfo.isUpdateAvailable && mounted) {
+        showDialog(
+          context: context,
+          barrierDismissible: !updateInfo.isMandatory,
+          builder: (context) => UpdateDialog(
+            updateInfo: updateInfo,
+            updateService: updateService,
+          ),
+        );
+      }
+    } catch (e) {
+      debugPrint('Error checking for updates: $e');
+    }
   }
 
   void _showCompleteProfileDialog() {

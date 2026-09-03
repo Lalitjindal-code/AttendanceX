@@ -54,6 +54,7 @@ class PreferencesService {
   static const String keyHasShownBottomNavTutorial = 'has_shown_bottom_nav_tutorial';
   static const String keyHasShownSettingsTutorial = 'has_shown_settings_tutorial';
   static const String keyTutorialsMigrated = 'tutorials_migrated';
+  static const String keyLastSeenAppVersion = 'last_seen_app_version';
 
   // Ad-related keys
   static const String keyAdFreeUntil = 'ad_free_until';

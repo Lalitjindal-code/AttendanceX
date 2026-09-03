@@ -19,6 +19,7 @@ class UpdateDialog extends ConsumerStatefulWidget {
 
 class _UpdateDialogState extends ConsumerState<UpdateDialog> {
   bool _isDownloading = false;
+  bool _isInstalling = false;
   double _progress = 0.0;
   String? _error;
 
@@ -45,11 +46,8 @@ class _UpdateDialogState extends ConsumerState<UpdateDialog> {
       onComplete: () {
         if (mounted) {
           setState(() {
-            _isDownloading = false;
-            // Optionally close dialog or show success
-            if (!widget.updateInfo.isMandatory) {
-               Navigator.of(context).pop();
-            }
+            _progress = 1.0;
+            _isInstalling = true;
           });
         }
       },
@@ -93,7 +91,7 @@ class _UpdateDialogState extends ConsumerState<UpdateDialog> {
             if (_isDownloading) ...[
               LinearProgressIndicator(value: _progress),
               const SizedBox(height: 8),
-              Text('${(_progress * 100).toStringAsFixed(1)}% Downloaded'),
+              Text(_isInstalling ? 'Installing...' : '${(_progress * 100).toStringAsFixed(1)}% Downloaded'),
             ] else ...[
               const Text('A new version of Attendify is available. Do you want to update now?'),
             ]
