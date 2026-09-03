@@ -45,8 +45,8 @@
     "applicationCategory": "EducationApplication",
     "applicationSubCategory": "Attendance Tracker",
     "downloadUrl": "https://github.com/Lalitjindal-code/AttendanceX/releases",
-    "softwareVersion": "1.1.0",
-    "releaseNotes": "Exam day marking, bunk prediction engine, offline-first architecture",
+    "softwareVersion": "1.1.2",
+    "releaseNotes": "Admin Reminders, FCM Push Notifications, Firebase Remote Config updates, offline-first architecture",
     "offers": {
       "@type": "Offer",
       "price": "0",
@@ -203,7 +203,7 @@
     <li><a href="#releases">Releases</a></li>
     <li><a href="https://github.com/Lalitjindal-code/AttendanceX" target="_blank" rel="noopener">GitHub</a></li>
     <li>
-      <a href="https://github.com/Lalitjindal-code/AttendanceX/releases/download/v1.1.0-beta.3/app-release.apk"
+      <a href="https://github.com/Lalitjindal-code/AttendanceX/releases/download/v1.1.2%2B5/app-release.apk"
          class="btn-nav-cta" id="nav-download-btn" aria-label="Download Attendify APK">
         ⬇ Download Free
       </a>
@@ -223,7 +223,7 @@
   <a href="#faq">FAQ</a>
   <a href="#releases">Releases</a>
   <a href="https://github.com/Lalitjindal-code/AttendanceX" target="_blank" rel="noopener">GitHub ↗</a>
-  <a href="https://github.com/Lalitjindal-code/AttendanceX/releases/download/v1.1.0-beta.3/app-release.apk"
+  <a href="https://github.com/Lalitjindal-code/AttendanceX/releases/download/v1.1.2%2B5/app-release.apk"
      id="mobile-download-btn">⬇ Download Free APK</a>
 </div>
 
@@ -236,7 +236,7 @@
   <div class="hero-content">
     <div class="hero-badge reveal">
       <span class="pulse"></span>
-      Now Available — v1.1.0
+      Now Available — v1.1.2
     </div>
 
     <h1 class="hero-title reveal reveal-delay-1">
@@ -251,10 +251,10 @@
     </p>
 
     <div class="hero-cta-group reveal reveal-delay-3">
-      <a href="https://github.com/Lalitjindal-code/AttendanceX/releases/download/v1.1.0-beta.3/app-release.apk"
-         class="btn-primary" id="hero-download-btn" aria-label="Download Attendify v1.1.0 APK">
+      <a href="https://github.com/Lalitjindal-code/AttendanceX/releases/download/v1.1.2%2B5/app-release.apk"
+         class="btn-primary" id="hero-download-btn" aria-label="Download Attendify v1.1.2 APK">
         ⬇ Download APK
-        <span class="version-tag">v1.1.0</span>
+        <span class="version-tag">v1.1.2</span>
       </a>
       <a href="https://github.com/Lalitjindal-code/AttendanceX" target="_blank" rel="noopener"
          class="btn-secondary" id="hero-github-btn">
@@ -511,39 +511,36 @@
 
   <div class="releases-grid">
 
-    <!-- v1.1.0 — LATEST -->
+    <!-- v1.1.2 — LATEST -->
     <div class="release-card latest reveal">
+      <div class="release-header">
+        <div class="release-version-group">
+          <span class="release-version">v1.1.2+5</span>
+          <span class="release-date">📅 September 3, 2026</span>
+        </div>
+        <div style="display:flex;flex-direction:column;gap:6px;align-items:flex-end">
+          <span class="badge latest">⚡ Latest</span>
+        </div>
+      </div>
+      <ul class="release-changelog">
+        <li>Admin Reminders — Get push notifications for updates and important alerts</li>
+        <li>FCM Integration with Firebase Cloud Messaging</li>
+        <li>In-app update engine with Firebase Remote Config</li>
+        <li>Performance improvements and UI polish</li>
+      </ul>
+      <a href="https://github.com/Lalitjindal-code/AttendanceX/releases/download/v1.1.2%2B5/app-release.apk"
+         class="btn-download primary" id="release-v112-download"
+         aria-label="Download Attendify v1.1.2">
+        ⬇ Download APK (v1.1.2)
+      </a>
+    </div>
+
+    <!-- v1.1.0 — Previous -->
+    <div class="release-card reveal reveal-delay-1">
       <div class="release-header">
         <div class="release-version-group">
           <span class="release-version">v1.1.0-beta.3</span>
           <span class="release-date">📅 September 2, 2026</span>
-        </div>
-        <div style="display:flex;flex-direction:column;gap:6px;align-items:flex-end">
-          <span class="badge latest">⚡ Latest</span>
-          <span class="badge beta">Beta</span>
-        </div>
-      </div>
-      <ul class="release-changelog">
-        <li>Exam Day Marking — Mid Sem 1, Mid Sem 2, End Sem, Practical Exam</li>
-        <li>Exam days intelligently excluded from attendance calculations</li>
-        <li>In-app update engine with Firebase Remote Config</li>
-        <li>Auto APK download and install via GitHub Releases</li>
-        <li>89/89 unit tests passing — rock-solid stability</li>
-        <li>Performance improvements and UI polish</li>
-      </ul>
-      <a href="https://github.com/Lalitjindal-code/AttendanceX/releases/download/v1.1.0-beta.3/app-release.apk"
-         class="btn-download primary" id="release-v110-download"
-         aria-label="Download Attendify v1.1.0-beta.3">
-        ⬇ Download APK (v1.1.0)
-      </a>
-    </div>
-
-    <!-- v1.0.0 — Previous -->
-    <div class="release-card reveal reveal-delay-1">
-      <div class="release-header">
-        <div class="release-version-group">
-          <span class="release-version">v1.0.0-beta.1</span>
-          <span class="release-date">📅 August 2026</span>
         </div>
         <div style="display:flex;flex-direction:column;gap:6px;align-items:flex-end">
           <span class="badge old">Previous</span>
@@ -551,19 +548,15 @@
         </div>
       </div>
       <ul class="release-changelog">
-        <li>Initial public beta release</li>
-        <li>Smart Dashboard with pending &amp; marked class separation</li>
-        <li>Offline-first Isar database integration</li>
-        <li>Weekly timetable auto-generation</li>
-        <li>Attendance analytics with safe bunk prediction</li>
-        <li>Calendar view with full attendance history</li>
-        <li>Present, Absent, GT, Medical, Holiday status support</li>
-        <li>Smart notifications and daily backup</li>
+        <li>Exam Day Marking — Mid Sem 1, Mid Sem 2, End Sem, Practical Exam</li>
+        <li>Exam days intelligently excluded from attendance calculations</li>
+        <li>Auto APK download and install via GitHub Releases</li>
+        <li>89/89 unit tests passing — rock-solid stability</li>
       </ul>
-      <a href="https://github.com/Lalitjindal-code/AttendanceX/releases"
-         class="btn-download secondary" id="release-v100-download"
+      <a href="https://github.com/Lalitjindal-code/AttendanceX/releases/tag/v1.1.0-beta.3"
+         class="btn-download secondary" id="release-v110-download"
          target="_blank" rel="noopener"
-         aria-label="View all releases on GitHub">
+         aria-label="View v1.1.0-beta.3 on GitHub">
         View on GitHub Releases ↗
       </a>
     </div>
@@ -780,7 +773,7 @@
   </nav>
 
   <div class="footer-version">
-    <span>🟢</span> Current: v1.1.0
+    <span>🟢</span> Current: v1.1.2
   </div>
 </footer>
 
